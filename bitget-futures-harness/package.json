@@ -1,0 +1,19 @@
+{
+  "name": "bitget-futures-harness",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local Bitget futures demo/live test harness for account checks and order execution",
+  "type": "commonjs",
+  "scripts": {
+    "account": "node scripts/account.js",
+    "all-balances": "node scripts/all-balances.js",
+    "spot-assets": "node scripts/spot-assets.js",
+    "transfer": "node scripts/transfer.js",
+    "positions": "node scripts/positions.js",
+    "set-margin-mode": "node scripts/set-margin-mode.js",
+    "set-leverage": "node scripts/set-leverage.js",
+    "place-order": "node scripts/place-order.js",
+    "cancel-order": "node scripts/cancel-order.js",
+    "execute-signal": "node scripts/execute-signal.js"
+  }
+}

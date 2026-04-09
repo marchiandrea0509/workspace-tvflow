@@ -1,0 +1,11 @@
+{
+  "symbol": "BTCUSDT",
+  "productType": "USDT-FUTURES",
+  "marginCoin": "USDT",
+  "marginMode": "isolated",
+  "leverage": "3",
+  "side": "buy",
+  "tradeSide": "open",
+  "orderType": "market",
+  "size": "0.001"
+}
