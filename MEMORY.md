@@ -40,12 +40,12 @@ This separation matters: keep execution helpers lightweight, but keep durable pr
 ## Core Screener Configuration
 
 Canonical operating setup:
-- **Watchlist:** `TRADFI`
-- **Indicator:** `OC Hybrid Edge Screener v2`
+- **Watchlist:** `BITGET_TRADFI`
+- **Indicator:** `OC Hybrid Edge Screener v7`
 - **Timeframe:** `4H`
 - **Inputs:** default indicator inputs unless explicitly changed
 
-A prior naming confusion existed around `Hybrid Slim v2`, but the confirmed indicator for the actual runtime is `OC Hybrid Edge Screener v2`.
+A prior naming confusion existed around older variants, but the confirmed current runtime indicator is `OC Hybrid Edge Screener v7`.
 
 The screener uses relay-free TradingView automation and exports results to artifacts under:
 - `tradingview/reports/pine_screener/`
