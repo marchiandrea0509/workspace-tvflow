@@ -33,7 +33,7 @@ Current working runtime stack:
 - Chat wrapper: `tradingview/scripts/pine_screener_telegram_report.ps1`
 - Cron prompt: `tradingview/prompts/cron_pine_screener_4h.md`
 - Recurring cron job: **TV Pine Screener 4H**
-- Current cron delivery model: isolated cron run, lightweight context, direct Telegram delivery
+- Current cron delivery model: isolated cron run, lightweight context, direct in-run messaging to the dedicated Discord thread `TV Pine Screener 4H`
 
 This separation matters: keep execution helpers lightweight, but keep durable project thinking in `tvflow`.
 
@@ -41,11 +41,11 @@ This separation matters: keep execution helpers lightweight, but keep durable pr
 
 Canonical operating setup:
 - **Watchlist:** `BITGET_TRADFI`
-- **Indicator:** `OC Hybrid Edge Screener v7`
+- **Indicator:** `OC Hybrid Edge Screener v6`
 - **Timeframe:** `4H`
 - **Inputs:** default indicator inputs unless explicitly changed
 
-A prior naming confusion existed around older variants, but the confirmed current runtime indicator is `OC Hybrid Edge Screener v7`.
+The active runtime default indicator is now `OC Hybrid Edge Screener v6`.
 
 The screener uses relay-free TradingView automation and exports results to artifacts under:
 - `tradingview/reports/pine_screener/`

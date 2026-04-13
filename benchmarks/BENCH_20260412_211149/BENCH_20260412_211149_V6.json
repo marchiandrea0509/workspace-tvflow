@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "error": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Indicator OC Hybrid Edge Screener v6' })\u001b[22m\n",
+  "stack": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Indicator OC Hybrid Edge Screener v6' })\u001b[22m\n\n    at ensureTimeframe (C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\pine_screener_export.js:249:74)\n    at C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\pine_screener_export.js:431:11",
+  "generatedAt": "2026-04-12T19:12:27.735Z",
+  "outJson": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\benchmarks\\BENCH_20260412_211149\\BENCH_20260412_211149_V6.json"
+}
