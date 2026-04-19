@@ -17,7 +17,8 @@ At the start of each session:
 1. Read `PROJECT_STATE.md`
 2. Read `SESSION_START.txt`
 3. Read today and yesterday under `memory/` if present
-4. Update `PROJECT_STATE.md` when milestones or blockers change
+4. If `memory/SHARED_FROM_MAIN.md` exists, read it as the safe cross-workspace bridge
+5. Update `PROJECT_STATE.md` when milestones or blockers change
 
 ## Continuity
 Prefer storing durable decisions, workflows, architecture notes, screener rules, and Pine design choices in workspace files so the project remains coherent over time.
