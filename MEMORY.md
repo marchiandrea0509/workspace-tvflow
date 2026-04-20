@@ -127,6 +127,11 @@ Current routing note:
 - Discord thread id: `1487830028120231979`
 - The cron still uses direct in-run messaging (delivery mode remains `none`), so routing is controlled by the prompt/script path rather than top-level cron delivery settings
 
+Deep-analysis source-of-truth rule:
+- The active Bitget deep-analysis workflow has been reverted to **OHLCV-first**
+- Primary truth source: **Bitget OHLCV exports**
+- Screenshots are now secondary / optional validation rather than the main analytical source
+
 ## Durable Project Rule
 
 The Pine Screener system is the **recurring shortlist engine**, not the full reasoning layer. Runtime helpers may execute it, but project continuity, architecture decisions, report evolution, and future feature growth should live in `tvflow`.
