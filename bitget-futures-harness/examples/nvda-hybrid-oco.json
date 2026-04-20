@@ -1,0 +1,82 @@
+{
+  "campaignId": "nvda_oco",
+  "symbol": "NVDAUSDT",
+  "productType": "USDT-FUTURES",
+  "marginCoin": "USDT",
+  "marginMode": "isolated",
+  "leverage": "3",
+  "branches": {
+    "A": {
+      "name": "pullback-ladder",
+      "clientOidPrefix": "nvda_oco_A_",
+      "orders": [
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "price": "198.50",
+          "size": "2.84",
+          "presetStopLossPrice": "189.70",
+          "presetStopSurplusPrice": "205.00"
+        },
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "price": "196.00",
+          "size": "5.55",
+          "presetStopLossPrice": "189.70",
+          "presetStopSurplusPrice": "212.00"
+        },
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "price": "193.50",
+          "size": "10.52",
+          "presetStopLossPrice": "189.70",
+          "presetStopSurplusPrice": "228.00"
+        }
+      ]
+    },
+    "B": {
+      "name": "breakout-cluster",
+      "clientOidPrefix": "nvda_oco_B_",
+      "orders": [
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "triggerPrice": "202.10",
+          "triggerType": "fill_price",
+          "price": "202.10",
+          "size": "5.32",
+          "stopLossTriggerPrice": "197.40",
+          "stopSurplusTriggerPrice": "205.00"
+        },
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "triggerPrice": "202.10",
+          "triggerType": "fill_price",
+          "price": "202.10",
+          "size": "10.63",
+          "stopLossTriggerPrice": "197.40",
+          "stopSurplusTriggerPrice": "212.00"
+        },
+        {
+          "side": "buy",
+          "tradeSide": "open",
+          "orderType": "limit",
+          "triggerPrice": "202.10",
+          "triggerType": "fill_price",
+          "price": "202.10",
+          "size": "5.32",
+          "stopLossTriggerPrice": "197.40",
+          "stopSurplusTriggerPrice": "228.00"
+        }
+      ]
+    }
+  }
+}

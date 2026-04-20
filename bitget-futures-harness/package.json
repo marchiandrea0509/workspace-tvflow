@@ -10,10 +10,15 @@
     "spot-assets": "node scripts/spot-assets.js",
     "transfer": "node scripts/transfer.js",
     "positions": "node scripts/positions.js",
+    "list-open-orders": "node scripts/list-open-orders.js",
     "set-margin-mode": "node scripts/set-margin-mode.js",
     "set-leverage": "node scripts/set-leverage.js",
     "place-order": "node scripts/place-order.js",
+    "place-trigger-order": "node scripts/place-trigger-order.js",
     "cancel-order": "node scripts/cancel-order.js",
-    "execute-signal": "node scripts/execute-signal.js"
+    "cancel-by-prefix": "node scripts/cancel-by-prefix.js",
+    "execute-signal": "node scripts/execute-signal.js",
+    "execute-oco-campaign": "node scripts/execute-oco-campaign.js",
+    "monitor-oco-campaign": "node scripts/execute-oco-campaign.js --monitor --intervalSeconds 300"
   }
 }
