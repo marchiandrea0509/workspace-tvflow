@@ -1,0 +1,22 @@
+{
+  "capturedAt": "2026-04-22T20:03:04.429Z",
+  "symbol": "GOOGLUSDT.P",
+  "timeframe": "1D",
+  "layout": "Openclaw-structure",
+  "preset": "standard",
+  "width": 1600,
+  "height": 1000,
+  "scale": 1,
+  "fixedZoom": true,
+  "profile": "profile-llama-capture",
+  "ready": false,
+  "url": "https://www.tradingview.com/chart/0ZPSKaZ4/?symbol=GOOGLUSDT.P&interval=1D",
+  "shotPath": "C:\\Users\\anmar\\.openclaw\\workspace-llama\\artifacts\\pine_screener_winner\\GOOGLUSDT.P_1D_Openclaw-structure.png",
+  "panelPath": null,
+  "market": {
+    "title": "GOOGLUSDT.P 339.75 ▲ +1.31% Openclaw-structure",
+    "symbol": "GOOGLUSDT.P",
+    "price": 339.75,
+    "changePct": 1.31
+  }
+}
