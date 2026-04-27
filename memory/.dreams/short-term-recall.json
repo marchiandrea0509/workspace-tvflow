@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-27T16:46:13.299Z",
+  "entries": {
+    "memory:memory/2026-04-10.md:1:8": {
+      "key": "memory:memory/2026-04-10.md:1:8",
+      "path": "memory/2026-04-10.md",
+      "startLine": 1,
+      "endLine": 8,
+      "source": "memory",
+      "snippet": "# 2026-04-10 - On 2026-04-10 the active Pine screener runtime in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview` was switched to watchlist `BITGET_TRADFI` and indicator `OC Hybrid Edge Screener v7`. This was later reverted; the current canonical runtime target for the 4H screener is back on `OC Hybrid Edge Screener v6`. - Replaced the default deep-analysis prompt path with a Bitget-specific LLM prompt. Active default prompt is now `data_pipeline/prompts/single_market_deep_dive_prompt.md` (Bitget version), while the legacy generic prompt was preserved at `data_pipeline/prompts/single_market_deep_dive_prompt_legacy_generic.md`. - Added a clear Bitget-specific LLM runtime path via `data_pipel",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.0637877556322202,
+      "maxScore": 0.6619517895219907,
+      "firstRecalledAt": "2026-04-27T16:44:23.745Z",
+      "lastRecalledAt": "2026-04-27T16:46:13.299Z",
+      "queryHashes": [
+        "ab67d239bc5e",
+        "9c5fe0c314b1"
+      ],
+      "recallDays": [
+        "2026-04-27"
+      ],
+      "conceptTags": [
+        "bitget-tradfi",
+        "deep-analysis",
+        "bitget-specific",
+        "data-pipel",
+        "the",
+        "active",
+        "pine",
+        "screener"
+      ]
+    },
+    "memory:memory/2026-04-13.md:1:6": {
+      "key": "memory:memory/2026-04-13.md:1:6",
+      "path": "memory/2026-04-13.md",
+      "startLine": 1,
+      "endLine": 6,
+      "source": "memory",
+      "snippet": "# 2026-04-13 - Confirmed the active/canonical Pine screener version for the 4H cron should be `OC Hybrid Edge Screener v6`. - Synced project memory to reduce version confusion: the earlier 2026-04-10 `v7` switch is now explicitly marked as later reverted. - Current routing expectation remains the dedicated Discord thread `TV Pine Screener 4H` (`1487830028120231979`) via direct in-run messaging, not top-level cron delivery.",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4651270300149917,
+      "maxScore": 0.4651270300149917,
+      "firstRecalledAt": "2026-04-27T16:44:23.745Z",
+      "lastRecalledAt": "2026-04-27T16:44:23.745Z",
+      "queryHashes": [
+        "ab67d239bc5e"
+      ],
+      "recallDays": [
+        "2026-04-27"
+      ],
+      "conceptTags": [
+        "active/canonical",
+        "in-run",
+        "top-level",
+        "confirmed",
+        "the",
+        "active",
+        "canonical",
+        "pine"
+      ]
+    }
+  }
+}

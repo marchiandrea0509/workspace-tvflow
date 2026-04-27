@@ -1,7 +1,7 @@
 Project: TradingView / Pine workflow
 Goal: Serve as the main coordination and continuity workspace for TradingView, Pine, screeners, chart analysis, and related TradingView automation
-Current phase: Screener continuity plus Bitget futures execution harness setup
-Last successful step: Hardened the Bitget local OCO controller so it is pure harness-side logic with explicit modes (`--arm`, `--enforce-once`, `--monitor`), 5-minute polling, duplicate-clientOid skipping, and auto-stop once one branch activates and the other is canceled; then started it for the live NVDA campaign
-Next step: If desired, improve branch activation detection beyond pending-order disappearance (e.g. order history / fill-state aware), but the current pure local 5-minute monitor is now active and self-terminating on trigger
+Current phase: Screener continuity plus live Bitget futures execution follow-through
+Last successful step: Ran the 4H Pine Screener with filter `02 Best Setup Code >= 2`, deep-analyzed `GMEUSDT.P`, and after explicit confirmation placed a live Bitget isolated 2x GMEUSDT long pullback ladder: L1 `26.66 @ 25.10` TP `26.35` SL `23.85`, L2 `35.08 @ 24.80` TP `27.10` SL `23.85`, L3 `55.57 @ 24.45` TP `28.50` SL `23.85`. All three verified live/resting immediately after placement.
+Next step: Monitor/cancel/adjust the live GMEUSDT ladder only on explicit instruction or if a dedicated monitoring workflow is requested; otherwise preserve the attached TP/SL order design.
 Blockers: None immediate; current screener execution already runs elsewhere through existing mini/nano agents and cron jobs
 Notes: tvflow is the main coordination and continuity agent for TradingView/Pine/screener work. Existing mini/nano agents and cron jobs already handle the current screener execution. tvflow is mainly for deeper analysis, future screener extensions, wiring to other tools, Discord delivery/routing, and additional Pine logic. tvflow is not the current runtime execution agent for the screener cron. A Bitget futures harness now exists under `bitget-futures-harness/` for API-side testing, starting with demo trading.
