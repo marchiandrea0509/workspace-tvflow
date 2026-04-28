@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-27T16:46:13.299Z",
+  "updatedAt": "2026-04-27T22:00:03.712Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -63,6 +63,37 @@
         "active",
         "canonical",
         "pine"
+      ]
+    },
+    "memory:memory/2026-04-27.md:6:9": {
+      "key": "memory:memory/2026-04-27.md:6:9",
+      "path": "memory/2026-04-27.md",
+      "startLine": 6,
+      "endLine": 9,
+      "source": "memory",
+      "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.45140752792358396,
+      "maxScore": 0.45140752792358396,
+      "firstRecalledAt": "2026-04-27T22:00:03.712Z",
+      "lastRecalledAt": "2026-04-27T22:00:03.712Z",
+      "queryHashes": [
+        "48c23c83cd00"
+      ],
+      "recallDays": [
+        "2026-04-28"
+      ],
+      "conceptTags": [
+        "tvflow-gme-ladder-20260427-l1",
+        "26.66",
+        "25.10",
+        "26.35",
+        "23.85",
+        "tvflow-gme-ladder-20260427-l2",
+        "35.08",
+        "24.80"
       ]
     }
   }
