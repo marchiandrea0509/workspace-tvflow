@@ -1,0 +1,16 @@
+{
+  "symbol": "GOOGLUSDT",
+  "productType": "USDT-FUTURES",
+  "marginCoin": "USDT",
+  "marginMode": "isolated",
+  "leverage": "4",
+  "side": "buy",
+  "tradeSide": "open",
+  "orderType": "limit",
+  "force": "gtc",
+  "price": "349.20",
+  "size": "4.30",
+  "clientOid": "tvflow_googl_20260429_L1",
+  "presetStopLossPrice": "341.20",
+  "presetStopSurplusPrice": "353.40"
+}

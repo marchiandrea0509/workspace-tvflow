@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-27T22:00:03.712Z",
+  "updatedAt": "2026-04-28T19:48:38.212Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -9,19 +9,21 @@
       "endLine": 8,
       "source": "memory",
       "snippet": "# 2026-04-10 - On 2026-04-10 the active Pine screener runtime in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview` was switched to watchlist `BITGET_TRADFI` and indicator `OC Hybrid Edge Screener v7`. This was later reverted; the current canonical runtime target for the 4H screener is back on `OC Hybrid Edge Screener v6`. - Replaced the default deep-analysis prompt path with a Bitget-specific LLM prompt. Active default prompt is now `data_pipeline/prompts/single_market_deep_dive_prompt.md` (Bitget version), while the legacy generic prompt was preserved at `data_pipeline/prompts/single_market_deep_dive_prompt_legacy_generic.md`. - Added a clear Bitget-specific LLM runtime path via `data_pipel",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.0637877556322202,
+      "totalScore": 1.4567082556722744,
       "maxScore": 0.6619517895219907,
       "firstRecalledAt": "2026-04-27T16:44:23.745Z",
-      "lastRecalledAt": "2026-04-27T16:46:13.299Z",
+      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
       "queryHashes": [
         "ab67d239bc5e",
-        "9c5fe0c314b1"
+        "9c5fe0c314b1",
+        "e3e1321e6742"
       ],
       "recallDays": [
-        "2026-04-27"
+        "2026-04-27",
+        "2026-04-28"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -94,6 +96,99 @@
         "tvflow-gme-ladder-20260427-l2",
         "35.08",
         "24.80"
+      ]
+    },
+    "memory:memory/2026-04-27.md:6:11": {
+      "key": "memory:memory/2026-04-27.md:6:11",
+      "path": "memory/2026-04-27.md",
+      "startLine": 6,
+      "endLine": 11,
+      "source": "memory",
+      "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.36626854240894313,
+      "maxScore": 0.36626854240894313,
+      "firstRecalledAt": "2026-04-28T19:09:46.475Z",
+      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
+      "queryHashes": [
+        "e3e1321e6742"
+      ],
+      "recallDays": [
+        "2026-04-28"
+      ],
+      "conceptTags": [
+        "tvflow-gme-ladder-20260427-l1",
+        "26.66",
+        "25.10",
+        "26.35",
+        "23.85",
+        "tvflow-gme-ladder-20260427-l2",
+        "35.08",
+        "24.80"
+      ]
+    },
+    "memory:memory/2026-04-27.md:1:7": {
+      "key": "memory:memory/2026-04-27.md:1:7",
+      "path": "memory/2026-04-27.md",
+      "startLine": 1,
+      "endLine": 7,
+      "source": "memory",
+      "snippet": "# 2026-04-27 - Ran the TradingView Pine Screener manually for `BITGET_TRADFI`, indicator `OC Hybrid Edge Screener v6`, timeframe `4H`, with filter `02 Best Setup Code >= 2`. Top result was `GMEUSDT.P` with Best Score about `69.3`; 15 rows passed the filter. - Built a Bitget OHLCV-first deep-analysis packet for `GMEUSDT.P` from latest screener output. Analysis classified it as a valid long-biased breakout/continuation market but **bad market-entry location**, with preferred conditional pullback ladder. - After explicit Discord confirmations (`CONFIRM LIVE 2X`, then `ENABLE FLAGS AND PLACE GME LADDER`), placed three **live Bitget USDT futures** GMEUSDT isolated 2x long limit orders via `bitge",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3550076454877853,
+      "maxScore": 0.3550076454877853,
+      "firstRecalledAt": "2026-04-28T19:09:46.475Z",
+      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
+      "queryHashes": [
+        "e3e1321e6742"
+      ],
+      "recallDays": [
+        "2026-04-28"
+      ],
+      "conceptTags": [
+        "bitget-tradfi",
+        "gmeusdt.p",
+        "69.3",
+        "ohlcv-first",
+        "deep-analysis",
+        "long-biased",
+        "breakout/continuation",
+        "market-entry"
+      ]
+    },
+    "memory:memory/2026-04-28.md:1:5": {
+      "key": "memory:memory/2026-04-28.md:1:5",
+      "path": "memory/2026-04-28.md",
+      "startLine": 1,
+      "endLine": 5,
+      "source": "memory",
+      "snippet": "# 2026-04-28 - Ran TradingView Strategy test chart-data CSV export for BITGET_TRADFI-style symbols sourced from the latest successful Pine screener CSV (`pine_screener_2026-04-27T16-38-02-295Z.csv`) using chart layout `Startegy test` / `https://www.tradingview.com/chart/0PgkxOVV/`, interval `240 / 4H`, exchange prefix `BITGET`. Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_2026-04-28T19-12-01-932Z`; zip delivered from tvflow workspace: `BITGET_TRADFI_strategy_test_csv_2026-04-28T19-12-01-932Z.zip`. Result: 48 CSVs exported OK, 3 failed (`ACNUSDT.P`, `CSCOUSDT.P`, `IBMUSDT.P`) because TradingView chart data export was missin",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4193193435668945,
+      "maxScore": 0.4193193435668945,
+      "firstRecalledAt": "2026-04-28T19:48:38.212Z",
+      "lastRecalledAt": "2026-04-28T19:48:38.212Z",
+      "queryHashes": [
+        "1b903297c53c"
+      ],
+      "recallDays": [
+        "2026-04-28"
+      ],
+      "conceptTags": [
+        "chart-data",
+        "bitget-tradfi-style",
+        "strategy-test-watchlist-csv",
+        "acnusdt.p",
+        "cscousdt.p",
+        "ibmusdt.p",
+        "ran",
+        "tradingview"
       ]
     }
   }
