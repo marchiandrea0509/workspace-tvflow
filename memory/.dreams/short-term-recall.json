@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-28T19:48:38.212Z",
+  "updatedAt": "2026-04-30T06:33:00.432Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -9,21 +9,23 @@
       "endLine": 8,
       "source": "memory",
       "snippet": "# 2026-04-10 - On 2026-04-10 the active Pine screener runtime in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview` was switched to watchlist `BITGET_TRADFI` and indicator `OC Hybrid Edge Screener v7`. This was later reverted; the current canonical runtime target for the 4H screener is back on `OC Hybrid Edge Screener v6`. - Replaced the default deep-analysis prompt path with a Bitget-specific LLM prompt. Active default prompt is now `data_pipeline/prompts/single_market_deep_dive_prompt.md` (Bitget version), while the legacy generic prompt was preserved at `data_pipeline/prompts/single_market_deep_dive_prompt_legacy_generic.md`. - Added a clear Bitget-specific LLM runtime path via `data_pipel",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.4567082556722744,
+      "totalScore": 1.816171756648837,
       "maxScore": 0.6619517895219907,
       "firstRecalledAt": "2026-04-27T16:44:23.745Z",
-      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
+      "lastRecalledAt": "2026-04-30T06:33:00.432Z",
       "queryHashes": [
         "ab67d239bc5e",
         "9c5fe0c314b1",
-        "e3e1321e6742"
+        "e3e1321e6742",
+        "e1d9ed05f284"
       ],
       "recallDays": [
         "2026-04-27",
-        "2026-04-28"
+        "2026-04-28",
+        "2026-04-30"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -189,6 +191,37 @@
         "ibmusdt.p",
         "ran",
         "tradingview"
+      ]
+    },
+    "memory:memory/2026-04-29.md:1:10": {
+      "key": "memory:memory/2026-04-29.md:1:10",
+      "path": "memory/2026-04-29.md",
+      "startLine": 1,
+      "endLine": 10,
+      "source": "memory",
+      "snippet": "## Live execution: GOOGLUSDT ladder - Time: 2026-04-29 ~07:55 Europe/Berlin - User explicitly confirmed: `CONFIRM GOOGL LIVE LADDER` - Placed live Bitget isolated 4x GOOGLUSDT long pullback ladder via API. - L1: limit buy `4.30 @ 349.20`, TP `353.40`, SL `341.20`, orderId `1433261681713770501`, clientOid `tvflow_googl_20260429_L1` - L2: limit buy `5.77 @ 346.40`, TP `358.80`, SL `341.20`, orderId `1433261686591746049`, clientOid `tvflow_googl_20260429_L2` - L3: limit buy `7.28 @ 343.60`, TP `364.00`, SL `341.20`, orderId `1433261691314532353`, clientOid `tvflow_googl_20260429_L3` - Verification immediately after placement: 3 regular pending orders, all `status: live`, `tradeSide: open`, `p",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3907879203557968,
+      "maxScore": 0.3907879203557968,
+      "firstRecalledAt": "2026-04-30T06:33:00.432Z",
+      "lastRecalledAt": "2026-04-30T06:33:00.432Z",
+      "queryHashes": [
+        "e1d9ed05f284"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "4.30",
+        "349.20",
+        "353.40",
+        "341.20",
+        "tvflow-googl-20260429-l1",
+        "5.77",
+        "346.40"
       ]
     }
   }
