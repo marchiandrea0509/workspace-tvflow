@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-30T06:33:00.432Z",
+  "updatedAt": "2026-04-30T17:32:05.984Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -107,18 +107,20 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.36626854240894313,
+      "totalScore": 0.7189988285303115,
       "maxScore": 0.36626854240894313,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
+      "lastRecalledAt": "2026-04-30T17:15:44.078Z",
       "queryHashes": [
-        "e3e1321e6742"
+        "e3e1321e6742",
+        "aa50b6b9ac9f"
       ],
       "recallDays": [
-        "2026-04-28"
+        "2026-04-28",
+        "2026-04-30"
       ],
       "conceptTags": [
         "tvflow-gme-ladder-20260427-l1",
@@ -138,18 +140,21 @@
       "endLine": 7,
       "source": "memory",
       "snippet": "# 2026-04-27 - Ran the TradingView Pine Screener manually for `BITGET_TRADFI`, indicator `OC Hybrid Edge Screener v6`, timeframe `4H`, with filter `02 Best Setup Code >= 2`. Top result was `GMEUSDT.P` with Best Score about `69.3`; 15 rows passed the filter. - Built a Bitget OHLCV-first deep-analysis packet for `GMEUSDT.P` from latest screener output. Analysis classified it as a valid long-biased breakout/continuation market but **bad market-entry location**, with preferred conditional pullback ladder. - After explicit Discord confirmations (`CONFIRM LIVE 2X`, then `ENABLE FLAGS AND PLACE GME LADDER`), placed three **live Bitget USDT futures** GMEUSDT isolated 2x long limit orders via `bitge",
-      "recallCount": 1,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3550076454877853,
-      "maxScore": 0.3550076454877853,
+      "totalScore": 1.1098775595426558,
+      "maxScore": 0.38075051605701443,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-04-28T19:09:46.475Z",
+      "lastRecalledAt": "2026-04-30T07:43:10.524Z",
       "queryHashes": [
-        "e3e1321e6742"
+        "e3e1321e6742",
+        "0a47ebeefbbd",
+        "7498185c9150"
       ],
       "recallDays": [
-        "2026-04-28"
+        "2026-04-28",
+        "2026-04-30"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -169,18 +174,20 @@
       "endLine": 5,
       "source": "memory",
       "snippet": "# 2026-04-28 - Ran TradingView Strategy test chart-data CSV export for BITGET_TRADFI-style symbols sourced from the latest successful Pine screener CSV (`pine_screener_2026-04-27T16-38-02-295Z.csv`) using chart layout `Startegy test` / `https://www.tradingview.com/chart/0PgkxOVV/`, interval `240 / 4H`, exchange prefix `BITGET`. Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_2026-04-28T19-12-01-932Z`; zip delivered from tvflow workspace: `BITGET_TRADFI_strategy_test_csv_2026-04-28T19-12-01-932Z.zip`. Result: 48 CSVs exported OK, 3 failed (`ACNUSDT.P`, `CSCOUSDT.P`, `IBMUSDT.P`) because TradingView chart data export was missin",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4193193435668945,
+      "totalScore": 0.7753362119197844,
       "maxScore": 0.4193193435668945,
       "firstRecalledAt": "2026-04-28T19:48:38.212Z",
-      "lastRecalledAt": "2026-04-28T19:48:38.212Z",
+      "lastRecalledAt": "2026-04-30T17:15:44.078Z",
       "queryHashes": [
-        "1b903297c53c"
+        "1b903297c53c",
+        "aa50b6b9ac9f"
       ],
       "recallDays": [
-        "2026-04-28"
+        "2026-04-28",
+        "2026-04-30"
       ],
       "conceptTags": [
         "chart-data",
@@ -200,15 +207,20 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "## Live execution: GOOGLUSDT ladder - Time: 2026-04-29 ~07:55 Europe/Berlin - User explicitly confirmed: `CONFIRM GOOGL LIVE LADDER` - Placed live Bitget isolated 4x GOOGLUSDT long pullback ladder via API. - L1: limit buy `4.30 @ 349.20`, TP `353.40`, SL `341.20`, orderId `1433261681713770501`, clientOid `tvflow_googl_20260429_L1` - L2: limit buy `5.77 @ 346.40`, TP `358.80`, SL `341.20`, orderId `1433261686591746049`, clientOid `tvflow_googl_20260429_L2` - L3: limit buy `7.28 @ 343.60`, TP `364.00`, SL `341.20`, orderId `1433261691314532353`, clientOid `tvflow_googl_20260429_L3` - Verification immediately after placement: 3 regular pending orders, all `status: live`, `tradeSide: open`, `p",
-      "recallCount": 1,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3907879203557968,
-      "maxScore": 0.3907879203557968,
+      "totalScore": 2.7051469236612316,
+      "maxScore": 0.5259791612625122,
       "firstRecalledAt": "2026-04-30T06:33:00.432Z",
-      "lastRecalledAt": "2026-04-30T06:33:00.432Z",
+      "lastRecalledAt": "2026-04-30T14:58:40.181Z",
       "queryHashes": [
-        "e1d9ed05f284"
+        "e1d9ed05f284",
+        "0a47ebeefbbd",
+        "7498185c9150",
+        "9b3d8896f9ec",
+        "22507dc88771",
+        "706f649d530a"
       ],
       "recallDays": [
         "2026-04-30"
@@ -222,6 +234,135 @@
         "tvflow-googl-20260429-l1",
         "5.77",
         "346.40"
+      ]
+    },
+    "memory:memory/2026-04-30.md:1:9": {
+      "key": "memory:memory/2026-04-30.md:1:9",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 9,
+      "source": "memory",
+      "snippet": "## GOOGLUSDT fresh deep analysis - Time: 2026-04-30 ~08:36 Europe/Berlin - Ran OHLCV-first Bitget deep analysis for `GOOGLUSDT` / `BITGET:GOOGL` after price broke out to ~374.5. - Public data snapshot: last/mark ~374.49/374.44, 24h range 344.44-376.43, 24h change +6.52%, 4H RSI ~81.96, 1D RSI ~85.93, 4H EMA20 ~355.38, 4H EMA50 ~347.77. - Verdict: bullish market but bad immediate entry; do not chase at market. Orderability is `PLACEABLE_CONDITIONAL_ONLY` via pullback ladder or confirmed breakout above ~376.60. - Suggested fresh pullback analysis levels: 356.00 / 348.00 / 343.60 with refreshed invalidation around 340.80, but any order changes require explicit confirmation. - Read-only live ord",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.887593600153923,
+      "maxScore": 0.4697892904281616,
+      "firstRecalledAt": "2026-04-30T07:40:58.167Z",
+      "lastRecalledAt": "2026-04-30T07:43:10.524Z",
+      "queryHashes": [
+        "0a47ebeefbbd",
+        "7498185c9150"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "ohlcv-first",
+        "374.5",
+        "last/mark",
+        "374.49/374.44",
+        "344.44-376.43",
+        "6.52",
+        "81.96"
+      ]
+    },
+    "memory:memory/2026-04-30.md:1:16": {
+      "key": "memory:memory/2026-04-30.md:1:16",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 16,
+      "source": "memory",
+      "snippet": "## GOOGLUSDT fresh deep analysis - Time: 2026-04-30 ~08:36 Europe/Berlin - Ran OHLCV-first Bitget deep analysis for `GOOGLUSDT` / `BITGET:GOOGL` after price broke out to ~374.5. - Public data snapshot: last/mark ~374.49/374.44, 24h range 344.44-376.43, 24h change +6.52%, 4H RSI ~81.96, 1D RSI ~85.93, 4H EMA20 ~355.38, 4H EMA50 ~347.77. - Verdict: bullish market but bad immediate entry; do not chase at market. Orderability is `PLACEABLE_CONDITIONAL_ONLY` via pullback ladder or confirmed breakout above ~376.60. - Suggested fresh pullback analysis levels: 356.00 / 348.00 / 343.60 with refreshed invalidation around 340.80, but any order changes require explicit confirmation. - Read-only live ord",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.7265686336509425,
+      "maxScore": 0.7808816436282832,
+      "firstRecalledAt": "2026-04-30T14:53:53.388Z",
+      "lastRecalledAt": "2026-04-30T14:58:40.181Z",
+      "queryHashes": [
+        "9b3d8896f9ec",
+        "22507dc88771",
+        "706f649d530a"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "ohlcv-first",
+        "374.5",
+        "last/mark",
+        "374.49/374.44",
+        "344.44-376.43",
+        "6.52",
+        "81.96"
+      ]
+    },
+    "memory:memory/2026-04-30.md:13:20": {
+      "key": "memory:memory/2026-04-30.md:13:20",
+      "path": "memory/2026-04-30.md",
+      "startLine": 13,
+      "endLine": 20,
+      "source": "memory",
+      "snippet": "- Cancelled old GOOGL L3 order `1433261691314532353` (`tvflow_googl_20260429_L3`). - Confirmed GOOGLUSDT margin mode isolated and leverage 4x. - Placed refreshed live Bitget isolated 4x GOOGLUSDT long pullback ladder: - L1: limit buy `2.00 @ 356.00`, TP `371.00`, SL `340.80`, orderId `1433651634121633795`, clientOid `tvflow_googl_20260430_refresh_L1` - L2: limit buy `4.00 @ 348.00`, TP `376.40`, SL `340.80`, orderId `1433651636873097218`, clientOid `tvflow_googl_20260430_refresh_L2` - L3: limit buy `11.30 @ 343.60`, TP `384.60`, SL `340.80`, orderId `1433651639444205569`, clientOid `tvflow_googl_20260430_refresh_L3` - Verification immediately after placement: 3 GOOGLUSDT regular pendin",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.3584687799215316,
+      "maxScore": 0.4789914160966873,
+      "firstRecalledAt": "2026-04-30T14:53:53.388Z",
+      "lastRecalledAt": "2026-04-30T14:58:40.181Z",
+      "queryHashes": [
+        "9b3d8896f9ec",
+        "22507dc88771",
+        "706f649d530a"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "tvflow-googl-20260429-l3",
+        "2.00",
+        "356.00",
+        "371.00",
+        "340.80",
+        "tvflow-googl-20260430-refresh-l1",
+        "4.00",
+        "348.00"
+      ]
+    },
+    "memory:memory/2026-04-30.md:39:44": {
+      "key": "memory:memory/2026-04-30.md:39:44",
+      "path": "memory/2026-04-30.md",
+      "startLine": 39,
+      "endLine": 44,
+      "source": "memory",
+      "snippet": "- Time: 2026-04-30 ~19:19 Europe/Berlin - User asked to reuse the MT5-style trade report in tvflow for past/future Bitget trades, initially as xls and later Google Sheets. - Exact MT5 workbook/template was not found in the accessible workspace search, so created a Google-Sheets-ready MT5-style Bitget futures workbook from live Bitget API history. - Bitget API retrieval succeeded: 90-day history returned 19 historical orders, 59 fills, 9 plan history rows; current snapshot included 3 open GOOGLUSDT FVG ladder orders and 1 open GMEUSDT position. - Created report: `reports/trade_journal/bitget_futures_trade_report_2026-04-30.xls` plus CSV sidecar `reports/trade_journal/bitget_futures_order_hist",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4051071941852569,
+      "maxScore": 0.4051071941852569,
+      "firstRecalledAt": "2026-04-30T17:32:05.984Z",
+      "lastRecalledAt": "2026-04-30T17:32:05.984Z",
+      "queryHashes": [
+        "d627c9a3de66"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "mt5-style",
+        "past/future",
+        "workbook/template",
+        "google-sheets-ready",
+        "90-day",
+        "time",
+        "europe"
       ]
     }
   }

@@ -1,0 +1,160 @@
+{
+  "generated_utc": "2026-04-30T06:35:48.897801+00:00",
+  "symbol": "GOOGLUSDT",
+  "ticker": [
+    {
+      "symbol": "GOOGLUSDT",
+      "lastPr": "374.49",
+      "askPr": "374.48",
+      "bidPr": "374.33",
+      "bidSz": "1.72",
+      "askSz": "30.98",
+      "high24h": "376.43",
+      "low24h": "344.44",
+      "ts": "1777530947646",
+      "change24h": "0.06522",
+      "baseVolume": "45430.95",
+      "quoteVolume": "16523416.8223",
+      "usdtVolume": "16523416.8223",
+      "openUtc": "375.37",
+      "changeUtc24h": "-0.00232",
+      "indexPrice": "373.9353414865419488",
+      "fundingRate": "0",
+      "holdingAmount": "14806.84",
+      "deliveryStartTime": null,
+      "deliveryTime": null,
+      "deliveryStatus": "",
+      "open24h": "351.56",
+      "markPrice": "374.44"
+    }
+  ],
+  "funding": [
+    {
+      "symbol": "GOOGLUSDT",
+      "fundingRate": "0",
+      "fundingRateInterval": "8",
+      "nextUpdate": "1777536000000",
+      "minFundingRate": "-0.001",
+      "maxFundingRate": "0.001"
+    }
+  ],
+  "open_interest": {
+    "openInterestList": [
+      {
+        "symbol": "GOOGLUSDT",
+        "size": "14806.84"
+      }
+    ],
+    "ts": "1777530948731"
+  },
+  "contract": {
+    "symbol": "GOOGLUSDT",
+    "baseCoin": "GOOGL",
+    "quoteCoin": "USDT",
+    "buyLimitPriceRatio": "0.02",
+    "sellLimitPriceRatio": "0.02",
+    "feeRateUpRatio": "0.005",
+    "makerFeeRate": "0.0002",
+    "takerFeeRate": "0.0006",
+    "openCostUpRatio": "0.01",
+    "supportMarginCoins": [
+      "USDT"
+    ],
+    "minTradeNum": "0.01",
+    "priceEndStep": "1",
+    "volumePlace": "2",
+    "pricePlace": "2",
+    "sizeMultiplier": "0.01",
+    "symbolType": "perpetual",
+    "minTradeUSDT": "5",
+    "maxSymbolOrderNum": "200",
+    "maxProductOrderNum": "1000",
+    "maxPositionNum": "150",
+    "symbolStatus": "normal",
+    "offTime": "-1",
+    "limitOpenTime": "-1",
+    "deliveryTime": "",
+    "deliveryStartTime": "",
+    "deliveryPeriod": "",
+    "launchTime": "",
+    "fundInterval": "8",
+    "minLever": "1",
+    "maxLever": "100",
+    "posLimit": "0.2",
+    "maintainTime": "",
+    "openTime": "1769994062323",
+    "maxMarketOrderQty": "300",
+    "maxOrderQty": "2000",
+    "isRwa": "YES"
+  },
+  "snap4h": {
+    "last": {
+      "ts": 1777521600000,
+      "dt": "2026-04-30T04:00:00+00:00",
+      "open": 374.87,
+      "high": 374.87,
+      "low": 371.04,
+      "close": 374.5,
+      "base_volume": 1826.68,
+      "quote_volume": 681618.3994,
+      "ema20": 355.3776247168116,
+      "ema21": 354.98160880517554,
+      "ema50": 347.7650344606179,
+      "ema100": 339.2047527581449,
+      "ema200": 326.1371327156178,
+      "rsi14": 81.95892168482713,
+      "atr14": 4.821504523288601,
+      "plus_di14": 44.364813514350246,
+      "minus_di14": 9.837535843337589,
+      "adx14": 31.77542722149647
+    },
+    "range20_high": 376.43,
+    "range20_low": 343.0,
+    "range50_high": 376.43,
+    "range50_low": 334.17,
+    "piv_res": [],
+    "piv_sup": [
+      346.32,
+      344.44,
+      343.0,
+      342.49,
+      335.64
+    ],
+    "vol_sma20": 4082.7835
+  },
+  "snap1d": {
+    "last": {
+      "ts": 1777478400000,
+      "dt": "2026-04-29T16:00:00+00:00",
+      "open": 351.12,
+      "high": 376.43,
+      "low": 348.0,
+      "close": 374.5,
+      "base_volume": 38355.47,
+      "quote_volume": 14046599.1157,
+      "ema20": 339.0409586402962,
+      "ema21": 338.17766938976536,
+      "ema50": 324.2123330716631,
+      "ema100": 321.2095744867564,
+      "ema200": 324.9539231121491,
+      "rsi14": 85.92973271591873,
+      "atr14": 8.202689842367436,
+      "plus_di14": 45.044817744020236,
+      "minus_di14": 7.837260416921319,
+      "adx14": 42.45985697445475
+    },
+    "range20_high": 376.43,
+    "range20_low": 310.09,
+    "range50_high": 376.43,
+    "range50_low": 272.0,
+    "piv_res": [],
+    "piv_sup": [
+      331.51,
+      310.09,
+      304.31,
+      302.47,
+      300.45
+    ],
+    "vol_sma20": 11697.6665
+  }
+}
