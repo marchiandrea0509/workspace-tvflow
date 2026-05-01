@@ -177,17 +177,17 @@ for p in positions:
         'Break Even': p.get('breakEvenPrice',''),
     })
 
-# MT5-style working journal: each order row can later be paired into a campaign/trade.
+# Bitget semi-auto working log: each order row can later be grouped into a setup/campaign.
 journal_rows=[]
 for r in order_rows:
     journal_rows.append({
         'Trade Date': r['Time Berlin'][:10],
-        'Broker': 'Bitget',
-        'Market': r['Symbol'],
-        'Product': 'USDT Perpetual Futures',
-        'Strategy/Setup': 'tvflow / Pine screener' if str(r['Client OID']).startswith('tvflow') else '',
+        'Exchange': 'Bitget Futures',
+        'Symbol': r['Symbol'],
+        'Execution Mode': 'semi-auto',
+        'Signal/Setup': 'tvflow / Pine screener' if str(r['Client OID']).startswith('tvflow') else '',
         'Direction': r['Position Side'].upper(),
-        'Lifecycle': r['Trade Side'],
+        'Action': r['Trade Side'],
         'Status': r['Status'],
         'Entry Time': r['Time Berlin'] if r['Trade Side']=='open' else '',
         'Exit Time': r['Time Berlin'] if r['Trade Side']=='close' else '',
@@ -200,8 +200,8 @@ for r in order_rows:
         'Gross PnL': r['Realized PnL'],
         'Fees': r['Fee'],
         'Net PnL Est': r['Net PnL Est'],
-        'R Multiple': '',
-        'Screenshot/Analysis Link': '',
+        'TradingView/Analysis Ref': '',
+        'Risk/Invalidation Notes': '',
         'Order ID': r['Order ID'],
         'Client OID': r['Client OID'],
         'Review Notes': '',
@@ -221,11 +221,12 @@ summary=[
     {'Metric':'Realized PnL gross from order history','Value':round(realized,8)},
     {'Metric':'Fees from order history','Value':round(fees,8)},
     {'Metric':'Net PnL estimate','Value':round(net,8)},
-    {'Metric':'Note','Value':'MT5-style workbook skeleton adapted for Bitget; Google Sheets migration can map these sheets 1:1 later.'},
+    {'Metric':'Workflow','Value':'Bitget semi-auto: TradingView/Pine signal context plus confirmed Bitget futures execution state.'},
+    {'Metric':'Safety note','Value':'Read-only report/log. Do not infer permission to place, cancel, or modify orders from this workbook.'},
 ]
 
 cols_summary=['Metric','Value']
-cols_journal=['Trade Date','Broker','Market','Product','Strategy/Setup','Direction','Lifecycle','Status','Entry Time','Exit Time','Entry Price','Exit Price','Qty','Leverage','TP Planned','SL Planned','Gross PnL','Fees','Net PnL Est','R Multiple','Screenshot/Analysis Link','Order ID','Client OID','Review Notes']
+cols_journal=['Trade Date','Exchange','Symbol','Execution Mode','Signal/Setup','Direction','Action','Status','Entry Time','Exit Time','Entry Price','Exit Price','Qty','Leverage','TP Planned','SL Planned','Gross PnL','Fees','Net PnL Est','TradingView/Analysis Ref','Risk/Invalidation Notes','Order ID','Client OID','Review Notes']
 cols_orders=['Time Berlin','Update Berlin','Exchange','Symbol','Status','Trade Side','Order Side','Position Side','Order Type','Source','Qty','Order Qty','Limit Price','Avg Price','Quote Volume','Leverage','Margin Mode','TP','SL','Fee','Realized PnL','Net PnL Est','Order ID','Client OID','Notes']
 cols_fills=['Time Berlin','Exchange','Symbol','Trade Side','Order Side','Scope','Price','Qty','Quote Volume','Profit','Fee Detail','Order ID','Trade ID','Source']
 cols_open=['Created Berlin','Exchange','Symbol','Status','Trade Side','Order Side','Position Side','Order Type','Qty','Price','TP','SL','Leverage','Margin Mode','Order ID','Client OID']
@@ -233,9 +234,9 @@ cols_pos=['Symbol','Side','Qty Total','Available','Avg Entry','Mark Price','Unre
 
 html_doc=f'''<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><style>td,th{{font-family:Calibri,Arial;font-size:11pt;white-space:nowrap}} th{{background:#D9EAF7;font-weight:bold}} h2{{font-family:Calibri,Arial}}</style></head><body>
-<h1>Bitget Futures Trade Report</h1>
+<h1>Bitget Semi-Auto Futures Trade Report</h1>
 {html_sheet('Summary', summary, cols_summary)}
-{html_sheet('Trade Journal', journal_rows, cols_journal, 'MT5-style working journal. Add discretionary notes/R multiples/review after the trade closes.')}
+{html_sheet('Semi-Auto Trade Log', journal_rows, cols_journal, 'Bitget-specific working log. Group entries manually into setups/campaigns; add TradingView context, invalidation, and review notes as needed.')}
 {html_sheet('Order History', order_rows, cols_orders)}
 {html_sheet('Fills', fill_rows, cols_fills)}
 {html_sheet('Open Orders', open_rows, cols_open)}

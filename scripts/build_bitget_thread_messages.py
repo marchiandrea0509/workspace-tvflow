@@ -117,20 +117,22 @@ def build_summary(history: dict[str, Any], open_orders: list[dict[str, Any]], po
     fees = sum(as_float(o.get('fee')) for o in orders)
     net = gross + fees
     lines = []
-    lines.append('Bitget futures trade report')
+    lines.append('Bitget semi-auto trade report')
     lines.append(f"Generated: {datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')}")
-    lines.append(f"History orders: {len(orders)} | fills: {len(fills)} | plan history: {len(plan_history)}")
-    lines.append(f"Open orders: {len(open_orders)} | open positions: {len(positions)}")
+    lines.append('Mode: TradingView/Pine signal side + confirmed Bitget futures execution')
+    lines.append(f"History: orders {len(orders)} | fills {len(fills)} | plan/order-plan history {len(plan_history)}")
+    lines.append(f"Current: active orders {len(open_orders)} | positions {len(positions)}")
     lines.append(f"Realized PnL gross: {gross:.2f} USDT | fees: {fees:.2f} | net est: {net:.2f} USDT")
     if workbook:
-        lines.append(f"Workbook: {workbook}")
+        lines.append(f"Local log/workbook: {workbook}")
+    lines.append('Read-only snapshot; not an instruction to place/cancel/modify orders.')
     return '\n'.join(lines)
 
 
 def build_open_orders_message(open_orders: list[dict[str, Any]], tz: ZoneInfo) -> str:
     if not open_orders:
-        return 'Open Bitget futures orders: none.'
-    lines = ['Open Bitget futures orders']
+        return 'Active Bitget futures orders: none.'
+    lines = ['Active Bitget futures orders / planned legs']
     for o in sorted(open_orders, key=lambda x: int(x.get('cTime') or 0), reverse=True)[:12]:
         lines.append(
             f"- {o.get('symbol')} {o.get('tradeSide')}/{o.get('side')} {o.get('posSide')} "
@@ -145,8 +147,8 @@ def build_open_orders_message(open_orders: list[dict[str, Any]], tz: ZoneInfo) -
 
 def build_positions_message(positions: list[dict[str, Any]]) -> str:
     if not positions:
-        return 'Open Bitget futures positions: none.'
-    lines = ['Open Bitget futures positions']
+        return 'Current Bitget futures positions: none.'
+    lines = ['Current Bitget futures positions']
     for p in positions:
         lines.append(
             f"- {p.get('symbol')} {p.get('holdSide')} qty {fmt(p.get('total'))} | avg {fmt(p.get('openPriceAvg'))} "
@@ -160,8 +162,8 @@ def build_recent_history_message(history: dict[str, Any], tz: ZoneInfo, limit: i
     orders = list_from_data((result_by_label(history, 'orders-history').get('data') or {}))
     orders = sorted(orders, key=lambda x: int(x.get('cTime') or 0), reverse=True)[:limit]
     if not orders:
-        return 'Recent Bitget futures order history: none found.'
-    lines = [f'Recent Bitget futures order history (latest {len(orders)})']
+        return 'Recent Bitget futures executions: none found.'
+    lines = [f'Recent Bitget futures executions (latest {len(orders)})']
     for o in orders:
         pnl = as_float(o.get('totalProfits')) + as_float(o.get('fee'))
         lines.append(

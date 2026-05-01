@@ -75,6 +75,14 @@ BITGET_ALLOW_ORDER_PLACEMENT=true
 node scripts/execute-signal.js --signal examples/open-long.market.json --send
 ```
 
+6. After any confirmed auto-trade action, refresh the semi-auto journal:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ..\scripts\run_bitget_journal_update.ps1 -MessagePrefix "Journal refreshed after Bitget auto-trade."
+```
+
+Use `-NoSend` if you only want to rebuild local artifacts without posting to the Bitget trades thread.
+
 ## Live-trading safety
 
 The harness refuses live order placement unless **both** are true:

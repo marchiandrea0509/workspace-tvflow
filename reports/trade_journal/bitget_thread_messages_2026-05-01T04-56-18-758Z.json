@@ -1,0 +1,17 @@
+{
+  "messages": [
+    "Bitget semi-auto trade report\nGenerated: 2026-05-01 06:56:23 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 20 | fills 59 | plan/order-plan history 9\nCurrent: active orders 4 | positions 1\nRealized PnL gross: 121.29 USDT | fees: -1.19 | net est: 120.10 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
+    "Active Bitget futures orders / planned legs\n- GMEUSDT close/buy long qty 58.65 @ 24.93 | TP n/a SL n/a | isolated 2x | id 1433962049984688134\n- GOOGLUSDT open/buy long qty 8 @ 356 | TP 384.6 SL 351.8 | isolated 4x | id 1433760830670401575\n- GOOGLUSDT open/buy long qty 4 @ 361 | TP 384.6 SL 351.8 | isolated 4x | id 1433760827969269761\n- GOOGLUSDT open/buy long qty 2 @ 366.5 | TP 379 SL 351.8 | isolated 4x | id 1433760825477853185",
+    "Current Bitget futures positions\n- GMEUSDT long qty 117.31 | avg 24.702382576081 mark 24.9 | uPnL 23.182499999937 | liq 12.673347788833 | isolated 2x",
+    "Recent Bitget futures executions (latest 8)\n- 2026-04-30 22:25:31 | GMEUSDT close/buy long qty 0 avg n/a | status canceled | PnL 0.00 fee 0.00 net 0.00 | id 1433842998482464769\n- 2026-04-29 22:02:53 | GOOGLUSDT close/buy long qty 5.77 avg 358.3 | status filled | PnL 61.77 fee -0.13 net 61.64 | id 1433474917071482883\n- 2026-04-29 16:27:12 | GOOGLUSDT close/buy long qty 4.3 avg 353.34 | status filled | PnL 24.72 fee -0.10 net 24.62 | id 1433390439678504962\n- 2026-04-29 07:55:35 | GOOGLUSDT open/buy long qty 5.77 avg 346.4 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1433261686591746049\n- 2026-04-29 07:55:34 | GOOGLUSDT open/buy long qty 4.3 avg 349.2 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1433261681713770501\n- 2026-04-27 19:11:25 | GMEUSDT open/buy long qty 55.57 avg 24.45 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1432706991322198018\n- 2026-04-27 19:11:25 | GMEUSDT open/buy long qty 35.08 avg 24.8 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1432706988700758017\n- 2026-04-27 19:11:24 | GMEUSDT open/buy long qty 26.66 avg 25.1 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1432706985806688257"
+  ],
+  "source": {
+    "history_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_bitget_history_latest.json",
+    "open_orders_json": [
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GOOGLUSDT_latest.json",
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GMEUSDT_latest.json"
+    ],
+    "positions_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_positions_latest.json",
+    "workbook": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls"
+  }
+}
