@@ -1,0 +1,670 @@
+{
+  "title": "Pine Screener — Scan Markets with Your Scripts — TradingView",
+  "body": "Skip to main content\n99+\n1\nSearch\nProducts\nCommunity\nMarkets\nBrokers\nMore\nPine Screener\nBETA\nWatchlist\nBITGET_TRADFI\nOC Hybrid Edge Screener v9.3\nEMA Fast\nEMA Medium\nEMA Slow\n01 Best Setup\n02 Best Score\n03 Final Long\n04 Final Short\n05 Trend Dir\n06 Macro Dir\n07 Verdict\nScan\nSymbol\n\t\nEMA Fast\n\t\nEMA Medium\n\t\nEMA Slow\n\t\n\n\nAAPLONUSDT\nAAPLONUSDT SPOT\n\t—\t—\t—\t\n\nAAPLUSDT.P\nAAPLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nACUUSDT.P\nACUUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nAMZNUSDT.P\nAMZNUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nARMUSDT.P\nARMUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nASMLUSDT.P\nASMLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nAVGOUSDT.P\nAVGOUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nBABAUSDT.P\nBABAUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nBZUSDT.P\nBZUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nCLUSDT.P\nCLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nCOINUSDT.P\nCOINUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nCOPPERUSDT.P\nCOPPERUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nCOSTUSDT.P\nCOSTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nCRCLUSDT.P\nCRCLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nEWJUSDT.P\nEWJUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nEWTUSDT.P\nEWTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nEWYUSDT.P\nEWYUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nFUTUUSDT.P\nFUTUUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nGMEUSDT.P\nGMEUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nGOOGLUSDT.P\nGOOGLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nHOODUSDT.P\nHOODUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nINTCUSDT.P\nINTCUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nJDUSDT.P\nJDUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nKWEBUSDT.P\nKWEBUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nLLYUSDT.P\nLLYUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nMCDUSDT.P\nMCDUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nMETAUSDT.P\nMETAUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nMRVLUSDT.P\nMRVLUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nMSFTUSDT.P\nMSFTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nMSTRUSDT.P\nMSTRUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nNATGASUSDT.P\nNATGASUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nNVDAUSDT.P\nNVDAUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nOXYUSDT.P\nOXYUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nPAXGUSDT.P\nPAXGUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nPLTRUSDT.P\nPLTRUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nQQQUSDT.P\nQQQUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nRDDTUSDT.P\nRDDTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nSPYUSDT.P\nSPYUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nSQQQUSDT.P\nSQQQUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nTQQQUSDT.P\nTQQQUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nTSLAUSDT.P\nTSLAUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nTSMUSDT.P\nTSMUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nUNHUSDT.P\nUNHUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nXAGUSDT.P\nXAGUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nXAUTUSDT.P\nXAUTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nXOMUSDT.P\nXOMUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nXPDUSDT.P\nXPDUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\n\nXPTUSDT.P\nXPTUSDTPERP PERPETUAL MIX CONTRACT\n\t—\t—\t—\t\nManage columns\nShift\n+\nC\nMANAGE COLUMNS\nEMA Fast\nEMA Medium\nEMA Slow\n01 Best Setup\n02 Best Score\n03 Final Long\n04 Final Short\n05 Trend Dir\n06 Macro Dir\n07 Verdict\n08 Conviction\n09 Signal Dir\nSQ01 Signals\n10 Score_v6\nSQ03 AvgMFE_ATR\nSQ04 AvgMAE_ATR\nSQ05 AvgEdgeRatio\nSQ06 PlusATR1stPct\nSQ07 AvgAdverseBars\nSQ08 AvgBarsToGreen\nSQ09 AvgCloseATR\nSQ10 AdverseBarPct\nSQ11 MinSampleFlag\nSQ12 ResearchValid\nD01 TacticalLong\nD02 TacTrendLong\nD03 TacBreakoutLong\nD04 MacroLong\nD05 StructLongCont\nD06 FreshStructLong\nD07 ADXContLong\nD08 LifecycleLong\nD09 ContextLongBoost\nD10 BullPenaltyTotal\nD11 LC Raw\nD12 LC AfterDiag\nD13 LC Final\nD14 SC Raw\nD15 SC AfterDiag\nD16 SC Final\nD17 LC ConfirmPenalty\nD18 LC ConfirmReason\nD19 SC ConfirmPenalty\nD20 SC ConfirmReason\nG01 Diag Long Adj\nG02 Diag Short Adj\nG03 Diag Long Conf\nG04 Diag Short Conf\nG05 Diag Long Break\nG06 Diag Short Break\nG07 Diag Long Stable\nG08 Diag Short Stable\nP01 Penalty_RSI_OB\nP02 Penalty_ADX_Weak\nP03 Penalty_TrendConflict\nP04 Penalty_NoBullStructure\nP05 Penalty_FastEMAStretch\nP06 Penalty_EMASpreadStretch\nP07 Penalty_VolumeWeak\nP08 Penalty_FailedRetest\nP09 Penalty_BearRetest\nP10 Penalty_BearSweep",
+  "items": [
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "Skip to main content",
+      "checked": null,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP large-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "EMA Fast",
+      "checked": true,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "EMA Medium",
+      "checked": true,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "EMA Slow",
+      "checked": true,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "01 Best Setup",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "02 Best Score",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "03 Final Long",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "04 Final Short",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "05 Trend Dir",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "06 Macro Dir",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "07 Verdict",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "08 Conviction",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "09 Signal Dir",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ01 Signals",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "10 Score_v6",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ03 AvgMFE_ATR",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ04 AvgMAE_ATR",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ05 AvgEdgeRatio",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ06 PlusATR1stPct",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ07 AvgAdverseBars",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ08 AvgBarsToGreen",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ09 AvgCloseATR",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ10 AdverseBarPct",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ11 MinSampleFlag",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "SQ12 ResearchValid",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D01 TacticalLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D02 TacTrendLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D03 TacBreakoutLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D04 MacroLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D05 StructLongCont",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D06 FreshStructLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D07 ADXContLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D08 LifecycleLong",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D09 ContextLongBoost",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D10 BullPenaltyTotal",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D11 LC Raw",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D12 LC AfterDiag",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D13 LC Final",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D14 SC Raw",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D15 SC AfterDiag",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D16 SC Final",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D17 LC ConfirmPenalty",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D18 LC ConfirmReason",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D19 SC ConfirmPenalty",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "D20 SC ConfirmReason",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G01 Diag Long Adj",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G02 Diag Short Adj",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G03 Diag Long Conf",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G04 Diag Short Conf",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G05 Diag Long Break",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G06 Diag Short Break",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G07 Diag Long Stable",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "G08 Diag Short Stable",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P01 Penalty_RSI_OB",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P02 Penalty_ADX_Weak",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P03 Penalty_TrendConflict",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P04 Penalty_NoBullStructure",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P05 Penalty_FastEMAStretch",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P06 Penalty_EMASpreadStretch",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P07 Penalty_VolumeWeak",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P08 Penalty_FailedRetest",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P09 Penalty_BearRetest",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": ".background-wJ4EfuBP",
+      "text": "P10 Penalty_BearSweep",
+      "checked": false,
+      "role": "",
+      "data": "",
+      "cls": "background-wJ4EfuBP medium-wJ4EfuBP neutral-wJ4EfuBP"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "Skip to main content",
+      "checked": null,
+      "role": "",
+      "data": "skip-navigation",
+      "cls": "skipNavigationItemWrapper-wCFzoXZN"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "99+1PublicPrivateYou have no private messages yetCryptocurrenciesOtter_BTCUSDT 5,9 minutes ago GoldpatternsBTCUSD 240,9 minutes ago@Otter_ wrote:was Swoop right all alongpam tired of Sade?ProphetIQBTCUSD 1D,9 minutes ago Chart SnapshotOtter_CL1! 15,9 minutes agoalternate : )GoldpatternsBTCUSD 240,8 minutes ago@Otter_ wrote:alternate : )why not pamela anderson Otter_BTCUSDT 3,8 minutes agoidkGoldpatternsBTCUSD 240,8 minutes agookWaveTrader-2015BTCUSD 1D,7 minutes agothe growing risk ......thres going to be no place to hide from it ...food shortages supply chains ..........high OIL transportation Prices .............its going to be all around us Electrical Black outsGoldpatternsBTCUSD 240,6 minutes ago@WaveTrader-2015 wrote:next few months this shit storm is going to get only more full onindeed.. i added shorts on gold but only thing worry me is.. oil will come towards 80... because it has pattern to come around 80 then will shoot 159/170... but yes coming months its going above 200UPonlySZN6 minutes agodamn if only there was a perfect inflation hedgeOtter_BTCUSDT 15,6 minutes agomooWaveTrader-2015BTCUSD 1D,5 minutes ago@Goldpatterns wrote:indeed.. i added shorts on gold but only thing worry me is.. oil will come towards 80... because it has pattern to come around 80 then will shoot 159/170... but yes coming months its going above 200SnyperTABTCUSD 1D,4 minutes agodoomers timing is trashGoldpatternsBTCUSD 240,4 minutes ago@WaveTrader-2015 wrote:as per my view.. this coming fall will be the last fall of oil... towards 80 then big jumpsUPonlySZN4 minutes agoWe reject: kings, presidents, and voting.We believe in: rough consensus and running code.novamaticBTCUSD 3D,3 minutes ago@WaveTrader-2015 wrote: so we got a shit storm coming with this OIL thingall part of the plan. narrative being set by trump, already. he' saying do you want iran nuclear weapons or high oil?@SnyperTA wrote:doomers timing is trashWaveTrader-2015BTCUSD 1D,3 minutes agoamd here comes the week end to thats when markets close and fighting starts that would normally affect the markets more if the started on during the weekGoldpatternsOPGUSDT.P 60,2 minutes ago@novamatic wrote:all part of the plan. narrative being set by trump, already. he' saying do you want iran nuclear weapons or high oil?its a rigged war lol.. mutual understanding warnovamaticSPY 1D,1 minute ago@Goldpatterns wrote:its a rigged war lol.. mutual understanding warseems as suchjust keep saying ceasefirebut the war goes onI feel like it is designed to impact china, the mostUPonlySZN1 minute agoit’s designed to ramp up the war manufacturing economy IMOCCCP-The_Man_In_BlackBTCUSD 60,1 minute agoThere is no warUPonlySZN1 minute agothat’s what russia didGoldpatternsOPGUSDT.P 60,1 minute ago@novamatic wrote:seems as suchcheck Albert Pike letter from 1871... he described to have 3 world wars and final war was in between Israel and Arabs but with mutual understanding... so what you see is a rigged war but at higher levels..SnyperTABTCUSD 3D,just now@novamatic wrote:its very to confirming bottomclose Chart snapshot Invalid linkPlease use English for chatting. Check local versions to see if your language is supported.TalksCryptocurrencies 50.6Mnovamatic: I feel like it is designed to impact china, the most1 minute ago0Forex 14.4Mhonestdhaqane: May be4 minutes ago0Stocks & Indexes 14.6MmcLurker: manu pmi at 32 minutes ago0Bitcoin Chat - BTCUSD 22.6KBleepBl00p: 7 hours ago0Chart Patterns Help 3.1Knomanalimughal1: xauusdApr 270Community Powered Help 5KCanadianjunior: Obliterate all the shortsApr 290DAX and GER30 919.6Kwolfah: likely3 hours ago0Ethereum - ETH 38.8Kjndove23: qcom18 hours ago0EURUSD Chat 23.9KMoreExpertAnalysis: https://www.tradingview.com/chart/EURUSD/sTeFb8IJ-EURUSD-is-showing-a-new-setup/8 hours ago0GBPUSD Cable Chat 6.9KDarkfxSignals: https://www.tradingview.com/script/EtFVKjVj-Darkfx-Signals-last-version/Apr 300Gold Scalping Strat (Group) 9.2KPremiumTrader57: 18 hours ago0Gold Trading Chat 10.4MRogueXXX: we are not yet in a clear form of trend2 minutes ago0Indian Indices - BSE, NSE, NIFTY 268.3KTron029: @RR_Edge_Labs wrote: @Tron029 :okay: :coffee:1 minute ago0Key Hidden Levels 494Kpsychosane: Who dafuq is Timan hour ago0Natural Gas Chat 429.5KTraderTP1: Looks powerful!2 hours ago0nmike Divergence Trading Room 347.6Knmike: :okay:15 hours ago0Oil Chat - WTI & Brent 5.5Msurge02130: S&P also bear. good room to move.1 minute ago0Options Trading 1.3KConsistentSpike: $HPE Strike $13 Puts expires on 01-15-2027 with an Open Interest of 1,799 :okay:17 hours ago0Pine Script™ Q&A 278Kgary7766: where can i see how many people have used the indicators ive created6 hours ago0Risk Master Guild Group 119.5KYCGH_Capital: https://in.tradingview.com/chart/GBPUSD/VMiOsltc-GBPUSD-M15/Apr 280Romanian Traders 76.6KPremiumTrader57: #Anyinvestor18 hours ago0Russian Traders 5.2KSovereignyx_capital: played out well2 hours ago0S&P 500 Chat - SPX, SPY, ES 487.6KKimL218: @Metal-Rules_Rap-Sucks wrote: Actually if your broker provides a good data feed (real time) and has a good app to trade through there is NO reason to pay TV for anything. I just use the free version of their charts. It has a 5 second delay but that is fast enough for me. If you need faster then maybe you might want to pay TV. I could not go without indicators on TVan hour ago0Silver Trading Chat 60KD4NKM4CH1N3: @Senyores wrote: swan dive Gentlemen https://www.tradingview.com/chart/SILVER/81jHpjOR-SiLVER-75-Building-a-Short-Position/ :downtrend: Interesting20 hours ago0The Leap 1.3Kjrkellum84: why does tron always seem to hold up extremely wellApr 280US30 & NAS100 (Group) 120.3KPFDICEZ: @RollingDize wrote: NAS totally retraced back up. going higher :rocket18 hours ago0You haven't added a chat room to favorites.",
+      "checked": null,
+      "role": "",
+      "data": "widgetbar-wrap",
+      "cls": "widgetbar-wrap unselectable"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "99+1",
+      "checked": null,
+      "role": "toolbar",
+      "data": "right-toolbar",
+      "cls": "toolbar-S4V6IoxY"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "99+",
+      "checked": null,
+      "role": "",
+      "data": "community-hub-button",
+      "cls": "button-I_wb5FjE button-GwQQdU8S apply-common-tooltip common-tooltip-vertical isInteractive-GwQQdU8S accessible-GwQQdU8S"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "1",
+      "checked": null,
+      "role": "",
+      "data": "notifications-button",
+      "cls": "button-I_wb5FjE button-GwQQdU8S apply-common-tooltip common-tooltip-vertical isInteractive-GwQQdU8S accessible-GwQQdU8S"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "PublicPrivateYou have no private messages yetCryptocurrenciesOtter_BTCUSDT 5,9 minutes ago GoldpatternsBTCUSD 240,9 minutes ago@Otter_ wrote:was Swoop right all alongpam tired of Sade?ProphetIQBTCUSD 1D,9 minutes ago Chart SnapshotOtter_CL1! 15,9 minutes agoalternate : )GoldpatternsBTCUSD 240,8 minutes ago@Otter_ wrote:alternate : )why not pamela anderson Otter_BTCUSDT 3,8 minutes agoidkGoldpatternsBTCUSD 240,8 minutes agookWaveTrader-2015BTCUSD 1D,7 minutes agothe growing risk ......thres going to be no place to hide from it ...food shortages supply chains ..........high OIL transportation Prices .............its going to be all around us Electrical Black outsGoldpatternsBTCUSD 240,6 minutes ago@WaveTrader-2015 wrote:next few months this shit storm is going to get only more full onindeed.. i added shorts on gold but only thing worry me is.. oil will come towards 80... because it has pattern to come around 80 then will shoot 159/170... but yes coming months its going above 200UPonlySZN6 minutes agodamn if only there was a perfect inflation hedgeOtter_BTCUSDT 15,6 minutes agomooWaveTrader-2015BTCUSD 1D,5 minutes ago@Goldpatterns wrote:indeed.. i added shorts on gold but only thing worry me is.. oil will come towards 80... because it has pattern to come around 80 then will shoot 159/170... but yes coming months its going above 200SnyperTABTCUSD 1D,4 minutes agodoomers timing is trashGoldpatternsBTCUSD 240,4 minutes ago@WaveTrader-2015 wrote:as per my view.. this coming fall will be the last fall of oil... towards 80 then big jumpsUPonlySZN4 minutes agoWe reject: kings, presidents, and voting.We believe in: rough consensus and running code.novamaticBTCUSD 3D,3 minutes ago@WaveTrader-2015 wrote: so we got a shit storm coming with this OIL thingall part of the plan. narrative being set by trump, already. he' saying do you want iran nuclear weapons or high oil?@SnyperTA wrote:doomers timing is trashWaveTrader-2015BTCUSD 1D,3 minutes agoamd here comes the week end to thats when markets close and fighting starts that would normally affect the markets more if the started on during the weekGoldpatternsOPGUSDT.P 60,2 minutes ago@novamatic wrote:all part of the plan. narrative being set by trump, already. he' saying do you want iran nuclear weapons or high oil?its a rigged war lol.. mutual understanding warnovamaticSPY 1D,1 minute ago@Goldpatterns wrote:its a rigged war lol.. mutual understanding warseems as suchjust keep saying ceasefirebut the war goes onI feel like it is designed to impact china, the mostUPonlySZN1 minute agoit’s designed to ramp up the war manufacturing economy IMOCCCP-The_Man_In_BlackBTCUSD 60,1 minute agoThere is no warUPonlySZN1 minute agothat’s what russia didGoldpatternsOPGUSDT.P 60,1 minute ago@novamatic wrote:seems as suchcheck Albert Pike letter from 1871... he described to have 3 world wars and final war was in between Israel and Arabs but with mutual understanding... so what you see is a rigged war but at higher levels..SnyperTABTCUSD 3D,just now@novamatic wrote:its very to confirming bottomclose Chart snapshot Invalid linkPlease use English for chatting. Check local versions to see if your language is supported.TalksCryptocurrencies 50.6Mnovamatic: I feel like it is designed to impact china, the most1 minute ago0Forex 14.4Mhonestdhaqane: May be4 minutes ago0Stocks & Indexes 14.6MmcLurker: manu pmi at 32 minutes ago0Bitcoin Chat - BTCUSD 22.6KBleepBl00p: 7 hours ago0Chart Patterns Help 3.1Knomanalimughal1: xauusdApr 270Community Powered Help 5KCanadianjunior: Obliterate all the shortsApr 290DAX and GER30 919.6Kwolfah: likely3 hours ago0Ethereum - ETH 38.8Kjndove23: qcom18 hours ago0EURUSD Chat 23.9KMoreExpertAnalysis: https://www.tradingview.com/chart/EURUSD/sTeFb8IJ-EURUSD-is-showing-a-new-setup/8 hours ago0GBPUSD Cable Chat 6.9KDarkfxSignals: https://www.tradingview.com/script/EtFVKjVj-Darkfx-Signals-last-version/Apr 300Gold Scalping Strat (Group) 9.2KPremiumTrader57: 18 hours ago0Gold Trading Chat 10.4MRogueXXX: we are not yet in a clear form of trend2 minutes ago0Indian Indices - BSE, NSE, NIFTY 268.3KTron029: @RR_Edge_Labs wrote: @Tron029 :okay: :coffee:1 minute ago0Key Hidden Levels 494Kpsychosane: Who dafuq is Timan hour ago0Natural Gas Chat 429.5KTraderTP1: Looks powerful!2 hours ago0nmike Divergence Trading Room 347.6Knmike: :okay:15 hours ago0Oil Chat - WTI & Brent 5.5Msurge02130: S&P also bear. good room to move.1 minute ago0Options Trading 1.3KConsistentSpike: $HPE Strike $13 Puts expires on 01-15-2027 with an Open Interest of 1,799 :okay:17 hours ago0Pine Script™ Q&A 278Kgary7766: where can i see how many people have used the indicators ive created6 hours ago0Risk Master Guild Group 119.5KYCGH_Capital: https://in.tradingview.com/chart/GBPUSD/VMiOsltc-GBPUSD-M15/Apr 280Romanian Traders 76.6KPremiumTrader57: #Anyinvestor18 hours ago0Russian Traders 5.2KSovereignyx_capital: played out well2 hours ago0S&P 500 Chat - SPX, SPY, ES 487.6KKimL218: @Metal-Rules_Rap-Sucks wrote: Actually if your broker provides a good data feed (real time) and has a good app to trade through there is NO reason to pay TV for anything. I just use the free version of their charts. It has a 5 second delay but that is fast enough for me. If you need faster then maybe you might want to pay TV. I could not go without indicators on TVan hour ago0Silver Trading Chat 60KD4NKM4CH1N3: @Senyores wrote: swan dive Gentlemen https://www.tradingview.com/chart/SILVER/81jHpjOR-SiLVER-75-Building-a-Short-Position/ :downtrend: Interesting20 hours ago0The Leap 1.3Kjrkellum84: why does tron always seem to hold up extremely wellApr 280US30 & NAS100 (Group) 120.3KPFDICEZ: @RollingDize wrote: NAS totally retraced back up. going higher :rocket18 hours ago0You haven't added a chat room to favorites.",
+      "checked": null,
+      "role": "",
+      "data": "widgetbar-pages-with-tabs",
+      "cls": "widgetbar-pages hidden"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "WatchlistBITGET_TRADFI",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-watchlist-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "OC Hybrid Edge Screener v9.3",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-indicator-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "EMA Fast",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "EMA Medium",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "EMA Slow",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "01 Best Setup",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "02 Best Score",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "03 Final Long",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "04 Final Short",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "05 Trend Dir",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "06 Macro Dir",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "07 Verdict",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-filter-pill",
+      "cls": "activeArea-Vky4fFhK noStretch-Vky4fFhK hasClickListener-Vky4fFhK"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "Scan",
+      "checked": null,
+      "role": "",
+      "data": "pine-screener-scan-btn",
+      "cls": "mobileHeader-xTDjar_8 button-D4RPB3ZC small-D4RPB3ZC black-D4RPB3ZC primary-D4RPB3ZC apply-overflow-tooltip apply-overflow-tooltip--check-children-recursively apply-overflow-tooltip--allow-text apply-common-tooltip"
+    },
+    {
+      "selector": "[data-name]",
+      "text": "Show more",
+      "checked": null,
+      "role": "",
+      "data": "toast-group-expand-button-orders",
+      "cls": "roundButton-FujgyDpN roundButtonColor-xCeOT7of gray-xCeOT7of quiet-primary-xCeOT7of xsmall-FujgyDpN withEndSlot-FujgyDpN"
+    }
+  ]
+}

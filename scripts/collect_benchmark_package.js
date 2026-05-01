@@ -12,6 +12,7 @@ const VERSION_MAP = {
   V6PD: 'OC Hybrid Edge Screener v6PD',
   V8: 'OC Hybrid Edge Screener v8',
   V8b: 'OC Hybrid Edge Screener v8b',
+  V93: 'OC Hybrid Edge Screener v9.3',
 };
 
 const SCREENER_COLUMNS_PREFERRED = [

@@ -41,11 +41,11 @@ This separation matters: keep execution helpers lightweight, but keep durable pr
 
 Canonical operating setup:
 - **Watchlist:** `BITGET_TRADFI`
-- **Indicator:** `OC Hybrid Edge Screener v6`
+- **Indicator:** `OC Hybrid Edge Screener v9.3`
 - **Timeframe:** `4H`
 - **Inputs:** default indicator inputs unless explicitly changed
 
-The active runtime default indicator is now `OC Hybrid Edge Screener v6`.
+The active runtime default indicator is now `OC Hybrid Edge Screener v9.3`.
 
 The screener uses relay-free TradingView automation and exports results to artifacts under:
 - `tradingview/reports/pine_screener/`
@@ -59,41 +59,39 @@ Typical artifacts:
 
 ## Signal Logic and Column Meanings
 
-The system’s primary ranking convention is:
-- **`03 Best Score` = main sort key**
+The system’s primary ranking convention for v9.3 is:
+- **`02 Best Score` = main sort key**
 
-Important operational fields:
-- **`01 Signal Dir`**: coarse directional output
-- **`02 Best Setup Code`**: setup classifier / pattern code
-- **`03 Best Score`**: primary ranking score for shortlist ordering
-- **`04 Final Long Score` / `05 Final Short Score`**: directional composite strength
-- **`06 Long Continuation` / `07 Short Continuation`**: continuation-style signal components
-- **`08 Long MeanRev` / `09 Short MeanRev`**: mean-reversion-style signal components
-- **`10 Conviction State`**: coarse confidence / state marker
-- **`11 Trend Dir`**: trend direction context
-- **`12 Macro Dir 1D`**: higher-timeframe macro context from 1D
-- **`13 Position State`**: current structural state
-- **`14 Retest Dir` / `15 Breakout Dir`**: setup subtype context
-- **`16 ADX` / `17 Rel Volume`**: supporting market-state strength/context
-- **`18 Dist Fast EMA ATR`**: distance/extension context
-- **`19`..`25` tactical/macro score columns**: downstream decomposition of tactical vs macro bias
+Important v9.3 operational fields:
+- **`01 Best Setup`**: setup classifier / pattern code
+- **`02 Best Score`**: primary ranking score for shortlist ordering
+- **`03 Final Long` / `04 Final Short`**: directional composite strength
+- **`05 Trend Dir`**: trend direction context
+- **`06 Macro Dir`**: higher-timeframe macro context
+- **`07 Verdict`**: coarse verdict/state marker
+- **`08 Conviction`**: coarse confidence / state marker
+- **`09 Signal Dir`**: coarse directional output
+- **`SQ*` columns**: setup-quality / research validation metrics
+- **`D*` columns**: score decomposition and diagnostics
+- **`G*` columns**: diagnostic adjustment/stability fields
+- **`P*` columns**: penalty components
 
 Durable interpretation rule:
-- Use **`03 Best Score`** to rank.
-- Use the long/short and continuation/mean-reversion subfields to understand *why* an asset ranked.
-- Use `10 Conviction State` as supporting context, not as the sole decision rule.
+- Use **`02 Best Score`** to rank.
+- Use `03 Final Long` / `04 Final Short` plus `D*`, `G*`, and `P*` fields to understand *why* an asset ranked.
+- Use `08 Conviction` as supporting context, not as the sole decision rule.
 
 ## Timeframe, Sorting, and Filtering Conventions
 
 Durable reporting convention:
 - Run on **4H**
-- Rank by **`03 Best Score` descending**
+- Rank by **`02 Best Score` descending**
 - User-facing output should show the **top 5 assets**
-- Present TradingView screener columns **`01`..`25`** in a **transposed chat-friendly table**
+- Present the v9.3 TradingView screener columns in a **transposed chat-friendly table**
 - Best asset appears leftmost; weaker ranked assets move to the right
 
 Historical note that still matters:
-- An earlier v1 filtered to `10 Conviction State = 3`
+- An earlier v1 filtered to `10 Conviction State = 3` / equivalent conviction state
 - That filter was later removed from the main user-facing report
 - Current durable rule: **do not hard-filter the final report by conviction unless deliberately reintroduced**
 
