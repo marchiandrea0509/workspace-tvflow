@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-01T04:54:11.381Z",
+  "updatedAt": "2026-05-02T05:44:35.493Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -109,21 +109,24 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
-      "recallCount": 3,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.102749016880989,
-      "maxScore": 0.3837501883506775,
+      "totalScore": 1.9118741363286973,
+      "maxScore": 0.40819604992866515,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-04-30T20:25:11.409Z",
+      "lastRecalledAt": "2026-05-02T05:44:35.493Z",
       "queryHashes": [
         "e3e1321e6742",
         "aa50b6b9ac9f",
-        "39db3ae6927e"
+        "39db3ae6927e",
+        "9f638a8ca7cb",
+        "6f509df61b4f"
       ],
       "recallDays": [
         "2026-04-28",
-        "2026-04-30"
+        "2026-04-30",
+        "2026-05-02"
       ],
       "conceptTags": [
         "tvflow-gme-ladder-20260427-l1",
@@ -181,20 +184,23 @@
       "endLine": 5,
       "source": "memory",
       "snippet": "# 2026-04-28 - Ran TradingView Strategy test chart-data CSV export for BITGET_TRADFI-style symbols sourced from the latest successful Pine screener CSV (`pine_screener_2026-04-27T16-38-02-295Z.csv`) using chart layout `Startegy test` / `https://www.tradingview.com/chart/0PgkxOVV/`, interval `240 / 4H`, exchange prefix `BITGET`. Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_2026-04-28T19-12-01-932Z`; zip delivered from tvflow workspace: `BITGET_TRADFI_strategy_test_csv_2026-04-28T19-12-01-932Z.zip`. Result: 48 CSVs exported OK, 3 failed (`ACNUSDT.P`, `CSCOUSDT.P`, `IBMUSDT.P`) because TradingView chart data export was missin",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7753362119197844,
+      "totalScore": 1.5380586922168729,
       "maxScore": 0.4193193435668945,
       "firstRecalledAt": "2026-04-28T19:48:38.212Z",
-      "lastRecalledAt": "2026-04-30T17:15:44.078Z",
+      "lastRecalledAt": "2026-05-02T05:44:35.493Z",
       "queryHashes": [
         "1b903297c53c",
-        "aa50b6b9ac9f"
+        "aa50b6b9ac9f",
+        "9f638a8ca7cb",
+        "6f509df61b4f"
       ],
       "recallDays": [
         "2026-04-28",
-        "2026-04-30"
+        "2026-04-30",
+        "2026-05-02"
       ],
       "conceptTags": [
         "chart-data",
@@ -751,6 +757,68 @@
         "trade-report",
         "thread/channel",
         "project-state.md"
+      ]
+    },
+    "memory:memory/2026-05-01.md:25:36": {
+      "key": "memory:memory/2026-05-01.md:25:36",
+      "path": "memory/2026-05-01.md",
+      "startLine": 25,
+      "endLine": 36,
+      "source": "memory",
+      "snippet": "- Read-only refresh observed current GME state differs from earlier memory: prior partial close order `1433842998482464769` is canceled; current active reduce-only GME close limit is `58.65 @ 24.93`, orderId `1433962049984688134`, source `modify_order_limit`. No live orders were touched by the journal refresh. ## Pine screener upgraded to v9.3 - Time: 2026-05-01 ~14:10 Europe/Berlin - User asked to replace the screener tool indicator with newest `OC Hybrid Edge Screener v9.3`. - Updated runtime default in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\pine_screener_export.js` from v6 to `OC Hybrid Edge Screener v9.3`. - Updated cron prompt `C:\\Users\\anmar\\.openclaw\\workspace\\tradi",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3734728544950485,
+      "maxScore": 0.3734728544950485,
+      "firstRecalledAt": "2026-05-02T05:36:54.376Z",
+      "lastRecalledAt": "2026-05-02T05:36:54.376Z",
+      "queryHashes": [
+        "9f638a8ca7cb"
+      ],
+      "recallDays": [
+        "2026-05-02"
+      ],
+      "conceptTags": [
+        "read-only",
+        "reduce-only",
+        "58.65",
+        "24.93",
+        "modify-order-limit",
+        "v9.3",
+        "europe/berlin",
+        "pine-screener-export.js"
+      ]
+    },
+    "memory:memory/2026-04-30.md:137:153": {
+      "key": "memory:memory/2026-04-30.md:137:153",
+      "path": "memory/2026-04-30.md",
+      "startLine": 137,
+      "endLine": 153,
+      "source": "memory",
+      "snippet": "- Placed live reduce-only close limit order for 50%: `58.65 @ 25.05`, `tradeSide: close`, `posSide: long`, `side: buy`, `marginMode: isolated`, leverage `2`, clientOid `tvflow_gme_20260430_partial_tp_50`, orderId `1433842998482464769`. - Verification after placement: order status `live`; position now `total: 117.31`, `locked: 58.65`, `available: 58.66`. ## TradingView Strategy Test subset export - Time: 2026-04-30 ~23:34 Europe/Berlin - User requested Strategy Test layout chart-data extraction for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Exported via `tradingview/scripts/export_strategy_test_s",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.36785924136638637,
+      "maxScore": 0.36785924136638637,
+      "firstRecalledAt": "2026-05-02T05:36:54.376Z",
+      "lastRecalledAt": "2026-05-02T05:36:54.376Z",
+      "queryHashes": [
+        "9f638a8ca7cb"
+      ],
+      "recallDays": [
+        "2026-05-02"
+      ],
+      "conceptTags": [
+        "reduce-only",
+        "58.65",
+        "25.05",
+        "117.31",
+        "58.66",
+        "europe/berlin",
+        "chart-data",
+        "bitget-tradfi"
       ]
     }
   }
