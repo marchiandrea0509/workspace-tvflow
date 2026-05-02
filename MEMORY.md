@@ -130,6 +130,15 @@ Deep-analysis source-of-truth rule:
 - Primary truth source: **Bitget OHLCV exports**
 - Screenshots are now secondary / optional validation rather than the main analytical source
 
+TradingView MCP drawing rule:
+- For future BITGET live order requests or explicit requests to draw/visualize a trade plan or ladder, use the `tv-draw-trade-plan` skill.
+- Before drawing, check TradingView Desktop MCP with `curl.exe http://127.0.0.1:9222/json/version`; continue only if the response contains `webSocketDebuggerUrl`.
+- If port 9222 is not reachable, start TradingView Desktop with `C:\Users\anmar\tools\start-tv-debug-detached.cmd`, wait 8-12 seconds, and check the same curl endpoint again.
+- If MCP is still unreachable after that, stop and tell the user: `TradingView Desktop MCP is not reachable on port 9222. Please check whether TradingView Desktop opened correctly.`
+- The skill writes a temporary JSON plan, normally `C:\Users\anmar\tools\trade_plan_from_oc.json`, then runs `C:\Users\anmar\tools\tv_draw_trade_plan.ps1` via PowerShell.
+- This is visual-only TradingView Desktop MCP markup for Entry / SL / TP line segments; it must never be treated as exchange order execution.
+- Do not attempt browser/Chrome TradingView drawing; this tool works only with TradingView Desktop MCP.
+
 ## Durable Project Rule
 
 The Pine Screener system is the **recurring shortlist engine**, not the full reasoning layer. Runtime helpers may execute it, but project continuity, architecture decisions, report evolution, and future feature growth should live in `tvflow`.
