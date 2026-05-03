@@ -110,6 +110,14 @@ Important durable quirks:
 Practical implication:
 - Treat column enforcement and export validation as first-class parts of the runtime, not optional polish
 
+## Strategy Test CSV Export Validation
+
+Durable validation rule for TradingView Strategy Test chart-data exports:
+- Before keeping/saving a CSV for a symbol, verify these indicator columns have at least one non-empty, non-NaN value: `02 Best Score`, `D13 LC Final`, `D16 SC Final`, `W04 SC ActionScore`, `SQ12 ResearchValid`.
+- If any required column is missing, empty, or NaN-only, treat the export as not ready; wait, reload the symbol, and retry rather than packaging the CSV.
+- Invalid half-loaded CSVs are typically around ~36 KB; valid real-market CSVs are expected to be much larger, around ~170 KB.
+- The hardened exporter writes candidate CSVs first and only renames them to final `*_strategy_test_4h.csv` after validation passes.
+
 ## Planned Upgrades
 
 Long-term direction:

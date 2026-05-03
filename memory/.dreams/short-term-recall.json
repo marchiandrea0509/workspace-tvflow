@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-02T15:41:48.259Z",
+  "updatedAt": "2026-05-03T12:35:33.226Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -111,13 +111,13 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
-      "recallCount": 11,
+      "recallCount": 12,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 4.3404150962829595,
+      "totalScore": 4.773653295636177,
       "maxScore": 0.4752642780542373,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-05-02T15:41:48.259Z",
+      "lastRecalledAt": "2026-05-03T09:12:33.963Z",
       "queryHashes": [
         "e3e1321e6742",
         "aa50b6b9ac9f",
@@ -129,12 +129,14 @@
         "5a020a4c2814",
         "6b6b50b2574f",
         "82fbbf85524a",
-        "3ff692179203"
+        "3ff692179203",
+        "9d45e52b55e2"
       ],
       "recallDays": [
         "2026-04-28",
         "2026-04-30",
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "tvflow-gme-ladder-20260427-l1",
@@ -497,22 +499,24 @@
       "endLine": 73,
       "source": "memory",
       "snippet": "- Placed live reduce-only close limit order for 50%: `58.65 @ 25.05`, `tradeSide: close`, `posSide: long`, `side: buy`, `marginMode: isolated`, leverage `2`, clientOid `tvflow_gme_20260430_partial_tp_50`, orderId `1433842998482464769`. - Verification after placement: order status `live`; position now `total: 117.31`, `locked: 58.65`, `available: 58.66`. ## TradingView Strategy Test subset export - Time: 2026-04-30 ~23:34 Europe/Berlin - User requested Strategy Test layout chart-data extraction for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Exported via `tradingview/scripts/export_strategy_test_s",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.5055245906114576,
-      "maxScore": 0.39265651702880855,
+      "totalScore": 2.2359864783608208,
+      "maxScore": 0.7304618877493629,
       "firstRecalledAt": "2026-04-30T21:38:48.553Z",
-      "lastRecalledAt": "2026-05-02T14:58:01.773Z",
+      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
       "queryHashes": [
         "9507d2bf1614",
         "a1a021ac935c",
         "a2c88a43dcb4",
-        "6b6b50b2574f"
+        "6b6b50b2574f",
+        "93e169d2b5ba"
       ],
       "recallDays": [
         "2026-04-30",
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "reduce-only",
@@ -668,20 +672,22 @@
       "endLine": 177,
       "source": "memory",
       "snippet": "- Exported 19/19 requested BITGET_TRADFI Strategy Test 4H CSVs, 0 failed. - Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_subset_2026-04-30T21-58-08-146Z`. - Zip: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_subset_2026-04-30T21-58-08-146Z.zip` size `3191183` bytes. - Sent via proven direct Discord media path; Discord messageId `1499531731471175761`.",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7429091304540634,
-      "maxScore": 0.37932654321193693,
+      "totalScore": 1.1242697656154632,
+      "maxScore": 0.38136063516139984,
       "firstRecalledAt": "2026-05-01T04:44:40.849Z",
-      "lastRecalledAt": "2026-05-02T15:41:48.259Z",
+      "lastRecalledAt": "2026-05-03T09:06:04.443Z",
       "queryHashes": [
         "9436ee5ea114",
-        "3ff692179203"
+        "3ff692179203",
+        "435306053e69"
       ],
       "recallDays": [
         "2026-05-01",
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "19/19",
@@ -830,22 +836,25 @@
       "endLine": 153,
       "source": "memory",
       "snippet": "- Placed live reduce-only close limit order for 50%: `58.65 @ 25.05`, `tradeSide: close`, `posSide: long`, `side: buy`, `marginMode: isolated`, leverage `2`, clientOid `tvflow_gme_20260430_partial_tp_50`, orderId `1433842998482464769`. - Verification after placement: order status `live`; position now `total: 117.31`, `locked: 58.65`, `available: 58.66`. ## TradingView Strategy Test subset export - Time: 2026-04-30 ~23:34 Europe/Berlin - User requested Strategy Test layout chart-data extraction for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Exported via `tradingview/scripts/export_strategy_test_s",
-      "recallCount": 5,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.880699148774147,
-      "maxScore": 0.39265651702880855,
+      "totalScore": 3.017823005946804,
+      "maxScore": 0.7304618877493629,
       "firstRecalledAt": "2026-05-02T05:36:54.376Z",
-      "lastRecalledAt": "2026-05-02T14:58:01.773Z",
+      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
       "queryHashes": [
         "9f638a8ca7cb",
         "895793ee70c6",
         "a1a021ac935c",
         "a2c88a43dcb4",
-        "6b6b50b2574f"
+        "6b6b50b2574f",
+        "9d45e52b55e2",
+        "93e169d2b5ba"
       ],
       "recallDays": [
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "reduce-only",
@@ -958,19 +967,21 @@
       "endLine": 175,
       "source": "memory",
       "snippet": "- User asked to repeat the 19-symbol Strategy Test export only if the displayed screener indicator was V6.6; otherwise stop. - First check used a headless Strategy Test layout probe (`tmp/check_strategy_test_v66.js`) on AAPLUSDT.P. Layout was detected as Strategy test, but visible chart text/DOM did not expose `v6.6`, so export was stopped. - User asked to try again. Second check used a one-symbol probe CSV export for AAPLUSDT.P to inspect exported Strategy Test chart-data headers/content. Probe export succeeded, but CSV still did not expose any machine-verifiable `v6.6` / indicator-version label. - Result: full 19-symbol export was not run; user was told to explicitly say `RUN STRATEGY EXPO",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7406639397144317,
-      "maxScore": 0.38745387792587277,
+      "totalScore": 1.1344228476285934,
+      "maxScore": 0.3937589079141617,
       "firstRecalledAt": "2026-05-02T14:58:01.773Z",
-      "lastRecalledAt": "2026-05-02T15:41:48.259Z",
+      "lastRecalledAt": "2026-05-03T09:06:04.443Z",
       "queryHashes": [
         "6b6b50b2574f",
-        "3ff692179203"
+        "3ff692179203",
+        "435306053e69"
       ],
       "recallDays": [
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "19-symbol",
@@ -1021,18 +1032,21 @@
       "endLine": 27,
       "source": "memory",
       "snippet": "- User requested Strategy Test CSV export for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Initial raw-symbol run started as `BITGET:AAPL` and failed, so it was stopped. Lingering Playwright Chrome processes for the TradingView profile were killed, then the export was rerun with explicit perpetual symbols `*USDT.P`. - Successful rerun via `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\run_bitget_tradfi_strategy_export.ps1` using layout `https://www.tradingview.com/chart/0PgkxOVV/`, interval `240 / 4H`, exchange `BITGET`. - Result: 19/19 CSV chart-data exports succeeded, 0 failed. - Output f",
-      "recallCount": 1,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.42153530716896054,
-      "maxScore": 0.42153530716896054,
+      "totalScore": 1.6072390670649508,
+      "maxScore": 0.7614215190283754,
       "firstRecalledAt": "2026-05-02T15:41:48.259Z",
-      "lastRecalledAt": "2026-05-02T15:41:48.259Z",
+      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
       "queryHashes": [
-        "3ff692179203"
+        "3ff692179203",
+        "9d45e52b55e2",
+        "93e169d2b5ba"
       ],
       "recallDays": [
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -1052,18 +1066,20 @@
       "endLine": 17,
       "source": "memory",
       "snippet": "# 2026-05-02 ## Bitget report update - Time: 2026-05-02 ~12:17 Europe/Berlin - Ran read-only Bitget semi-auto futures report refresh via `scripts/run_bitget_journal_update.ps1`. - First normal run refreshed artifacts but was killed during Discord-send phase before returning final sent confirmation. - Re-ran cleanly with `-NoSend`; result `ok: true`, `sent: false`. - History summary: orders-history 23, fills 82, orders-plan-history 9. - Current snapshot: 3 active GOOGLUSDT open/buy long ladder orders, 0 positions. - Net realized PnL estimate in report: 300.52096938 USDT. - Latest artifacts: `reports/trade_journal/bitget_futures_trade_report_latest.xls`, `reports/trade_journal/bitget_futures_",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3607577353715896,
-      "maxScore": 0.3607577353715896,
+      "totalScore": 0.8234596848487854,
+      "maxScore": 0.46270194947719573,
       "firstRecalledAt": "2026-05-02T15:41:48.259Z",
-      "lastRecalledAt": "2026-05-02T15:41:48.259Z",
+      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
       "queryHashes": [
-        "3ff692179203"
+        "3ff692179203",
+        "93e169d2b5ba"
       ],
       "recallDays": [
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-03"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -1074,6 +1090,101 @@
         "orders-history",
         "orders-plan-history",
         "open/buy"
+      ]
+    },
+    "memory:memory/2026-05-02.md:35:44": {
+      "key": "memory:memory/2026-05-02.md:35:44",
+      "path": "memory/2026-05-02.md",
+      "startLine": 35,
+      "endLine": 44,
+      "source": "memory",
+      "snippet": "- Verified current TradingView Strategy Test layout by running `scripts/inspect_tv_chart.js` only; no export/download was started during verification. - Chart/layout observed: `https://www.tradingview.com/chart/0PgkxOVV/`, title `AAPL ... Strategy test`, watchlist name `tradingview_real_market_stocks_watchlist` visible. - Current verified watchlist symbols from the UI: AAPL, ADBE, AMD, AMZN, ARM, ASML, AVGO, BABA, COIN, CRM, DIS, GME, GOOGL, HOOD, INTC, JPM, MCD, META, MRVL, MSFT, MSTR, NFLX, NVDA, ORCL, PLTR, RDDT, SHOP, TSLA, UNH, XOM. - User confirmed with `CONFIRM EXPORT REAL MARKET STOCKS WATCHLIST`. - Ran actual Strategy Test export using verified stock symbols with exchange `BATS` and",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8043236702680587,
+      "maxScore": 0.44293215870857233,
+      "firstRecalledAt": "2026-05-03T09:06:04.443Z",
+      "lastRecalledAt": "2026-05-03T09:12:33.963Z",
+      "queryHashes": [
+        "435306053e69",
+        "9d45e52b55e2"
+      ],
+      "recallDays": [
+        "2026-05-03"
+      ],
+      "conceptTags": [
+        "scripts/inspect-tv-chart.js",
+        "export/download",
+        "chart/layout",
+        "verified",
+        "current",
+        "tradingview",
+        "strategy",
+        "test"
+      ]
+    },
+    "memory:memory/2026-05-02.md:24:36": {
+      "key": "memory:memory/2026-05-02.md:24:36",
+      "path": "memory/2026-05-02.md",
+      "startLine": 24,
+      "endLine": 36,
+      "source": "memory",
+      "snippet": "## TradingView Strategy Test full watchlist export - Time: 2026-05-02 ~17:00 Europe/Berlin - User requested Strategy Test CSV export for the full `tradingview_real_market_stocks_watchlist` set, mapped to BITGET perpetual symbols. - Ran `run_bitget_tradfi_strategy_export.ps1` with 30 explicit `*USDT.P` symbols and Discord reply target `1500148773811388558`. - Main run result: requested 30, ok 25, failed 5 (`ADBEUSDT.P`, `CRMUSDT.P`, `JPMUSDT.P`, `DISUSDT.P`, `SHOPUSDT.P`). Failures were CSV download missing/empty. - Main zip artifact sent to Discord: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_subset_2026-05-02T14-58-40-313Z.zip`, size 1822689 bytes, Discord message",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8205099135637283,
+      "maxScore": 0.46227808296680445,
+      "firstRecalledAt": "2026-05-03T09:06:04.443Z",
+      "lastRecalledAt": "2026-05-03T09:12:33.963Z",
+      "queryHashes": [
+        "435306053e69",
+        "9d45e52b55e2"
+      ],
+      "recallDays": [
+        "2026-05-03"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "usdt.p",
+        "adbeusdt.p",
+        "crmusdt.p",
+        "jpmusdt.p",
+        "disusdt.p",
+        "shopusdt.p",
+        "missing/empty"
+      ]
+    },
+    "memory:memory/2026-04-30.md:70:84": {
+      "key": "memory:memory/2026-04-30.md:70:84",
+      "path": "memory/2026-04-30.md",
+      "startLine": 70,
+      "endLine": 84,
+      "source": "memory",
+      "snippet": "- User reported inline `MEDIA:` attachment did not deliver the Strategy Test zip. - Used proven OpenClaw direct media-send path: `openclaw message send --channel discord --target 1487602980093165658 --reply-to 1499524473257197568 --media <zip>`. - Discord result ok, messageId `1499525125626663062`, channelId `1487602980093165658`. ## Methodology update: Strategy Test zip delivery - Time: 2026-04-30 ~23:40 Europe/Berlin - User confirmed the direct Discord media-send path worked and asked to adjust/commit methodology. - Updated main workspace wrapper `tradingview/scripts/run_bitget_tradfi_strategy_export.ps1` to support ad-hoc subset exports via `-Symbols` / `-SymbolsFile`, with subset zip n",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4520169168710708,
+      "maxScore": 0.4520169168710708,
+      "firstRecalledAt": "2026-05-03T12:35:33.226Z",
+      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
+      "queryHashes": [
+        "93e169d2b5ba"
+      ],
+      "recallDays": [
+        "2026-05-03"
+      ],
+      "conceptTags": [
+        "media-send",
+        "reply-to",
+        "europe/berlin",
+        "adjust/commit",
+        "ad-hoc",
+        "user",
+        "reported",
+        "inline"
       ]
     }
   }
