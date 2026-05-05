@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-04T06:39:52.428Z",
+  "updatedAt": "2026-05-04T19:55:17.721Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -674,18 +674,20 @@
       "endLine": 177,
       "source": "memory",
       "snippet": "- Exported 19/19 requested BITGET_TRADFI Strategy Test 4H CSVs, 0 failed. - Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_subset_2026-04-30T21-58-08-146Z`. - Zip: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_subset_2026-04-30T21-58-08-146Z.zip` size `3191183` bytes. - Sent via proven direct Discord media path; Discord messageId `1499531731471175761`.",
-      "recallCount": 4,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.6431376367807387,
-      "maxScore": 0.5188678711652756,
+      "totalScore": 2.715386101603508,
+      "maxScore": 0.5504340350627899,
       "firstRecalledAt": "2026-05-01T04:44:40.849Z",
-      "lastRecalledAt": "2026-05-04T06:39:52.428Z",
+      "lastRecalledAt": "2026-05-04T19:55:17.721Z",
       "queryHashes": [
         "9436ee5ea114",
         "3ff692179203",
         "435306053e69",
-        "e43bda482685"
+        "e43bda482685",
+        "0aa54c3c5417",
+        "6364f8628240"
       ],
       "recallDays": [
         "2026-05-01",
@@ -971,18 +973,20 @@
       "endLine": 175,
       "source": "memory",
       "snippet": "- User asked to repeat the 19-symbol Strategy Test export only if the displayed screener indicator was V6.6; otherwise stop. - First check used a headless Strategy Test layout probe (`tmp/check_strategy_test_v66.js`) on AAPLUSDT.P. Layout was detected as Strategy test, but visible chart text/DOM did not expose `v6.6`, so export was stopped. - User asked to try again. Second check used a one-symbol probe CSV export for AAPLUSDT.P to inspect exported Strategy Test chart-data headers/content. Probe export succeeded, but CSV still did not expose any machine-verifiable `v6.6` / indicator-version label. - Result: full 19-symbol export was not run; user was told to explicitly say `RUN STRATEGY EXPO",
-      "recallCount": 4,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.623845139145851,
-      "maxScore": 0.48942229151725763,
+      "totalScore": 2.653530484437942,
+      "maxScore": 0.5273348540067673,
       "firstRecalledAt": "2026-05-02T14:58:01.773Z",
-      "lastRecalledAt": "2026-05-04T06:39:52.428Z",
+      "lastRecalledAt": "2026-05-04T19:55:17.721Z",
       "queryHashes": [
         "6b6b50b2574f",
         "3ff692179203",
         "435306053e69",
-        "e43bda482685"
+        "e43bda482685",
+        "0aa54c3c5417",
+        "6364f8628240"
       ],
       "recallDays": [
         "2026-05-02",
@@ -1038,18 +1042,19 @@
       "endLine": 27,
       "source": "memory",
       "snippet": "- User requested Strategy Test CSV export for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Initial raw-symbol run started as `BITGET:AAPL` and failed, so it was stopped. Lingering Playwright Chrome processes for the TradingView profile were killed, then the export was rerun with explicit perpetual symbols `*USDT.P`. - Successful rerun via `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\run_bitget_tradfi_strategy_export.ps1` using layout `https://www.tradingview.com/chart/0PgkxOVV/`, interval `240 / 4H`, exchange `BITGET`. - Result: 19/19 CSV chart-data exports succeeded, 0 failed. - Output f",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.0916659588686923,
+      "totalScore": 2.6053423936240176,
       "maxScore": 0.7614215190283754,
       "firstRecalledAt": "2026-05-02T15:41:48.259Z",
-      "lastRecalledAt": "2026-05-04T06:39:52.428Z",
+      "lastRecalledAt": "2026-05-04T19:25:42.882Z",
       "queryHashes": [
         "3ff692179203",
         "9d45e52b55e2",
         "93e169d2b5ba",
-        "e43bda482685"
+        "e43bda482685",
+        "0aa54c3c5417"
       ],
       "recallDays": [
         "2026-05-02",
@@ -1139,19 +1144,21 @@
       "endLine": 36,
       "source": "memory",
       "snippet": "## TradingView Strategy Test full watchlist export - Time: 2026-05-02 ~17:00 Europe/Berlin - User requested Strategy Test CSV export for the full `tradingview_real_market_stocks_watchlist` set, mapped to BITGET perpetual symbols. - Ran `run_bitget_tradfi_strategy_export.ps1` with 30 explicit `*USDT.P` symbols and Discord reply target `1500148773811388558`. - Main run result: requested 30, ok 25, failed 5 (`ADBEUSDT.P`, `CRMUSDT.P`, `JPMUSDT.P`, `DISUSDT.P`, `SHOPUSDT.P`). Failures were CSV download missing/empty. - Main zip artifact sent to Discord: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_subset_2026-05-02T14-58-40-313Z.zip`, size 1822689 bytes, Discord message",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8205099135637283,
-      "maxScore": 0.46227808296680445,
+      "totalScore": 1.3310307562351227,
+      "maxScore": 0.5105208426713943,
       "firstRecalledAt": "2026-05-03T09:06:04.443Z",
-      "lastRecalledAt": "2026-05-03T09:12:33.963Z",
+      "lastRecalledAt": "2026-05-04T19:25:42.882Z",
       "queryHashes": [
         "435306053e69",
-        "9d45e52b55e2"
+        "9d45e52b55e2",
+        "0aa54c3c5417"
       ],
       "recallDays": [
-        "2026-05-03"
+        "2026-05-03",
+        "2026-05-04"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -1224,6 +1231,68 @@
         "csv",
         "export",
         "validation"
+      ]
+    },
+    "memory:memory/2026-05-04.md:1:8": {
+      "key": "memory:memory/2026-05-04.md:1:8",
+      "path": "memory/2026-05-04.md",
+      "startLine": 1,
+      "endLine": 8,
+      "source": "memory",
+      "snippet": "# 2026-05-04 - Re-ran the TradingView Strategy Test 4H CSV export through `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\run_bitget_tradfi_strategy_export.ps1 -ReplyTo 1500748638425448460`. - Source screener CSV: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\pine_screener\\pine_screener_2026-05-01T12-08-35-838Z.csv`. - Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_2026-05-04T06-39-56-916Z`. - Zip: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_csv_2026-05-04T06-39-56-916Z.zip` size `1801037` bytes. - Result: requested `48`, exported `48/48`, failed `0`; sent via Discord direct media",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5962422221899032,
+      "maxScore": 0.5962422221899032,
+      "firstRecalledAt": "2026-05-04T19:25:42.882Z",
+      "lastRecalledAt": "2026-05-04T19:25:42.882Z",
+      "queryHashes": [
+        "0aa54c3c5417"
+      ],
+      "recallDays": [
+        "2026-05-04"
+      ],
+      "conceptTags": [
+        "re-ran",
+        "pine-screener",
+        "strategy-test-watchlist-csv",
+        "workspace-tvflow",
+        "48/48",
+        "ran",
+        "the",
+        "tradingview"
+      ]
+    },
+    "memory:memory/2026-05-04.md:1:14": {
+      "key": "memory:memory/2026-05-04.md:1:14",
+      "path": "memory/2026-05-04.md",
+      "startLine": 1,
+      "endLine": 14,
+      "source": "memory",
+      "snippet": "# 2026-05-04 - Re-ran the TradingView Strategy Test 4H CSV export through `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\run_bitget_tradfi_strategy_export.ps1 -ReplyTo 1500748638425448460`. - Source screener CSV: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\pine_screener\\pine_screener_2026-05-01T12-08-35-838Z.csv`. - Output folder: `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\strategy_test_watchlist_csv\\BITGET_TRADFI_2026-05-04T06-39-56-916Z`. - Zip: `C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\BITGET_TRADFI_strategy_test_csv_2026-05-04T06-39-56-916Z.zip` size `1801037` bytes. - Result: requested `48`, exported `48/48`, failed `0`; sent via Discord direct media",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7953895211946154,
+      "maxScore": 0.7953895211946154,
+      "firstRecalledAt": "2026-05-04T19:55:17.721Z",
+      "lastRecalledAt": "2026-05-04T19:55:17.721Z",
+      "queryHashes": [
+        "6364f8628240"
+      ],
+      "recallDays": [
+        "2026-05-04"
+      ],
+      "conceptTags": [
+        "re-ran",
+        "pine-screener",
+        "strategy-test-watchlist-csv",
+        "workspace-tvflow",
+        "48/48",
+        "ran",
+        "the",
+        "tradingview"
       ]
     }
   }
