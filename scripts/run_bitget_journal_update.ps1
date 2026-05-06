@@ -1,7 +1,7 @@
 param(
   [string]$Target = '1499631210283008002',
   [string]$Since = '2020-01-01',
-  [string]$Symbols = 'GOOGLUSDT,GMEUSDT',
+  [string]$Symbols = 'GOOGLUSDT,GMEUSDT,AAPLUSDT',
   [string]$MessagePrefix = '',
   [switch]$NoSend,
   [switch]$Strict
