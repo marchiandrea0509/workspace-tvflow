@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-07T06:28:06.823Z",
+  "generatedAt": "2026-05-07T01:51:45.989Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-07T06:27:34.443Z",
+  "until": "2026-05-07T01:51:14.946Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778135254443"
+        "untilTime": "1778118674946"
       },
-      "count": 26,
+      "count": 23,
       "windows": [
         {
           "ok": true,
@@ -199,106 +199,13 @@
         },
         {
           "ok": true,
-          "count": 26,
+          "count": 23,
           "startTime": "1772236800000",
-          "endTime": "1778135254443",
+          "endTime": "1778118674946",
           "pages": 1
         }
       ],
       "data": [
-        {
-          "symbol": "AAPLUSDT",
-          "size": "2",
-          "orderId": "1435665509704691717",
-          "clientOid": "1435665509704691718",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "280.2",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "android",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "modify_order_limit",
-          "presetStopSurplusPrice": "287.5",
-          "presetStopLossPrice": "270.3",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1778015251565",
-          "uTime": "1778135060234"
-        },
-        {
-          "symbol": "AAPLUSDT",
-          "size": "9",
-          "orderId": "1435664049562611713",
-          "clientOid": "tvflow_aapl_20260505_ladder_L3",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "274.2",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "api",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "normal",
-          "presetStopSurplusPrice": "293.3",
-          "presetStopLossPrice": "270.3",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1778014903440",
-          "uTime": "1778135068641"
-        },
-        {
-          "symbol": "AAPLUSDT",
-          "size": "6",
-          "orderId": "1435664027584458753",
-          "clientOid": "tvflow_aapl_20260505_ladder_L2",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "277.1",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "api",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "normal",
-          "presetStopSurplusPrice": "292.3",
-          "presetStopLossPrice": "270.3",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1778014898200",
-          "uTime": "1778135063360"
-        },
         {
           "symbol": "GMEUSDT",
           "size": "27.79",
@@ -1021,7 +928,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778135254443"
+        "untilTime": "1778118674946"
       },
       "count": 82,
       "windows": [
@@ -1204,7 +1111,7 @@
           "ok": true,
           "count": 82,
           "startTime": "1772236800000",
-          "endTime": "1778135254443",
+          "endTime": "1778118674946",
           "pages": 1
         }
       ],
@@ -3104,7 +3011,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778135254443",
+        "untilTime": "1778118674946",
         "planType": "normal_plan"
       },
       "count": 9,
@@ -3288,7 +3195,7 @@
           "ok": true,
           "count": 9,
           "startTime": "1772236800000",
-          "endTime": "1778135254443",
+          "endTime": "1778118674946",
           "pages": 1
         }
       ],
