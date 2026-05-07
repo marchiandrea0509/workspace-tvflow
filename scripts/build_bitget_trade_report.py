@@ -95,10 +95,86 @@ def list_open_orders(paths: list[str]) -> list[dict[str, Any]]:
     return rows
 
 
+def order_key(o: dict[str, Any]) -> str:
+    return str(o.get('orderId') or o.get('planOrderId') or o.get('clientOid') or '')
+
+
+def history_by_order_id(orders: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    out: dict[str, dict[str, Any]] = {}
+    for row in orders:
+        key = str(row.get('orderId') or row.get('planOrderId') or '')
+        if key and key not in out:
+            out[key] = row
+    return out
+
+
+def detect_open_order_change_rows(previous: list[dict[str, Any]], current: list[dict[str, Any]], orders: list[dict[str, Any]], tz: ZoneInfo) -> list[dict[str, Any]]:
+    prev_by_id = {order_key(o): o for o in previous if order_key(o)}
+    curr_by_id = {order_key(o): o for o in current if order_key(o)}
+    hist_by_id = history_by_order_id(orders)
+    rows: list[dict[str, Any]] = []
+
+    def base(event: str, oid: str, src: dict[str, Any]) -> dict[str, Any]:
+        h = hist_by_id.get(oid, {})
+        return {
+            'Detected At': datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S'),
+            'Event': event,
+            'Symbol': src.get('symbol', ''),
+            'Order ID': oid,
+            'Client OID': src.get('clientOid', ''),
+            'Trade Side': src.get('tradeSide', ''),
+            'Order Side': src.get('side', ''),
+            'Position Side': src.get('posSide', ''),
+            'Qty': src.get('size', ''),
+            'Price': src.get('price', ''),
+            'TP': src.get('presetStopSurplusPrice', ''),
+            'SL': src.get('presetStopLossPrice', ''),
+            'History Status': h.get('status', ''),
+            'History Fill Qty': h.get('baseVolume', ''),
+            'History Avg Price': h.get('priceAvg', ''),
+            'Details': '',
+        }
+
+    for oid in sorted(prev_by_id.keys() - curr_by_id.keys()):
+        row = base('REMOVED_FROM_ACTIVE', oid, prev_by_id[oid])
+        row['Details'] = 'Order existed in previous open-order snapshot but is absent now; check History Status for cancel/fill outcome.'
+        rows.append(row)
+
+    for oid in sorted(curr_by_id.keys() - prev_by_id.keys()):
+        row = base('NEW_ACTIVE', oid, curr_by_id[oid])
+        row['Details'] = 'Order is active now but was absent from previous open-order snapshot.'
+        rows.append(row)
+
+    watched = [
+        ('size', 'Qty'),
+        ('price', 'Price'),
+        ('presetStopSurplusPrice', 'TP'),
+        ('presetStopLossPrice', 'SL'),
+        ('status', 'Status'),
+        ('baseVolume', 'Filled'),
+        ('leverage', 'Leverage'),
+        ('marginMode', 'Margin Mode'),
+    ]
+    for oid in sorted(prev_by_id.keys() & curr_by_id.keys()):
+        old = prev_by_id[oid]
+        new = curr_by_id[oid]
+        diffs = []
+        for key, label in watched:
+            if str(old.get(key) or '') != str(new.get(key) or ''):
+                diffs.append(f"{label}: {old.get(key, '')} -> {new.get(key, '')}")
+        if diffs:
+            row = base('UPDATED_ACTIVE', oid, new)
+            row['Details'] = '; '.join(diffs)
+            rows.append(row)
+
+    return rows
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description='Build a Bitget semi-auto futures trade log workbook from mirrored Bitget API artifacts.')
     ap.add_argument('--history-json', default=str(REPORT_DIR / 'raw_bitget_history_latest.json'))
     ap.add_argument('--open-orders-json', action='append', default=[])
+    ap.add_argument('--previous-open-orders-json', action='append', default=[])
     ap.add_argument('--positions-json', default=str(REPORT_DIR / 'raw_positions_latest.json'))
     ap.add_argument('--out-xls', default=str(REPORT_DIR / 'bitget_futures_trade_report_latest.xls'))
     ap.add_argument('--out-csv', default=str(REPORT_DIR / 'bitget_futures_order_history_latest.csv'))
@@ -111,6 +187,7 @@ def main() -> int:
     fills = arr_from_data(get_result(history, 'fills').get('data'))
     plans = arr_from_data(get_result(history, 'orders-plan-history').get('data'))
     open_orders = list_open_orders(args.open_orders_json)
+    previous_open_orders = list_open_orders(args.previous_open_orders_json)
     positions_raw = load_json(args.positions_json)
     positions = ((positions_raw.get('result') or {}).get('data') or []) if isinstance(positions_raw, dict) else []
 
@@ -200,6 +277,8 @@ def main() -> int:
         'Break Even': p.get('breakEvenPrice', ''),
     } for p in positions]
 
+    change_rows = detect_open_order_change_rows(previous_open_orders, open_orders, orders, tz) if previous_open_orders else []
+
     journal_rows: list[dict[str, Any]] = []
     for r in order_rows:
         journal_rows.append({
@@ -241,6 +320,7 @@ def main() -> int:
         {'Metric': 'Plan/order-plan history', 'Value': len(plans)},
         {'Metric': 'Current active orders', 'Value': len(open_rows)},
         {'Metric': 'Current positions', 'Value': len(pos_rows)},
+        {'Metric': 'Open-order state changes vs previous refresh', 'Value': len(change_rows) if previous_open_orders else 'previous snapshot unavailable'},
         {'Metric': 'Realized PnL gross from order history', 'Value': round(realized, 8)},
         {'Metric': 'Fees from order history', 'Value': round(fees, 8)},
         {'Metric': 'Net PnL estimate', 'Value': round(net, 8)},
@@ -254,6 +334,7 @@ def main() -> int:
     cols_fills = ['Time Berlin', 'Exchange', 'Symbol', 'Trade Side', 'Order Side', 'Scope', 'Price', 'Qty', 'Quote Volume', 'Profit', 'Fee Detail', 'Order ID', 'Trade ID', 'Source']
     cols_open = ['Created Berlin', 'Exchange', 'Symbol', 'Status', 'Trade Side', 'Order Side', 'Position Side', 'Order Type', 'Qty', 'Price', 'TP', 'SL', 'Leverage', 'Margin Mode', 'Order ID', 'Client OID']
     cols_pos = ['Symbol', 'Side', 'Qty Total', 'Available', 'Avg Entry', 'Mark Price', 'Unrealized PnL', 'Leverage', 'Margin Mode', 'Margin Size', 'Liquidation Price', 'Break Even']
+    cols_changes = ['Detected At', 'Event', 'Symbol', 'Order ID', 'Client OID', 'Trade Side', 'Order Side', 'Position Side', 'Qty', 'Price', 'TP', 'SL', 'History Status', 'History Fill Qty', 'History Avg Price', 'Details']
 
     html_doc = f'''<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><style>td,th{{font-family:Calibri,Arial;font-size:11pt;white-space:nowrap}} th{{background:#D9EAF7;font-weight:bold}} h2{{font-family:Calibri,Arial}}</style></head><body>
@@ -262,6 +343,7 @@ def main() -> int:
 {html_sheet('Semi-Auto Trade Log', journal_rows, cols_journal, 'Bitget-specific working log. Group entries manually into setups/campaigns; add TradingView context, invalidation, and review notes as needed.')}
 {html_sheet('Order History', order_rows, cols_orders)}
 {html_sheet('Fills', fill_rows, cols_fills)}
+{html_sheet('Open Order State Changes', change_rows, cols_changes, 'Diff between previous and current open-order snapshots for tracked symbols; catches manual cancels/modifications made directly on Bitget.')}
 {html_sheet('Active Orders', open_rows, cols_open)}
 {html_sheet('Positions Snapshot', pos_rows, cols_pos)}
 </body></html>'''

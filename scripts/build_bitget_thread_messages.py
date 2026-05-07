@@ -102,6 +102,74 @@ def open_orders_from_file(path: str | Path) -> list[dict[str, Any]]:
     return rows
 
 
+def order_key(o: dict[str, Any]) -> str:
+    return str(o.get('orderId') or o.get('planOrderId') or o.get('clientOid') or '')
+
+
+def describe_order(o: dict[str, Any]) -> str:
+    return (
+        f"{o.get('symbol')} {o.get('tradeSide')}/{o.get('side')} {o.get('posSide')} "
+        f"qty {fmt(o.get('size'))} @ {fmt(o.get('price'))} | TP {fmt(o.get('presetStopSurplusPrice'))} "
+        f"SL {fmt(o.get('presetStopLossPrice'))} | {fmt(o.get('marginMode'))} {fmt(o.get('leverage'))}x | "
+        f"id {order_key(o) or 'n/a'}"
+    )
+
+
+def history_status_by_order_id(history: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    rows = list_from_data((result_by_label(history, 'orders-history').get('data') or {}))
+    out: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        key = str(row.get('orderId') or row.get('planOrderId') or '')
+        if key and key not in out:
+            out[key] = row
+    return out
+
+
+def detect_open_order_changes(previous: list[dict[str, Any]], current: list[dict[str, Any]], history: dict[str, Any]) -> list[str]:
+    prev_by_id = {order_key(o): o for o in previous if order_key(o)}
+    curr_by_id = {order_key(o): o for o in current if order_key(o)}
+    hist_by_id = history_status_by_order_id(history)
+    changes: list[str] = []
+
+    for oid in sorted(prev_by_id.keys() - curr_by_id.keys()):
+        old = prev_by_id[oid]
+        h = hist_by_id.get(oid, {})
+        status = h.get('status') or 'not active now'
+        fill_qty = h.get('baseVolume') or h.get('size') or old.get('baseVolume') or ''
+        avg = h.get('priceAvg') or ''
+        suffix = f" | history status {status}"
+        if fill_qty not in ('', None):
+            suffix += f" fill/qty {fmt(fill_qty)}"
+        if avg:
+            suffix += f" avg {fmt(avg)}"
+        changes.append(f"REMOVED from active orders: {describe_order(old)}{suffix}")
+
+    for oid in sorted(curr_by_id.keys() - prev_by_id.keys()):
+        changes.append(f"NEW active order: {describe_order(curr_by_id[oid])}")
+
+    watched = [
+        ('size', 'qty'),
+        ('price', 'price'),
+        ('presetStopSurplusPrice', 'TP'),
+        ('presetStopLossPrice', 'SL'),
+        ('status', 'status'),
+        ('baseVolume', 'filled'),
+        ('leverage', 'leverage'),
+        ('marginMode', 'margin'),
+    ]
+    for oid in sorted(prev_by_id.keys() & curr_by_id.keys()):
+        old = prev_by_id[oid]
+        new = curr_by_id[oid]
+        diffs = []
+        for key, label in watched:
+            if str(old.get(key) or '') != str(new.get(key) or ''):
+                diffs.append(f"{label} {fmt(old.get(key))}->{fmt(new.get(key))}")
+        if diffs:
+            changes.append(f"UPDATED active order: {describe_order(new)} | " + '; '.join(diffs))
+
+    return changes
+
+
 def positions_from_file(path: str | Path) -> list[dict[str, Any]]:
     raw = load_json(path)
     if not isinstance(raw, dict):
@@ -145,6 +213,19 @@ def build_open_orders_message(open_orders: list[dict[str, Any]], tz: ZoneInfo) -
     return '\n'.join(lines)
 
 
+def build_state_changes_message(previous_open_orders: list[dict[str, Any]], open_orders: list[dict[str, Any]], history: dict[str, Any]) -> str:
+    if not previous_open_orders:
+        return 'Order state changes since previous refresh: previous snapshot unavailable.'
+    changes = detect_open_order_changes(previous_open_orders, open_orders, history)
+    if not changes:
+        return 'Order state changes since previous refresh: none detected.'
+    lines = [f'Order state changes since previous refresh ({len(changes)})']
+    lines.extend(f'- {c}' for c in changes[:12])
+    if len(changes) > 12:
+        lines.append(f'... plus {len(changes) - 12} more')
+    return '\n'.join(lines)
+
+
 def build_positions_message(positions: list[dict[str, Any]]) -> str:
     if not positions:
         return 'Current Bitget futures positions: none.'
@@ -179,6 +260,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description='Build Discord-safe Bitget futures trade report messages.')
     ap.add_argument('--history-json', default=str(DEFAULT_REPORT_DIR / 'raw_bitget_history_90d_2026-04-30.json'))
     ap.add_argument('--open-orders-json', action='append', default=[])
+    ap.add_argument('--previous-open-orders-json', action='append', default=[])
     ap.add_argument('--positions-json', default=str(DEFAULT_REPORT_DIR / 'raw_positions_2026-04-30.json'))
     ap.add_argument('--workbook', default=str(DEFAULT_REPORT_DIR / 'bitget_futures_trade_report_2026-04-30.xls'))
     ap.add_argument('--recent-limit', type=int, default=8)
@@ -195,10 +277,14 @@ def main() -> int:
     open_orders: list[dict[str, Any]] = []
     for path in open_paths:
         open_orders.extend(open_orders_from_file(path))
+    previous_open_orders: list[dict[str, Any]] = []
+    for path in args.previous_open_orders_json or []:
+        previous_open_orders.extend(open_orders_from_file(path))
     positions = positions_from_file(args.positions_json)
 
     messages: list[str] = []
     messages.extend(chunk_text(build_summary(history, open_orders, positions, args.workbook, tz)))
+    messages.extend(chunk_text(build_state_changes_message(previous_open_orders, open_orders, history)))
     messages.extend(chunk_text(build_open_orders_message(open_orders, tz)))
     messages.extend(chunk_text(build_positions_message(positions)))
     messages.extend(chunk_text(build_recent_history_message(history, tz, args.recent_limit)))
@@ -208,6 +294,7 @@ def main() -> int:
         'source': {
             'history_json': args.history_json,
             'open_orders_json': open_paths,
+            'previous_open_orders_json': args.previous_open_orders_json or [],
             'positions_json': args.positions_json,
             'workbook': args.workbook,
         },

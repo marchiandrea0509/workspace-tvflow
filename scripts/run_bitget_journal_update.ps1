@@ -53,10 +53,16 @@ try {
 } catch {}
 
 $openOrderFiles = @()
+$previousOpenOrderFiles = @()
 foreach ($sym in $tracked) {
   $safe = $sym -replace '[^A-Z0-9_\-]', '_'
   $openLatest = Join-Path $reportDir "raw_open_orders_${safe}_latest.json"
+  $openPrevious = Join-Path $reportDir "raw_open_orders_${safe}_previous.json"
   $openStamped = Join-Path $reportDir "raw_open_orders_${safe}_$stamp.json"
+  if (Test-Path $openLatest) {
+    Copy-Item $openLatest $openPrevious -Force
+    $previousOpenOrderFiles += $openPrevious
+  }
   & node bitget-futures-harness\scripts\list-open-orders.js --symbol $sym > $openLatest
   if ($LASTEXITCODE -ne 0) {
     if ($Strict) { throw "list-open-orders.js failed for $sym with exit code $LASTEXITCODE" }
@@ -68,13 +74,15 @@ foreach ($sym in $tracked) {
 
 $openArgs = @()
 foreach ($f in $openOrderFiles) { $openArgs += @('--open-orders-json', $f) }
+$previousOpenArgs = @()
+foreach ($f in $previousOpenOrderFiles) { $previousOpenArgs += @('--previous-open-orders-json', $f) }
 
-& python scripts\build_bitget_trade_report.py --history-json $historyLatest @openArgs --positions-json $positionsLatest --out-xls $workbookLatest --out-csv $csvLatest
+& python scripts\build_bitget_trade_report.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest --out-xls $workbookLatest --out-csv $csvLatest
 if ($LASTEXITCODE -ne 0) { throw "build_bitget_trade_report.py failed with exit code $LASTEXITCODE" }
 Copy-Item $workbookLatest $workbookStamped -Force
 Copy-Item $csvLatest $csvStamped -Force
 
-& python scripts\build_bitget_thread_messages.py --history-json $historyLatest @openArgs --positions-json $positionsLatest --workbook $workbookLatest --out $messagesLatest
+& python scripts\build_bitget_thread_messages.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest --workbook $workbookLatest --out $messagesLatest
 if ($LASTEXITCODE -ne 0) { throw "build_bitget_thread_messages.py failed with exit code $LASTEXITCODE" }
 Copy-Item $messagesLatest $messagesStamped -Force
 
