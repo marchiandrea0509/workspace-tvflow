@@ -1,0 +1,107 @@
+﻿[
+    {
+        "relativePath":  "data_pipeline\\prompts\\bitget_single_market_deep_dive_prompt.md",
+        "bytes":  10257,
+        "lastWriteTime":  "2026-04-20T08:20:34"
+    },
+    {
+        "relativePath":  "data_pipeline\\prompts\\single_market_deep_dive_prompt.md",
+        "bytes":  10257,
+        "lastWriteTime":  "2026-04-20T08:20:34"
+    },
+    {
+        "relativePath":  "data_pipeline\\prompts\\single_market_deep_dive_prompt_legacy_generic.md",
+        "bytes":  10407,
+        "lastWriteTime":  "2026-03-14T20:17:50"
+    },
+    {
+        "relativePath":  "data_pipeline\\prompts\\trade_deep_analysis_v1.md",
+        "bytes":  2157,
+        "lastWriteTime":  "2026-03-14T18:02:23"
+    },
+    {
+        "relativePath":  "data_pipeline\\scripts\\build_bitget_llm_deep_analysis_packet.py",
+        "bytes":  9110,
+        "lastWriteTime":  "2026-04-20T08:21:32"
+    },
+    {
+        "relativePath":  "README.md",
+        "bytes":  3720,
+        "lastWriteTime":  "2026-05-09T17:30:16"
+    },
+    {
+        "relativePath":  "workspace\\tradingview\\scripts\\capture_live.js",
+        "bytes":  15988,
+        "lastWriteTime":  "2026-03-07T18:34:50"
+    },
+    {
+        "relativePath":  "workspace\\tradingview\\scripts\\export_strategy_test_symbols_csv.js",
+        "bytes":  13799,
+        "lastWriteTime":  "2026-05-03T14:36:08"
+    },
+    {
+        "relativePath":  "workspace\\tradingview\\scripts\\pine_screener_export.js",
+        "bytes":  17293,
+        "lastWriteTime":  "2026-05-01T14:05:54"
+    },
+    {
+        "relativePath":  "workspace\\tradingview\\scripts\\run_bitget_tradfi_strategy_export.ps1",
+        "bytes":  5240,
+        "lastWriteTime":  "2026-05-03T11:08:24"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\prompts\\bitget_llm_deep_analysis_prompt_v1.md",
+        "bytes":  8257,
+        "lastWriteTime":  "2026-04-10T08:10:29"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\prompts\\cron_bitget_futures_trade_report.md",
+        "bytes":  4655,
+        "lastWriteTime":  "2026-05-01T06:56:52"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\prompts\\tool_bitget_journal_update_nano.md",
+        "bytes":  1463,
+        "lastWriteTime":  "2026-05-01T06:57:00"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\scripts\\build_bitget_thread_messages.py",
+        "bytes":  12702,
+        "lastWriteTime":  "2026-05-07T08:57:09"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\scripts\\build_bitget_trade_report.py",
+        "bytes":  17242,
+        "lastWriteTime":  "2026-05-07T08:57:23"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\scripts\\run_bitget_journal_update.ps1",
+        "bytes":  5293,
+        "lastWriteTime":  "2026-05-08T00:30:28"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\tmp\\aaplusdt_deep_analysis.py",
+        "bytes":  7464,
+        "lastWriteTime":  "2026-05-05T22:27:12"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\tmp\\aaplusdt_dip_analysis.py",
+        "bytes":  8990,
+        "lastWriteTime":  "2026-05-08T00:36:27"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\tmp\\googl_deep_analysis.py",
+        "bytes":  5379,
+        "lastWriteTime":  "2026-04-30T08:35:42"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\tmp\\intcusdt_deep_analysis.py",
+        "bytes":  8985,
+        "lastWriteTime":  "2026-05-08T00:18:28"
+    },
+    {
+        "relativePath":  "workspace-tvflow\\tmp\\nearusdt_deep_analysis.py",
+        "bytes":  8811,
+        "lastWriteTime":  "2026-05-07T03:35:41"
+    }
+]
