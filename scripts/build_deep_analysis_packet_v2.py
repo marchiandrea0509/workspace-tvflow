@@ -231,6 +231,15 @@ def rn(x: Optional[float], ndigits: int = 6) -> Optional[float]:
     return round(float(x), ndigits)
 
 
+def as_float(value: Any, default: Optional[float] = None) -> Optional[float]:
+    try:
+        if value in (None, "", "NaN", "nan"):
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
 def trend_state(close: float, e20: Optional[float], e50: Optional[float], e200: Optional[float]) -> str:
     if e20 is None or e50 is None:
         return "unknown"
@@ -357,18 +366,35 @@ def nearest_tp(entry: float, side: str, levels: Dict[str, List[Dict[str, Any]]],
     if side == "LONG":
         natural = [x for x in levels["resistances"] if float(x["price"]) > entry]
         if natural:
-            p = float(natural[0]["price"])
-            rr = (p - entry) / risk_per_unit if risk_per_unit else 0.0
-            if rr >= 1.0:
-                return {"price": p, "source": natural[0]["source"], "type": "natural_resistance", "rr": rr}
+            scored = []
+            for x in natural:
+                p = float(x["price"])
+                rr = (p - entry) / risk_per_unit if risk_per_unit else 0.0
+                scored.append((rr, p, x))
+            good = [t for t in scored if t[0] >= 1.20]
+            if good:
+                # Use the first meaningful natural resistance with acceptable R:R.
+                rr, p, x = sorted(good, key=lambda t: t[1])[0]
+                return {"price": p, "source": x["source"], "type": "natural_resistance", "rr": rr}
+            # Do not hide poor R:R by inventing an optimistic projected target when
+            # natural resistance is visible. Surface the weak natural target instead.
+            rr, p, x = max(scored, key=lambda t: t[0])
+            return {"price": p, "source": x["source"], "type": "natural_resistance_weak_rr", "rr": rr}
         p = entry + max(1.5 * risk_per_unit, 1.2 * atr4h)
         return {"price": p, "source": "projected_rr_target", "type": "projected_requires_follow_through", "rr": (p - entry) / risk_per_unit if risk_per_unit else None}
     natural = [x for x in levels["supports"] if float(x["price"]) < entry]
     if natural:
-        p = float(natural[0]["price"])
-        rr = (entry - p) / risk_per_unit if risk_per_unit else 0.0
-        if rr >= 1.0:
-            return {"price": p, "source": natural[0]["source"], "type": "natural_support", "rr": rr}
+        scored = []
+        for x in natural:
+            p = float(x["price"])
+            rr = (entry - p) / risk_per_unit if risk_per_unit else 0.0
+            scored.append((rr, p, x))
+        good = [t for t in scored if t[0] >= 1.20]
+        if good:
+            rr, p, x = sorted(good, key=lambda t: t[1], reverse=True)[0]
+            return {"price": p, "source": x["source"], "type": "natural_support", "rr": rr}
+        rr, p, x = max(scored, key=lambda t: t[0])
+        return {"price": p, "source": x["source"], "type": "natural_support_weak_rr", "rr": rr}
     p = entry - max(1.5 * risk_per_unit, 1.2 * atr4h)
     return {"price": p, "source": "projected_rr_target", "type": "projected_requires_follow_through", "rr": (entry - p) / risk_per_unit if risk_per_unit else None}
 
@@ -487,7 +513,7 @@ def structure_risk_diagnostics(side: str, summaries: Dict[str, Dict[str, Any]], 
     }
 
 
-def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any]) -> Dict[str, Any]:
+def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     side = side.upper()
     if side not in ("LONG", "SHORT"):
         return {"side": side, "decision_hint": "WAIT", "warnings": ["No LONG/SHORT side supplied; LLM must infer or ask for confirmation."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
@@ -503,33 +529,122 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     split = [0.25, 0.35, 0.40]
     warnings: List[str] = []
     omitted: List[Dict[str, Any]] = []
+    screener_row = (screener_data or {}).get("selected_row") or {}
+
+    def screener_lc_action_inactive() -> bool:
+        if not screener_row:
+            return False
+        action = as_float(screener_row.get("W01 LC ActionScore"), 0.0) or 0.0
+        window = as_float(screener_row.get("W02 LC WindowActive"), 0.0) or 0.0
+        entry_state = as_float(screener_row.get("W03 LC EntryState"), 0.0) or 0.0
+        return action <= 0 and window <= 0 and entry_state <= 0
+
+    nearest_res_atr = None
+    if levels.get("resistances"):
+        nearest_res_atr = levels["resistances"][0].get("distance_atr")
+    near_resistance = bool(nearest_res_atr is not None and float(nearest_res_atr) <= 1.0)
+    rsi4h = as_float(summaries.get("4H", {}).get("rsi14"), 0.0) or 0.0
+    hot_or_at_resistance = bool(rsi4h >= 75 or near_resistance)
+
+    if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO"):
+        if screener_lc_action_inactive():
+            warnings.append("Screener LC action/window fields are inactive; avoid near-market/noise legs and prefer deeper structural supports.")
+        if hot_or_at_resistance:
+            warnings.append("Price is hot/near resistance; shallow LC legs must be discounted unless explicitly confirmed by screener action fields.")
+
+    def source_quality(source: str, side: str) -> int:
+        s = str(source or "")
+        if "4H pivot" in s:
+            return 0
+        if "4H ema50" in s:
+            return 1
+        if "1H ema200" in s:
+            return 2
+        if "4H ema20" in s or "1H ema50" in s:
+            return 3
+        if "1H pivot" in s:
+            return 4
+        if "1D ema20" in s:
+            return 5
+        return 6
+
+    def choose_structural_entries(candidates: List[Dict[str, Any]], side: str) -> List[Tuple[str, float, str]]:
+        """Choose ladder legs from meaningful structural zones, not tiny ATR buckets.
+
+        The old bucket logic over-selected near-market 1H noise (e.g. MRVL 170.36 / 169.82)
+        and then jumped to the deep leg.  This selector enforces minimum discount when
+        price is hot/near resistance or LC action fields are inactive, clusters nearby
+        levels, and prefers 4H pivots / major EMAs.
+        """
+        if not candidates:
+            return []
+        min_depth_atr = 0.75
+        if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO") and (hot_or_at_resistance or screener_lc_action_inactive()):
+            min_depth_atr = 1.50
+        max_depth_atr = float(pull.get("max_leg_depth_atr") or 6.0)
+        max_depth_pct = float(pull.get("max_leg_depth_pct") or 6.25)
+        min_spacing = max(1.20 * atr4h, current * 0.012)
+        structural = []
+        for item in candidates:
+            price = float(item["price"])
+            depth = (current - price) / atr4h if side == "LONG" else (price - current) / atr4h
+            depth_pct = abs(current - price) / current * 100.0
+            if depth < min_depth_atr:
+                omitted.append({**item, "reason": "too_shallow_near_market_for_lc_context"})
+                continue
+            if depth > max_depth_atr or depth_pct > max_depth_pct:
+                omitted.append({**item, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
+                continue
+            structural.append({**item, "depth_atr": depth, "depth_pct": depth_pct, "quality": source_quality(str(item.get("source", "")), side)})
+        if not structural:
+            return []
+
+        # Prefer one leg from each structural depth zone.  The zones deliberately map
+        # to shallow-value / normal-pullback / deep-structure instead of near-market ATR noise.
+        zones = [(1.5, 3.2), (3.2, 5.0), (5.0, max_depth_atr)]
+        selected: List[Dict[str, Any]] = []
+        for lo, hi in zones:
+            in_zone = [x for x in structural if lo <= float(x["depth_atr"]) <= hi]
+            if not in_zone:
+                continue
+            target_depth = (lo + hi) / 2
+            if side == "LONG" and lo >= 5.0:
+                # Deep LC legs should prefer the better-discounted structural level in the zone,
+                # not the first/nearest pivot in the same support cluster.
+                in_zone.sort(key=lambda x: (int(x["quality"]), -float(x["depth_atr"]), abs(float(x["price"]) - current)))
+            elif side == "SHORT" and lo >= 5.0:
+                in_zone.sort(key=lambda x: (int(x["quality"]), -float(x["depth_atr"]), abs(float(x["price"]) - current)))
+            else:
+                in_zone.sort(key=lambda x: (int(x["quality"]), abs(float(x["depth_atr"]) - target_depth), abs(float(x["price"]) - current)))
+            cand = in_zone[0]
+            if all(abs(float(cand["price"]) - float(prev["price"])) >= min_spacing for prev in selected):
+                selected.append(cand)
+
+        if len(selected) < 3:
+            extras = sorted(structural, key=lambda x: (int(x["quality"]), float(x["depth_atr"])))
+            for cand in extras:
+                if len(selected) >= 3:
+                    break
+                if all(abs(float(cand["price"]) - float(prev["price"])) >= min_spacing for prev in selected):
+                    selected.append(cand)
+
+        selected = sorted(selected[:3], key=lambda x: float(x["price"]), reverse=(side == "LONG"))
+        return [(f"L{i+1}", round_price(float(x["price"]), rules), str(x.get("source") or "structural_level")) for i, x in enumerate(selected)]
 
     if side == "LONG":
         supports = [x for x in levels["supports"] if float(x["price"]) < current]
         # Initial fallback stop; refined below after entries are selected.
         stop = round_price(current - 2.0 * atr4h, rules)
-        raw_targets = [current - pull["shallow_atr"] * atr4h, current - pull["normal_atr"] * atr4h, current - pull["deep_atr"] * atr4h]
-        # Prefer nearby structural supports/EMAs inside each expected pullback band.
-        bands = [(0.15, 0.55), (0.55, 1.05), (1.05, pull["max_leg_depth_atr"])]
-        entries = []
-        for i, (lo, hi) in enumerate(bands):
-            candidates = []
-            for s in supports:
-                depth_atr = (current - float(s["price"])) / atr4h
-                depth_pct = (current - float(s["price"])) / current * 100.0
-                if lo <= depth_atr <= hi and depth_pct <= pull["max_leg_depth_pct"]:
-                    candidates.append((abs(depth_atr - [pull["shallow_atr"], pull["normal_atr"], pull["deep_atr"]][i]), float(s["price"]), s.get("source")))
-                elif depth_atr > pull["max_leg_depth_atr"] or depth_pct > pull["max_leg_depth_pct"]:
-                    omitted.append({**s, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
-            price = sorted(candidates)[0][1] if candidates else raw_targets[i]
-            if price < current:
-                entries.append((f"L{i+1}", round_price(price, rules), "structure_or_expected_pullback" if candidates else "expected_pullback_atr"))
+        entries = choose_structural_entries(supports, "LONG")
         if entries:
             deepest_entry = min(e[1] for e in entries)
             four_h_pivots_below_entry = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) < deepest_entry]
             four_h_pivots_inside_ladder = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) <= deepest_entry]
             if four_h_pivots_below_entry:
-                stop_base = max(four_h_pivots_below_entry)
+                separate = sorted([p for p in four_h_pivots_below_entry if p <= deepest_entry - max(1.20 * atr4h, current * 0.012)], reverse=True)
+                # Put the swing stop beyond the next lower structural cluster, not just under
+                # the nearest pivot in the same cluster as the deepest entry.
+                stop_base = separate[1] if len(separate) >= 2 else (separate[0] if separate else max(four_h_pivots_below_entry))
             elif four_h_pivots_inside_ladder:
                 stop_base = min(four_h_pivots_inside_ladder) - 1.0 * atr4h
             else:
@@ -539,21 +654,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     else:
         resistances = [x for x in levels["resistances"] if float(x["price"]) > current]
         stop = round_price(current + 2.0 * atr4h, rules)
-        raw_targets = [current + pull["shallow_atr"] * atr4h, current + pull["normal_atr"] * atr4h, current + pull["deep_atr"] * atr4h]
-        bands = [(0.15, 0.55), (0.55, 1.05), (1.05, pull["max_leg_depth_atr"])]
-        entries = []
-        for i, (lo, hi) in enumerate(bands):
-            candidates = []
-            for r in resistances:
-                depth_atr = (float(r["price"]) - current) / atr4h
-                depth_pct = (float(r["price"]) - current) / current * 100.0
-                if lo <= depth_atr <= hi and depth_pct <= pull["max_leg_depth_pct"]:
-                    candidates.append((abs(depth_atr - [pull["shallow_atr"], pull["normal_atr"], pull["deep_atr"]][i]), float(r["price"]), r.get("source")))
-                elif depth_atr > pull["max_leg_depth_atr"] or depth_pct > pull["max_leg_depth_pct"]:
-                    omitted.append({**r, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
-            price = sorted(candidates)[0][1] if candidates else raw_targets[i]
-            if current < price:
-                entries.append((f"L{i+1}", round_price(price, rules), "structure_or_expected_pullback" if candidates else "expected_pullback_atr"))
+        entries = choose_structural_entries(resistances, "SHORT")
         if entries:
             deepest_entry = max(e[1] for e in entries)
             four_h_pivots_above_entry = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high" and float(x["price"]) > deepest_entry]
@@ -631,6 +732,14 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         "stop_loss_candidate": stop,
         "invalidation_logic": "Shared SL beyond structural invalidation plus ATR buffer; entries constrained to plausible pullback depth.",
         "structure_risk_diagnostics": structure_risk,
+        "screener_action_context_used": {
+            "available": bool(screener_row),
+            "W01 LC ActionScore": screener_row.get("W01 LC ActionScore"),
+            "W02 LC WindowActive": screener_row.get("W02 LC WindowActive"),
+            "W03 LC EntryState": screener_row.get("W03 LC EntryState"),
+            "D13 LC ContextFinal": screener_row.get("D13 LC ContextFinal"),
+            "D16 SC Final": screener_row.get("D16 SC Final"),
+        },
         "target_total_risk_usdt": risk_usdt,
         "max_margin_usdt": max_margin,
         "planned_leverage": planned_leverage,
@@ -911,7 +1020,7 @@ def main() -> int:
     current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     levels = collect_levels(summaries, current)
     rules = contract_rules(market_snapshot)
-    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules)
+    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data)
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
     screener_summary = {

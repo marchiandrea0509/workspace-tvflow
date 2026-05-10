@@ -102,3 +102,5 @@ Feed `llm_input_packet.md` together with `prompts/master_trade_analysis_prompt_v
 ## Ladder-quality requirement
 
 The builder now allows deeper LC/DIP structural legs when they are meaningful, e.g. 4H supports that may improve R:R. A level should not be rejected merely because current price is near resistance or RSI is high. A strong no-ladder reason should cite change of character, degraded trend, high SL-hit probability, stale data, liquidity/fee issue, or objectively poor R:R. If the full 100 USDT risk target would breach the 1500 USDT margin cap at planned leverage, this is shown as a strong warning; cap-adjusted sizing is informational, not a silent replacement.
+
+For LC/DIP ladders, do not fill L1/L2 from near-market 1H noise just because those levels fit shallow ATR buckets. When price is hot/near resistance or the screener LC action/window fields are inactive, prefer meaningful structural zones: 4H EMA50 / 1H EMA200 area, 4H pivot shelf, and deeper 4H structural support. Show weak natural R:R instead of inventing optimistic projected targets before nearby resistance is cleared.
