@@ -1,0 +1,510 @@
+# LLM Input Packet — AAPLUSDT
+
+This packet is generated for one manually selected symbol. Use it together with `prompts/master_trade_analysis_prompt.md`.
+
+## 1. Manifest
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "score": 72.4,
+  "rank": null,
+  "risk_usdt": 100.0,
+  "max_margin_usdt": 1500.0,
+  "created_at_local": "2026-05-10T07:10:10",
+  "created_at_utc": "2026-05-10T05:10:10Z",
+  "timezone": "Europe/Berlin",
+  "price_truth_source": "Bitget REST",
+  "tv_export_source": "not provided",
+  "screener_usage": "summary_only"
+}
+```
+
+## 2. Data priority reminder
+
+1. Processed summary below is the primary compact analysis source.
+2. Bitget OHLCV is the price/execution truth.
+3. TradingView exports and screenshots are validation only.
+4. Screener summary is candidate-selection context only.
+5. If position/open-order data exists, it overrides new-ticket creation.
+
+## 3. Processed analysis summary
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "risk_usdt": 100.0,
+  "max_margin_usdt": 1500.0,
+  "timeframes": {
+    "1D": {
+      "timeframe": "1D",
+      "bars": 30,
+      "latest_closed_bar_time_utc": "2026-05-09T16:00:00Z",
+      "latest_close": 294.65,
+      "latest_high": 294.88,
+      "latest_low": 294.01,
+      "ema20": 280.18599,
+      "ema50": null,
+      "ema200": null,
+      "atr14": 6.232857,
+      "atr14_pct": 2.1153,
+      "rsi14": 73.29,
+      "adx14": 34.57,
+      "volume_ratio_20": 0.053,
+      "trend_state": "unknown",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-04-22T16:00:00Z",
+          "price": 275.74
+        },
+        {
+          "time_utc": "2026-04-30T16:00:00Z",
+          "price": 287.69
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-04-21T16:00:00Z",
+          "price": 265.56
+        },
+        {
+          "time_utc": "2026-04-26T16:00:00Z",
+          "price": 265.49
+        }
+      ]
+    },
+    "4H": {
+      "timeframe": "4H",
+      "bars": 50,
+      "latest_closed_bar_time_utc": "2026-05-10T04:00:00Z",
+      "latest_close": 294.65,
+      "latest_high": 294.76,
+      "latest_low": 294.52,
+      "ema20": 291.552269,
+      "ema50": 285.1054,
+      "ema200": null,
+      "atr14": 1.292857,
+      "atr14_pct": 0.4388,
+      "rsi14": 92.68,
+      "adx14": 65.87,
+      "volume_ratio_20": 0.024,
+      "trend_state": "bullish",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-05-02T20:00:00Z",
+          "price": 281.14
+        },
+        {
+          "time_utc": "2026-05-03T20:00:00Z",
+          "price": 282.28
+        },
+        {
+          "time_utc": "2026-05-05T16:00:00Z",
+          "price": 284.94
+        },
+        {
+          "time_utc": "2026-05-07T12:00:00Z",
+          "price": 292.31
+        },
+        {
+          "time_utc": "2026-05-08T12:00:00Z",
+          "price": 294.98
+        },
+        {
+          "time_utc": "2026-05-09T04:00:00Z",
+          "price": 294.63
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-05-04T12:00:00Z",
+          "price": 275.02
+        },
+        {
+          "time_utc": "2026-05-05T12:00:00Z",
+          "price": 275.68
+        },
+        {
+          "time_utc": "2026-05-06T12:00:00Z",
+          "price": 280.99
+        },
+        {
+          "time_utc": "2026-05-07T16:00:00Z",
+          "price": 286.18
+        }
+      ]
+    },
+    "1H": {
+      "timeframe": "1H",
+      "bars": 50,
+      "latest_closed_bar_time_utc": "2026-05-10T05:00:00Z",
+      "latest_close": 294.65,
+      "latest_high": 294.65,
+      "latest_low": 294.64,
+      "ema20": 294.281292,
+      "ema50": 293.1442,
+      "ema200": null,
+      "atr14": 0.312143,
+      "atr14_pct": 0.1059,
+      "rsi14": 56.38,
+      "adx14": 13.36,
+      "volume_ratio_20": 0.007,
+      "trend_state": "bullish",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-05-08T14:00:00Z",
+          "price": 294.98
+        },
+        {
+          "time_utc": "2026-05-08T19:00:00Z",
+          "price": 294.46
+        },
+        {
+          "time_utc": "2026-05-08T23:00:00Z",
+          "price": 294.36
+        },
+        {
+          "time_utc": "2026-05-09T07:00:00Z",
+          "price": 294.63
+        },
+        {
+          "time_utc": "2026-05-09T15:00:00Z",
+          "price": 294.62
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-05-08T08:00:00Z",
+          "price": 288.0
+        },
+        {
+          "time_utc": "2026-05-08T09:00:00Z",
+          "price": 288.0
+        },
+        {
+          "time_utc": "2026-05-09T06:00:00Z",
+          "price": 293.8
+        },
+        {
+          "time_utc": "2026-05-09T12:00:00Z",
+          "price": 293.86
+        },
+        {
+          "time_utc": "2026-05-09T13:00:00Z",
+          "price": 293.86
+        },
+        {
+          "time_utc": "2026-05-09T18:00:00Z",
+          "price": 294.01
+        },
+        {
+          "time_utc": "2026-05-10T01:00:00Z",
+          "price": 294.04
+        }
+      ]
+    }
+  },
+  "levels": {
+    "supports": [
+      {
+        "price": 294.04,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-10T01:00:00Z",
+        "distance_pct": 0.207,
+        "distance_atr": 0.472
+      },
+      {
+        "price": 294.01,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T18:00:00Z",
+        "distance_pct": 0.217,
+        "distance_atr": 0.495
+      },
+      {
+        "price": 293.86,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T12:00:00Z",
+        "distance_pct": 0.268,
+        "distance_atr": 0.611
+      },
+      {
+        "price": 293.8,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T06:00:00Z",
+        "distance_pct": 0.288,
+        "distance_atr": 0.657
+      },
+      {
+        "price": 288.0,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-08T08:00:00Z",
+        "distance_pct": 2.257,
+        "distance_atr": 5.144
+      },
+      {
+        "price": 286.18,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-07T16:00:00Z",
+        "distance_pct": 2.875,
+        "distance_atr": 6.551
+      },
+      {
+        "price": 280.99,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-06T12:00:00Z",
+        "distance_pct": 4.636,
+        "distance_atr": 10.566
+      },
+      {
+        "price": 275.68,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-05T12:00:00Z",
+        "distance_pct": 6.438,
+        "distance_atr": 14.673
+      },
+      {
+        "price": 275.02,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-04T12:00:00Z",
+        "distance_pct": 6.662,
+        "distance_atr": 15.183
+      },
+      {
+        "price": 265.56,
+        "source": "1D pivot low",
+        "time_utc": "2026-04-21T16:00:00Z",
+        "distance_pct": 9.873,
+        "distance_atr": 22.501
+      }
+    ],
+    "resistances": [
+      {
+        "price": 294.98,
+        "source": "4H pivot high",
+        "time_utc": "2026-05-08T12:00:00Z",
+        "distance_pct": 0.112,
+        "distance_atr": 0.255
+      }
+    ]
+  },
+  "candidate_trade_design": {
+    "side": "LONG",
+    "style_hint": "DIP_LADDER",
+    "current_price_reference": 294.65,
+    "atr4h_reference": 1.292857,
+    "stop_loss_candidate": 287.676786,
+    "invalidation_logic": "Below meaningful 4H/support pivot plus 0.25 ATR buffer",
+    "candidate_orders": [
+      {
+        "leg": "L1",
+        "entry": 294.132857,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 25.0,
+        "estimated_qty_before_exchange_rounding": 3.872324,
+        "estimated_notional_usdt": 1138.98,
+        "rr_estimate": 0.13
+      },
+      {
+        "leg": "L2",
+        "entry": 294.04,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 35.0,
+        "estimated_qty_before_exchange_rounding": 5.500365,
+        "estimated_notional_usdt": 1617.33,
+        "rr_estimate": 0.15
+      },
+      {
+        "leg": "L3",
+        "entry": 294.01,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 40.0,
+        "estimated_qty_before_exchange_rounding": 6.315908,
+        "estimated_notional_usdt": 1856.94,
+        "rr_estimate": 0.15
+      }
+    ],
+    "target_total_risk_usdt": 100.0,
+    "max_margin_usdt": 1500.0
+  },
+  "screener_summary": {
+    "screener_version": null,
+    "symbol": "BITGET:AAPLUSDT.P",
+    "bias": "LONG",
+    "family": "LC",
+    "score": 72.4,
+    "rank": null,
+    "action_window_active": null,
+    "bars_since_trigger": null,
+    "invalidation_state": null,
+    "usage_note": "Screener is candidate-selection context only; do not use score as proof of trade quality."
+  },
+  "freshness": {
+    "status": "OK",
+    "ticker_vs_4h_close_diff_pct": 0.0,
+    "current_ticker_reference": 294.65,
+    "latest_4h_close": 294.65,
+    "tv_exports_available": false,
+    "notes": [
+      "No TradingView MCP exports copied; analysis can still use Bitget OHLCV but screenshots/TV validation are absent."
+    ],
+    "checked_at_utc": "2026-05-10T05:10:13Z"
+  },
+  "tv_exports_summary": {
+    "available": false,
+    "files": [],
+    "manifest": null
+  }
+}
+```
+
+## 4. Market snapshot
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "product_type": "USDT-FUTURES",
+  "fetched_at_utc": "2026-05-10T05:10:11Z",
+  "ticker": [
+    {
+      "symbol": "AAPLUSDT",
+      "lastPr": "294.65",
+      "askPr": "294.69",
+      "bidPr": "294.68",
+      "bidSz": "2.34",
+      "askSz": "2.12",
+      "high24h": "294.88",
+      "low24h": "293.8",
+      "ts": "1778389812104",
+      "change24h": "0.00177",
+      "baseVolume": "1493.18",
+      "quoteVolume": "439469.8298",
+      "usdtVolume": "439469.8298",
+      "openUtc": "294.51",
+      "changeUtc24h": "0.00048",
+      "indexPrice": "293.8534327391645988",
+      "fundingRate": "0.001",
+      "holdingAmount": "13339.87",
+      "deliveryStartTime": null,
+      "deliveryTime": null,
+      "deliveryStatus": "",
+      "open24h": "294.13",
+      "markPrice": "294.65"
+    }
+  ],
+  "funding_rate": [
+    {
+      "symbol": "AAPLUSDT",
+      "fundingRate": "0.001",
+      "fundingRateInterval": "8",
+      "nextUpdate": "1778400000000",
+      "minFundingRate": "-0.001",
+      "maxFundingRate": "0.001"
+    }
+  ],
+  "open_interest": {
+    "openInterestList": [
+      {
+        "symbol": "AAPLUSDT",
+        "size": "13339.87"
+      }
+    ],
+    "ts": "1778389812746"
+  },
+  "contract_specs": [
+    {
+      "symbol": "AAPLUSDT",
+      "baseCoin": "AAPL",
+      "quoteCoin": "USDT",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "feeRateUpRatio": "0.005",
+      "makerFeeRate": "0.0002",
+      "takerFeeRate": "0.0006",
+      "openCostUpRatio": "0.01",
+      "supportMarginCoins": [
+        "USDT"
+      ],
+      "minTradeNum": "0.01",
+      "priceEndStep": "1",
+      "volumePlace": "2",
+      "pricePlace": "2",
+      "sizeMultiplier": "0.01",
+      "symbolType": "perpetual",
+      "minTradeUSDT": "5",
+      "maxSymbolOrderNum": "200",
+      "maxProductOrderNum": "1000",
+      "maxPositionNum": "150",
+      "symbolStatus": "normal",
+      "offTime": "-1",
+      "limitOpenTime": "-1",
+      "deliveryTime": "",
+      "deliveryStartTime": "",
+      "deliveryPeriod": "",
+      "launchTime": "",
+      "fundInterval": "8",
+      "minLever": "1",
+      "maxLever": "100",
+      "posLimit": "0.2",
+      "maintainTime": "",
+      "openTime": "1769994062305",
+      "maxMarketOrderQty": "200",
+      "maxOrderQty": "2000",
+      "isRwa": "YES"
+    }
+  ],
+  "errors": []
+}
+```
+
+## 5. Execution state
+
+```json
+{
+  "available": false,
+  "reason": "No authenticated execution-state source provided"
+}
+```
+
+## 6. Raw evidence files
+
+```json
+{
+  "bitget_ohlcv": {
+    "1D": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\raw\\bitget_AAPLUSDT_1D_ohlcv.csv",
+    "4H": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\raw\\bitget_AAPLUSDT_4H_ohlcv.csv",
+    "1H": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\raw\\bitget_AAPLUSDT_1H_ohlcv.csv"
+  },
+  "tv_exports": [],
+  "other": {
+    "market_snapshot": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\raw\\market_snapshot.json",
+    "execution_state": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\raw\\execution_state.json"
+  },
+  "derived": {
+    "analysis_summary": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\derived\\analysis_summary.json",
+    "candidate_levels": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\derived\\candidate_levels.json",
+    "freshness_check": "tmp\\review_oc_mcp_deep_analysis_starter\\test_packets\\20260510_071010_AAPLUSDT\\derived\\freshness_check.json"
+  }
+}
+```
+
+## 7. Required output
+
+Follow the master prompt exactly, including:
+
+- executive decision
+- blind technical analysis
+- levels/invalidation
+- trade ticket table
+- screener alignment check
+- warnings
+- data usage check
+- final strict JSON ticket

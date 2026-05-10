@@ -1,0 +1,94 @@
+{
+  "symbol": "AAPLUSDT",
+  "product_type": "USDT-FUTURES",
+  "fetched_at_utc": "2026-05-10T05:10:11Z",
+  "ticker": [
+    {
+      "symbol": "AAPLUSDT",
+      "lastPr": "294.65",
+      "askPr": "294.69",
+      "bidPr": "294.68",
+      "bidSz": "2.34",
+      "askSz": "2.12",
+      "high24h": "294.88",
+      "low24h": "293.8",
+      "ts": "1778389812104",
+      "change24h": "0.00177",
+      "baseVolume": "1493.18",
+      "quoteVolume": "439469.8298",
+      "usdtVolume": "439469.8298",
+      "openUtc": "294.51",
+      "changeUtc24h": "0.00048",
+      "indexPrice": "293.8534327391645988",
+      "fundingRate": "0.001",
+      "holdingAmount": "13339.87",
+      "deliveryStartTime": null,
+      "deliveryTime": null,
+      "deliveryStatus": "",
+      "open24h": "294.13",
+      "markPrice": "294.65"
+    }
+  ],
+  "funding_rate": [
+    {
+      "symbol": "AAPLUSDT",
+      "fundingRate": "0.001",
+      "fundingRateInterval": "8",
+      "nextUpdate": "1778400000000",
+      "minFundingRate": "-0.001",
+      "maxFundingRate": "0.001"
+    }
+  ],
+  "open_interest": {
+    "openInterestList": [
+      {
+        "symbol": "AAPLUSDT",
+        "size": "13339.87"
+      }
+    ],
+    "ts": "1778389812746"
+  },
+  "contract_specs": [
+    {
+      "symbol": "AAPLUSDT",
+      "baseCoin": "AAPL",
+      "quoteCoin": "USDT",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "feeRateUpRatio": "0.005",
+      "makerFeeRate": "0.0002",
+      "takerFeeRate": "0.0006",
+      "openCostUpRatio": "0.01",
+      "supportMarginCoins": [
+        "USDT"
+      ],
+      "minTradeNum": "0.01",
+      "priceEndStep": "1",
+      "volumePlace": "2",
+      "pricePlace": "2",
+      "sizeMultiplier": "0.01",
+      "symbolType": "perpetual",
+      "minTradeUSDT": "5",
+      "maxSymbolOrderNum": "200",
+      "maxProductOrderNum": "1000",
+      "maxPositionNum": "150",
+      "symbolStatus": "normal",
+      "offTime": "-1",
+      "limitOpenTime": "-1",
+      "deliveryTime": "",
+      "deliveryStartTime": "",
+      "deliveryPeriod": "",
+      "launchTime": "",
+      "fundInterval": "8",
+      "minLever": "1",
+      "maxLever": "100",
+      "posLimit": "0.2",
+      "maintainTime": "",
+      "openTime": "1769994062305",
+      "maxMarketOrderQty": "200",
+      "maxOrderQty": "2000",
+      "isRwa": "YES"
+    }
+  ],
+  "errors": []
+}

@@ -137,6 +137,13 @@ Deep-analysis source-of-truth rule:
 - The active Bitget deep-analysis workflow has been reverted to **OHLCV-first**
 - Primary truth source: **Bitget OHLCV exports**
 - Screenshots are now secondary / optional validation rather than the main analytical source
+- As of 2026-05-10, the new generic deep-analysis packet builder should become the default workflow, while the old deep-analysis scripts/prompts remain available for comparison/reference during transition.
+- Deep analysis must treat the user-selected screener symbol as preselected context only; remove any strict `score >=70` eligibility rule. Target planned risk remains **100 USDT**, but if structure, R:R, freshness, or the **1500 USDT max notional** cap make the ticket weak/invalid, return a strong warning or WAIT/NO_TRADE rather than silently weakening the standard target.
+- The `1500` cap in deep-analysis tickets means **max total notional**, not max margin.
+- Live Bitget execution is excluded from the deep-analysis round. Deep analysis may output a proposed ticket only; the user will always ask separately and explicitly for any live execution.
+- The current screener version context for new deep-analysis work is `OC Hybrid Edge Screener v11.6.x`.
+- Ladder generation is a critical quality surface: it must consider R:R, but especially avoid entries that are too deep relative to the expected pullback. Entry legs should be plausible fills for the setup family/timeframe, not mechanically placed at distant supports just because they improve R:R.
+- TradingView evidence choice: keep using the existing Playwright/browser capture/export path unless TradingView Desktop MCP proves clearly more robust or cheaper for the same evidence. Prefer robustness and lower runtime cost over novelty.
 
 TradingView MCP drawing rule:
 - For future BITGET live order requests or explicit requests to draw/visualize a trade plan or ladder, use the `tv-draw-trade-plan` skill.

@@ -1,0 +1,956 @@
+# LLM Input Packet v2 — AAPLUSDT
+
+Use this packet with `prompts/master_trade_analysis_prompt_v2.md`.
+
+## 1. Manifest
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "score": 72.4,
+  "rank": null,
+  "screener_version": "OC Hybrid Edge Screener v11.6.x",
+  "risk_usdt_target": 100.0,
+  "max_total_notional_usdt": 1500.0,
+  "created_at_local": "2026-05-10T07:48:32",
+  "created_at_utc": "2026-05-10T05:48:32Z",
+  "timezone": "Europe/Berlin",
+  "price_truth_source": "Bitget REST closed OHLCV candles",
+  "tv_export_source": "not provided",
+  "screener_usage": "summary_only_no_score_threshold",
+  "live_execution_scope": "excluded_requires_separate_explicit_user_request"
+}
+```
+
+## 2. Decision rules reminder
+
+- Bitget OHLCV and processed summaries are primary truth.
+- TradingView captures/exports are optional validation.
+- Screener context is candidate-selection context only, not proof.
+- No hard screener-score eligibility rule.
+- Target planned risk is 100 USDT unless user supplied another value.
+- Max cap is total notional, not margin: 1500.0 USDT.
+- If 100 USDT risk cannot fit structure/R:R/notional/freshness, give a strong warning or WAIT/NO_TRADE.
+- Live execution is excluded; final JSON must keep `requires_user_confirmation: true`.
+
+## 3. Processed analysis summary
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "risk_usdt_target": 100.0,
+  "max_total_notional_usdt": 1500.0,
+  "contract_rules": {
+    "price_place": 2,
+    "volume_place": 2,
+    "size_multiplier": 0.01,
+    "min_trade_num": 0.01,
+    "min_trade_usdt": 5.0,
+    "raw": {
+      "symbol": "AAPLUSDT",
+      "baseCoin": "AAPL",
+      "quoteCoin": "USDT",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "feeRateUpRatio": "0.005",
+      "makerFeeRate": "0.0002",
+      "takerFeeRate": "0.0006",
+      "openCostUpRatio": "0.01",
+      "supportMarginCoins": [
+        "USDT"
+      ],
+      "minTradeNum": "0.01",
+      "priceEndStep": "1",
+      "volumePlace": "2",
+      "pricePlace": "2",
+      "sizeMultiplier": "0.01",
+      "symbolType": "perpetual",
+      "minTradeUSDT": "5",
+      "maxSymbolOrderNum": "200",
+      "maxProductOrderNum": "1000",
+      "maxPositionNum": "150",
+      "symbolStatus": "normal",
+      "offTime": "-1",
+      "limitOpenTime": "-1",
+      "deliveryTime": "",
+      "deliveryStartTime": "",
+      "deliveryPeriod": "",
+      "launchTime": "",
+      "fundInterval": "8",
+      "minLever": "1",
+      "maxLever": "100",
+      "posLimit": "0.2",
+      "maintainTime": "",
+      "openTime": "1769994062305",
+      "maxMarketOrderQty": "200",
+      "maxOrderQty": "2000",
+      "isRwa": "YES"
+    }
+  },
+  "timeframes": {
+    "1D": {
+      "timeframe": "1D",
+      "bars": 79,
+      "closed_candles_only": true,
+      "latest_closed_bar_time_utc": "2026-05-08T16:00:00Z",
+      "latest_close": 294.46,
+      "latest_high": 294.63,
+      "latest_low": 292.18,
+      "ema20": 278.559405,
+      "ema50": 270.00792,
+      "ema200": null,
+      "atr14": 6.233571,
+      "atr14_pct": 2.117,
+      "rsi14": 73.55,
+      "adx14": 34.67,
+      "volume_ratio_20": 0.266,
+      "trend_state": "bullish",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-02-25T16:00:00Z",
+          "price": 276.0
+        },
+        {
+          "time_utc": "2026-03-10T16:00:00Z",
+          "price": 262.59
+        },
+        {
+          "time_utc": "2026-03-17T16:00:00Z",
+          "price": 255.72
+        },
+        {
+          "time_utc": "2026-03-25T16:00:00Z",
+          "price": 256.92
+        },
+        {
+          "time_utc": "2026-04-01T16:00:00Z",
+          "price": 256.09
+        },
+        {
+          "time_utc": "2026-04-05T16:00:00Z",
+          "price": 262.37
+        },
+        {
+          "time_utc": "2026-04-09T16:00:00Z",
+          "price": 262.13
+        },
+        {
+          "time_utc": "2026-04-22T16:00:00Z",
+          "price": 275.74
+        },
+        {
+          "time_utc": "2026-04-30T16:00:00Z",
+          "price": 287.69
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-03-08T16:00:00Z",
+          "price": 252.71
+        },
+        {
+          "time_utc": "2026-03-14T16:00:00Z",
+          "price": 249.4
+        },
+        {
+          "time_utc": "2026-03-22T16:00:00Z",
+          "price": 245.35
+        },
+        {
+          "time_utc": "2026-03-30T16:00:00Z",
+          "price": 245.26
+        },
+        {
+          "time_utc": "2026-04-06T16:00:00Z",
+          "price": 246.15
+        },
+        {
+          "time_utc": "2026-04-12T16:00:00Z",
+          "price": 256.76
+        },
+        {
+          "time_utc": "2026-04-21T16:00:00Z",
+          "price": 265.56
+        },
+        {
+          "time_utc": "2026-04-26T16:00:00Z",
+          "price": 265.49
+        }
+      ]
+    },
+    "4H": {
+      "timeframe": "4H",
+      "bars": 119,
+      "closed_candles_only": true,
+      "latest_closed_bar_time_utc": "2026-05-10T00:00:00Z",
+      "latest_close": 294.73,
+      "latest_high": 294.88,
+      "latest_low": 294.04,
+      "ema20": 291.160498,
+      "ema50": 285.835458,
+      "ema200": null,
+      "atr14": 1.381429,
+      "atr14_pct": 0.4687,
+      "rsi14": 94.02,
+      "adx14": 62.48,
+      "volume_ratio_20": 0.272,
+      "trend_state": "bullish",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-04-26T20:00:00Z",
+          "price": 272.58
+        },
+        {
+          "time_utc": "2026-04-28T12:00:00Z",
+          "price": 272.91
+        },
+        {
+          "time_utc": "2026-04-30T20:00:00Z",
+          "price": 284.93
+        },
+        {
+          "time_utc": "2026-05-01T12:00:00Z",
+          "price": 287.69
+        },
+        {
+          "time_utc": "2026-05-02T20:00:00Z",
+          "price": 281.14
+        },
+        {
+          "time_utc": "2026-05-03T20:00:00Z",
+          "price": 282.28
+        },
+        {
+          "time_utc": "2026-05-05T16:00:00Z",
+          "price": 284.94
+        },
+        {
+          "time_utc": "2026-05-07T12:00:00Z",
+          "price": 292.31
+        },
+        {
+          "time_utc": "2026-05-08T12:00:00Z",
+          "price": 294.98
+        },
+        {
+          "time_utc": "2026-05-09T04:00:00Z",
+          "price": 294.63
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-04-24T16:00:00Z",
+          "price": 269.86
+        },
+        {
+          "time_utc": "2026-04-25T20:00:00Z",
+          "price": 270.46
+        },
+        {
+          "time_utc": "2026-04-27T12:00:00Z",
+          "price": 265.49
+        },
+        {
+          "time_utc": "2026-04-29T12:00:00Z",
+          "price": 267.51
+        },
+        {
+          "time_utc": "2026-04-30T20:00:00Z",
+          "price": 268.25
+        },
+        {
+          "time_utc": "2026-05-02T04:00:00Z",
+          "price": 280.05
+        },
+        {
+          "time_utc": "2026-05-04T12:00:00Z",
+          "price": 275.02
+        },
+        {
+          "time_utc": "2026-05-05T12:00:00Z",
+          "price": 275.68
+        },
+        {
+          "time_utc": "2026-05-06T12:00:00Z",
+          "price": 280.99
+        },
+        {
+          "time_utc": "2026-05-07T16:00:00Z",
+          "price": 286.18
+        }
+      ]
+    },
+    "1H": {
+      "timeframe": "1H",
+      "bars": 119,
+      "closed_candles_only": true,
+      "latest_closed_bar_time_utc": "2026-05-10T04:00:00Z",
+      "latest_close": 294.64,
+      "latest_high": 294.76,
+      "latest_low": 294.52,
+      "ema20": 294.26536,
+      "ema50": 292.755621,
+      "ema200": null,
+      "atr14": 0.333571,
+      "atr14_pct": 0.1132,
+      "rsi14": 51.88,
+      "adx14": 15.47,
+      "volume_ratio_20": 0.402,
+      "trend_state": "bullish",
+      "recent_pivot_highs": [
+        {
+          "time_utc": "2026-05-06T19:00:00Z",
+          "price": 288.32
+        },
+        {
+          "time_utc": "2026-05-07T02:00:00Z",
+          "price": 288.43
+        },
+        {
+          "time_utc": "2026-05-07T14:00:00Z",
+          "price": 292.31
+        },
+        {
+          "time_utc": "2026-05-07T22:00:00Z",
+          "price": 288.46
+        },
+        {
+          "time_utc": "2026-05-08T06:00:00Z",
+          "price": 288.84
+        },
+        {
+          "time_utc": "2026-05-08T14:00:00Z",
+          "price": 294.98
+        },
+        {
+          "time_utc": "2026-05-08T19:00:00Z",
+          "price": 294.46
+        },
+        {
+          "time_utc": "2026-05-08T23:00:00Z",
+          "price": 294.36
+        },
+        {
+          "time_utc": "2026-05-09T07:00:00Z",
+          "price": 294.63
+        },
+        {
+          "time_utc": "2026-05-09T15:00:00Z",
+          "price": 294.62
+        }
+      ],
+      "recent_pivot_lows": [
+        {
+          "time_utc": "2026-05-07T02:00:00Z",
+          "price": 286.72
+        },
+        {
+          "time_utc": "2026-05-07T09:00:00Z",
+          "price": 286.72
+        },
+        {
+          "time_utc": "2026-05-07T19:00:00Z",
+          "price": 286.18
+        },
+        {
+          "time_utc": "2026-05-08T08:00:00Z",
+          "price": 288.0
+        },
+        {
+          "time_utc": "2026-05-08T09:00:00Z",
+          "price": 288.0
+        },
+        {
+          "time_utc": "2026-05-09T06:00:00Z",
+          "price": 293.8
+        },
+        {
+          "time_utc": "2026-05-09T12:00:00Z",
+          "price": 293.86
+        },
+        {
+          "time_utc": "2026-05-09T13:00:00Z",
+          "price": 293.86
+        },
+        {
+          "time_utc": "2026-05-09T18:00:00Z",
+          "price": 294.01
+        },
+        {
+          "time_utc": "2026-05-10T01:00:00Z",
+          "price": 294.04
+        }
+      ]
+    }
+  },
+  "levels": {
+    "supports": [
+      {
+        "price": 294.26536,
+        "source": "1H ema20",
+        "time_utc": "2026-05-10T04:00:00Z",
+        "distance_pct": 0.158,
+        "distance_atr": 0.336
+      },
+      {
+        "price": 294.04,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-10T01:00:00Z",
+        "distance_pct": 0.234,
+        "distance_atr": 0.499
+      },
+      {
+        "price": 294.01,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T18:00:00Z",
+        "distance_pct": 0.244,
+        "distance_atr": 0.521
+      },
+      {
+        "price": 293.86,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T12:00:00Z",
+        "distance_pct": 0.295,
+        "distance_atr": 0.63
+      },
+      {
+        "price": 293.8,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-09T06:00:00Z",
+        "distance_pct": 0.316,
+        "distance_atr": 0.673
+      },
+      {
+        "price": 292.755621,
+        "source": "1H ema50",
+        "time_utc": "2026-05-10T04:00:00Z",
+        "distance_pct": 0.67,
+        "distance_atr": 1.429
+      },
+      {
+        "price": 291.160498,
+        "source": "4H ema20",
+        "time_utc": "2026-05-10T00:00:00Z",
+        "distance_pct": 1.211,
+        "distance_atr": 2.584
+      },
+      {
+        "price": 288.0,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-08T08:00:00Z",
+        "distance_pct": 2.283,
+        "distance_atr": 4.872
+      },
+      {
+        "price": 286.72,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-07T02:00:00Z",
+        "distance_pct": 2.718,
+        "distance_atr": 5.798
+      },
+      {
+        "price": 286.18,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-07T16:00:00Z",
+        "distance_pct": 2.901,
+        "distance_atr": 6.189
+      },
+      {
+        "price": 285.835458,
+        "source": "4H ema50",
+        "time_utc": "2026-05-10T00:00:00Z",
+        "distance_pct": 3.018,
+        "distance_atr": 6.439
+      },
+      {
+        "price": 280.99,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-06T12:00:00Z",
+        "distance_pct": 4.662,
+        "distance_atr": 9.946
+      },
+      {
+        "price": 280.05,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-02T04:00:00Z",
+        "distance_pct": 4.981,
+        "distance_atr": 10.627
+      },
+      {
+        "price": 278.559405,
+        "source": "1D ema20",
+        "time_utc": "2026-05-08T16:00:00Z",
+        "distance_pct": 5.487,
+        "distance_atr": 11.706
+      },
+      {
+        "price": 275.68,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-05T12:00:00Z",
+        "distance_pct": 6.464,
+        "distance_atr": 13.79
+      },
+      {
+        "price": 275.02,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-04T12:00:00Z",
+        "distance_pct": 6.687,
+        "distance_atr": 14.268
+      },
+      {
+        "price": 270.46,
+        "source": "4H pivot low",
+        "time_utc": "2026-04-25T20:00:00Z",
+        "distance_pct": 8.235,
+        "distance_atr": 17.569
+      },
+      {
+        "price": 270.00792,
+        "source": "1D ema50",
+        "time_utc": "2026-05-08T16:00:00Z",
+        "distance_pct": 8.388,
+        "distance_atr": 17.896
+      },
+      {
+        "price": 269.86,
+        "source": "4H pivot low",
+        "time_utc": "2026-04-24T16:00:00Z",
+        "distance_pct": 8.438,
+        "distance_atr": 18.003
+      },
+      {
+        "price": 268.25,
+        "source": "4H pivot low",
+        "time_utc": "2026-04-30T20:00:00Z",
+        "distance_pct": 8.984,
+        "distance_atr": 19.169
+      },
+      {
+        "price": 267.51,
+        "source": "4H pivot low",
+        "time_utc": "2026-04-29T12:00:00Z",
+        "distance_pct": 9.236,
+        "distance_atr": 19.704
+      },
+      {
+        "price": 265.56,
+        "source": "1D pivot low",
+        "time_utc": "2026-04-21T16:00:00Z",
+        "distance_pct": 9.897,
+        "distance_atr": 21.116
+      },
+      {
+        "price": 265.49,
+        "source": "1D pivot low",
+        "time_utc": "2026-04-26T16:00:00Z",
+        "distance_pct": 9.921,
+        "distance_atr": 21.166
+      },
+      {
+        "price": 256.76,
+        "source": "1D pivot low",
+        "time_utc": "2026-04-12T16:00:00Z",
+        "distance_pct": 12.883,
+        "distance_atr": 27.486
+      },
+      {
+        "price": 252.71,
+        "source": "1D pivot low",
+        "time_utc": "2026-03-08T16:00:00Z",
+        "distance_pct": 14.257,
+        "distance_atr": 30.418
+      },
+      {
+        "price": 249.4,
+        "source": "1D pivot low",
+        "time_utc": "2026-03-14T16:00:00Z",
+        "distance_pct": 15.38,
+        "distance_atr": 32.814
+      },
+      {
+        "price": 246.15,
+        "source": "1D pivot low",
+        "time_utc": "2026-04-06T16:00:00Z",
+        "distance_pct": 16.483,
+        "distance_atr": 35.166
+      },
+      {
+        "price": 245.35,
+        "source": "1D pivot low",
+        "time_utc": "2026-03-22T16:00:00Z",
+        "distance_pct": 16.754,
+        "distance_atr": 35.746
+      },
+      {
+        "price": 245.26,
+        "source": "1D pivot low",
+        "time_utc": "2026-03-30T16:00:00Z",
+        "distance_pct": 16.785,
+        "distance_atr": 35.811
+      }
+    ],
+    "resistances": [
+      {
+        "price": 294.98,
+        "source": "4H pivot high",
+        "time_utc": "2026-05-08T12:00:00Z",
+        "distance_pct": 0.085,
+        "distance_atr": 0.181
+      }
+    ]
+  },
+  "candidate_trade_design": {
+    "side": "LONG",
+    "style_hint": "DIP_LADDER",
+    "current_price_reference": 294.73,
+    "atr4h_reference": 1.381429,
+    "expected_pullback_policy": {
+      "style": "DIP_LADDER",
+      "shallow_atr": 0.35,
+      "normal_atr": 0.8,
+      "deep_atr": 1.25,
+      "max_leg_depth_atr": 1.8,
+      "max_leg_depth_pct": 2.5,
+      "atr4h": 1.381429,
+      "current_price": 294.73,
+      "logic": "Legs beyond 1.8x 4H ATR or 2.5% are omitted unless user explicitly wants deeper resting orders."
+    },
+    "stop_loss_candidate": 290.82,
+    "invalidation_logic": "Shared SL beyond structural invalidation plus ATR buffer; entries constrained to plausible pullback depth.",
+    "target_total_risk_usdt": 100.0,
+    "max_total_notional_usdt": 1500.0,
+    "target_orders_before_notional_cap": [
+      {
+        "leg": "L1",
+        "order_type": "limit",
+        "entry": 294.27,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 7.24,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 299.44,
+        "take_profit_source": "projected_rr_target",
+        "allocated_target_risk_usdt": 25.0,
+        "actual_risk_before_notional_cap_usdt": 24.98,
+        "notional_before_notional_cap_usdt": 2130.51,
+        "rr_estimate": 1.5
+      },
+      {
+        "leg": "L2",
+        "order_type": "limit",
+        "entry": 293.8,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 11.74,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 298.27,
+        "take_profit_source": "projected_rr_target",
+        "allocated_target_risk_usdt": 35.0,
+        "actual_risk_before_notional_cap_usdt": 34.99,
+        "notional_before_notional_cap_usdt": 3449.21,
+        "rr_estimate": 1.5
+      },
+      {
+        "leg": "L3",
+        "order_type": "limit",
+        "entry": 292.76,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 20.61,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 294.98,
+        "take_profit_source": "4H pivot high",
+        "allocated_target_risk_usdt": 40.0,
+        "actual_risk_before_notional_cap_usdt": 39.98,
+        "notional_before_notional_cap_usdt": 6033.78,
+        "rr_estimate": 1.14
+      }
+    ],
+    "target_total_notional_before_cap_usdt": 11613.5,
+    "target_risk_feasible_under_notional_cap": false,
+    "cap_adjusted_orders_if_needed": [
+      {
+        "leg": "L1",
+        "order_type": "limit",
+        "entry": 294.27,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 7.24,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 299.44,
+        "take_profit_source": "projected_rr_target",
+        "allocated_target_risk_usdt": 25.0,
+        "actual_risk_before_notional_cap_usdt": 24.98,
+        "notional_before_notional_cap_usdt": 2130.51,
+        "rr_estimate": 1.5,
+        "qty_cap_adjusted": 0.93,
+        "notional_cap_adjusted_usdt": 273.67,
+        "actual_risk_cap_adjusted_usdt": 3.21
+      },
+      {
+        "leg": "L2",
+        "order_type": "limit",
+        "entry": 293.8,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 11.74,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 298.27,
+        "take_profit_source": "projected_rr_target",
+        "allocated_target_risk_usdt": 35.0,
+        "actual_risk_before_notional_cap_usdt": 34.99,
+        "notional_before_notional_cap_usdt": 3449.21,
+        "rr_estimate": 1.5,
+        "qty_cap_adjusted": 1.51,
+        "notional_cap_adjusted_usdt": 443.64,
+        "actual_risk_cap_adjusted_usdt": 4.5
+      },
+      {
+        "leg": "L3",
+        "order_type": "limit",
+        "entry": 292.76,
+        "entry_source": "structure_or_expected_pullback",
+        "qty_target_risk_before_notional_cap": 20.61,
+        "stop_loss": 290.82,
+        "take_profit_candidate": 294.98,
+        "take_profit_source": "4H pivot high",
+        "allocated_target_risk_usdt": 40.0,
+        "actual_risk_before_notional_cap_usdt": 39.98,
+        "notional_before_notional_cap_usdt": 6033.78,
+        "rr_estimate": 1.14,
+        "qty_cap_adjusted": 2.66,
+        "notional_cap_adjusted_usdt": 778.74,
+        "actual_risk_cap_adjusted_usdt": 5.16
+      }
+    ],
+    "omitted_too_deep_levels_sample": [
+      {
+        "price": 291.160498,
+        "source": "4H ema20",
+        "time_utc": "2026-05-10T00:00:00Z",
+        "distance_pct": 1.211,
+        "distance_atr": 2.584,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 288.0,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-08T08:00:00Z",
+        "distance_pct": 2.283,
+        "distance_atr": 4.872,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 286.72,
+        "source": "1H pivot low",
+        "time_utc": "2026-05-07T02:00:00Z",
+        "distance_pct": 2.718,
+        "distance_atr": 5.798,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 286.18,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-07T16:00:00Z",
+        "distance_pct": 2.901,
+        "distance_atr": 6.189,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 285.835458,
+        "source": "4H ema50",
+        "time_utc": "2026-05-10T00:00:00Z",
+        "distance_pct": 3.018,
+        "distance_atr": 6.439,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 280.99,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-06T12:00:00Z",
+        "distance_pct": 4.662,
+        "distance_atr": 9.946,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 280.05,
+        "source": "4H pivot low",
+        "time_utc": "2026-05-02T04:00:00Z",
+        "distance_pct": 4.981,
+        "distance_atr": 10.627,
+        "reason": "too_deep_for_expected_pullback"
+      },
+      {
+        "price": 278.559405,
+        "source": "1D ema20",
+        "time_utc": "2026-05-08T16:00:00Z",
+        "distance_pct": 5.487,
+        "distance_atr": 11.706,
+        "reason": "too_deep_for_expected_pullback"
+      }
+    ],
+    "warnings": [
+      "Target 100 USDT risk exceeds max total notional 1500.00 USDT; cap-adjusted sizing is shown for feasibility, but this is a strong warning.",
+      "Some structural levels were omitted because they are too deep for the expected pullback window; this is intentional to avoid unrealistic resting legs."
+    ]
+  },
+  "screener_summary": {
+    "screener_version": "OC Hybrid Edge Screener v11.6.x",
+    "symbol": "BITGET:AAPLUSDT.P",
+    "bias": "LONG",
+    "family": "LC",
+    "score": 72.4,
+    "rank": null,
+    "usage_note": "Candidate-selection context only. No hard score threshold; target 100 USDT risk by default, warn if trade quality/constraints are weak."
+  },
+  "freshness": {
+    "status": "OK",
+    "ticker_vs_last_closed_4h_diff_pct": 0.0034,
+    "current_ticker_reference": 294.72,
+    "latest_closed_4h_close": 294.73,
+    "tv_exports_available": false,
+    "notes": [
+      "No TradingView capture/export copied; Bitget OHLCV remains primary truth, visual validation absent."
+    ],
+    "checked_at_utc": "2026-05-10T05:48:34Z"
+  },
+  "tv_exports_summary": {
+    "available": false,
+    "files": [],
+    "manifest": null,
+    "method_preference": "existing Playwright/browser capture unless TradingView Desktop MCP proves more robust/cheaper"
+  }
+}
+```
+
+## 4. Market snapshot
+
+```json
+{
+  "symbol": "AAPLUSDT",
+  "product_type": "USDT-FUTURES",
+  "fetched_at_utc": "2026-05-10T05:48:33Z",
+  "ticker": [
+    {
+      "symbol": "AAPLUSDT",
+      "lastPr": "294.72",
+      "askPr": "294.72",
+      "bidPr": "294.71",
+      "bidSz": "2.57",
+      "askSz": "2.36",
+      "high24h": "294.88",
+      "low24h": "293.8",
+      "ts": "1778392113576",
+      "change24h": "0.00197",
+      "baseVolume": "1449.58",
+      "quoteVolume": "426644.6078",
+      "usdtVolume": "426644.6078",
+      "openUtc": "294.51",
+      "changeUtc24h": "0.00071",
+      "indexPrice": "293.8534327391645988",
+      "fundingRate": "0.001",
+      "holdingAmount": "13335.49",
+      "deliveryStartTime": null,
+      "deliveryTime": null,
+      "deliveryStatus": "",
+      "open24h": "294.14",
+      "markPrice": "294.72"
+    }
+  ],
+  "funding_rate": [
+    {
+      "symbol": "AAPLUSDT",
+      "fundingRate": "0.001",
+      "fundingRateInterval": "8",
+      "nextUpdate": "1778400000000",
+      "minFundingRate": "-0.001",
+      "maxFundingRate": "0.001"
+    }
+  ],
+  "open_interest": {
+    "openInterestList": [
+      {
+        "symbol": "AAPLUSDT",
+        "size": "13335.49"
+      }
+    ],
+    "ts": "1778392114326"
+  },
+  "contract_specs": [
+    {
+      "symbol": "AAPLUSDT",
+      "baseCoin": "AAPL",
+      "quoteCoin": "USDT",
+      "buyLimitPriceRatio": "0.02",
+      "sellLimitPriceRatio": "0.02",
+      "feeRateUpRatio": "0.005",
+      "makerFeeRate": "0.0002",
+      "takerFeeRate": "0.0006",
+      "openCostUpRatio": "0.01",
+      "supportMarginCoins": [
+        "USDT"
+      ],
+      "minTradeNum": "0.01",
+      "priceEndStep": "1",
+      "volumePlace": "2",
+      "pricePlace": "2",
+      "sizeMultiplier": "0.01",
+      "symbolType": "perpetual",
+      "minTradeUSDT": "5",
+      "maxSymbolOrderNum": "200",
+      "maxProductOrderNum": "1000",
+      "maxPositionNum": "150",
+      "symbolStatus": "normal",
+      "offTime": "-1",
+      "limitOpenTime": "-1",
+      "deliveryTime": "",
+      "deliveryStartTime": "",
+      "deliveryPeriod": "",
+      "launchTime": "",
+      "fundInterval": "8",
+      "minLever": "1",
+      "maxLever": "100",
+      "posLimit": "0.2",
+      "maintainTime": "",
+      "openTime": "1769994062305",
+      "maxMarketOrderQty": "200",
+      "maxOrderQty": "2000",
+      "isRwa": "YES"
+    }
+  ],
+  "errors": []
+}
+```
+
+## 5. Execution state / read-only context
+
+```json
+{
+  "available": false,
+  "reason": "Execution state intentionally excluded unless supplied as read-only context",
+  "usage_note": "Live execution is out of scope for deep analysis."
+}
+```
+
+## 6. Evidence files
+
+```json
+{
+  "bitget_ohlcv": {
+    "1D": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\raw\\bitget_AAPLUSDT_1D_closed_ohlcv.csv",
+    "4H": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\raw\\bitget_AAPLUSDT_4H_closed_ohlcv.csv",
+    "1H": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\raw\\bitget_AAPLUSDT_1H_closed_ohlcv.csv"
+  },
+  "tv_exports": [],
+  "other": {
+    "market_snapshot": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\raw\\market_snapshot.json",
+    "execution_state": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\raw\\execution_state.json"
+  },
+  "derived": {
+    "analysis_summary": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\derived\\analysis_summary.json",
+    "candidate_levels": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\derived\\candidate_levels.json",
+    "freshness_check": "tmp\\deep_analysis_packets_v2_test\\20260510_074832_AAPLUSDT\\derived\\freshness_check.json"
+  }
+}
+```

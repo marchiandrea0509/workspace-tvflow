@@ -1,0 +1,16 @@
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "score": 72.4,
+  "rank": null,
+  "risk_usdt": 100.0,
+  "max_margin_usdt": 1500.0,
+  "created_at_local": "2026-05-10T07:10:10",
+  "created_at_utc": "2026-05-10T05:10:10Z",
+  "timezone": "Europe/Berlin",
+  "price_truth_source": "Bitget REST",
+  "tv_export_source": "not provided",
+  "screener_usage": "summary_only"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "OK",
+  "ticker_vs_last_closed_4h_diff_pct": 0.0034,
+  "current_ticker_reference": 294.72,
+  "latest_closed_4h_close": 294.73,
+  "tv_exports_available": false,
+  "notes": [
+    "No TradingView capture/export copied; Bitget OHLCV remains primary truth, visual validation absent."
+  ],
+  "checked_at_utc": "2026-05-10T05:49:13Z"
+}

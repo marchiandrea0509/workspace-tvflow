@@ -1,0 +1,18 @@
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "side": "LONG",
+  "family": "LC",
+  "score": 72.4,
+  "rank": null,
+  "screener_version": "OC Hybrid Edge Screener v11.6.x",
+  "risk_usdt_target": 100.0,
+  "max_total_notional_usdt": 1500.0,
+  "created_at_local": "2026-05-10T07:49:10",
+  "created_at_utc": "2026-05-10T05:49:10Z",
+  "timezone": "Europe/Berlin",
+  "price_truth_source": "Bitget REST closed OHLCV candles",
+  "tv_export_source": "not provided",
+  "screener_usage": "summary_only_no_score_threshold",
+  "live_execution_scope": "excluded_requires_separate_explicit_user_request"
+}

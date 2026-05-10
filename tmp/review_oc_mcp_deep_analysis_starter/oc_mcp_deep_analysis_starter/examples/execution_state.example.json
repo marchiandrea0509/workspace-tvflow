@@ -1,0 +1,15 @@
+{
+  "available": true,
+  "position": {
+    "has_position": false,
+    "side": null,
+    "size": 0,
+    "entry_price": null,
+    "unrealized_pnl": null
+  },
+  "open_orders": [],
+  "tpsl_orders": [],
+  "available_margin": null,
+  "margin_currency": "USDT",
+  "fetched_at_utc": "2026-05-10T10:00:00Z"
+}

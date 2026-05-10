@@ -1,0 +1,5 @@
+{
+  "available": false,
+  "reason": "Execution state intentionally excluded unless supplied as read-only context",
+  "usage_note": "Live execution is out of scope for deep analysis."
+}

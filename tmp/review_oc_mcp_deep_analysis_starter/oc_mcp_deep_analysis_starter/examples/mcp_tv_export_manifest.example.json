@@ -1,0 +1,45 @@
+{
+  "symbol": "AAPLUSDT",
+  "tv_symbol": "BITGET:AAPLUSDT.P",
+  "created_at_utc": "2026-05-10T10:00:00Z",
+  "exports": [
+    {
+      "type": "structure_csv",
+      "timeframe": "1D",
+      "path": "tv_AAPLUSDT_1D_structure_export.csv",
+      "indicator": "OC Deep Structure Export v1"
+    },
+    {
+      "type": "structure_csv",
+      "timeframe": "4H",
+      "path": "tv_AAPLUSDT_4H_structure_export.csv",
+      "indicator": "OC Deep Structure Export v1"
+    },
+    {
+      "type": "structure_csv",
+      "timeframe": "1H",
+      "path": "tv_AAPLUSDT_1H_structure_export.csv",
+      "indicator": "OC Deep Structure Export v1"
+    },
+    {
+      "type": "screenshot",
+      "timeframe": "1D",
+      "path": "tv_AAPLUSDT_1D_clean.png"
+    },
+    {
+      "type": "screenshot",
+      "timeframe": "4H",
+      "path": "tv_AAPLUSDT_4H_clean.png"
+    },
+    {
+      "type": "screenshot",
+      "timeframe": "1H",
+      "path": "tv_AAPLUSDT_1H_clean.png"
+    },
+    {
+      "type": "dashboard_screenshot",
+      "timeframe": "4H",
+      "path": "tv_AAPLUSDT_4H_dashboard.png"
+    }
+  ]
+}

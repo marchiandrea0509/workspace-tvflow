@@ -1,0 +1,38 @@
+{
+  "timezone": "Europe/Berlin",
+  "exchange": "Bitget",
+  "product_type": "USDT-FUTURES",
+  "default_timeframes": ["1D", "4H", "1H"],
+  "optional_timeframes": ["15m"],
+  "bars_per_timeframe": {
+    "1D": 400,
+    "4H": 500,
+    "1H": 500,
+    "15m": 300
+  },
+  "risk": {
+    "standard_risk_usdt": 100.0,
+    "max_margin_usdt": 1500.0,
+    "default_ladder_risk_split": [0.25, 0.35, 0.40]
+  },
+  "indicators": {
+    "ema_periods": [20, 50, 200],
+    "atr_period": 14,
+    "rsi_period": 14,
+    "adx_period": 14,
+    "volume_sma_period": 20,
+    "pivot_left": 3,
+    "pivot_right": 3,
+    "atr_stop_buffer_min": 0.15,
+    "atr_stop_buffer_max": 0.35
+  },
+  "freshness": {
+    "max_packet_age_minutes": 15,
+    "max_tv_bitget_close_diff_pct": 0.15
+  },
+  "screenshots": {
+    "required_clean_timeframes": ["1D", "4H", "1H"],
+    "optional_dashboard_timeframe": "4H",
+    "recommended_visuals": ["candles", "EMA20", "EMA50", "EMA200", "support_resistance", "volume", "current_price_line"]
+  }
+}

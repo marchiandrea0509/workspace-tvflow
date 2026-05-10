@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-09T15:28:23.500Z",
+  "updatedAt": "2026-05-10T05:09:22.348Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -9,13 +9,13 @@
       "endLine": 8,
       "source": "memory",
       "snippet": "# 2026-04-10 - On 2026-04-10 the active Pine screener runtime in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview` was switched to watchlist `BITGET_TRADFI` and indicator `OC Hybrid Edge Screener v7`. This was later reverted; the current canonical runtime target for the 4H screener is back on `OC Hybrid Edge Screener v6`. - Replaced the default deep-analysis prompt path with a Bitget-specific LLM prompt. Active default prompt is now `data_pipeline/prompts/single_market_deep_dive_prompt.md` (Bitget version), while the legacy generic prompt was preserved at `data_pipeline/prompts/single_market_deep_dive_prompt_legacy_generic.md`. - Added a clear Bitget-specific LLM runtime path via `data_pipel",
-      "recallCount": 7,
+      "recallCount": 8,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.0243652554987053,
+      "totalScore": 3.495423954987345,
       "maxScore": 0.6619517895219907,
       "firstRecalledAt": "2026-04-27T16:44:23.745Z",
-      "lastRecalledAt": "2026-05-09T15:28:23.500Z",
+      "lastRecalledAt": "2026-05-10T05:09:22.348Z",
       "queryHashes": [
         "ab67d239bc5e",
         "9c5fe0c314b1",
@@ -23,7 +23,8 @@
         "e1d9ed05f284",
         "eb3fb32532eb",
         "6c90ed120bcf",
-        "c49bf331721f"
+        "c49bf331721f",
+        "a94d27845c18"
       ],
       "recallDays": [
         "2026-04-27",
@@ -31,7 +32,8 @@
         "2026-04-30",
         "2026-05-01",
         "2026-05-08",
-        "2026-05-09"
+        "2026-05-09",
+        "2026-05-10"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -115,13 +117,13 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
-      "recallCount": 14,
+      "recallCount": 15,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 5.650675684213638,
+      "totalScore": 6.058548712730408,
       "maxScore": 0.4752642780542373,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-05-09T15:28:23.500Z",
+      "lastRecalledAt": "2026-05-10T05:09:22.348Z",
       "queryHashes": [
         "e3e1321e6742",
         "aa50b6b9ac9f",
@@ -136,7 +138,8 @@
         "3ff692179203",
         "9d45e52b55e2",
         "fbb4912a96a0",
-        "c49bf331721f"
+        "c49bf331721f",
+        "a94d27845c18"
       ],
       "recallDays": [
         "2026-04-28",
@@ -144,7 +147,8 @@
         "2026-05-02",
         "2026-05-03",
         "2026-05-06",
-        "2026-05-09"
+        "2026-05-09",
+        "2026-05-10"
       ],
       "conceptTags": [
         "tvflow-gme-ladder-20260427-l1",
@@ -838,19 +842,21 @@
       "endLine": 36,
       "source": "memory",
       "snippet": "- Read-only refresh observed current GME state differs from earlier memory: prior partial close order `1433842998482464769` is canceled; current active reduce-only GME close limit is `58.65 @ 24.93`, orderId `1433962049984688134`, source `modify_order_limit`. No live orders were touched by the journal refresh. ## Pine screener upgraded to v9.3 - Time: 2026-05-01 ~14:10 Europe/Berlin - User asked to replace the screener tool indicator with newest `OC Hybrid Edge Screener v9.3`. - Updated runtime default in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\scripts\\pine_screener_export.js` from v6 to `OC Hybrid Edge Screener v9.3`. - Updated cron prompt `C:\\Users\\anmar\\.openclaw\\workspace\\tradi",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8132547616958619,
+      "totalScore": 1.2383820861577988,
       "maxScore": 0.4397819072008133,
       "firstRecalledAt": "2026-05-02T05:36:54.376Z",
-      "lastRecalledAt": "2026-05-02T15:26:45.529Z",
+      "lastRecalledAt": "2026-05-10T05:09:22.348Z",
       "queryHashes": [
         "9f638a8ca7cb",
-        "82fbbf85524a"
+        "82fbbf85524a",
+        "a94d27845c18"
       ],
       "recallDays": [
-        "2026-05-02"
+        "2026-05-02",
+        "2026-05-10"
       ],
       "conceptTags": [
         "read-only",

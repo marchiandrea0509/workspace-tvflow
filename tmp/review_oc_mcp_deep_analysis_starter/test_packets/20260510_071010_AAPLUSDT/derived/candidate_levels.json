@@ -1,0 +1,125 @@
+{
+  "supports": [
+    {
+      "price": 294.04,
+      "source": "1H pivot low",
+      "time_utc": "2026-05-10T01:00:00Z",
+      "distance_pct": 0.207,
+      "distance_atr": 0.472
+    },
+    {
+      "price": 294.01,
+      "source": "1H pivot low",
+      "time_utc": "2026-05-09T18:00:00Z",
+      "distance_pct": 0.217,
+      "distance_atr": 0.495
+    },
+    {
+      "price": 293.86,
+      "source": "1H pivot low",
+      "time_utc": "2026-05-09T12:00:00Z",
+      "distance_pct": 0.268,
+      "distance_atr": 0.611
+    },
+    {
+      "price": 293.8,
+      "source": "1H pivot low",
+      "time_utc": "2026-05-09T06:00:00Z",
+      "distance_pct": 0.288,
+      "distance_atr": 0.657
+    },
+    {
+      "price": 288.0,
+      "source": "1H pivot low",
+      "time_utc": "2026-05-08T08:00:00Z",
+      "distance_pct": 2.257,
+      "distance_atr": 5.144
+    },
+    {
+      "price": 286.18,
+      "source": "4H pivot low",
+      "time_utc": "2026-05-07T16:00:00Z",
+      "distance_pct": 2.875,
+      "distance_atr": 6.551
+    },
+    {
+      "price": 280.99,
+      "source": "4H pivot low",
+      "time_utc": "2026-05-06T12:00:00Z",
+      "distance_pct": 4.636,
+      "distance_atr": 10.566
+    },
+    {
+      "price": 275.68,
+      "source": "4H pivot low",
+      "time_utc": "2026-05-05T12:00:00Z",
+      "distance_pct": 6.438,
+      "distance_atr": 14.673
+    },
+    {
+      "price": 275.02,
+      "source": "4H pivot low",
+      "time_utc": "2026-05-04T12:00:00Z",
+      "distance_pct": 6.662,
+      "distance_atr": 15.183
+    },
+    {
+      "price": 265.56,
+      "source": "1D pivot low",
+      "time_utc": "2026-04-21T16:00:00Z",
+      "distance_pct": 9.873,
+      "distance_atr": 22.501
+    }
+  ],
+  "resistances": [
+    {
+      "price": 294.98,
+      "source": "4H pivot high",
+      "time_utc": "2026-05-08T12:00:00Z",
+      "distance_pct": 0.112,
+      "distance_atr": 0.255
+    }
+  ],
+  "candidate_trade_design": {
+    "side": "LONG",
+    "style_hint": "DIP_LADDER",
+    "current_price_reference": 294.65,
+    "atr4h_reference": 1.292857,
+    "stop_loss_candidate": 287.676786,
+    "invalidation_logic": "Below meaningful 4H/support pivot plus 0.25 ATR buffer",
+    "candidate_orders": [
+      {
+        "leg": "L1",
+        "entry": 294.132857,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 25.0,
+        "estimated_qty_before_exchange_rounding": 3.872324,
+        "estimated_notional_usdt": 1138.98,
+        "rr_estimate": 0.13
+      },
+      {
+        "leg": "L2",
+        "entry": 294.04,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 35.0,
+        "estimated_qty_before_exchange_rounding": 5.500365,
+        "estimated_notional_usdt": 1617.33,
+        "rr_estimate": 0.15
+      },
+      {
+        "leg": "L3",
+        "entry": 294.01,
+        "stop_loss": 287.676786,
+        "take_profit_candidate": 294.98,
+        "allocated_risk_usdt": 40.0,
+        "estimated_qty_before_exchange_rounding": 6.315908,
+        "estimated_notional_usdt": 1856.94,
+        "rr_estimate": 0.15
+      }
+    ],
+    "target_total_risk_usdt": 100.0,
+    "max_margin_usdt": 1500.0
+  }
+}
