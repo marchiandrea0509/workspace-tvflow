@@ -11,8 +11,8 @@ Analyze one manually selected Bitget USDT perpetual symbol and produce a practic
 3. Use screener context only after the blind technical review.
 4. Do **not** use a hard screener-score threshold. No `score >=70` rule.
 5. Default target planned risk is **100 USDT** unless the packet says otherwise.
-6. The cap is **1500 USDT max total notional**, not max margin.
-7. Do not silently reduce risk because confidence is lower. If the full-risk target is structurally weak, has bad R:R, stale data, or breaches notional constraints, say so strongly and prefer `WAIT` / `NO_TRADE` when needed.
+6. The cap is **1500 USDT max margin** at the planned leverage, not max total notional.
+7. Do not silently reduce risk because confidence is lower. If the full-risk target is structurally weak, has bad R:R, stale data, or breaches margin constraints, say so strongly and prefer `WAIT` / `NO_TRADE` when needed.
 8. No live execution is authorized. Produce analysis and a proposed ticket only.
 9. Final JSON must include `requires_user_confirmation: true`.
 
@@ -20,13 +20,21 @@ Analyze one manually selected Bitget USDT perpetual symbol and produce a practic
 
 A valid ladder must balance R:R with plausible fill depth.
 
-Do not choose very deep leg entries only because they improve theoretical R:R. Each entry must be realistic for the expected pullback based on timeframe, ATR, trend state, and setup family.
+Do not choose very deep leg entries only because they improve theoretical R:R. Each entry must be realistic for the expected pullback based on timeframe, ATR, trend state, and setup family. But for LC/DIP setups, do **not** reject a deeper structural level merely because current price is near resistance or RSI is high; those can be valid reasons to expect a pullback.
+
+Reasons for rejecting a ladder must be meaningful and explicit, for example:
+- clear 4H/1H change of character against the intended side
+- strong probability that the pullback leg would be filled only during trend failure and then hit SL
+- degraded 4H EMA/trend structure
+- stale price/evidence
+- poor natural/projected R:R even after using valid structural legs
+- liquidity/fee/contract constraint issues
 
 For pullback ladders:
 - L1 should be a plausible shallow pullback.
 - L2 should be a normal expected pullback.
-- L3 may be deeper, but still inside the realistic expected pullback window unless explicitly flagged as aggressive/deep.
-- If the best structural support is too far below current price for the setup, do not force it as a resting leg. Mark it as omitted/deep and warn.
+- L3 may be deeper and should consider important 4H screenshot/structure levels when they improve R:R without implying a character change.
+- If the best structural support is too far below current price for the setup, do not force it as a resting leg. Mark it as omitted/deep and explain the CHoCH / trend-failure / SL-hit reason.
 
 ## Analysis sequence
 
@@ -51,7 +59,7 @@ Check:
 - Are entries realistically fillable for the expected pullback?
 - Is the stop structurally valid?
 - Is natural or projected R:R acceptable?
-- Does target 100 USDT risk fit inside 1500 USDT total notional?
+- Does target 100 USDT risk fit inside the 1500 USDT margin cap at planned leverage?
 
 ### D) Screener alignment check
 Only after independent analysis, compare against screener context:
@@ -59,6 +67,7 @@ Only after independent analysis, compare against screener context:
 - family
 - score/rank if provided
 - action window/invalidation if provided
+- strategy-test / screener export fields if provided in the packet
 
 ### E) Decision
 Choose exactly one:
@@ -77,7 +86,7 @@ Because live execution is excluded from this round, even `NEW_TRADE` means only 
 - Bias:
 - Execution style:
 - Planned risk target:
-- Max total notional cap:
+- Max margin cap / planned leverage:
 - Main reason in 2-4 lines.
 
 ## 2) Blind technical analysis
@@ -100,7 +109,7 @@ If tradeable:
 | Leg | Order type | Entry | Qty | SL | TP | Risk USDT | Notional USDT | R:R | Comment |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
 
-If target risk cannot fit under 1500 USDT notional, show the issue clearly and recommend WAIT or cap-adjusted sizing only as information, not as silent replacement.
+If target risk cannot fit under 1500 USDT margin at planned leverage, show the issue clearly and recommend WAIT or cap-adjusted sizing only as information, not as silent replacement.
 
 ## 6) Screener alignment check
 | Screener item | Value | Impact |
@@ -117,7 +126,7 @@ List practical warnings. Make notional cap, bad R:R, stale data, unrealistic pul
 | execution_state.json | yes/no | | |
 | Bitget OHLCV | yes/no | | |
 | TradingView exports/screenshots | yes/no | | |
-| Screener summary | yes/no | | |
+| Screener summary / strategy-test export | yes/no | | |
 
 ## 9) Final JSON ticket
 Return valid JSON only inside this section.
@@ -129,8 +138,10 @@ Return valid JSON only inside this section.
   "side": "LONG",
   "execution_style": "DIP_LADDER",
   "planned_risk_usdt": 100.0,
-  "max_total_notional_usdt": 1500.0,
-  "target_risk_feasible_under_notional_cap": false,
+  "max_margin_usdt": 1500.0,
+  "planned_leverage": 4.0,
+  "max_effective_notional_usdt": 6000.0,
+  "target_risk_feasible_under_margin_cap": true,
   "confidence": "medium",
   "orders": [],
   "invalidation": {

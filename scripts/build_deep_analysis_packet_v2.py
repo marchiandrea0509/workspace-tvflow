@@ -6,9 +6,10 @@ Design decisions:
 - User-selected screener symbol is context, not proof.
 - No hard screener score threshold.
 - Target planned risk remains 100 USDT by default.
-- 1500 cap means max total notional, not max margin.
+- 1500 cap means max margin at the planned leverage, not max total notional.
 - Live execution is excluded; this script never places/cancels/modifies orders.
 - Ladder entries must be plausible for the expected pullback, not simply deep supports.
+- --screener-data-file accepts TradingView Screener/strategy-test CSV or JSON exports.
 """
 from __future__ import annotations
 
@@ -58,7 +59,8 @@ def ensure_dir(path: Path) -> Path:
 def read_json(path: Path, default: Any = None) -> Any:
     if not path or not path.exists():
         return default
-    return json.loads(path.read_text(encoding="utf-8"))
+    # PowerShell-created JSON can include a UTF-8 BOM on Windows.
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def write_json(path: Path, data: Any) -> None:
@@ -375,18 +377,21 @@ def classify_expected_pullback(side: str, family: str, summaries: Dict[str, Dict
     atr4h = float(summaries.get("4H", {}).get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
     close = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     fam = family.upper()
-    # Pullback windows are deliberately conservative: avoid deep legs that need a regime change to fill.
+    # LC/DIP ladders can legitimately use deeper structural supports.  Do not reject
+    # a deep level merely because price is currently near resistance; reject/flag it
+    # only when it implies a likely change of character, unacceptable SL-hit risk, or
+    # broken trend structure.
     if fam in ("LC", "DIP", "DIP_LADDER", "AUTO"):
         return {
             "style": "DIP_LADDER" if side == "LONG" else "SELL_RALLY",
             "shallow_atr": 0.35,
             "normal_atr": 0.80,
-            "deep_atr": 1.25,
-            "max_leg_depth_atr": 1.80,
-            "max_leg_depth_pct": 2.50,
+            "deep_atr": 5.50,
+            "max_leg_depth_atr": 6.00,
+            "max_leg_depth_pct": 6.25,
             "atr4h": atr4h,
             "current_price": close,
-            "logic": "Legs beyond 1.8x 4H ATR or 2.5% are omitted unless user explicitly wants deeper resting orders.",
+            "logic": "LC/DIP ladders may include deeper structural support; omit only for change-of-character/SL-hit/trend-risk reasons, not simply because current price is near resistance.",
         }
     if fam in ("BO", "BREAKOUT", "BREAKDOWN"):
         return {
@@ -404,36 +409,105 @@ def classify_expected_pullback(side: str, family: str, summaries: Dict[str, Dict
         "style": "AUTO",
         "shallow_atr": 0.35,
         "normal_atr": 0.80,
-        "deep_atr": 1.25,
-        "max_leg_depth_atr": 1.80,
-        "max_leg_depth_pct": 2.50,
+        "deep_atr": 5.50,
+        "max_leg_depth_atr": 6.00,
+        "max_leg_depth_pct": 6.25,
         "atr4h": atr4h,
         "current_price": close,
-        "logic": "Default conservative pullback window.",
+        "logic": "Default pullback window allows meaningful structural legs; rejection should cite CHoCH/trend-risk/SL-hit risk/R:R, not resistance alone.",
     }
 
 
-def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_notional: float, rules: Dict[str, Any]) -> Dict[str, Any]:
+def structure_risk_diagnostics(side: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
+    """Cheap structure/CHoCH proxy for deciding whether rejecting a ladder is meaningful.
+
+    This is intentionally explainable rather than predictive: it flags when a pullback
+    would likely be normal trend retest vs. a probable character change.
+    """
+    side = side.upper()
+    tf4 = summaries.get("4H", {})
+    tf1 = summaries.get("1H", {})
+    close = float(tf4.get("latest_close") or tf1.get("latest_close") or 0.0)
+    atr4h = float(tf4.get("atr14") or tf1.get("atr14") or 0.0)
+    ema20 = tf4.get("ema20")
+    ema50 = tf4.get("ema50")
+    ema200 = tf4.get("ema200")
+    trend = tf4.get("trend_state")
+    rsi4h = tf4.get("rsi14")
+    adx4h = tf4.get("adx14")
+
+    supports = levels.get("supports", [])
+    resistances = levels.get("resistances", [])
+    four_h_lows = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low"]
+    four_h_highs = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high"]
+
+    if side == "LONG":
+        key_structure = max(four_h_lows) if four_h_lows else None
+        choch_level = key_structure
+        if key_structure is not None and atr4h:
+            danger_zone = key_structure - 0.5 * atr4h
+        else:
+            danger_zone = None
+        choch_triggered = bool(key_structure is not None and close < key_structure)
+        trend_degraded = bool(ema20 and ema50 and close < float(ema50) and float(ema20) < float(ema50))
+        reasons = []
+        if choch_triggered:
+            reasons.append("latest 4H close is below the most recent 4H swing-low support")
+        if trend_degraded:
+            reasons.append("4H close/EMA stack has degraded below EMA50")
+    else:
+        key_structure = min(four_h_highs) if four_h_highs else None
+        choch_level = key_structure
+        danger_zone = key_structure + 0.5 * atr4h if key_structure is not None and atr4h else None
+        choch_triggered = bool(key_structure is not None and close > key_structure)
+        trend_degraded = bool(ema20 and ema50 and close > float(ema50) and float(ema20) > float(ema50))
+        reasons = []
+        if choch_triggered:
+            reasons.append("latest 4H close is above the most recent 4H swing-high resistance")
+        if trend_degraded:
+            reasons.append("4H close/EMA stack has degraded above EMA50 against the short")
+
+    if not reasons:
+        reasons.append("no decisive 4H change-of-character proxy detected")
+
+    return {
+        "side": side,
+        "trend_state_4h": trend,
+        "rsi14_4h": rsi4h,
+        "adx14_4h": adx4h,
+        "ema20_4h": ema20,
+        "ema50_4h": ema50,
+        "ema200_4h": ema200,
+        "choch_reference_level": rn(choch_level),
+        "sl_hit_danger_zone": rn(danger_zone),
+        "choch_triggered_now": choch_triggered,
+        "trend_degraded_now": trend_degraded,
+        "ladder_rejection_guidance": "Do not reject LC/DIP solely because price is near resistance or RSI is high. Stronger rejection needs CHoCH, degraded trend, stale data, poor R:R, liquidity/fee issue, or high probability of stop hit before a realistic TP.",
+        "reasons": reasons,
+    }
+
+
+def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any]) -> Dict[str, Any]:
     side = side.upper()
     if side not in ("LONG", "SHORT"):
-        return {"side": side, "decision_hint": "WAIT", "warnings": ["No LONG/SHORT side supplied; LLM must infer or ask for confirmation."], "target_risk_usdt": risk_usdt, "max_total_notional_usdt": max_notional}
+        return {"side": side, "decision_hint": "WAIT", "warnings": ["No LONG/SHORT side supplied; LLM must infer or ask for confirmation."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
 
     current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     atr4h = float(summaries.get("4H", {}).get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
     if atr4h <= 0:
-        return {"side": side, "decision_hint": "WAIT", "warnings": ["ATR unavailable; cannot construct robust ladder."], "target_risk_usdt": risk_usdt, "max_total_notional_usdt": max_notional}
+        return {"side": side, "decision_hint": "WAIT", "warnings": ["ATR unavailable; cannot construct robust ladder."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
 
     pull = classify_expected_pullback(side, family, summaries)
+    structure_risk = structure_risk_diagnostics(side, summaries, levels)
+    max_effective_notional = max_margin * planned_leverage
     split = [0.25, 0.35, 0.40]
     warnings: List[str] = []
     omitted: List[Dict[str, Any]] = []
 
     if side == "LONG":
         supports = [x for x in levels["supports"] if float(x["price"]) < current]
-        # Stop is below the nearest meaningful 4H support if available; otherwise 2 ATR below current.
-        four_h_supports = [x for x in supports if str(x.get("source", "")).startswith("4H")]
-        stop_base = float(four_h_supports[0]["price"]) if four_h_supports else current - 2.0 * atr4h
-        stop = round_price(stop_base - 0.25 * atr4h, rules)
+        # Initial fallback stop; refined below after entries are selected.
+        stop = round_price(current - 2.0 * atr4h, rules)
         raw_targets = [current - pull["shallow_atr"] * atr4h, current - pull["normal_atr"] * atr4h, current - pull["deep_atr"] * atr4h]
         # Prefer nearby structural supports/EMAs inside each expected pullback band.
         bands = [(0.15, 0.55), (0.55, 1.05), (1.05, pull["max_leg_depth_atr"])]
@@ -446,15 +520,25 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 if lo <= depth_atr <= hi and depth_pct <= pull["max_leg_depth_pct"]:
                     candidates.append((abs(depth_atr - [pull["shallow_atr"], pull["normal_atr"], pull["deep_atr"]][i]), float(s["price"]), s.get("source")))
                 elif depth_atr > pull["max_leg_depth_atr"] or depth_pct > pull["max_leg_depth_pct"]:
-                    omitted.append({**s, "reason": "too_deep_for_expected_pullback"})
+                    omitted.append({**s, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
             price = sorted(candidates)[0][1] if candidates else raw_targets[i]
-            if stop < price < current:
+            if price < current:
                 entries.append((f"L{i+1}", round_price(price, rules), "structure_or_expected_pullback" if candidates else "expected_pullback_atr"))
+        if entries:
+            deepest_entry = min(e[1] for e in entries)
+            four_h_pivots_below_entry = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) < deepest_entry]
+            four_h_pivots_inside_ladder = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) <= deepest_entry]
+            if four_h_pivots_below_entry:
+                stop_base = max(four_h_pivots_below_entry)
+            elif four_h_pivots_inside_ladder:
+                stop_base = min(four_h_pivots_inside_ladder) - 1.0 * atr4h
+            else:
+                stop_base = deepest_entry - 1.5 * atr4h
+            stop = round_price(stop_base - 0.25 * atr4h, rules)
+            entries = [e for e in entries if stop < e[1] < current]
     else:
         resistances = [x for x in levels["resistances"] if float(x["price"]) > current]
-        four_h_res = [x for x in resistances if str(x.get("source", "")).startswith("4H")]
-        stop_base = float(four_h_res[0]["price"]) if four_h_res else current + 2.0 * atr4h
-        stop = round_price(stop_base + 0.25 * atr4h, rules)
+        stop = round_price(current + 2.0 * atr4h, rules)
         raw_targets = [current + pull["shallow_atr"] * atr4h, current + pull["normal_atr"] * atr4h, current + pull["deep_atr"] * atr4h]
         bands = [(0.15, 0.55), (0.55, 1.05), (1.05, pull["max_leg_depth_atr"])]
         entries = []
@@ -466,10 +550,22 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 if lo <= depth_atr <= hi and depth_pct <= pull["max_leg_depth_pct"]:
                     candidates.append((abs(depth_atr - [pull["shallow_atr"], pull["normal_atr"], pull["deep_atr"]][i]), float(r["price"]), r.get("source")))
                 elif depth_atr > pull["max_leg_depth_atr"] or depth_pct > pull["max_leg_depth_pct"]:
-                    omitted.append({**r, "reason": "too_deep_for_expected_pullback"})
+                    omitted.append({**r, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
             price = sorted(candidates)[0][1] if candidates else raw_targets[i]
-            if current < price < stop:
+            if current < price:
                 entries.append((f"L{i+1}", round_price(price, rules), "structure_or_expected_pullback" if candidates else "expected_pullback_atr"))
+        if entries:
+            deepest_entry = max(e[1] for e in entries)
+            four_h_pivots_above_entry = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high" and float(x["price"]) > deepest_entry]
+            four_h_pivots_inside_ladder = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high" and float(x["price"]) >= deepest_entry]
+            if four_h_pivots_above_entry:
+                stop_base = min(four_h_pivots_above_entry)
+            elif four_h_pivots_inside_ladder:
+                stop_base = max(four_h_pivots_inside_ladder) + 1.0 * atr4h
+            else:
+                stop_base = deepest_entry + 1.5 * atr4h
+            stop = round_price(stop_base + 0.25 * atr4h, rules)
+            entries = [e for e in entries if current < e[1] < stop]
 
     if len(entries) < 2:
         warnings.append("Fewer than two plausible ladder entries inside the expected pullback window; this may be WAIT/conditional rather than a full ladder.")
@@ -499,30 +595,32 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "order_type": "limit",
             "entry": entry,
             "entry_source": source,
-            "qty_target_risk_before_notional_cap": rn(qty),
+            "qty_target_risk_before_margin_cap": rn(qty),
             "stop_loss": stop,
             "take_profit_candidate": tp_price,
             "take_profit_source": tp["source"],
             "allocated_target_risk_usdt": rn(risk_alloc, 2),
             "actual_risk_before_notional_cap_usdt": rn(actual_risk, 2),
-            "notional_before_notional_cap_usdt": rn(notional, 2),
+            "notional_before_margin_cap_usdt": rn(notional, 2),
+            "estimated_margin_before_cap_usdt": rn(notional / planned_leverage if planned_leverage else None, 2),
             "rr_estimate": rn(rr, 2),
         })
 
-    total_notional = sum(float(o["notional_before_notional_cap_usdt"] or 0) for o in target_orders)
-    target_risk_feasible_under_notional_cap = total_notional <= max_notional + 1e-9
+    total_notional = sum(float(o["notional_before_margin_cap_usdt"] or 0) for o in target_orders)
+    total_margin = total_notional / planned_leverage if planned_leverage else float("inf")
+    target_risk_feasible_under_margin_cap = total_margin <= max_margin + 1e-9
     cap_adjusted_orders = []
-    if not target_risk_feasible_under_notional_cap and total_notional > 0:
-        scale = max_notional / total_notional
-        warnings.append(f"Target 100 USDT risk exceeds max total notional {max_notional:.2f} USDT; cap-adjusted sizing is shown for feasibility, but this is a strong warning.")
+    if not target_risk_feasible_under_margin_cap and total_notional > 0:
+        scale = max_effective_notional / total_notional
+        warnings.append(f"Target {risk_usdt:.2f} USDT risk exceeds max margin {max_margin:.2f} USDT at {planned_leverage:.2f}x leverage; cap-adjusted sizing is shown for feasibility, but this is a strong warning.")
         for o in target_orders:
-            qty = floor_qty(float(o["qty_target_risk_before_notional_cap"] or 0) * scale, rules)
+            qty = floor_qty(float(o["qty_target_risk_before_margin_cap"] or 0) * scale, rules)
             entry = float(o["entry"])
             risk = qty * abs(entry - float(o["stop_loss"]))
-            cap_adjusted_orders.append({**o, "qty_cap_adjusted": rn(qty), "notional_cap_adjusted_usdt": rn(qty * entry, 2), "actual_risk_cap_adjusted_usdt": rn(risk, 2)})
+            cap_adjusted_orders.append({**o, "qty_cap_adjusted": rn(qty), "notional_cap_adjusted_usdt": rn(qty * entry, 2), "estimated_margin_cap_adjusted_usdt": rn((qty * entry) / planned_leverage if planned_leverage else None, 2), "actual_risk_cap_adjusted_usdt": rn(risk, 2)})
 
     if omitted:
-        warnings.append("Some structural levels were omitted because they are too deep for the expected pullback window; this is intentional to avoid unrealistic resting legs.")
+        warnings.append("Some structural levels were omitted because they are outside the expected pullback/character window. Do not omit deep LC levels merely for R:R; cite CHoCH/trend-risk/SL-hit risk if rejecting them.")
 
     return {
         "side": side,
@@ -532,11 +630,15 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         "expected_pullback_policy": pull,
         "stop_loss_candidate": stop,
         "invalidation_logic": "Shared SL beyond structural invalidation plus ATR buffer; entries constrained to plausible pullback depth.",
+        "structure_risk_diagnostics": structure_risk,
         "target_total_risk_usdt": risk_usdt,
-        "max_total_notional_usdt": max_notional,
-        "target_orders_before_notional_cap": target_orders,
+        "max_margin_usdt": max_margin,
+        "planned_leverage": planned_leverage,
+        "max_effective_notional_usdt": rn(max_effective_notional, 2),
+        "target_orders_before_margin_cap": target_orders,
         "target_total_notional_before_cap_usdt": rn(total_notional, 2),
-        "target_risk_feasible_under_notional_cap": target_risk_feasible_under_notional_cap,
+        "target_estimated_margin_before_cap_usdt": rn(total_margin, 2),
+        "target_risk_feasible_under_margin_cap": target_risk_feasible_under_margin_cap,
         "cap_adjusted_orders_if_needed": cap_adjusted_orders,
         "omitted_too_deep_levels_sample": omitted[:8],
         "warnings": warnings,
@@ -598,6 +700,69 @@ def load_execution_state(execution_state_json: Optional[Path], raw_dir: Path) ->
     return data
 
 
+def load_screener_data(screener_data_file: Optional[Path], symbol: str, raw_dir: Path) -> Dict[str, Any]:
+    """Load optional screener/strategy-test export context.
+
+    Supports JSON exports and CSV chart-data/strategy-test exports.  For CSV we keep
+    the newest row that has useful screener-like fields (Best Score, LC/SC, SQ, D*,
+    W*) and/or a symbol match.  This is read-only context used after the blind OHLCV
+    review.
+    """
+    if not screener_data_file:
+        return {"available": False, "reason": "No screener/strategy-test export supplied."}
+    if not screener_data_file.exists():
+        return {"available": False, "reason": f"Screener data file not found: {screener_data_file}"}
+
+    dest = raw_dir / f"screener_data{''.join(screener_data_file.suffixes[-1:]) or '.dat'}"
+    shutil.copy2(screener_data_file, dest)
+    sym = api_symbol(symbol)
+
+    def interesting(row: Dict[str, Any]) -> Dict[str, Any]:
+        keep: Dict[str, Any] = {}
+        wanted_substrings = ("score", "setup", "conviction", "verdict", "signal", "trend", "macro", "final", "action", "research", "valid")
+        wanted_prefixes = ("D", "G", "P", "SQ", "W")
+        for k, v in row.items():
+            if v in (None, "", "NaN", "nan"):
+                continue
+            key = str(k).strip()
+            low = key.lower()
+            if any(s in low for s in wanted_substrings) or key.startswith(wanted_prefixes) or low in ("symbol", "ticker", "time", "datetime", "date"):
+                keep[key] = v
+        return keep
+
+    try:
+        suffix = screener_data_file.suffix.lower()
+        if suffix == ".json":
+            data = read_json(screener_data_file, default={})
+            candidates: List[Dict[str, Any]] = []
+            if isinstance(data, list):
+                candidates = [x for x in data if isinstance(x, dict)]
+            elif isinstance(data, dict):
+                for key in ("rows", "data", "results", "records"):
+                    if isinstance(data.get(key), list):
+                        candidates = [x for x in data[key] if isinstance(x, dict)]
+                        break
+                if not candidates:
+                    candidates = [data]
+            matches = [r for r in candidates if sym in json.dumps(r, ensure_ascii=False).upper().replace("BITGET:", "").replace(".P", "")]
+            row = (matches or candidates or [{}])[-1]
+            return {"available": True, "source_file": str(dest), "format": "json", "matched_symbol": bool(matches), "row_count": len(candidates), "selected_row": interesting(row)}
+
+        with screener_data_file.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            rows = [r for r in reader]
+        matches = []
+        for r in rows:
+            blob = json.dumps(r, ensure_ascii=False).upper().replace("BITGET:", "").replace(".P", "")
+            if sym in blob:
+                matches.append(r)
+        useful = [r for r in (matches or rows) if interesting(r)]
+        row = (useful or matches or rows or [{}])[-1]
+        return {"available": True, "source_file": str(dest), "format": "csv", "matched_symbol": bool(matches), "row_count": len(rows), "selected_row": interesting(row)}
+    except Exception as exc:
+        return {"available": False, "source_file": str(dest), "error": str(exc)}
+
+
 def make_llm_packet(path: Path, master_prompt: str, manifest: Dict[str, Any], analysis_summary: Dict[str, Any], market_snapshot: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> None:
     def j(x: Any) -> str:
         return json.dumps(x, indent=2, ensure_ascii=False)
@@ -618,8 +783,9 @@ Use this packet with `{master_prompt}`.
 - Screener context is candidate-selection context only, not proof.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
-- Max cap is total notional, not margin: {manifest['max_total_notional_usdt']} USDT.
-- If 100 USDT risk cannot fit structure/R:R/notional/freshness, give a strong warning or WAIT/NO_TRADE.
+- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT).
+- If 100 USDT risk cannot fit structure/R:R/margin/freshness, give a strong warning or WAIT/NO_TRADE.
+- Do not reject an LC/DIP ladder merely because price is near resistance or RSI is high. Stronger rejection needs CHoCH, degraded trend, high SL-hit probability, stale data, liquidity/fee issue, or objectively bad R:R.
 - Live execution is excluded; final JSON must keep `requires_user_confirmation: true`.
 
 ## 3. Processed analysis summary
@@ -659,13 +825,16 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--rank", type=int, default=None)
     p.add_argument("--screener-version", default=DEFAULT_SCREENER_VERSION)
     p.add_argument("--risk-usdt", type=float, default=100.0)
-    p.add_argument("--max-notional-usdt", type=float, default=1500.0)
+    p.add_argument("--max-margin-usdt", type=float, default=1500.0, help="Maximum margin budget in USDT, not total notional.")
+    p.add_argument("--planned-leverage", type=float, default=4.0, help="Planned leverage used to estimate effective notional cap from margin cap.")
+    p.add_argument("--max-notional-usdt", type=float, default=None, help="Deprecated compatibility flag; if supplied, converted to margin using --planned-leverage.")
     p.add_argument("--bars-1d", type=int, default=400)
     p.add_argument("--bars-4h", type=int, default=500)
     p.add_argument("--bars-1h", type=int, default=500)
     p.add_argument("--include-15m", action="store_true")
     p.add_argument("--bars-15m", type=int, default=300)
     p.add_argument("--tv-export-dir", default=None)
+    p.add_argument("--screener-data-file", default=None, help="Optional screener/strategy-test CSV or JSON exported from TradingView/MCP.")
     p.add_argument("--execution-state-json", default=None, help="Optional read-only account/order context JSON")
     p.add_argument("--out-root", default="reports/deep_analysis_packets_v2")
     p.add_argument("--master-prompt", default="prompts/master_trade_analysis_prompt_v2.md")
@@ -676,6 +845,13 @@ def main() -> int:
     args = parse_args()
     symbol = api_symbol(args.symbol)
     tv_symbol = args.tv_symbol or f"BITGET:{symbol}.P"
+    max_margin_usdt = args.max_margin_usdt
+    if args.max_notional_usdt is not None:
+        # Backward compatibility with older wrappers.  The durable policy is now
+        # margin-cap semantics, so convert a legacy notional cap to equivalent
+        # margin at the planned leverage rather than keeping the old meaning.
+        max_margin_usdt = args.max_notional_usdt / args.planned_leverage if args.planned_leverage else args.max_margin_usdt
+    max_effective_notional = max_margin_usdt * args.planned_leverage
     out_dir = ensure_dir(Path(args.out_root) / f"{local_stamp()}_{symbol}")
     raw_dir = ensure_dir(out_dir / "raw")
     derived_dir = ensure_dir(out_dir / "derived")
@@ -689,7 +865,11 @@ def main() -> int:
         "rank": args.rank,
         "screener_version": args.screener_version,
         "risk_usdt_target": args.risk_usdt,
-        "max_total_notional_usdt": args.max_notional_usdt,
+        "max_margin_usdt": max_margin_usdt,
+        "planned_leverage": args.planned_leverage,
+        "max_effective_notional_usdt": max_effective_notional,
+        "cap_semantics": "max margin at planned leverage, not max total notional",
+        "legacy_max_notional_usdt_input": args.max_notional_usdt,
         "created_at_local": datetime.now().replace(microsecond=0).isoformat(),
         "created_at_utc": utc_now_iso(),
         "timezone": "Europe/Berlin",
@@ -723,11 +903,15 @@ def main() -> int:
     execution_state = load_execution_state(Path(args.execution_state_json) if args.execution_state_json else None, raw_dir)
     files["other"]["execution_state"] = str(raw_dir / "execution_state.json")
 
+    screener_data = load_screener_data(Path(args.screener_data_file) if args.screener_data_file else None, symbol, raw_dir)
+    if screener_data.get("source_file"):
+        files["other"]["screener_data"] = screener_data.get("source_file")
+
     summaries = {tf: summarize_tf(tf, candles) for tf, candles in candles_by_tf.items()}
     current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     levels = collect_levels(summaries, current)
     rules = contract_rules(market_snapshot)
-    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, args.max_notional_usdt, rules)
+    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules)
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
     screener_summary = {
@@ -737,6 +921,7 @@ def main() -> int:
         "family": args.family,
         "score": args.score,
         "rank": args.rank,
+        "extracted_data": screener_data,
         "usage_note": "Candidate-selection context only. No hard score threshold; target 100 USDT risk by default, warn if trade quality/constraints are weak.",
     }
 
@@ -746,7 +931,9 @@ def main() -> int:
         "side": args.side,
         "family": args.family,
         "risk_usdt_target": args.risk_usdt,
-        "max_total_notional_usdt": args.max_notional_usdt,
+        "max_margin_usdt": max_margin_usdt,
+        "planned_leverage": args.planned_leverage,
+        "max_effective_notional_usdt": max_effective_notional,
         "contract_rules": rules,
         "timeframes": summaries,
         "levels": levels,
@@ -765,7 +952,21 @@ def main() -> int:
     }
 
     make_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, manifest, analysis_summary, market_snapshot, execution_state, files)
-    print(json.dumps({"packet_dir": str(out_dir), "llm_input_packet": str(out_dir / "llm_input_packet.md"), "analysis_summary": str(derived_dir / "analysis_summary.json"), "symbol": symbol, "side": args.side, "risk_usdt_target": args.risk_usdt, "max_total_notional_usdt": args.max_notional_usdt}, indent=2))
+    tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+    print(json.dumps({
+        "packet_dir": str(out_dir),
+        "llm_input_packet": str(out_dir / "llm_input_packet.md"),
+        "analysis_summary": str(derived_dir / "analysis_summary.json"),
+        "symbol": symbol,
+        "side": args.side,
+        "risk_usdt_target": args.risk_usdt,
+        "max_margin_usdt": max_margin_usdt,
+        "planned_leverage": args.planned_leverage,
+        "max_effective_notional_usdt": max_effective_notional,
+        "tv_screenshot_files": tv_screenshot_files,
+        "discord_media_lines": [f"MEDIA:{p}" for p in tv_screenshot_files],
+        "reporting_note": "When answering in Discord after -CaptureTv, paste/attach the 1D/4H/1H screenshot files using MEDIA lines."
+    }, indent=2))
     return 0
 
 

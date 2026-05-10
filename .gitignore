@@ -1,0 +1,10 @@
+# Generated analysis/report artifacts
+reports/
+tmp/
+
+# Python/cache artifacts
+__pycache__/
+*.pyc
+
+# Volatile OpenClaw recall/cache files
+memory/.dreams/
