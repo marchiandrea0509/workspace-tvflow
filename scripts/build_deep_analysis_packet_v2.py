@@ -513,12 +513,13 @@ def structure_risk_diagnostics(side: str, summaries: Dict[str, Dict[str, Any]], 
     }
 
 
-def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None, current_price_reference: Optional[float] = None) -> Dict[str, Any]:
     side = side.upper()
     if side not in ("LONG", "SHORT"):
         return {"side": side, "decision_hint": "WAIT", "warnings": ["No LONG/SHORT side supplied; LLM must infer or ask for confirmation."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
 
-    current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
+    closed_current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
+    current = float(current_price_reference or closed_current)
     atr4h = float(summaries.get("4H", {}).get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
     if atr4h <= 0:
         return {"side": side, "decision_hint": "WAIT", "warnings": ["ATR unavailable; cannot construct robust ladder."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
@@ -581,9 +582,19 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         min_depth_atr = 0.75
         if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO") and (hot_or_at_resistance or screener_lc_action_inactive()):
             min_depth_atr = 1.50
-        max_depth_atr = float(pull.get("max_leg_depth_atr") or 6.0)
-        max_depth_pct = float(pull.get("max_leg_depth_pct") or 6.25)
-        min_spacing = max(1.20 * atr4h, current * 0.012)
+        base_max_depth_atr = float(pull.get("max_leg_depth_atr") or 6.0)
+        base_max_depth_pct = float(pull.get("max_leg_depth_pct") or 6.25)
+        # The first hardened v2 pass became too strict: when LC action was inactive or
+        # price was hot it often returned only one/two legs because max depth stopped at
+        # ~6 ATR.  For LC/DIP we still suppress near-market noise, but allow deeper
+        # meaningful 4H/EMA structure inside a sane percent window so L2/L3 can exist.
+        if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO"):
+            max_depth_atr = max(base_max_depth_atr, 10.0)
+            max_depth_pct = max(base_max_depth_pct, 8.0)
+        else:
+            max_depth_atr = base_max_depth_atr
+            max_depth_pct = base_max_depth_pct
+        min_spacing = max(1.00 * atr4h, current * 0.008)
         structural = []
         for item in candidates:
             price = float(item["price"])
@@ -601,7 +612,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
 
         # Prefer one leg from each structural depth zone.  The zones deliberately map
         # to shallow-value / normal-pullback / deep-structure instead of near-market ATR noise.
-        zones = [(1.5, 3.2), (3.2, 5.0), (5.0, max_depth_atr)]
+        zones = [(min_depth_atr, 3.2), (3.2, 6.0), (6.0, max_depth_atr)]
         selected: List[Dict[str, Any]] = []
         for lo, hi in zones:
             in_zone = [x for x in structural if lo <= float(x["depth_atr"]) <= hi]
@@ -641,14 +652,23 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             four_h_pivots_below_entry = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) < deepest_entry]
             four_h_pivots_inside_ladder = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) <= deepest_entry]
             if four_h_pivots_below_entry:
-                separate = sorted([p for p in four_h_pivots_below_entry if p <= deepest_entry - max(1.20 * atr4h, current * 0.012)], reverse=True)
-                # Put the swing stop beyond the next lower structural cluster, not just under
-                # the nearest pivot in the same cluster as the deepest entry.
-                stop_base = separate[1] if len(separate) >= 2 else (separate[0] if separate else max(four_h_pivots_below_entry))
+                separate = sorted([p for p in four_h_pivots_below_entry if p <= deepest_entry - max(1.00 * atr4h, current * 0.008)], reverse=True)
+                if separate:
+                    nearest_lower = separate[0]
+                    # If the next lower cluster is far away, using it as SL creates the
+                    # over-deep swing stops Andrea flagged.  In that case use immediate
+                    # 4H-structure invalidation just beyond the deepest selected leg.
+                    if deepest_entry - nearest_lower > max(3.5 * atr4h, current * 0.035):
+                        stop_base = deepest_entry - 1.0 * atr4h
+                        warnings.append("Next lower structural cluster is far below the ladder; using immediate 4H-structure invalidation instead of a wide swing stop.")
+                    else:
+                        stop_base = nearest_lower
+                else:
+                    stop_base = max(four_h_pivots_below_entry)
             elif four_h_pivots_inside_ladder:
                 stop_base = min(four_h_pivots_inside_ladder) - 1.0 * atr4h
             else:
-                stop_base = deepest_entry - 1.5 * atr4h
+                stop_base = deepest_entry - 1.25 * atr4h
             stop = round_price(stop_base - 0.25 * atr4h, rules)
             entries = [e for e in entries if stop < e[1] < current]
     else:
@@ -1017,10 +1037,17 @@ def main() -> int:
         files["other"]["screener_data"] = screener_data.get("source_file")
 
     summaries = {tf: summarize_tf(tf, candles) for tf, candles in candles_by_tf.items()}
-    current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
+    closed_current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
+    ticker_current = current_ticker_price(market_snapshot)
+    ticker_diff_pct = abs(float(ticker_current) - closed_current) / closed_current * 100.0 if ticker_current and closed_current else None
+    # Closed candles remain the primary analytical truth, but ladder order placement must
+    # be based on the live/current price when the market has moved materially away from
+    # the last closed 4H bar.  Otherwise a fast move near highs can make all useful
+    # pullback levels look too shallow/deep and collapse the ladder to one leg.
+    current = float(ticker_current) if ticker_current and ticker_diff_pct is not None and ticker_diff_pct > 0.15 else closed_current
     levels = collect_levels(summaries, current)
     rules = contract_rules(market_snapshot)
-    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data)
+    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data, current_price_reference=current)
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
     screener_summary = {
@@ -1047,6 +1074,13 @@ def main() -> int:
         "timeframes": summaries,
         "levels": levels,
         "candidate_trade_design": ladder,
+        "ladder_price_reference": {
+            "used": rn(current),
+            "closed_4h_reference": rn(closed_current),
+            "ticker_reference": rn(ticker_current),
+            "ticker_vs_closed_4h_diff_pct": rn(ticker_diff_pct, 4),
+            "reason": "ticker used for ladder geometry when it differs materially from latest closed 4H; closed candles remain primary analysis truth"
+        },
         "screener_summary": screener_summary,
         "freshness": fresh,
         "tv_exports_summary": tv_summary,
@@ -1062,6 +1096,9 @@ def main() -> int:
 
     make_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, manifest, analysis_summary, market_snapshot, execution_state, files)
     tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+    discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
+    contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
+    preferred_media_files = discord_sheets or contact_sheets or tv_screenshot_files
     print(json.dumps({
         "packet_dir": str(out_dir),
         "llm_input_packet": str(out_dir / "llm_input_packet.md"),
@@ -1073,8 +1110,9 @@ def main() -> int:
         "planned_leverage": args.planned_leverage,
         "max_effective_notional_usdt": max_effective_notional,
         "tv_screenshot_files": tv_screenshot_files,
-        "discord_media_lines": [f"MEDIA:{p}" for p in tv_screenshot_files],
-        "reporting_note": "When answering in Discord after -CaptureTv, paste/attach the 1D/4H/1H screenshot files using MEDIA lines."
+        "preferred_media_files": preferred_media_files,
+        "discord_media_lines": [f"MEDIA:{p}" for p in preferred_media_files],
+        "reporting_note": "When answering in Discord after -CaptureTv, attach the merged horizontal 1D|4H|1H contact sheet when present; use separate screenshots only as fallback."
     }, indent=2))
     return 0
 

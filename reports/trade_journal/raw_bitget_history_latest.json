@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-07T22:53:16.037Z",
+  "generatedAt": "2026-05-11T16:38:56.948Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-07T22:52:40.719Z",
+  "until": "2026-05-11T16:38:25.719Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778194360719"
+        "untilTime": "1778517505719"
       },
-      "count": 24,
+      "count": 29,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,168 @@
         },
         {
           "ok": true,
-          "count": 24,
+          "count": 29,
           "startTime": "1772236800000",
-          "endTime": "1778194360719",
+          "endTime": "1778517505719",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "NVDAUSDT",
+          "size": "14.7",
+          "orderId": "1437769572160270337",
+          "clientOid": "tvflow_nvda_20260511_opt2_6x_L3",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "216.1",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "225.8",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778516899147",
+          "uTime": "1778517171017"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "10.5",
+          "orderId": "1437769569299755009",
+          "clientOid": "tvflow_nvda_20260511_opt2_6x_L2",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "217.1",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "224.8",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778516898465",
+          "uTime": "1778517175135"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "7",
+          "orderId": "1437769566665732097",
+          "clientOid": "tvflow_nvda_20260511_opt2_6x_L1",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "218.1",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "222.4",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778516897837",
+          "uTime": "1778517178267"
+        },
+        {
+          "symbol": "INTCUSDT",
+          "size": "27.65",
+          "orderId": "1437712244350283856",
+          "clientOid": "tvflow_intc_20260511_v2_4hsl_L2",
+          "baseVolume": "27.65",
+          "fee": "0",
+          "price": "125.67",
+          "priceAvg": "125.67",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "3474.7755",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "139.5",
+          "presetStopLossPrice": "123.5",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778503231132",
+          "uTime": "1778509715910"
+        },
+        {
+          "symbol": "INTCUSDT",
+          "size": "8.28",
+          "orderId": "1437712240680267777",
+          "clientOid": "tvflow_intc_20260511_v2_4hsl_L1",
+          "baseVolume": "8.28",
+          "fee": "0",
+          "price": "128.33",
+          "priceAvg": "128.33",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1062.5724",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "134.8",
+          "presetStopLossPrice": "123.5",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778503230260",
+          "uTime": "1778506561155"
+        },
         {
           "symbol": "AAPLUSDT",
           "size": "2",
@@ -959,9 +1114,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778194360719"
+        "untilTime": "1778517505719"
       },
-      "count": 82,
+      "count": 87,
       "windows": [
         {
           "ok": true,
@@ -1140,13 +1295,128 @@
         },
         {
           "ok": true,
-          "count": 82,
+          "count": 87,
           "startTime": "1772236800000",
-          "endTime": "1778194360719",
+          "endTime": "1778517505719",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "tradeId": "1437739443454459907",
+          "symbol": "INTCUSDT",
+          "orderId": "1437712244350283856",
+          "price": "125.67",
+          "baseVolume": "27.65",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "3474.7755",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778509715903"
+        },
+        {
+          "tradeId": "1437726211448750081",
+          "symbol": "INTCUSDT",
+          "orderId": "1437712240680267777",
+          "price": "128.33",
+          "baseVolume": "6.4",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "821.312",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778506561147"
+        },
+        {
+          "tradeId": "1437726211356475393",
+          "symbol": "INTCUSDT",
+          "orderId": "1437712240680267777",
+          "price": "128.33",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "64.165",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778506561125"
+        },
+        {
+          "tradeId": "1437726211335503875",
+          "symbol": "INTCUSDT",
+          "orderId": "1437712240680267777",
+          "price": "128.33",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "64.165",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778506561120"
+        },
+        {
+          "tradeId": "1437726211306143753",
+          "symbol": "INTCUSDT",
+          "orderId": "1437712240680267777",
+          "price": "128.33",
+          "baseVolume": "0.38",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "48.7654",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778506561113"
+        },
         {
           "tradeId": "1434222999521443848",
           "symbol": "GMEUSDT",
@@ -3042,7 +3312,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778194360719",
+        "untilTime": "1778517505719",
         "planType": "normal_plan"
       },
       "count": 9,
@@ -3226,7 +3496,7 @@
           "ok": true,
           "count": 9,
           "startTime": "1772236800000",
-          "endTime": "1778194360719",
+          "endTime": "1778517505719",
           "pages": 1
         }
       ],

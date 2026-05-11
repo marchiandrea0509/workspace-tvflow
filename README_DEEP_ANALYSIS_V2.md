@@ -52,7 +52,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_deep_analysis_pa
 
 Use `-CaptureStrict` when you want the run to fail if any screenshot fails.
 
-Discord/reporting rule: when `-CaptureTv` succeeds, the final chat reply must attach/paste the generated `1D`, `4H`, and `1H` screenshots. Prefer the separate full-resolution original screenshots when price/Y-axis readability matters. Use a combined sheet only as a fallback/preview when Discord drops multiple attachments; do not downscale below ~2560 px width unless file-size limits force it. The builder prints `discord_media_lines` in its JSON output for this purpose; include each `MEDIA:<path>` line or the combined sheet in the final assistant response.
+Discord/reporting rule: when `-CaptureTv` succeeds, the final chat reply should attach the merged horizontal `1D | 4H | 1H` contact sheet as the preferred Discord artifact. Discord has dropped/rendered only one image when multiple separate screenshot `MEDIA:` lines were sent, and very large full-resolution contact sheets can fail delivery. The wrapper therefore generates both `SYMBOL_1D_4H_1H_contact_sheet.png` and a Discord-safe `SYMBOL_1D_4H_1H_contact_sheet_discord.png` scaled to 7680px width when `ffmpeg` is available. The builder prefers the `_discord.png` path in `discord_media_lines`. Keep the separate full-resolution original screenshots in the packet as fallback/debug evidence when price/Y-axis readability matters.
 
 If you have a TradingView strategy-test / screener export CSV or JSON, pass it with:
 
