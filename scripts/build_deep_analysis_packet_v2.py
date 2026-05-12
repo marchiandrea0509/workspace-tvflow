@@ -513,24 +513,65 @@ def structure_risk_diagnostics(side: str, summaries: Dict[str, Dict[str, Any]], 
     }
 
 
+
 def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None, current_price_reference: Optional[float] = None) -> Dict[str, Any]:
+    """Build a static OC 4H pullback ladder ticket.
+
+    The ladder is intentionally static: all entries, quantities, SLs and TPs must be
+    valid at order creation. It must not rely on later cancellation, SL movement,
+    trailing stops, or post-fill management to keep risk near the target.
+    """
     side = side.upper()
     if side not in ("LONG", "SHORT"):
-        return {"side": side, "decision_hint": "WAIT", "warnings": ["No LONG/SHORT side supplied; LLM must infer or ask for confirmation."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
+        return {"side": side, "decision_hint": "NO_TRADE", "warnings": ["No LONG/SHORT side supplied; cannot construct static 4H ladder."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
 
     closed_current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     current = float(current_price_reference or closed_current)
-    atr4h = float(summaries.get("4H", {}).get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
-    if atr4h <= 0:
-        return {"side": side, "decision_hint": "WAIT", "warnings": ["ATR unavailable; cannot construct robust ladder."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_margin * planned_leverage, 2)}
-
-    pull = classify_expected_pullback(side, family, summaries)
-    structure_risk = structure_risk_diagnostics(side, summaries, levels)
+    tf4 = summaries.get("4H", {})
+    atr4h = float(tf4.get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
     max_effective_notional = max_margin * planned_leverage
-    split = [0.25, 0.35, 0.40]
     warnings: List[str] = []
     omitted: List[Dict[str, Any]] = []
     screener_row = (screener_data or {}).get("selected_row") or {}
+
+    if atr4h <= 0:
+        return {"side": side, "decision_hint": "NO_TRADE", "warnings": ["ATR(14) unavailable; cannot construct robust static 4H ladder."], "target_risk_usdt": risk_usdt, "max_margin_usdt": max_margin, "planned_leverage": planned_leverage, "max_effective_notional_usdt": rn(max_effective_notional, 2)}
+
+    def parse_time_ms(value: Any) -> int:
+        try:
+            text = str(value or "").replace("Z", "+00:00")
+            return int(datetime.fromisoformat(text).timestamp() * 1000)
+        except Exception:
+            return 0
+
+    def pivot_list(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        out = []
+        for item in items or []:
+            try:
+                out.append({"price": float(item["price"]), "time_utc": item.get("time_utc"), "time_ms": parse_time_ms(item.get("time_utc"))})
+            except Exception:
+                continue
+        return sorted(out, key=lambda x: int(x.get("time_ms") or 0))
+
+    def find_impulse() -> Dict[str, Any]:
+        highs = pivot_list(tf4.get("recent_pivot_highs", []))
+        lows = pivot_list(tf4.get("recent_pivot_lows", []))
+        min_range = 1.2 * atr4h
+        if side == "LONG":
+            for high in reversed(highs):
+                lows_before = [x for x in lows if int(x["time_ms"]) < int(high["time_ms"]) and float(x["price"]) < float(high["price"])]
+                for low in reversed(lows_before):
+                    rng = float(high["price"]) - float(low["price"])
+                    if rng >= min_range:
+                        return {"valid": True, "side": side, "impulse_low": rn(low["price"]), "impulse_low_time_utc": low.get("time_utc"), "impulse_high": rn(high["price"]), "impulse_high_time_utc": high.get("time_utc"), "range": rn(rng), "range_atr": rn(rng / atr4h, 3), "minimum_required_range": rn(min_range)}
+            return {"valid": False, "side": side, "reason": "No recent 4H bullish pivot-low -> pivot-high impulse >= 1.2 ATR found."}
+        for low in reversed(lows):
+            highs_before = [x for x in highs if int(x["time_ms"]) < int(low["time_ms"]) and float(x["price"]) > float(low["price"])]
+            for high in reversed(highs_before):
+                rng = float(high["price"]) - float(low["price"])
+                if rng >= min_range:
+                    return {"valid": True, "side": side, "impulse_high": rn(high["price"]), "impulse_high_time_utc": high.get("time_utc"), "impulse_low": rn(low["price"]), "impulse_low_time_utc": low.get("time_utc"), "range": rn(rng), "range_atr": rn(rng / atr4h, 3), "minimum_required_range": rn(min_range)}
+        return {"valid": False, "side": side, "reason": "No recent 4H bearish pivot-high -> pivot-low impulse >= 1.2 ATR found."}
 
     def screener_lc_action_inactive() -> bool:
         if not screener_row:
@@ -540,217 +581,576 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         entry_state = as_float(screener_row.get("W03 LC EntryState"), 0.0) or 0.0
         return action <= 0 and window <= 0 and entry_state <= 0
 
-    nearest_res_atr = None
-    if levels.get("resistances"):
-        nearest_res_atr = levels["resistances"][0].get("distance_atr")
-    near_resistance = bool(nearest_res_atr is not None and float(nearest_res_atr) <= 1.0)
-    rsi4h = as_float(summaries.get("4H", {}).get("rsi14"), 0.0) or 0.0
-    hot_or_at_resistance = bool(rsi4h >= 75 or near_resistance)
+    nearest_res_atr = levels.get("resistances", [{}])[0].get("distance_atr") if levels.get("resistances") else None
+    nearest_sup_atr = levels.get("supports", [{}])[0].get("distance_atr") if levels.get("supports") else None
+    near_major_resistance = bool(side == "LONG" and nearest_res_atr is not None and float(nearest_res_atr) <= 0.25)
+    near_major_support = bool(side == "SHORT" and nearest_sup_atr is not None and float(nearest_sup_atr) <= 0.25)
+    rsi4h = as_float(tf4.get("rsi14"), 0.0) or 0.0
+    hot_or_at_resistance = bool(side == "LONG" and (rsi4h >= 75 or (nearest_res_atr is not None and float(nearest_res_atr) <= 1.0)))
+    cold_or_at_support = bool(side == "SHORT" and (rsi4h <= 25 or (nearest_sup_atr is not None and float(nearest_sup_atr) <= 1.0)))
 
-    if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO"):
-        if screener_lc_action_inactive():
-            warnings.append("Screener LC action/window fields are inactive; avoid near-market/noise legs and prefer deeper structural supports.")
-        if hot_or_at_resistance:
-            warnings.append("Price is hot/near resistance; shallow LC legs must be discounted unless explicitly confirmed by screener action fields.")
+    if screener_lc_action_inactive() and side == "LONG":
+        warnings.append("Screener LC action/window fields are inactive; static ladder must rely on 4H impulse/value-zone structure, not near-market noise.")
+    if hot_or_at_resistance:
+        warnings.append("Price is hot/near resistance; L1 must be a genuine 4H pullback level and the final verdict may be WAIT if R:R is weak.")
+    if cold_or_at_support:
+        warnings.append("Price is cold/near support; S1 must be a genuine 4H sell-rally level and the final verdict may be WAIT if R:R is weak.")
 
-    def source_quality(source: str, side: str) -> int:
+    pull = classify_expected_pullback(side, family, summaries)
+    structure_risk = structure_risk_diagnostics(side, summaries, levels)
+    impulse = find_impulse()
+    trend = str(tf4.get("trend_state") or "unknown")
+    hard_reject_reasons: List[str] = []
+    if not impulse.get("valid"):
+        hard_reject_reasons.append(str(impulse.get("reason")))
+    if side == "LONG" and trend == "bearish":
+        hard_reject_reasons.append("4H trend is bearish; DIP_LADDER long requires bullish or bullish-neutral 4H structure.")
+    if side == "SHORT" and trend == "bullish":
+        hard_reject_reasons.append("4H trend is bullish; SELL_RALLY short requires bearish or bearish-neutral 4H structure.")
+    if near_major_resistance:
+        warnings.append("Current price is very close to detected resistance (<0.25 ATR); static long ladder should usually WAIT unless entries are clearly in the value zone.")
+    if near_major_support:
+        warnings.append("Current price is very close to detected support (<0.25 ATR); static short ladder should usually WAIT unless entries are clearly in the value zone.")
+
+    def empty_result(decision: str) -> Dict[str, Any]:
+        return {
+            "side": side,
+            "style_hint": "DIP_LADDER" if side == "LONG" else "SELL_RALLY",
+            "decision_hint": decision,
+            "current_price_reference": rn(current),
+            "atr4h_reference": rn(atr4h),
+            "expected_pullback_policy": pull,
+            "oc_static_ladder_rules": {
+                "version": "OC_4H_PULLBACK_LADDER_STATIC_V1",
+                "static_only": True,
+                "no_dynamic_management": True,
+                "max_legs": 3,
+                "risk_split_policy": "3 legs 25/35/40; 2 legs 40/60; split by risk, not quantity",
+                "spacing_min_atr": 0.25,
+                "spacing_ideal_atr": "0.30-0.60",
+                "sl_buffer_atr": "0.25-0.50",
+            },
+            "impulse_analysis_4h": impulse,
+            "value_zone": None,
+            "stop_loss_candidate": None,
+            "invalidation_logic": "No static ladder: invalid/missing 4H impulse or trend context.",
+            "structure_risk_diagnostics": structure_risk,
+            "target_total_risk_usdt": risk_usdt,
+            "max_margin_usdt": max_margin,
+            "planned_leverage": planned_leverage,
+            "max_effective_notional_usdt": rn(max_effective_notional, 2),
+            "target_orders_before_margin_cap": [],
+            "target_total_notional_before_cap_usdt": 0.0,
+            "target_estimated_margin_before_cap_usdt": 0.0,
+            "target_actual_risk_before_cap_usdt": 0.0,
+            "target_reward_before_cap_usdt": 0.0,
+            "target_blended_entry": None,
+            "target_blended_rr": None,
+            "target_risk_feasible_under_margin_cap": True,
+            "cap_adjusted_orders_if_needed": [],
+            "omitted_too_deep_levels_sample": omitted[:8],
+            "static_ticket_safe": False,
+            "static_ticket_reject_reasons": hard_reject_reasons,
+            "warnings": warnings + hard_reject_reasons,
+        }
+
+    if hard_reject_reasons:
+        return empty_result("NO_TRADE")
+
+    impulse_low = float(impulse["impulse_low"])
+    impulse_high = float(impulse["impulse_high"])
+    impulse_range = abs(impulse_high - impulse_low)
+    if side == "LONG":
+        fibs = {
+            "38.2": impulse_high - 0.382 * impulse_range,
+            "50.0": impulse_high - 0.500 * impulse_range,
+            "61.8": impulse_high - 0.618 * impulse_range,
+        }
+        value_zone_low, value_zone_high = fibs["61.8"], fibs["38.2"]
+        structural_side = levels.get("supports", [])
+        tp_side = levels.get("resistances", [])
+    else:
+        fibs = {
+            "38.2": impulse_low + 0.382 * impulse_range,
+            "50.0": impulse_low + 0.500 * impulse_range,
+            "61.8": impulse_low + 0.618 * impulse_range,
+        }
+        value_zone_low, value_zone_high = fibs["38.2"], fibs["61.8"]
+        structural_side = levels.get("resistances", [])
+        tp_side = levels.get("supports", [])
+
+    value_zone_width_atr = abs(value_zone_high - value_zone_low) / atr4h if atr4h else None
+    value_zone = {
+        "basis": "latest valid 4H impulse fib pullback zone",
+        "impulse_low": rn(impulse_low),
+        "impulse_high": rn(impulse_high),
+        "fib_38_2": rn(fibs["38.2"]),
+        "fib_50_0": rn(fibs["50.0"]),
+        "fib_61_8": rn(fibs["61.8"]),
+        "zone_low": rn(min(value_zone_low, value_zone_high)),
+        "zone_high": rn(max(value_zone_low, value_zone_high)),
+        "zone_width_atr": rn(value_zone_width_atr, 3),
+    }
+
+    def source_quality(source: str) -> int:
         s = str(source or "")
         if "4H pivot" in s:
             return 0
-        if "4H ema50" in s:
+        if "4H ema50" in s or "4H ema20" in s:
             return 1
         if "1H ema200" in s:
             return 2
-        if "4H ema20" in s or "1H ema50" in s:
+        if "1D ema20" in s or "1D ema50" in s:
             return 3
-        if "1H pivot" in s:
+        if "1H pivot" in s or "1H ema" in s:
             return 4
-        if "1D ema20" in s:
-            return 5
-        return 6
+        return 5
 
-    def choose_structural_entries(candidates: List[Dict[str, Any]], side: str) -> List[Tuple[str, float, str]]:
-        """Choose ladder legs from meaningful structural zones, not tiny ATR buckets.
-
-        The old bucket logic over-selected near-market 1H noise (e.g. MRVL 170.36 / 169.82)
-        and then jumped to the deep leg.  This selector enforces minimum discount when
-        price is hot/near resistance or LC action fields are inactive, clusters nearby
-        levels, and prefers 4H pivots / major EMAs.
-        """
-        if not candidates:
-            return []
-        min_depth_atr = 0.75
-        if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO") and (hot_or_at_resistance or screener_lc_action_inactive()):
-            min_depth_atr = 1.50
-        base_max_depth_atr = float(pull.get("max_leg_depth_atr") or 6.0)
-        base_max_depth_pct = float(pull.get("max_leg_depth_pct") or 6.25)
-        # The first hardened v2 pass became too strict: when LC action was inactive or
-        # price was hot it often returned only one/two legs because max depth stopped at
-        # ~6 ATR.  For LC/DIP we still suppress near-market noise, but allow deeper
-        # meaningful 4H/EMA structure inside a sane percent window so L2/L3 can exist.
-        if side == "LONG" and family.upper() in ("LC", "DIP", "DIP_LADDER", "AUTO"):
-            max_depth_atr = max(base_max_depth_atr, 10.0)
-            max_depth_pct = max(base_max_depth_pct, 8.0)
-        else:
-            max_depth_atr = base_max_depth_atr
-            max_depth_pct = base_max_depth_pct
-        min_spacing = max(1.00 * atr4h, current * 0.008)
-        structural = []
-        for item in candidates:
-            price = float(item["price"])
-            depth = (current - price) / atr4h if side == "LONG" else (price - current) / atr4h
-            depth_pct = abs(current - price) / current * 100.0
-            if depth < min_depth_atr:
-                omitted.append({**item, "reason": "too_shallow_near_market_for_lc_context"})
+    def choose_leg_price(role: str, fib_key: str) -> Optional[Dict[str, Any]]:
+        target = float(fibs[fib_key])
+        tolerance = max(0.35 * atr4h, current * 0.002)
+        nearby = []
+        for item in structural_side:
+            try:
+                p = float(item["price"])
+            except Exception:
                 continue
-            if depth > max_depth_atr or depth_pct > max_depth_pct:
-                omitted.append({**item, "reason": "too_deep_or_possible_character_change_for_expected_ladder"})
+            in_value_zone = min(value_zone_low, value_zone_high) - 0.25 * atr4h <= p <= max(value_zone_low, value_zone_high) + 0.25 * atr4h
+            if not in_value_zone:
                 continue
-            structural.append({**item, "depth_atr": depth, "depth_pct": depth_pct, "quality": source_quality(str(item.get("source", "")), side)})
-        if not structural:
-            return []
+            if abs(p - target) <= tolerance:
+                nearby.append({**item, "distance_to_fib_atr": abs(p - target) / atr4h if atr4h else None, "quality": source_quality(str(item.get("source", "")))})
+        if nearby:
+            nearby.sort(key=lambda x: (int(x["quality"]), float(x.get("distance_to_fib_atr") or 999), abs(float(x["price"]) - target)))
+            chosen = nearby[0]
+            return {"leg_role": role, "entry": round_price(float(chosen["price"]), rules), "entry_source": f"{chosen.get('source')} near {fib_key}% fib", "fib_price": rn(target), "confluence_count": len(nearby), "nearby_confluence": [{"price": rn(float(x["price"])), "source": x.get("source")} for x in nearby[:4]]}
+        warnings.append(f"{role} uses {fib_key}% fib without nearby EMA/pivot confluence; validate visually before treating as TAKE.")
+        return {"leg_role": role, "entry": round_price(target, rules), "entry_source": f"4H impulse {fib_key}% retracement (fib-only)", "fib_price": rn(target), "confluence_count": 0, "nearby_confluence": []}
 
-        # Prefer one leg from each structural depth zone.  The zones deliberately map
-        # to shallow-value / normal-pullback / deep-structure instead of near-market ATR noise.
-        zones = [(min_depth_atr, 3.2), (3.2, 6.0), (6.0, max_depth_atr)]
-        selected: List[Dict[str, Any]] = []
-        for lo, hi in zones:
-            in_zone = [x for x in structural if lo <= float(x["depth_atr"]) <= hi]
-            if not in_zone:
-                continue
-            target_depth = (lo + hi) / 2
-            if side == "LONG" and lo >= 5.0:
-                # Deep LC legs should prefer the better-discounted structural level in the zone,
-                # not the first/nearest pivot in the same support cluster.
-                in_zone.sort(key=lambda x: (int(x["quality"]), -float(x["depth_atr"]), abs(float(x["price"]) - current)))
-            elif side == "SHORT" and lo >= 5.0:
-                in_zone.sort(key=lambda x: (int(x["quality"]), -float(x["depth_atr"]), abs(float(x["price"]) - current)))
-            else:
-                in_zone.sort(key=lambda x: (int(x["quality"]), abs(float(x["depth_atr"]) - target_depth), abs(float(x["price"]) - current)))
-            cand = in_zone[0]
-            if all(abs(float(cand["price"]) - float(prev["price"])) >= min_spacing for prev in selected):
-                selected.append(cand)
+    requested_roles = [("L1", "38.2"), ("L2", "50.0"), ("L3", "61.8")]
+    if value_zone_width_atr is not None and value_zone_width_atr < 0.60:
+        warnings.append("Useful 4H pullback zone is <0.60 ATR wide; using 2-leg ladder per OC rules.")
+        requested_roles = [("L1", "50.0"), ("L2", "61.8")]
 
-        if len(selected) < 3:
-            extras = sorted(structural, key=lambda x: (int(x["quality"]), float(x["depth_atr"])))
-            for cand in extras:
-                if len(selected) >= 3:
-                    break
-                if all(abs(float(cand["price"]) - float(prev["price"])) >= min_spacing for prev in selected):
-                    selected.append(cand)
-
-        selected = sorted(selected[:3], key=lambda x: float(x["price"]), reverse=(side == "LONG"))
-        return [(f"L{i+1}", round_price(float(x["price"]), rules), str(x.get("source") or "structural_level")) for i, x in enumerate(selected)]
-
+    raw_entries = [x for x in (choose_leg_price(role, fib) for role, fib in requested_roles) if x]
     if side == "LONG":
-        supports = [x for x in levels["supports"] if float(x["price"]) < current]
-        # Initial fallback stop; refined below after entries are selected.
-        stop = round_price(current - 2.0 * atr4h, rules)
-        entries = choose_structural_entries(supports, "LONG")
-        if entries:
-            deepest_entry = min(e[1] for e in entries)
-            four_h_pivots_below_entry = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) < deepest_entry]
-            four_h_pivots_inside_ladder = [float(x["price"]) for x in supports if str(x.get("source", "")) == "4H pivot low" and float(x["price"]) <= deepest_entry]
-            if four_h_pivots_below_entry:
-                separate = sorted([p for p in four_h_pivots_below_entry if p <= deepest_entry - max(1.00 * atr4h, current * 0.008)], reverse=True)
-                if separate:
-                    nearest_lower = separate[0]
-                    # If the next lower cluster is far away, using it as SL creates the
-                    # over-deep swing stops Andrea flagged.  In that case use immediate
-                    # 4H-structure invalidation just beyond the deepest selected leg.
-                    if deepest_entry - nearest_lower > max(3.5 * atr4h, current * 0.035):
-                        stop_base = deepest_entry - 1.0 * atr4h
-                        warnings.append("Next lower structural cluster is far below the ladder; using immediate 4H-structure invalidation instead of a wide swing stop.")
-                    else:
-                        stop_base = nearest_lower
-                else:
-                    stop_base = max(four_h_pivots_below_entry)
-            elif four_h_pivots_inside_ladder:
-                stop_base = min(four_h_pivots_inside_ladder) - 1.0 * atr4h
-            else:
-                stop_base = deepest_entry - 1.25 * atr4h
-            stop = round_price(stop_base - 0.25 * atr4h, rules)
-            entries = [e for e in entries if stop < e[1] < current]
+        raw_entries = [x for x in raw_entries if float(x["entry"]) < current]
+        raw_entries.sort(key=lambda x: float(x["entry"]), reverse=True)
     else:
-        resistances = [x for x in levels["resistances"] if float(x["price"]) > current]
-        stop = round_price(current + 2.0 * atr4h, rules)
-        entries = choose_structural_entries(resistances, "SHORT")
-        if entries:
-            deepest_entry = max(e[1] for e in entries)
-            four_h_pivots_above_entry = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high" and float(x["price"]) > deepest_entry]
-            four_h_pivots_inside_ladder = [float(x["price"]) for x in resistances if str(x.get("source", "")) == "4H pivot high" and float(x["price"]) >= deepest_entry]
-            if four_h_pivots_above_entry:
-                stop_base = min(four_h_pivots_above_entry)
-            elif four_h_pivots_inside_ladder:
-                stop_base = max(four_h_pivots_inside_ladder) + 1.0 * atr4h
-            else:
-                stop_base = deepest_entry + 1.5 * atr4h
-            stop = round_price(stop_base + 0.25 * atr4h, rules)
-            entries = [e for e in entries if current < e[1] < stop]
+        raw_entries = [x for x in raw_entries if float(x["entry"]) > current]
+        raw_entries.sort(key=lambda x: float(x["entry"]))
+
+    entries: List[Dict[str, Any]] = []
+    min_spacing = 0.25 * atr4h
+    for item in raw_entries:
+        if all(abs(float(item["entry"]) - float(prev["entry"])) >= min_spacing for prev in entries):
+            entries.append(item)
+        else:
+            omitted.append({**item, "reason": "omitted_spacing_less_than_0_25_atr"})
+    for i, item in enumerate(entries):
+        item["leg"] = f"L{i+1}" if side == "LONG" else f"S{i+1}"
 
     if len(entries) < 2:
-        warnings.append("Fewer than two plausible ladder entries inside the expected pullback window; this may be WAIT/conditional rather than a full ladder.")
+        warnings.append("Fewer than two static ladder legs remain after value-zone and spacing checks.")
 
-    target_orders = []
-    for idx, (leg, entry, source) in enumerate(entries[:3]):
-        risk_alloc = risk_usdt * split[idx]
-        risk_per_unit = abs(entry - stop)
-        if risk_per_unit <= 0:
-            warnings.append(f"{leg} has invalid entry/stop geometry.")
-            continue
-        qty_raw = risk_alloc / risk_per_unit
-        qty = floor_qty(qty_raw, rules)
-        tp = nearest_tp(entry, side, levels, stop, atr4h)
-        tp_price = round_price(float(tp["price"]), rules)
-        notional = qty * entry
-        actual_risk = qty * risk_per_unit
-        rr = abs(tp_price - entry) / risk_per_unit if risk_per_unit else None
-        if rr is not None and rr < 1.0:
-            warnings.append(f"{leg} natural/projected R:R is weak ({rr:.2f}); LLM should strongly warn or WAIT if no better target exists.")
-        if qty <= 0 or qty < float(rules.get("min_trade_num") or 0):
-            warnings.append(f"{leg} quantity is below Bitget minimum after rounding.")
-        if notional < float(rules.get("min_trade_usdt") or 0):
-            warnings.append(f"{leg} notional is below Bitget minTradeUSDT after rounding.")
-        target_orders.append({
-            "leg": leg,
-            "order_type": "limit",
-            "entry": entry,
-            "entry_source": source,
-            "qty_target_risk_before_margin_cap": rn(qty),
-            "stop_loss": stop,
-            "take_profit_candidate": tp_price,
-            "take_profit_source": tp["source"],
-            "allocated_target_risk_usdt": rn(risk_alloc, 2),
-            "actual_risk_before_notional_cap_usdt": rn(actual_risk, 2),
-            "notional_before_margin_cap_usdt": rn(notional, 2),
-            "estimated_margin_before_cap_usdt": rn(notional / planned_leverage if planned_leverage else None, 2),
-            "rr_estimate": rn(rr, 2),
-        })
+    buffer_atr = 0.35
+    if side == "LONG":
+        lower_edge = min(float(fibs["61.8"]), impulse_low)
+        stop = round_price(lower_edge - buffer_atr * atr4h, rules)
+        invalidation_source = "below 4H impulse low / lower edge of 61.8% value zone plus 0.35 ATR buffer"
+        entries = [x for x in entries if float(x["entry"]) > stop + 0.25 * atr4h]
+    else:
+        upper_edge = max(float(fibs["61.8"]), impulse_high)
+        stop = round_price(upper_edge + buffer_atr * atr4h, rules)
+        invalidation_source = "above 4H impulse high / upper edge of 61.8% value zone plus 0.35 ATR buffer"
+        entries = [x for x in entries if float(x["entry"]) < stop - 0.25 * atr4h]
+
+    if len(entries) < 2:
+        warnings.append("After SL placement, fewer than two legs are at least 0.25 ATR away from the stop; static ticket is weak/invalid.")
+
+    if len(entries) >= 3:
+        risk_split = [0.25, 0.35, 0.40]
+        entries = entries[:3]
+    elif len(entries) == 2:
+        risk_split = [0.40, 0.60]
+    else:
+        risk_split = [1.00]
+
+    def fixed_tp(entry: float, idx: int) -> Dict[str, Any]:
+        if side == "LONG":
+            natural = []
+            for x in tp_side:
+                try:
+                    p = float(x["price"])
+                except Exception:
+                    continue
+                if p > entry:
+                    natural.append({"price": p, "source": x.get("source")})
+            if impulse_high > entry:
+                natural.append({"price": impulse_high, "source": "4H impulse high"})
+            natural = sorted({round(float(x["price"]), 6): x for x in natural}.values(), key=lambda x: float(x["price"]))
+            if natural:
+                chosen = natural[min(idx, len(natural) - 1)]
+                return {"price": round_price(float(chosen["price"]), rules), "source": chosen.get("source"), "type": "fixed_natural_resistance"}
+            projected = entry + max(1.2 * abs(entry - stop), 1.2 * atr4h)
+            warnings.append("No natural resistance found above long entry; TP is projected and should be treated cautiously.")
+            return {"price": round_price(projected, rules), "source": "projected_fixed_tp_no_natural_resistance", "type": "projected"}
+        natural = []
+        for x in tp_side:
+            try:
+                p = float(x["price"])
+            except Exception:
+                continue
+            if p < entry:
+                natural.append({"price": p, "source": x.get("source")})
+        if impulse_low < entry:
+            natural.append({"price": impulse_low, "source": "4H impulse low"})
+        natural = sorted({round(float(x["price"]), 6): x for x in natural}.values(), key=lambda x: float(x["price"]), reverse=True)
+        if natural:
+            chosen = natural[min(idx, len(natural) - 1)]
+            return {"price": round_price(float(chosen["price"]), rules), "source": chosen.get("source"), "type": "fixed_natural_support"}
+        projected = entry - max(1.2 * abs(entry - stop), 1.2 * atr4h)
+        warnings.append("No natural support found below short entry; TP is projected and should be treated cautiously.")
+        return {"price": round_price(projected, rules), "source": "projected_fixed_tp_no_natural_support", "type": "projected"}
+
+    def risk_split_for_count(count: int) -> List[float]:
+        if count >= 3:
+            return [0.25, 0.35, 0.40]
+        if count == 2:
+            return [0.40, 0.60]
+        return [1.0]
+
+    def entry_combinations(source_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        combos: List[Dict[str, Any]] = []
+        if len(source_entries) >= 3:
+            combos.append({"name": "balanced_3_leg_value_zone", "entries": source_entries[:3]})
+            combos.append({"name": "shallow_2_leg_38_50", "entries": source_entries[:2]})
+            combos.append({"name": "deep_2_leg_50_618", "entries": source_entries[1:3]})
+        elif len(source_entries) == 2:
+            combos.append({"name": "standard_2_leg_value_zone", "entries": source_entries[:2]})
+        elif len(source_entries) == 1:
+            combos.append({"name": "single_leg_probe_only", "entries": source_entries[:1]})
+        return combos[:3]
+
+    def sl_candidates_for(combo_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        out: List[Dict[str, Any]] = [{"price": stop, "source": invalidation_source, "type": "conservative"}]
+        deepest = min(float(x["entry"]) for x in combo_entries) if side == "LONG" else max(float(x["entry"]) for x in combo_entries)
+        structural_prices: List[Dict[str, Any]] = []
+        for item in structural_side:
+            try:
+                p = float(item["price"])
+            except Exception:
+                continue
+            structural_prices.append({"price": p, "source": item.get("source")})
+        structural_prices.append({"price": float(fibs["61.8"]), "source": "4H impulse 61.8% retracement"})
+        structural_prices.append({"price": impulse_low if side == "LONG" else impulse_high, "source": "4H impulse invalidation pivot"})
+
+        for item in structural_prices:
+            p = float(item["price"])
+            cand = p - 0.35 * atr4h if side == "LONG" else p + 0.35 * atr4h
+            cand = round_price(cand, rules)
+            # Tighter stops are allowed only beyond a real level and outside normal 4H noise.
+            if side == "LONG":
+                if cand >= deepest - 0.70 * atr4h:
+                    continue
+                if cand >= current - 0.45 * atr4h:
+                    continue
+            else:
+                if cand <= deepest + 0.70 * atr4h:
+                    continue
+                if cand <= current + 0.45 * atr4h:
+                    continue
+            out.append({"price": cand, "source": f"beyond {item.get('source')} with 0.35 ATR buffer", "type": "tighter_structural"})
+
+        dedup: Dict[float, Dict[str, Any]] = {}
+        for item in out:
+            dedup[round(float(item["price"]), 6)] = item
+        vals = list(dedup.values())
+        if side == "LONG":
+            conservative = [x for x in vals if float(x["price"]) <= stop + 1e-9]
+            tighter = sorted([x for x in vals if float(x["price"]) > stop + 1e-9], key=lambda x: float(x["price"]))
+        else:
+            conservative = [x for x in vals if float(x["price"]) >= stop - 1e-9]
+            tighter = sorted([x for x in vals if float(x["price"]) < stop - 1e-9], key=lambda x: float(x["price"]), reverse=True)
+        return (conservative[:1] + tighter)[:4]
+
+    daily_strong = bool(str(summaries.get("1D", {}).get("trend_state") or "") == "bullish" and (as_float(summaries.get("1D", {}).get("adx14"), 0.0) or 0.0) >= 25) if side == "LONG" else bool(str(summaries.get("1D", {}).get("trend_state") or "") == "bearish" and (as_float(summaries.get("1D", {}).get("adx14"), 0.0) or 0.0) >= 25)
+
+    def tp_candidates() -> List[Dict[str, Any]]:
+        out: List[Dict[str, Any]] = []
+        def meaningful_tp_source(src: Any) -> bool:
+            s = str(src or "")
+            return any(token in s for token in ("4H pivot", "1D pivot", "4H impulse", "impulse"))
+        if side == "LONG":
+            for x in tp_side:
+                try:
+                    p = float(x["price"])
+                except Exception:
+                    continue
+                if p > min(float(e["entry"]) for e in entries or raw_entries) and meaningful_tp_source(x.get("source")):
+                    out.append({"price": round_price(p, rules), "source": x.get("source"), "type": "natural_resistance"})
+            out.append({"price": round_price(impulse_high, rules), "source": "4H impulse high", "type": "natural_resistance"})
+            out.append({"price": round_price(impulse_high + 0.272 * impulse_range, rules), "source": "4H impulse 1.272 extension", "type": "measured_extension"})
+            out.append({"price": round_price(impulse_high + 0.618 * impulse_range, rules), "source": "4H impulse 1.618 extension", "type": "measured_extension"})
+            out = [x for x in out if float(x["price"]) > current - 2 * atr4h]
+            out = sorted({round(float(x["price"]), 6): x for x in out}.values(), key=lambda x: float(x["price"]))
+        else:
+            for x in tp_side:
+                try:
+                    p = float(x["price"])
+                except Exception:
+                    continue
+                if p < max(float(e["entry"]) for e in entries or raw_entries) and meaningful_tp_source(x.get("source")):
+                    out.append({"price": round_price(p, rules), "source": x.get("source"), "type": "natural_support"})
+            out.append({"price": round_price(impulse_low, rules), "source": "4H impulse low", "type": "natural_support"})
+            out.append({"price": round_price(impulse_low - 0.272 * impulse_range, rules), "source": "4H impulse 1.272 extension", "type": "measured_extension"})
+            out.append({"price": round_price(impulse_low - 0.618 * impulse_range, rules), "source": "4H impulse 1.618 extension", "type": "measured_extension"})
+            out = [x for x in out if float(x["price"]) < current + 2 * atr4h]
+            out = sorted({round(float(x["price"]), 6): x for x in out}.values(), key=lambda x: float(x["price"]), reverse=True)
+        return out[:4]
+
+    def liquidation_estimate(blended: float, lev: float) -> Optional[float]:
+        if not blended or not lev:
+            return None
+        maintenance = 0.006
+        if side == "LONG":
+            return blended * (1.0 - (1.0 / lev) + maintenance)
+        return blended * (1.0 + (1.0 / lev) - maintenance)
+
+    def choose_leverage(total_notional: float, blended: Optional[float], sl_price: float) -> Dict[str, Any]:
+        options = sorted({planned_leverage, 6.0, 8.0, 10.0, 12.0, 15.0, 20.0})
+        checks = []
+        chosen = None
+        for lev in options:
+            if lev <= 0:
+                continue
+            margin = total_notional / lev if lev else float("inf")
+            liq = liquidation_estimate(float(blended or 0), lev)
+            if side == "LONG":
+                liq_safe = bool(liq is not None and liq < sl_price - 0.25 * atr4h)
+                liq_gap_atr = ((sl_price - liq) / atr4h) if liq is not None else None
+            else:
+                liq_safe = bool(liq is not None and liq > sl_price + 0.25 * atr4h)
+                liq_gap_atr = ((liq - sl_price) / atr4h) if liq is not None else None
+            ok = margin <= max_margin + 1e-9 and liq_safe
+            # Above 10x is allowed only when liquidation is still safely beyond SL.
+            if lev > 10.0 and not liq_safe:
+                ok = False
+            checks.append({"leverage": rn(lev, 2), "estimated_margin_usdt": rn(margin, 2), "estimated_liquidation": rn(liq), "liquidation_vs_sl_gap_atr": rn(liq_gap_atr, 3), "liquidation_beyond_sl": liq_safe, "passes": ok})
+            if ok and chosen is None:
+                chosen = checks[-1]
+        return {"chosen": chosen, "checks": checks}
+
+    def build_orders_for(combo_entries: List[Dict[str, Any]], sl_item: Dict[str, Any], tp_item: Dict[str, Any]) -> Dict[str, Any]:
+        split = risk_split_for_count(len(combo_entries))
+        orders = []
+        for idx, item in enumerate(combo_entries):
+            leg = f"L{idx+1}" if side == "LONG" else f"S{idx+1}"
+            entry = float(item["entry"])
+            sl_price = float(sl_item["price"])
+            tp_price = float(tp_item["price"])
+            risk_per_unit = abs(entry - sl_price)
+            if risk_per_unit <= 0:
+                continue
+            risk_alloc = risk_usdt * split[idx]
+            qty = floor_qty(risk_alloc / risk_per_unit, rules)
+            actual_risk = qty * risk_per_unit
+            reward = qty * abs(tp_price - entry)
+            notional = qty * entry
+            spacing_prev_atr = abs(entry - float(combo_entries[idx - 1]["entry"])) / atr4h if idx > 0 else None
+            orders.append({
+                "leg": leg,
+                "order_type": "limit",
+                "entry": round_price(entry, rules),
+                "entry_source": item.get("entry_source"),
+                "fib_price": item.get("fib_price"),
+                "confluence_count": item.get("confluence_count"),
+                "nearby_confluence": item.get("nearby_confluence"),
+                "qty_target_risk_before_margin_cap": rn(qty),
+                "stop_loss": round_price(sl_price, rules),
+                "stop_loss_source": sl_item.get("source"),
+                "take_profit_candidate": round_price(tp_price, rules),
+                "take_profit_source": tp_item.get("source"),
+                "take_profit_type": tp_item.get("type"),
+                "allocated_target_risk_usdt": rn(risk_alloc, 2),
+                "actual_risk_before_notional_cap_usdt": rn(actual_risk, 2),
+                "estimated_reward_usdt": rn(reward, 2),
+                "notional_before_margin_cap_usdt": rn(notional, 2),
+                "estimated_margin_before_cap_usdt": rn(notional / planned_leverage if planned_leverage else None, 2),
+                "rr_estimate": rn(abs(tp_price - entry) / risk_per_unit, 2),
+                "spacing_from_prior_leg_atr": rn(spacing_prev_atr, 3),
+            })
+        total_notional_local = sum(float(o["notional_before_margin_cap_usdt"] or 0) for o in orders)
+        total_risk_local = sum(float(o["actual_risk_before_notional_cap_usdt"] or 0) for o in orders)
+        total_reward_local = sum(float(o["estimated_reward_usdt"] or 0) for o in orders)
+        total_qty_local = sum(float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders)
+        blended_local = sum(float(o["entry"]) * float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders) / total_qty_local if total_qty_local else None
+        sl_dist_atr = abs(float(blended_local or 0) - float(sl_item["price"])) / atr4h if blended_local else None
+        tp_dist_atr = abs(float(tp_item["price"]) - float(blended_local or 0)) / atr4h if blended_local else None
+        l1 = orders[:1]
+        l12 = orders[:2]
+        def scen(sub: List[Dict[str, Any]]) -> Optional[float]:
+            r = sum(float(o["actual_risk_before_notional_cap_usdt"] or 0) for o in sub)
+            w = sum(float(o["estimated_reward_usdt"] or 0) for o in sub)
+            return w / r if r else None
+        lev = choose_leverage(total_notional_local, blended_local, float(sl_item["price"]))
+        scenario_l1 = scen(l1)
+        scenario_l12 = scen(l12) if len(orders) >= 2 else None
+        scenario_all = total_reward_local / total_risk_local if total_risk_local else None
+        valid = bool(
+            len(orders) >= 2
+            and total_risk_local > 0
+            and total_risk_local <= risk_usdt * 1.05
+            and (scenario_l1 or 0) >= 1.0
+            and (scenario_l12 or 0) >= 1.2
+            and (scenario_all or 0) >= 1.5
+            and sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.00
+            and tp_dist_atr is not None and tp_dist_atr >= 1.20
+            and (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20))
+            and lev.get("chosen") is not None
+        )
+        rejects = []
+        if len(orders) < 2:
+            rejects.append("fewer than two valid legs")
+        if (scenario_l1 or 0) < 1.0:
+            rejects.append("L1-only R:R below 1.0")
+        if (scenario_l12 or 0) < 1.2:
+            rejects.append("L1+L2 R:R below 1.2")
+        if (scenario_all or 0) < 1.5:
+            rejects.append("all-filled R:R below 1.5")
+        if sl_dist_atr is None or not (0.70 <= sl_dist_atr <= 2.00):
+            rejects.append("SL distance outside preferred 0.70-2.00 ATR")
+        if tp_dist_atr is None or tp_dist_atr < 1.20 or not (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)):
+            rejects.append("TP distance outside preferred realistic ATR range")
+        if lev.get("chosen") is None:
+            rejects.append("no leverage option fits margin cap with liquidation safely beyond SL")
+        return {
+            "entries_name": None,
+            "orders": orders,
+            "stop_loss": round_price(float(sl_item["price"]), rules),
+            "stop_loss_source": sl_item.get("source"),
+            "take_profit": round_price(float(tp_item["price"]), rules),
+            "take_profit_source": tp_item.get("source"),
+            "take_profit_type": tp_item.get("type"),
+            "total_planned_risk_usdt": rn(risk_usdt, 2),
+            "actual_risk_usdt": rn(total_risk_local, 2),
+            "estimated_reward_usdt": rn(total_reward_local, 2),
+            "total_notional_usdt": rn(total_notional_local, 2),
+            "estimated_margin_at_planned_leverage_usdt": rn(total_notional_local / planned_leverage if planned_leverage else None, 2),
+            "selected_leverage_check": lev.get("chosen"),
+            "leverage_checks": lev.get("checks"),
+            "blended_entry": rn(blended_local),
+            "rr_l1_only": rn(scenario_l1, 2),
+            "rr_l1_l2": rn(scenario_l12, 2),
+            "rr_all_filled": rn(scenario_all, 2),
+            "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
+            "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
+            "valid_static_ticket": valid,
+            "reject_reasons": rejects,
+        }
+
+    scan_entries = entry_combinations(entries)
+    scan_tps = tp_candidates()
+    scan_results: List[Dict[str, Any]] = []
+    for combo in scan_entries:
+        for sl_item in sl_candidates_for(combo["entries"]):
+            for tp_item in scan_tps:
+                r = build_orders_for(combo["entries"], sl_item, tp_item)
+                r["entries_name"] = combo["name"]
+                r["entry_prices"] = [float(x["entry"]) for x in combo["entries"]]
+                scan_results.append(r)
+
+    def scan_sort_key(item: Dict[str, Any]) -> Tuple[int, float, float, float]:
+        # Prefer valid, nearest realistic TP, better all-filled R:R, then lower leverage.
+        valid_rank = 0 if item.get("valid_static_ticket") else 1
+        tp_atr = float(item.get("tp_distance_atr_from_blended") or 999)
+        rr_all = float(item.get("rr_all_filled") or 0)
+        lev = float((item.get("selected_leverage_check") or {}).get("leverage") or 999)
+        return (valid_rank, abs(tp_atr - 1.8), -rr_all, lev)
+
+    scan_results.sort(key=scan_sort_key)
+    best = scan_results[0] if scan_results else None
+    target_orders = list((best or {}).get("orders") or [])
+    if best:
+        stop = float(best["stop_loss"])
+        invalidation_source = str(best.get("stop_loss_source") or invalidation_source)
+        selected_leverage = float((best.get("selected_leverage_check") or {}).get("leverage") or planned_leverage)
+    else:
+        selected_leverage = planned_leverage
 
     total_notional = sum(float(o["notional_before_margin_cap_usdt"] or 0) for o in target_orders)
-    total_margin = total_notional / planned_leverage if planned_leverage else float("inf")
+    total_margin = total_notional / selected_leverage if selected_leverage else float("inf")
+    total_risk = sum(float(o["actual_risk_before_notional_cap_usdt"] or 0) for o in target_orders)
+    total_reward = sum(float(o["estimated_reward_usdt"] or 0) for o in target_orders)
+    total_qty = sum(float(o["qty_target_risk_before_margin_cap"] or 0) for o in target_orders)
+    blended_entry = sum(float(o["entry"]) * float(o["qty_target_risk_before_margin_cap"] or 0) for o in target_orders) / total_qty if total_qty else None
+    blended_rr = total_reward / total_risk if total_risk else None
     target_risk_feasible_under_margin_cap = total_margin <= max_margin + 1e-9
     cap_adjusted_orders = []
     if not target_risk_feasible_under_margin_cap and total_notional > 0:
-        scale = max_effective_notional / total_notional
-        warnings.append(f"Target {risk_usdt:.2f} USDT risk exceeds max margin {max_margin:.2f} USDT at {planned_leverage:.2f}x leverage; cap-adjusted sizing is shown for feasibility, but this is a strong warning.")
+        scale = (max_margin * selected_leverage) / total_notional
+        warnings.append(f"Target {risk_usdt:.2f} USDT risk exceeds max margin {max_margin:.2f} USDT at selected {selected_leverage:.2f}x leverage. Static OC rules forbid silently resizing; cap-adjusted sizing is informational only.")
         for o in target_orders:
             qty = floor_qty(float(o["qty_target_risk_before_margin_cap"] or 0) * scale, rules)
             entry = float(o["entry"])
             risk = qty * abs(entry - float(o["stop_loss"]))
-            cap_adjusted_orders.append({**o, "qty_cap_adjusted": rn(qty), "notional_cap_adjusted_usdt": rn(qty * entry, 2), "estimated_margin_cap_adjusted_usdt": rn((qty * entry) / planned_leverage if planned_leverage else None, 2), "actual_risk_cap_adjusted_usdt": rn(risk, 2)})
+            cap_adjusted_orders.append({**o, "qty_cap_adjusted": rn(qty), "notional_cap_adjusted_usdt": rn(qty * entry, 2), "estimated_margin_cap_adjusted_usdt": rn((qty * entry) / selected_leverage if selected_leverage else None, 2), "actual_risk_cap_adjusted_usdt": rn(risk, 2)})
+
+    static_rejects: List[str] = []
+    if len(target_orders) < 2:
+        static_rejects.append("Static ladder has fewer than two valid legs after optimisation scan.")
+    if total_risk <= 0 or total_risk > risk_usdt * 1.05:
+        static_rejects.append("Total actual risk is not controlled near the target if all entries fill and price goes directly to SL.")
+    if total_risk < risk_usdt * 0.85 and target_orders:
+        warnings.append("Actual risk after contract rounding is materially below target; do not silently add unsafe size to force exactly 100 USDT.")
+    if not target_risk_feasible_under_margin_cap:
+        static_rejects.append("Full static ticket breaches max margin cap at selected leverage.")
+    if not (best or {}).get("valid_static_ticket"):
+        static_rejects.append("Static optimisation scan found no candidate meeting R:R, ATR-distance, margin, and liquidation safety rules.")
+    if near_major_resistance and side == "LONG":
+        warnings.append("Long setup is near major resistance; final verdict should prefer WAIT unless pullback entries are well below resistance and R:R is acceptable.")
+    if near_major_support and side == "SHORT":
+        warnings.append("Short setup is near major support; final verdict should prefer WAIT unless sell-rally entries are well above support and R:R is acceptable.")
+
+    static_ticket_safe = not static_rejects
+    if static_rejects:
+        decision_hint = "NO_TRADE"
+    elif warnings:
+        decision_hint = "WAIT"
+    else:
+        decision_hint = "TAKE"
 
     if omitted:
-        warnings.append("Some structural levels were omitted because they are outside the expected pullback/character window. Do not omit deep LC levels merely for R:R; cite CHoCH/trend-risk/SL-hit risk if rejecting them.")
+        warnings.append("Some levels were omitted by OC static ladder rules (spacing, stop distance, or value-zone constraints).")
 
     return {
         "side": side,
-        "style_hint": pull["style"],
+        "style_hint": "DIP_LADDER" if side == "LONG" else "SELL_RALLY",
+        "decision_hint": decision_hint,
         "current_price_reference": rn(current),
         "atr4h_reference": rn(atr4h),
         "expected_pullback_policy": pull,
+        "oc_static_ladder_rules": {
+            "version": "OC_4H_PULLBACK_LADDER_STATIC_OPTIMIZED_V2",
+            "static_only": True,
+            "no_dynamic_management": True,
+            "no_trailing_or_post_fill_adjustment": True,
+            "max_legs": 3,
+            "risk_split_used": risk_split_for_count(len(target_orders))[:len(target_orders)],
+            "spacing_min_atr": 0.25,
+            "spacing_ideal_atr": "0.30-0.60",
+            "sl_buffer_atr_used": buffer_atr,
+            "l3_min_distance_from_sl_atr": 0.25,
+            "fixed_tp_required": True,
+            "static_optimisation_required": True,
+            "rr_thresholds": {"l1_only_min": 1.0, "l1_l2_min": 1.2, "all_filled_min": 1.5},
+            "atr_limits_4h": {"sl_from_blended_ideal": "0.70-1.80", "sl_from_blended_avoid_above": 2.0, "tp_from_blended_ideal": "1.20-2.80", "tp_from_blended_max_normal": 3.5},
+            "atr_source": "4H ATR(14) only",
+        },
+        "impulse_analysis_4h": impulse,
+        "value_zone": value_zone,
         "stop_loss_candidate": stop,
-        "invalidation_logic": "Shared SL beyond structural invalidation plus ATR buffer; entries constrained to plausible pullback depth.",
+        "invalidation_logic": invalidation_source,
         "structure_risk_diagnostics": structure_risk,
         "screener_action_context_used": {
             "available": bool(screener_row),
@@ -761,18 +1161,32 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "D16 SC Final": screener_row.get("D16 SC Final"),
         },
         "target_total_risk_usdt": risk_usdt,
+        "target_actual_risk_before_cap_usdt": rn(total_risk, 2),
+        "target_reward_before_cap_usdt": rn(total_reward, 2),
+        "target_blended_entry": rn(blended_entry),
+        "target_blended_rr": rn(blended_rr, 2),
         "max_margin_usdt": max_margin,
         "planned_leverage": planned_leverage,
-        "max_effective_notional_usdt": rn(max_effective_notional, 2),
+        "selected_leverage": rn(selected_leverage, 2),
+        "selected_leverage_reason": "Minimum scanned leverage that fits the margin cap and keeps estimated liquidation safely beyond SL; >10x is allowed only if that liquidation-vs-SL check passes.",
+        "max_effective_notional_usdt": rn(max_margin * selected_leverage, 2),
         "target_orders_before_margin_cap": target_orders,
         "target_total_notional_before_cap_usdt": rn(total_notional, 2),
         "target_estimated_margin_before_cap_usdt": rn(total_margin, 2),
         "target_risk_feasible_under_margin_cap": target_risk_feasible_under_margin_cap,
         "cap_adjusted_orders_if_needed": cap_adjusted_orders,
+        "static_optimisation_scan": {
+            "entry_combinations_tested": [{"name": x["name"], "entries": [rn(float(e["entry"])) for e in x["entries"]]} for x in scan_entries],
+            "tp_candidates_tested": scan_tps,
+            "candidate_count": len(scan_results),
+            "best_candidate": {k: v for k, v in (best or {}).items() if k != "orders"},
+            "top_candidates": [{k: v for k, v in x.items() if k != "orders"} for x in scan_results[:8]],
+        },
         "omitted_too_deep_levels_sample": omitted[:8],
-        "warnings": warnings,
+        "static_ticket_safe": static_ticket_safe,
+        "static_ticket_reject_reasons": static_rejects,
+        "warnings": warnings + static_rejects,
     }
-
 
 def current_ticker_price(snapshot: Dict[str, Any]) -> Optional[float]:
     ticker = snapshot.get("ticker")
@@ -913,8 +1327,11 @@ Use this packet with `{master_prompt}`.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
 - Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT).
+- Final ticket must follow the static OC 4H ladder rules in `candidate_trade_design.oc_static_ladder_rules`.
+- Only propose `DIP_LADDER long` or `SELL_RALLY short` static tickets with fixed entries, quantities, SLs, and TPs valid at order creation.
+- Do not assume future cancellation, stop movement, trailing, or post-fill management.
+- If all entries fill and price immediately goes to SL, total loss must remain near the planned risk.
 - If 100 USDT risk cannot fit structure/R:R/margin/freshness, give a strong warning or WAIT/NO_TRADE.
-- Do not reject an LC/DIP ladder merely because price is near resistance or RSI is high. Stronger rejection needs CHoCH, degraded trend, high SL-hit probability, stale data, liquidity/fee issue, or objectively bad R:R.
 - Live execution is excluded; final JSON must keep `requires_user_confirmation: true`.
 
 ## 3. Processed analysis summary
@@ -1112,7 +1529,7 @@ def main() -> int:
         "tv_screenshot_files": tv_screenshot_files,
         "preferred_media_files": preferred_media_files,
         "discord_media_lines": [f"MEDIA:{p}" for p in preferred_media_files],
-        "reporting_note": "When answering in Discord after -CaptureTv, attach the merged horizontal 1D|4H|1H contact sheet when present; use separate screenshots only as fallback."
+        "reporting_note": "When answering in Discord after -CaptureTv, attach the merged horizontal 1D|4H contact sheet when present; use separate screenshots only as fallback."
     }, indent=2))
     return 0
 

@@ -52,7 +52,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_deep_analysis_pa
 
 Use `-CaptureStrict` when you want the run to fail if any screenshot fails.
 
-Discord/reporting rule: when `-CaptureTv` succeeds, the final chat reply should attach the merged horizontal `1D | 4H | 1H` contact sheet as the preferred Discord artifact. Discord has dropped/rendered only one image when multiple separate screenshot `MEDIA:` lines were sent, and very large full-resolution contact sheets can fail delivery. The wrapper therefore generates both `SYMBOL_1D_4H_1H_contact_sheet.png` and a Discord-safe `SYMBOL_1D_4H_1H_contact_sheet_discord.png` scaled to 7680px width when `ffmpeg` is available. The builder prefers the `_discord.png` path in `discord_media_lines`. Keep the separate full-resolution original screenshots in the packet as fallback/debug evidence when price/Y-axis readability matters.
+Discord/reporting rule: when `-CaptureTv` succeeds, the final chat reply should attach the merged horizontal `1D | 4H` contact sheet as the preferred Discord artifact. Discord has dropped/rendered only one image when multiple separate screenshot `MEDIA:` lines were sent, and the old 3-panel `1D | 4H | 1H` sheet made charts too small to read. The wrapper therefore captures only `1D` and `4H`, then generates both `SYMBOL_1D_4H_contact_sheet.png` and a Discord-safe `SYMBOL_1D_4H_contact_sheet_discord.png` scaled to 6144px width when `ffmpeg` is available. The builder prefers the `_discord.png` path in `discord_media_lines`. Keep the separate full-resolution original screenshots in the packet as fallback/debug evidence when price/Y-axis readability matters.
 
 If you have a TradingView strategy-test / screener export CSV or JSON, pass it with:
 
@@ -72,7 +72,7 @@ node scripts\export_tv_desktop_screener_chart_data_cdp.js
 
 The script finds the open Desktop chart with `Active layout: Screener`, opens **Download chart data**, saves a CSV under `reports/mcp_screener_export_test/`, and writes `manifest.json`. The resulting CSV can be passed to `-ScreenerDataFile`.
 
-The wrapper captures clean `1D`, `4H`, and `1H` screenshots using:
+The wrapper captures clean `1D` and `4H` screenshots using:
 
 - `../workspace/tradingview/scripts/capture_live.js`
 - layout: `Openclaw-structure`
@@ -99,8 +99,42 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
 
 Feed `llm_input_packet.md` together with `prompts/master_trade_analysis_prompt_v2.md` into the final analysis step.
 
-## Ladder-quality requirement
+## Static OC 4H ladder requirement
 
-The builder now allows deeper LC/DIP structural legs when they are meaningful, e.g. 4H supports that may improve R:R. A level should not be rejected merely because current price is near resistance or RSI is high. A strong no-ladder reason should cite change of character, degraded trend, high SL-hit probability, stale data, liquidity/fee issue, or objectively poor R:R. If the full 100 USDT risk target would breach the 1500 USDT margin cap at planned leverage, this is shown as a strong warning; cap-adjusted sizing is informational, not a silent replacement.
+The builder now follows Andrea's OC 4H Pullback Ladder Ticket Rules. It creates only static 4H pullback tickets: `DIP_LADDER long` or `SELL_RALLY short`.
 
-For LC/DIP ladders, do not fill L1/L2 from near-market 1H noise just because those levels fit shallow ATR buckets. When price is hot/near resistance or the screener LC action/window fields are inactive, prefer meaningful structural zones: 4H EMA50 / 1H EMA200 area, 4H pivot shelf, and deeper 4H structural support. Show weak natural R:R instead of inventing optimistic projected targets before nearby resistance is cleared.
+Core constraints:
+- No dynamic management, trailing, future cancellation assumption, SL movement, or post-fill adjustment.
+- All entries, quantities, SLs, and TPs must be valid at order creation.
+- If all entries fill and price immediately goes to SL, total loss must still be around the target risk, normally `100 USDT`.
+- Use the latest valid 4H impulse and build entries from the 38.2/50/61.8 pullback value zone plus EMA/pivot/support/resistance confluence.
+- Use 2 or 3 legs maximum.
+- Use risk split, not raw quantity split: 3 legs = `25/35/40`, 2 legs = `40/60`.
+- Minimum spacing is `0.25 ATR(14)`; ideal spacing is `0.30-0.60 ATR(14)`.
+- Common structural SL uses a `0.25-0.50 ATR` buffer and must not be moved just to make a ticket fit.
+- Fixed TP/SL per order at creation time.
+- If the static ticket is unsafe, the builder marks `static_ticket_safe=false` and exposes `static_ticket_reject_reasons`; final analysis should output `NO TRADE` or `WAIT`, not an unsafe ladder.
+
+## Static optimisation scan requirement
+
+Before selecting the final static ladder, the builder now scans candidate combinations instead of accepting the first generated geometry:
+
+- 2-3 entry ladder combinations inside the 4H pullback value zone.
+- 2-4 structural SL candidates.
+- 2-4 meaningful TP candidates.
+- For each candidate: L1-only R:R, L1+L2 R:R, all-filled R:R, planned risk, rounded quantity, estimated margin, 4H ATR distance to SL/TP, selected leverage, and estimated liquidation-vs-SL safety.
+
+All ATR checks use **4H ATR(14)** only.
+
+Preferred gates:
+- SL from blended entry: ideally `0.70-1.80 ATR`, avoid above `2.00 ATR`.
+- TP from blended entry: ideally `1.20-2.80 ATR`, max around `3.50 ATR` unless daily trend is very strong.
+- L1-only R:R at least `~1.0`.
+- L1+L2 R:R at least `~1.2`.
+- All-filled ladder R:R at least `~1.5`.
+
+The scan chooses the best valid static ticket, not the most optimistic one. Tighter SLs are allowed only beyond real support/invalidation and outside normal 4H noise. Far TP targets must be structurally meaningful.
+
+Leverage above `10x` may be considered only as a margin-efficiency adjustment after checking that estimated liquidation remains safely beyond the SL; it must not increase planned risk.
+
+Screenshot capture fix: deep-analysis capture now routes TradingView with the full exchange symbol while writing a safe filename, uses a visible `profile-deep-visible` browser profile to avoid black headless GPU screenshots, and rejects near-black/unusable captures before generating a Discord sheet.

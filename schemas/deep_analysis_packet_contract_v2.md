@@ -36,6 +36,10 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
 `derived/analysis_summary.json.candidate_trade_design` must include:
 
 - `target_total_risk_usdt`
+- `target_actual_risk_before_cap_usdt`
+- `target_reward_before_cap_usdt`
+- `target_blended_entry`
+- `target_blended_rr`
 - `max_margin_usdt`
 - `planned_leverage`
 - `max_effective_notional_usdt`
@@ -45,13 +49,18 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
 - `target_risk_feasible_under_margin_cap`
 - `cap_adjusted_orders_if_needed`
 - `expected_pullback_policy`
+- `oc_static_ladder_rules`
+- `impulse_analysis_4h`
+- `value_zone`
 - `structure_risk_diagnostics`
+- `static_ticket_safe`
+- `static_ticket_reject_reasons`
 - `omitted_too_deep_levels_sample`
 - `warnings`
 
-## Ladder rule
+## Static 4H ladder rule
 
-Legs must be plausible for expected pullback depth. Deep LC/DIP structural levels can be valid when they improve R:R without implying a character change. Do not reject a ladder merely because current price is near resistance or RSI is high; use stronger reasons such as CHoCH, degraded trend, likely SL hit, stale data, liquidity/fee issue, or objectively poor R:R.
+Deep Analysis v2 now builds only static OC 4H pullback tickets: `DIP_LADDER long` or `SELL_RALLY short`. Entries must come from the latest valid 4H impulse pullback value zone (38.2/50/61.8 retracement plus structural confluence), use 2-3 legs maximum, use common structural SL with 0.25-0.50 ATR buffer, fixed TP/SL at order creation, and risk splits by risk not quantity. A valid ticket must remain risk-controlled near the target risk if all entries fill and price immediately goes to SL. No ticket may depend on future cancellation, trailing, SL movement, or post-fill adjustment.
 
 ## Screener / strategy-test export context
 

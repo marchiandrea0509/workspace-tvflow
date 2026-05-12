@@ -37,8 +37,43 @@ function Normalize-TvSymbol([string]$api, [string]$explicit) {
 }
 
 function Normalize-CaptureSymbol([string]$tv) {
-  # capture_live.js uses the symbol in filenames; strip exchange prefix to avoid ':' in Windows paths.
+  # Keep the exchange prefix for TradingView routing; capture_live.js now has a separate safe --fileSymbol.
+  return $tv.ToUpper()
+}
+
+function Normalize-CaptureFileSymbol([string]$tv) {
   return $tv.ToUpper().Replace('BITGET:', '')
+}
+
+function Test-CaptureImageUsable([string]$path) {
+  if (-not (Test-Path $path)) { return $false }
+  try {
+    Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue | Out-Null
+    $bmp = [System.Drawing.Bitmap]::new((Resolve-Path $path))
+    try {
+      $w = $bmp.Width; $h = $bmp.Height
+      $step = [Math]::Max(1, [int]([Math]::Min($w, $h) / 120))
+      $n = 0; $dark = 0; $sum = 0.0
+      for ($y = 0; $y -lt $h; $y += $step) {
+        for ($x = 0; $x -lt $w; $x += $step) {
+          $c = $bmp.GetPixel($x, $y)
+          $lum = ($c.R + $c.G + $c.B) / 3.0
+          $sum += $lum; $n++
+          if ($c.R -lt 35 -and $c.G -lt 35 -and $c.B -lt 35) { $dark++ }
+        }
+      }
+      if ($n -le 0) { return $false }
+      $mean = $sum / $n
+      $darkRatio = $dark / $n
+      # TradingView dark theme is naturally dark, but fully broken captures are near-black.
+      return ($mean -ge 12.0 -and $darkRatio -le 0.94)
+    } finally {
+      $bmp.Dispose()
+    }
+  } catch {
+    # If validation itself fails, do not block capture; return true so the original file is preserved.
+    return $true
+  }
 }
 
 $ApiSymbol = Normalize-ApiSymbol $Symbol
@@ -56,18 +91,27 @@ if ($CaptureTv) {
   New-Item -ItemType Directory -Force -Path $TvExportDir | Out-Null
   $captureLog = Join-Path $TvExportDir 'capture.log'
   $captureSymbol = Normalize-CaptureSymbol $EffectiveTvSymbol
+  $captureFileSymbol = Normalize-CaptureFileSymbol $EffectiveTvSymbol
+  # Use a fresh profile per run. The capture script runs headless with software GL/SwiftShader to avoid
+  # black GPU screenshots on this host and to avoid visible-profile locking.
+  $captureProfile = "profile-deep-headless-$((Get-Date -Format 'yyyyMMddHHmmss'))-$ApiSymbol"
   $exports = @()
   $failures = @()
 
-  foreach ($tf in @('1D', '4H', '1H')) {
+  foreach ($tf in @('1D', '4H')) {
     $nodeArgs = @(
       $CaptureJs,
       '--symbol', $captureSymbol,
+      '--fileSymbol', $captureFileSymbol,
       '--timeframe', $tf,
       '--layout', $CaptureLayout,
       '--chartUrl', $CaptureChartUrl,
       '--preset', 'deep',
       '--panelShot', 'false',
+      '--mainPaneOnly', 'true',
+      '--focusRecent', 'true',
+      '--headless', 'true',
+      '--profile', $captureProfile,
       '--outdir', $TvExportDir,
       '--log', $captureLog
     )
@@ -75,7 +119,9 @@ if ($CaptureTv) {
     try {
       $out = & node @nodeArgs 2>&1
       if ($LASTEXITCODE -ne 0) { throw ($out | Out-String) }
-      $exports += [ordered]@{ type = 'screenshot'; timeframe = $tf; path = ($out | Select-Object -First 1); layout = $CaptureLayout; chart_url = $CaptureChartUrl }
+      $capturePath = [string]($out | Select-Object -First 1)
+      if (-not (Test-CaptureImageUsable $capturePath)) { throw "TradingView capture appears black/unusable: $capturePath" }
+      $exports += [ordered]@{ type = 'screenshot'; timeframe = $tf; path = $capturePath; layout = $CaptureLayout; chart_url = $CaptureChartUrl }
     } catch {
       $msg = "${tf}: $($_.Exception.Message)"
       $failures += $msg
@@ -87,20 +133,20 @@ if ($CaptureTv) {
   }
 
   # Discord often renders/delivers only one of several screenshot attachments in this workflow.
-  # Build a single horizontal 1D | 4H | 1H contact sheet and make it the preferred chat artifact.
+  # Build a single horizontal 1D | 4H contact sheet and make it the preferred chat artifact.
+  # 1H was removed from the default sheet because it made the evidence too small/unusable in Discord.
   $byTf = @{}
   foreach ($item in $exports) { if ($item.type -eq 'screenshot') { $byTf[$item.timeframe] = [string]$item.path } }
-  if ($byTf.ContainsKey('1D') -and $byTf.ContainsKey('4H') -and $byTf.ContainsKey('1H')) {
+  if ($byTf.ContainsKey('1D') -and $byTf.ContainsKey('4H')) {
     $ffmpeg = Get-Command ffmpeg -ErrorAction SilentlyContinue
     if ($ffmpeg) {
-      $sheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_1H_contact_sheet.png"
+      $sheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_contact_sheet.png"
       $sheetLog = Join-Path $TvExportDir 'contact_sheet_ffmpeg.log'
       $ffArgs = @(
         '-y',
         '-i', $byTf['1D'],
         '-i', $byTf['4H'],
-        '-i', $byTf['1H'],
-        '-filter_complex', '[0:v][1:v][2:v]hstack=inputs=3[out]',
+        '-filter_complex', '[0:v]scale=-2:3000[v0];[1:v]scale=-2:3000[v1];[v0][v1]hstack=inputs=2[out]',
         '-map', '[out]',
         '-frames:v', '1',
         $sheetPath
@@ -115,11 +161,11 @@ if ($CaptureTv) {
       }
       [System.IO.File]::WriteAllText($sheetLog, ($ffOut | Out-String), [System.Text.UTF8Encoding]::new($false))
       if ($ffExitCode -eq 0 -and (Test-Path $sheetPath)) {
-        $discordSheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_1H_contact_sheet_discord.png"
+        $discordSheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_contact_sheet_discord.png"
         $scaleArgs = @(
           '-y',
           '-i', $sheetPath,
-          '-vf', 'scale=7680:-2',
+          '-vf', 'scale=6144:-2',
           '-frames:v', '1',
           $discordSheetPath
         )
@@ -133,9 +179,9 @@ if ($CaptureTv) {
         }
         [System.IO.File]::AppendAllText($sheetLog, "`n=== discord-scale ===`n" + ($scaleOut | Out-String), [System.Text.UTF8Encoding]::new($false))
         if ($scaleExitCode -eq 0 -and (Test-Path $discordSheetPath)) {
-          $exports += [ordered]@{ type = 'contact_sheet_discord'; timeframe = '1D|4H|1H'; path = $discordSheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Preferred Discord artifact: merged horizontal 1D, 4H, 1H screenshot scaled for reliable Discord delivery.' }
+          $exports += [ordered]@{ type = 'contact_sheet_discord'; timeframe = '1D|4H'; path = $discordSheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Preferred Discord artifact: merged horizontal 1D and 4H screenshot scaled for reliable Discord delivery/readability.' }
         }
-        $exports += [ordered]@{ type = 'contact_sheet_fullres'; timeframe = '1D|4H|1H'; path = $sheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Full-resolution merged horizontal 1D, 4H, 1H screenshot.' }
+        $exports += [ordered]@{ type = 'contact_sheet_fullres'; timeframe = '1D|4H'; path = $sheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Full-resolution merged horizontal 1D and 4H screenshot.' }
       } else {
         $failures += "contact_sheet: ffmpeg failed; see $sheetLog"
         if ($CaptureStrict) { throw "TradingView contact sheet generation failed; see $sheetLog" }
@@ -152,13 +198,14 @@ if ($CaptureTv) {
     symbol = $ApiSymbol
     tv_symbol = $EffectiveTvSymbol
     capture_symbol = $captureSymbol
+    capture_file_symbol = $captureFileSymbol
     created_at_utc = (Get-Date).ToUniversalTime().ToString('o')
     method = 'existing Playwright/browser capture_live.js'
     chart_url = $CaptureChartUrl
     layout = $CaptureLayout
     exports = $exports
     failures = $failures
-    note = 'TradingView evidence is optional validation; Bitget OHLCV remains primary truth. Prefer the merged horizontal contact sheet for Discord delivery.'
+    note = 'TradingView evidence is optional validation; Bitget OHLCV remains primary truth. Prefer the merged horizontal 1D|4H contact sheet for Discord delivery/readability.'
   }
   $manifestPath = Join-Path $TvExportDir 'manifest.json'
   $manifestJson = $manifest | ConvertTo-Json -Depth 8
