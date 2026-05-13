@@ -16,6 +16,7 @@ param(
   [string]$OutRoot = 'reports/deep_analysis_packets_v2',
   [switch]$CaptureTv,
   [switch]$CaptureStrict,
+  [ValidateSet('Auto','Web','DesktopCdp')][string]$CaptureBackend = 'Auto',
   [string]$CaptureLayout = 'Openclaw-structure',
   [string]$CaptureChartUrl = 'https://www.tradingview.com/chart/0ZPSKaZ4/'
 )
@@ -25,6 +26,16 @@ $Repo = Split-Path -Parent $PSScriptRoot
 $Script = Join-Path $PSScriptRoot 'build_deep_analysis_packet_v2.py'
 $TradingViewRoot = Join-Path (Split-Path -Parent $Repo) 'workspace\tradingview'
 $CaptureJs = Join-Path $TradingViewRoot 'scripts\capture_live.js'
+$CaptureDesktopCdpJs = Join-Path $TradingViewRoot 'scripts\capture_live_desktop_cdp.js'
+
+function Test-DesktopCdpAvailable() {
+  try {
+    $res = Invoke-RestMethod -Uri 'http://127.0.0.1:9222/json/version' -TimeoutSec 3
+    return [bool]$res.webSocketDebuggerUrl
+  } catch {
+    return $false
+  }
+}
 
 function Normalize-ApiSymbol([string]$s) {
   $x = $s.ToUpper().Replace('BITGET:', '').Replace('.P', '')
@@ -92,29 +103,49 @@ if ($CaptureTv) {
   $captureLog = Join-Path $TvExportDir 'capture.log'
   $captureSymbol = Normalize-CaptureSymbol $EffectiveTvSymbol
   $captureFileSymbol = Normalize-CaptureFileSymbol $EffectiveTvSymbol
-  # Use a fresh profile per run. The capture script runs headless with software GL/SwiftShader to avoid
-  # black GPU screenshots on this host and to avoid visible-profile locking.
+  # Use a fresh profile per run for web fallback. This avoids visible-profile locking, but protected/private
+  # TradingView studies can show red exclamation marks and fail to render in that fresh headless profile.
+  # For Openclaw-structure evidence, prefer the logged-in TradingView Desktop CDP session when available.
   $captureProfile = "profile-deep-headless-$((Get-Date -Format 'yyyyMMddHHmmss'))-$ApiSymbol"
+  $desktopAvailable = Test-DesktopCdpAvailable
+  $useDesktopCdp = ($CaptureBackend -eq 'DesktopCdp') -or (($CaptureBackend -eq 'Auto') -and $desktopAvailable -and (Test-Path $CaptureDesktopCdpJs))
+  if ($CaptureBackend -eq 'DesktopCdp' -and -not $desktopAvailable) { throw 'TradingView Desktop CDP is not reachable on port 9222.' }
+  if ($CaptureBackend -eq 'DesktopCdp' -and -not (Test-Path $CaptureDesktopCdpJs)) { throw "TradingView Desktop CDP capture script not found: $CaptureDesktopCdpJs" }
+  if ($CaptureBackend -eq 'Auto' -and $desktopAvailable -and -not (Test-Path $CaptureDesktopCdpJs)) {
+    Write-Warning "TradingView Desktop CDP is reachable but capture script is missing; falling back to web capture: $CaptureDesktopCdpJs"
+  }
   $exports = @()
   $failures = @()
 
   foreach ($tf in @('1D', '4H')) {
-    $nodeArgs = @(
-      $CaptureJs,
-      '--symbol', $captureSymbol,
-      '--fileSymbol', $captureFileSymbol,
-      '--timeframe', $tf,
-      '--layout', $CaptureLayout,
-      '--chartUrl', $CaptureChartUrl,
-      '--preset', 'deep',
-      '--panelShot', 'false',
-      '--mainPaneOnly', 'true',
-      '--focusRecent', 'true',
-      '--headless', 'true',
-      '--profile', $captureProfile,
-      '--outdir', $TvExportDir,
-      '--log', $captureLog
-    )
+    if ($useDesktopCdp) {
+      $nodeArgs = @(
+        $CaptureDesktopCdpJs,
+        '--symbol', $captureSymbol,
+        '--fileSymbol', $captureFileSymbol,
+        '--timeframe', $tf,
+        '--layout', $CaptureLayout,
+        '--chartUrl', $CaptureChartUrl,
+        '--outdir', $TvExportDir
+      )
+    } else {
+      $nodeArgs = @(
+        $CaptureJs,
+        '--symbol', $captureSymbol,
+        '--fileSymbol', $captureFileSymbol,
+        '--timeframe', $tf,
+        '--layout', $CaptureLayout,
+        '--chartUrl', $CaptureChartUrl,
+        '--preset', 'deep',
+        '--panelShot', 'false',
+        '--mainPaneOnly', 'false',
+        '--focusRecent', 'true',
+        '--headless', 'true',
+        '--profile', $captureProfile,
+        '--outdir', $TvExportDir,
+        '--log', $captureLog
+      )
+    }
     Push-Location (Split-Path -Parent $TradingViewRoot)
     try {
       $out = & node @nodeArgs 2>&1
@@ -200,7 +231,9 @@ if ($CaptureTv) {
     capture_symbol = $captureSymbol
     capture_file_symbol = $captureFileSymbol
     created_at_utc = (Get-Date).ToUniversalTime().ToString('o')
-    method = 'existing Playwright/browser capture_live.js'
+    method = if ($useDesktopCdp) { 'TradingView Desktop CDP capture_live_desktop_cdp.js' } else { 'existing Playwright/browser capture_live.js' }
+    capture_backend = if ($useDesktopCdp) { 'DesktopCdp' } else { 'Web' }
+    desktop_cdp_available = $desktopAvailable
     chart_url = $CaptureChartUrl
     layout = $CaptureLayout
     exports = $exports

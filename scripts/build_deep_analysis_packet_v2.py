@@ -288,10 +288,16 @@ def collect_levels(summaries: Dict[str, Dict[str, Any]], current: float) -> Dict
             price = float(p["price"])
             if price < current:
                 supports.append({"price": price, "source": f"{tf} pivot low", "time_utc": p.get("time_utc")})
+            elif price > current:
+                # A prior pivot low above current can act as overhead supply/resistance after price loses it.
+                resistances.append({"price": price, "source": f"{tf} prior pivot low resistance", "time_utc": p.get("time_utc")})
         for p in s.get("recent_pivot_highs", []):
             price = float(p["price"])
             if price > current:
                 resistances.append({"price": price, "source": f"{tf} pivot high", "time_utc": p.get("time_utc")})
+            elif price < current:
+                # Prior highs below current are valid support / breakout retest levels.
+                supports.append({"price": price, "source": f"{tf} prior pivot high support", "time_utc": p.get("time_utc")})
         for name in ("ema20", "ema50", "ema200"):
             val = s.get(name)
             if val:
@@ -733,6 +739,62 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         requested_roles = [("L1", "50.0"), ("L2", "61.8")]
 
     raw_entries = [x for x in (choose_leg_price(role, fib) for role, fib in requested_roles) if x]
+
+    # Optional relaxation: allow a deep structural L3 outside the 38.2/50/61.8 fib value zone
+    # when it is a strong prior HTF level (e.g. prior 1D/4H pivot high retest) and has not
+    # crossed the impulse invalidation.  This keeps L1/L2 anchored to the active value zone,
+    # but lets the scan test a deeper structural catch-bid/sell-rally level instead of
+    # rejecting it solely for sitting below/above the fib zone.
+    def deep_structural_l3() -> Optional[Dict[str, Any]]:
+        if not atr4h:
+            return None
+        candidates: List[Dict[str, Any]] = []
+        if side == "LONG":
+            lower_bound = impulse_low + 0.25 * atr4h
+            upper_bound = min(value_zone_low, value_zone_high) - 0.35 * atr4h
+            for item in structural_side:
+                try:
+                    p = float(item["price"])
+                except Exception:
+                    continue
+                src = str(item.get("source") or "")
+                strong = ("1D prior pivot high" in src or "4H prior pivot high" in src or "4H pivot low" in src or "4H ema50" in src or "1H ema200" in src)
+                if strong and lower_bound <= p <= upper_bound:
+                    candidates.append({**item, "quality": source_quality(src), "distance_below_value_zone_atr": (min(value_zone_low, value_zone_high) - p) / atr4h})
+            if not candidates:
+                return None
+            candidates.sort(key=lambda x: (int(x.get("quality", 9)), abs(float(x["price"]) - float(fibs["61.8"]))))
+        else:
+            upper_bound = impulse_high - 0.25 * atr4h
+            lower_bound = max(value_zone_low, value_zone_high) + 0.35 * atr4h
+            for item in structural_side:
+                try:
+                    p = float(item["price"])
+                except Exception:
+                    continue
+                src = str(item.get("source") or "")
+                strong = ("1D prior pivot low" in src or "4H prior pivot low" in src or "4H pivot high" in src or "4H ema50" in src or "1H ema200" in src)
+                if strong and lower_bound <= p <= upper_bound:
+                    candidates.append({**item, "quality": source_quality(src), "distance_above_value_zone_atr": (p - max(value_zone_low, value_zone_high)) / atr4h})
+            if not candidates:
+                return None
+            candidates.sort(key=lambda x: (int(x.get("quality", 9)), abs(float(x["price"]) - float(fibs["61.8"]))))
+        chosen = candidates[0]
+        return {
+            "leg_role": "L3" if side == "LONG" else "S3",
+            "entry": round_price(float(chosen["price"]), rules),
+            "entry_source": f"deep structural L3 outside fib value zone: {chosen.get('source')}",
+            "fib_price": rn(float(fibs["61.8"])),
+            "confluence_count": len(candidates),
+            "nearby_confluence": [{"price": rn(float(x["price"])), "source": x.get("source")} for x in candidates[:4]],
+            "deep_structural_l3": True,
+        }
+
+    deep_l3 = deep_structural_l3()
+    if deep_l3 and all(abs(float(deep_l3["entry"]) - float(x["entry"])) >= 0.20 * atr4h for x in raw_entries):
+        warnings.append("Relaxed rule active: testing a strong deep structural L3 outside the 4H fib value zone; final ticket must still pass SL/R:R/margin/liquidation checks.")
+        raw_entries.append(deep_l3)
+
     if side == "LONG":
         raw_entries = [x for x in raw_entries if float(x["entry"]) < current]
         raw_entries.sort(key=lambda x: float(x["entry"]), reverse=True)
@@ -770,7 +832,6 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
 
     if len(entries) >= 3:
         risk_split = [0.25, 0.35, 0.40]
-        entries = entries[:3]
     elif len(entries) == 2:
         risk_split = [0.40, 0.60]
     else:
@@ -826,11 +887,15 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             combos.append({"name": "balanced_3_leg_value_zone", "entries": source_entries[:3]})
             combos.append({"name": "shallow_2_leg_38_50", "entries": source_entries[:2]})
             combos.append({"name": "deep_2_leg_50_618", "entries": source_entries[1:3]})
+            deep = [x for x in source_entries if x.get("deep_structural_l3")]
+            if deep:
+                combos.append({"name": "relaxed_3_leg_deep_structural_L3", "entries": source_entries[:2] + deep[:1]})
+                combos.append({"name": "relaxed_2_leg_deep_structural", "entries": [source_entries[1], deep[0]]})
         elif len(source_entries) == 2:
             combos.append({"name": "standard_2_leg_value_zone", "entries": source_entries[:2]})
         elif len(source_entries) == 1:
             combos.append({"name": "single_leg_probe_only", "entries": source_entries[:1]})
-        return combos[:3]
+        return combos[:5]
 
     def sl_candidates_for(combo_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         out: List[Dict[str, Any]] = [{"price": stop, "source": invalidation_source, "type": "conservative"}]
@@ -997,33 +1062,69 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         scenario_l1 = scen(l1)
         scenario_l12 = scen(l12) if len(orders) >= 2 else None
         scenario_all = total_reward_local / total_risk_local if total_risk_local else None
-        valid = bool(
+        l1_risk_share = (float(orders[0].get("actual_risk_before_notional_cap_usdt") or 0) / total_risk_local) if orders and total_risk_local else None
+        sl_quality_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.00)
+        sl_fill_warning_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.20)
+        sl_fill_strong_ok = bool(sl_dist_atr is not None and 2.20 < sl_dist_atr <= 2.75 and daily_strong)
+        sl_fill_ok = bool(sl_fill_warning_ok or sl_fill_strong_ok)
+        tp_quality_ok = bool(tp_dist_atr is not None and tp_dist_atr >= 1.20 and (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)))
+        tp_fill_ok = tp_quality_ok
+        base_safety_ok = bool(
             len(orders) >= 2
             and total_risk_local > 0
             and total_risk_local <= risk_usdt * 1.05
-            and (scenario_l1 or 0) >= 1.0
-            and (scenario_l12 or 0) >= 1.2
             and (scenario_all or 0) >= 1.5
-            and sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.00
-            and tp_dist_atr is not None and tp_dist_atr >= 1.20
-            and (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20))
             and lev.get("chosen") is not None
         )
+        common_safety_ok = bool(base_safety_ok and (scenario_l12 or 0) >= 1.2 and sl_quality_ok and tp_quality_ok)
+        valid_quality = bool(common_safety_ok and (scenario_l1 or 0) >= 1.0)
+        l12_fill_soft_ok = bool((scenario_l12 or 0) >= 1.15)
+        valid_fill_probability = bool(
+            base_safety_ok
+            and (scenario_l1 or 0) >= 0.90
+            and (scenario_l1 or 0) < 1.0
+            and l1_risk_share is not None
+            and l1_risk_share <= 0.25
+            and l12_fill_soft_ok
+            and sl_fill_ok
+            and tp_fill_ok
+        )
+        valid = valid_quality
         rejects = []
+        warnings_local = []
         if len(orders) < 2:
             rejects.append("fewer than two valid legs")
-        if (scenario_l1 or 0) < 1.0:
-            rejects.append("L1-only R:R below 1.0")
-        if (scenario_l12 or 0) < 1.2:
+        if (scenario_l1 or 0) < 0.90:
+            rejects.append("L1-only R:R below 0.90 fill-probability floor")
+        elif (scenario_l1 or 0) < 1.0:
+            if l1_risk_share is not None and l1_risk_share <= 0.25:
+                warnings_local.append("L1-only R:R is 0.90-0.99; can be BEST FILL PROBABILITY only if all total ladder quality / ATR / TP / margin / structure gates pass.")
+            else:
+                rejects.append("Rejected due to total ladder quality / ATR / TP / margin / structure gates, not because L1 R:R is below 1.0: L1 risk share is too large for BEST FILL PROBABILITY exception")
+        if (scenario_l12 or 0) < 1.15:
             rejects.append("L1+L2 R:R below 1.2")
+        elif (scenario_l12 or 0) < 1.2:
+            warnings_local.append("L1+L2 R:R is in 1.15-1.20 soft-warning zone for BEST FILL PROBABILITY.")
         if (scenario_all or 0) < 1.5:
             rejects.append("all-filled R:R below 1.5")
-        if sl_dist_atr is None or not (0.70 <= sl_dist_atr <= 2.00):
-            rejects.append("SL distance outside preferred 0.70-2.00 ATR")
+        if sl_dist_atr is None or sl_dist_atr < 0.70:
+            rejects.append("SL distance below minimum preferred 0.70 ATR")
+        elif sl_dist_atr > 2.50 and not daily_strong:
+            rejects.append("SL distance >2.50 ATR without exceptional HTF structure")
+        elif sl_dist_atr > 2.20 and not daily_strong:
+            rejects.append("SL distance >2.20 ATR requires very strong HTF structure")
+        elif sl_dist_atr > 2.50:
+            warnings_local.append("SL distance is >2.50 ATR; accepted only because exceptional 1D/HTF structure and realistic TP support the fill-probability exception.")
+        elif sl_dist_atr > 2.00:
+            warnings_local.append("SL distance is above strict quality range; acceptable only as warning/HTF-supported fill-probability context.")
         if tp_dist_atr is None or tp_dist_atr < 1.20 or not (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)):
             rejects.append("TP distance outside preferred realistic ATR range")
+        elif tp_dist_atr > 3.50:
+            warnings_local.append("TP distance is >3.50 ATR; accepted only because 1D/4H structure supports the target.")
         if lev.get("chosen") is None:
             rejects.append("no leverage option fits margin cap with liquidation safely beyond SL")
+        if valid_fill_probability and not valid_quality:
+            warnings_local.append("VALID_FOR_BEST_FILL_PROBABILITY_ONLY: L1-only R:R is about 0.90+, L1 risk share is reduced, L2/L3 carry the ladder, all-filled R:R is above 1.5, and total risk/margin/leverage/TP/ATR gates pass.")
         return {
             "entries_name": None,
             "orders": orders,
@@ -1043,14 +1144,19 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "rr_l1_only": rn(scenario_l1, 2),
             "rr_l1_l2": rn(scenario_l12, 2),
             "rr_all_filled": rn(scenario_all, 2),
+            "l1_risk_share": rn(l1_risk_share, 3),
             "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
             "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
             "valid_static_ticket": valid,
+            "valid_best_quality": valid_quality,
+            "valid_best_fill_probability": valid_fill_probability,
+            "option_compliance": [x for x, ok in (("BEST_QUALITY", valid_quality), ("BEST_FILL_PROBABILITY", valid_fill_probability or valid_quality)) if ok] + (["VALID_FOR_BEST_FILL_PROBABILITY_ONLY"] if valid_fill_probability and not valid_quality else []),
             "reject_reasons": rejects,
+            "warning_reasons": warnings_local,
         }
 
     scan_entries = entry_combinations(entries)
-    scan_tps = tp_candidates()
+    scan_tps = tp_candidates() if scan_entries else []
     scan_results: List[Dict[str, Any]] = []
     for combo in scan_entries:
         for sl_item in sl_candidates_for(combo["entries"]):
@@ -1180,7 +1286,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "tp_candidates_tested": scan_tps,
             "candidate_count": len(scan_results),
             "best_candidate": {k: v for k, v in (best or {}).items() if k != "orders"},
-            "top_candidates": [{k: v for k, v in x.items() if k != "orders"} for x in scan_results[:8]],
+            "top_candidates": [{k: v for k, v in x.items() if k != "orders"} for x in scan_results],
         },
         "omitted_too_deep_levels_sample": omitted[:8],
         "static_ticket_safe": static_ticket_safe,
@@ -1306,7 +1412,217 @@ def load_screener_data(screener_data_file: Optional[Path], symbol: str, raw_dir:
         return {"available": False, "source_file": str(dest), "error": str(exc)}
 
 
-def make_llm_packet(path: Path, master_prompt: str, manifest: Dict[str, Any], analysis_summary: Dict[str, Any], market_snapshot: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> None:
+def compact_level_list(items: Any, limit: int = 8) -> List[Dict[str, Any]]:
+    out: List[Dict[str, Any]] = []
+    if not isinstance(items, list):
+        return out
+    for x in items[:limit]:
+        if not isinstance(x, dict):
+            continue
+        out.append({
+            "price": x.get("price"),
+            "source": x.get("source"),
+            "time_utc": x.get("time_utc"),
+            "distance_pct": x.get("distance_pct"),
+            "distance_atr": x.get("distance_atr"),
+        })
+    return out
+
+
+def compact_tf_summary(summary: Dict[str, Any]) -> Dict[str, Any]:
+    keep = [
+        "timeframe", "bars", "closed_candles_only", "latest_closed_bar_time_utc",
+        "latest_close", "latest_high", "latest_low", "ema20", "ema50", "ema200",
+        "atr14", "atr14_pct", "rsi14", "adx14", "volume_ratio_20", "trend_state",
+    ]
+    out = {k: summary.get(k) for k in keep if k in summary}
+    # Full pivot history stays in analysis_summary.json; compact packet uses nearest merged key levels.
+    return out
+
+
+def compact_order(order: Dict[str, Any]) -> Dict[str, Any]:
+    keep = [
+        "leg", "order_type", "entry", "entry_source", "qty_target_risk_before_margin_cap",
+        "stop_loss", "stop_loss_source", "take_profit_candidate", "take_profit_source",
+        "take_profit_type", "allocated_target_risk_usdt", "actual_risk_before_notional_cap_usdt",
+        "estimated_reward_usdt", "notional_before_margin_cap_usdt", "estimated_margin_before_cap_usdt",
+        "rr_estimate", "spacing_from_prior_leg_atr",
+    ]
+    return {k: order.get(k) for k in keep if k in order}
+
+
+def compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
+    keep = [
+        "entries_name", "entry_prices", "stop_loss", "stop_loss_source", "take_profit",
+        "take_profit_source", "take_profit_type", "actual_risk_usdt", "estimated_reward_usdt",
+        "total_notional_usdt", "estimated_margin_at_planned_leverage_usdt", "blended_entry",
+        "rr_l1_only", "rr_l1_l2", "rr_all_filled", "l1_risk_share", "sl_distance_atr_from_blended",
+        "tp_distance_atr_from_blended", "valid_static_ticket", "valid_best_quality",
+        "valid_best_fill_probability", "option_compliance", "reject_reasons", "warning_reasons",
+    ]
+    out = {k: candidate.get(k) for k in keep if k in candidate}
+    if isinstance(candidate.get("selected_leverage_check"), dict):
+        out["selected_leverage_check"] = candidate["selected_leverage_check"]
+    return out
+
+
+def compact_execution_state(execution_state: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(execution_state, dict):
+        return {"available": False}
+    if not execution_state.get("available"):
+        return {k: execution_state.get(k) for k in ("available", "reason", "usage_note") if k in execution_state}
+    keep = ["available", "symbol", "positions", "orders", "plan_orders", "usage_note"]
+    return {k: execution_state.get(k) for k in keep if k in execution_state}
+
+
+def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> Dict[str, Any]:
+    ladder = analysis_summary.get("candidate_trade_design") or {}
+    levels = analysis_summary.get("levels") or {}
+    scan = ladder.get("static_optimisation_scan") or {}
+    best = scan.get("best_candidate") or {}
+    top_candidates = scan.get("top_candidates") if isinstance(scan.get("top_candidates"), list) else []
+    screener_summary = analysis_summary.get("screener_summary") or {}
+    screener_data = screener_summary.get("extracted_data") or {}
+    contract_rules = analysis_summary.get("contract_rules") or {}
+    valid_candidates = [x for x in top_candidates if isinstance(x, dict) and (x.get("valid_static_ticket") or x.get("valid_best_fill_probability"))]
+    rejected_candidates = [x for x in top_candidates if isinstance(x, dict) and not x.get("valid_static_ticket")]
+    side = str(ladder.get("side") or manifest.get("side") or "").upper()
+    quality_candidates = [x for x in valid_candidates if x.get("valid_best_quality")]
+    fill_candidates = [x for x in valid_candidates if "BEST_FILL_PROBABILITY" in (x.get("option_compliance") or [])]
+
+    def quality_sort_key(x: Dict[str, Any]) -> tuple:
+        tp_atr = float(x.get("tp_distance_atr_from_blended") or 999)
+        rr_all = float(x.get("rr_all_filled") or 0)
+        lev = float((x.get("selected_leverage_check") or {}).get("leverage") or 999)
+        return (abs(tp_atr - 1.8), -rr_all, lev)
+
+    def fill_sort_key(x: Dict[str, Any]) -> tuple:
+        entries = x.get("entry_prices") if isinstance(x.get("entry_prices"), list) else []
+        first = float(entries[0]) if entries else 0.0
+        fill_first = -first if side == "LONG" else first
+        rr_all = float(x.get("rr_all_filled") or 0)
+        tp_atr = float(x.get("tp_distance_atr_from_blended") or 999)
+        return (-len(entries), fill_first, abs(tp_atr - 2.8), -rr_all)
+
+    best_quality_candidate = sorted(quality_candidates, key=quality_sort_key)[0] if quality_candidates else (best if isinstance(best, dict) else {})
+    best_fill_probability_candidate = sorted(fill_candidates, key=fill_sort_key)[0] if fill_candidates else {}
+
+    compact_valid_candidates = []
+    seen_candidate_keys = set()
+    for x in [best_quality_candidate, best_fill_probability_candidate] + valid_candidates:
+        if not isinstance(x, dict) or not x:
+            continue
+        key = (x.get("entries_name"), tuple(x.get("entry_prices") or []), x.get("stop_loss"), x.get("take_profit"))
+        if key in seen_candidate_keys:
+            continue
+        seen_candidate_keys.add(key)
+        compact_valid_candidates.append(x)
+
+    return {
+        "packet_type": "compact_deep_analysis_decision_packet_v2",
+        "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files.",
+        "non_negotiable_rules": {
+            "primary_truth": "Bitget closed OHLCV / processed summaries. TradingView captures/exports are optional validation only.",
+            "trade_style": "Static 4H pullback ladder only: DIP_LADDER long or SELL_RALLY short.",
+            "risk_target": "Default target planned risk is 100 USDT unless overridden.",
+            "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional.",
+            "static_safety": "If all entries fill and price goes directly to SL, total loss must remain near planned risk.",
+            "forbidden_assumptions": ["no live execution", "no dynamic management", "no trailing", "no future cancellation assumption", "no SL movement or post-fill adjustment"],
+            "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
+        },
+        "manifest": {k: manifest.get(k) for k in [
+            "symbol", "tv_symbol", "side", "family", "score", "rank", "screener_version",
+            "risk_usdt_target", "max_margin_usdt", "planned_leverage", "max_effective_notional_usdt",
+            "created_at_utc", "price_truth_source", "screener_usage", "live_execution_scope",
+        ] if k in manifest},
+        "freshness": analysis_summary.get("freshness"),
+        "ladder_price_reference": analysis_summary.get("ladder_price_reference"),
+        "contract_rules_compact": {k: contract_rules.get(k) for k in ["price_place", "volume_place", "size_multiplier", "min_trade_num", "min_trade_usdt"] if k in contract_rules},
+        "timeframes": {tf: compact_tf_summary(s) for tf, s in (analysis_summary.get("timeframes") or {}).items() if isinstance(s, dict)},
+        "key_levels_nearest": {
+            "supports": compact_level_list(levels.get("supports"), 8),
+            "resistances": compact_level_list(levels.get("resistances"), 8),
+        },
+        "candidate_trade_design": {
+            "side": ladder.get("side"),
+            "style_hint": ladder.get("style_hint"),
+            "decision_hint": ladder.get("decision_hint"),
+            "current_price_reference": ladder.get("current_price_reference"),
+            "atr4h_reference": ladder.get("atr4h_reference"),
+            "impulse_analysis_4h": ladder.get("impulse_analysis_4h"),
+            "value_zone": ladder.get("value_zone"),
+            "invalidation_logic": ladder.get("invalidation_logic"),
+            "stop_loss_candidate": ladder.get("stop_loss_candidate"),
+            "structure_risk_diagnostics": ladder.get("structure_risk_diagnostics"),
+            "target_total_risk_usdt": ladder.get("target_total_risk_usdt"),
+            "target_actual_risk_before_cap_usdt": ladder.get("target_actual_risk_before_cap_usdt"),
+            "target_reward_before_cap_usdt": ladder.get("target_reward_before_cap_usdt"),
+            "target_blended_entry": ladder.get("target_blended_entry"),
+            "target_blended_rr": ladder.get("target_blended_rr"),
+            "selected_leverage": ladder.get("selected_leverage"),
+            "selected_leverage_reason": ladder.get("selected_leverage_reason"),
+            "target_total_notional_before_cap_usdt": ladder.get("target_total_notional_before_cap_usdt"),
+            "target_estimated_margin_before_cap_usdt": ladder.get("target_estimated_margin_before_cap_usdt"),
+            "target_risk_feasible_under_margin_cap": ladder.get("target_risk_feasible_under_margin_cap"),
+            "static_ticket_safe": ladder.get("static_ticket_safe"),
+            "static_ticket_reject_reasons": ladder.get("static_ticket_reject_reasons"),
+            "warnings": ladder.get("warnings"),
+            "orders": [compact_order(o) for o in (ladder.get("target_orders_before_margin_cap") or []) if isinstance(o, dict)],
+            "static_rules_summary": {
+                "static_only": True,
+                "max_legs": 3,
+                "risk_split_used": (ladder.get("oc_static_ladder_rules") or {}).get("risk_split_used"),
+                "rr_thresholds": (ladder.get("oc_static_ladder_rules") or {}).get("rr_thresholds"),
+                "atr_limits_4h": (ladder.get("oc_static_ladder_rules") or {}).get("atr_limits_4h"),
+                "atr_source": "4H ATR(14) only",
+            },
+            "static_optimisation_scan_summary": {
+                "candidate_count": scan.get("candidate_count"),
+                "entry_combinations_tested": scan.get("entry_combinations_tested"),
+                "tp_candidates_tested": [
+                    {"price": x.get("price"), "source": x.get("source"), "type": x.get("type")}
+                    for x in (scan.get("tp_candidates_tested") or [])[:4] if isinstance(x, dict)
+                ],
+                "best_candidate": compact_candidate(best) if isinstance(best, dict) else {},
+                "best_quality_candidate": compact_candidate(best_quality_candidate) if isinstance(best_quality_candidate, dict) else {},
+                "best_fill_probability_candidate": compact_candidate(best_fill_probability_candidate) if isinstance(best_fill_probability_candidate, dict) else {},
+                "valid_candidate_alternatives_compact": [compact_candidate(x) for x in compact_valid_candidates[:10]],
+                "rejected_candidate_examples_compact": [compact_candidate(x) for x in rejected_candidates[:5]],
+            },
+        },
+        "screener_context": {
+            "available": screener_data.get("available"),
+            "source_file": screener_data.get("source_file"),
+            "row_count": screener_data.get("row_count"),
+            "selected_row_essentials": screener_data.get("selected_row"),
+            "usage_note": screener_summary.get("usage_note"),
+        },
+        "execution_state": compact_execution_state(execution_state),
+        "evidence_files": {
+            "analysis_summary_full": (files.get("derived") or {}).get("analysis_summary"),
+            "candidate_levels_full": (files.get("derived") or {}).get("candidate_levels"),
+            "freshness_check": (files.get("derived") or {}).get("freshness_check"),
+            "tv_exports": files.get("tv_exports", []),
+            "bitget_ohlcv": files.get("bitget_ohlcv", {}),
+        },
+    }
+
+
+def make_compact_llm_packet(path: Path, master_prompt: str, compact_payload: Dict[str, Any]) -> None:
+    content = f"""# Compact LLM Decision Packet v2 — {compact_payload.get('manifest', {}).get('symbol')}
+
+Use this compact packet with `{master_prompt}` for the final short report.
+
+The full raw/audit packet remains on disk. Do not infer live-execution permission from this packet.
+
+```json
+{json.dumps(compact_payload, indent=2, ensure_ascii=False)}
+```
+"""
+    path.write_text(content, encoding="utf-8")
+
+
+def make_full_llm_packet(path: Path, master_prompt: str, manifest: Dict[str, Any], analysis_summary: Dict[str, Any], market_snapshot: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> None:
     def j(x: Any) -> str:
         return json.dumps(x, indent=2, ensure_ascii=False)
     content = f"""# LLM Input Packet v2 — {manifest['symbol']}
@@ -1511,7 +1827,18 @@ def main() -> int:
         "freshness_check": str(derived_dir / "freshness_check.json"),
     }
 
-    make_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, manifest, analysis_summary, market_snapshot, execution_state, files)
+    compact_payload = make_compact_decision_payload(manifest, analysis_summary, execution_state, files)
+    write_json(derived_dir / "decision_packet_compact.json", compact_payload)
+    files["derived"]["decision_packet_compact"] = str(derived_dir / "decision_packet_compact.json")
+
+    # Keep the original verbose packet for audit/debug, but make the canonical
+    # llm_input_packet.md compact so normal deep-analysis runs are cheaper and
+    # less distractible for the final LLM step.
+    v2_full_packet = out_dir / "llm_input_packet_V2.full.md"
+    make_full_llm_packet(v2_full_packet, args.master_prompt, manifest, analysis_summary, market_snapshot, execution_state, files)
+    # Backward-compatible alias for older notes/tools; V2.full is the explicit comparison name.
+    shutil.copy2(v2_full_packet, out_dir / "llm_input_packet_full.md")
+    make_compact_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, compact_payload)
     tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
     discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
     contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
@@ -1519,6 +1846,10 @@ def main() -> int:
     print(json.dumps({
         "packet_dir": str(out_dir),
         "llm_input_packet": str(out_dir / "llm_input_packet.md"),
+        "llm_input_packet_kind": "compact",
+        "full_llm_input_packet": str(v2_full_packet),
+        "full_llm_input_packet_alias": str(out_dir / "llm_input_packet_full.md"),
+        "decision_packet_compact_json": str(derived_dir / "decision_packet_compact.json"),
         "analysis_summary": str(derived_dir / "analysis_summary.json"),
         "symbol": symbol,
         "side": args.side,

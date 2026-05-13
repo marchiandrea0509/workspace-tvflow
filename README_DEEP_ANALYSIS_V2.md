@@ -91,23 +91,29 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
     execution_state.json
     tv_exports/ optional
   derived/
-    analysis_summary.json
-    candidate_levels.json
+    analysis_summary.json              # full audit/debug payload
+    candidate_levels.json              # full levels + candidate design
     freshness_check.json
-  llm_input_packet.md
+    decision_packet_compact.json       # compact final-decision payload
+  llm_input_packet.md                   # compact packet for normal final LLM/report step
+  llm_input_packet_V2.full.md           # verbose full packet for comparison/audit/debug
+  llm_input_packet_full.md              # backward-compatible alias of V2.full
 ```
 
-Feed `llm_input_packet.md` together with `prompts/master_trade_analysis_prompt_v2.md` into the final analysis step.
+Feed compact `llm_input_packet.md` together with `prompts/master_trade_analysis_prompt_v2.md` into the normal final analysis step. Keep `llm_input_packet_V2.full.md`, `analysis_summary.json`, and raw files for comparison/audit/debug only. The compact packet preserves mandatory rules, selected decision facts, and compact valid/rejected candidate alternatives for Option A/B selection while removing duplicated raw data, repeated leverage arrays, long pivot histories, and bulky manifests.
+
+Comparison rule: if comparing compact vs `V2.full`, run each final LLM analysis in an isolated context with only its own packet and the same master prompt/model. Do not paste the first result into the second run, or the second result can be influenced by the first.
 
 ## Static OC 4H ladder requirement
 
-The builder now follows Andrea's OC 4H Pullback Ladder Ticket Rules. It creates only static 4H pullback tickets: `DIP_LADDER long` or `SELL_RALLY short`.
+The builder now follows Andrea's OC 4H Pullback Ladder Ticket Rules. It creates static 4H pullback ticket candidates: `DIP_LADDER long` or `SELL_RALLY short`. The final prompt may output up to two mutually exclusive options when both are valid: Option A = best quality, Option B = best fill probability. A and B are alternatives, never simultaneous; do not sum their risk.
 
 Core constraints:
 - No dynamic management, trailing, future cancellation assumption, SL movement, or post-fill adjustment.
 - All entries, quantities, SLs, and TPs must be valid at order creation.
 - If all entries fill and price immediately goes to SL, total loss must still be around the target risk, normally `100 USDT`.
-- Use the latest valid 4H impulse and build entries from the 38.2/50/61.8 pullback value zone plus EMA/pivot/support/resistance confluence.
+- Use the latest valid 4H impulse and build L1/L2 from the 38.2/50/61.8 pullback value zone plus EMA/pivot/support/resistance confluence.
+- Relaxed L3 rule: a strong deep structural L3 outside the fib value zone may be tested when it is a clear HTF level (for example a prior 1D/4H pivot-high retest for longs), has not crossed trend-failure/CHoCH invalidation, and still passes static SL/R:R/margin/liquidation checks. This permits testing deep levels but does not override safety gates.
 - Use 2 or 3 legs maximum.
 - Use risk split, not raw quantity split: 3 legs = `25/35/40`, 2 legs = `40/60`.
 - Minimum spacing is `0.25 ATR(14)`; ideal spacing is `0.30-0.60 ATR(14)`.
@@ -127,11 +133,10 @@ Before selecting the final static ladder, the builder now scans candidate combin
 All ATR checks use **4H ATR(14)** only.
 
 Preferred gates:
-- SL from blended entry: ideally `0.70-1.80 ATR`, avoid above `2.00 ATR`.
-- TP from blended entry: ideally `1.20-2.80 ATR`, max around `3.50 ATR` unless daily trend is very strong.
-- L1-only R:R at least `~1.0`.
-- L1+L2 R:R at least `~1.2`.
-- All-filled ladder R:R at least `~1.5`.
+- SL from blended entry: ideally `0.70-1.80 ATR`; `1.80-2.20 ATR` is warning zone; `>2.20 ATR` requires very strong HTF structure; `>2.50 ATR` normally rejects unless exceptional 1D structure and realistic TP support it.
+- TP from blended entry: ideally `1.20-2.80 ATR`, normal max around `3.50 ATR`; `>3.50 ATR` requires clear 1D/4H support and must not be lifted only to force R:R.
+- Option A / BEST QUALITY: L1-only R:R at least `~1.0`, L1+L2 at least `~1.2`, all-filled at least `~1.5`.
+- Option B / BEST FILL PROBABILITY: shallow L1-only R:R may be `0.90-0.99` only if L1 is structurally valid, inside/near the valid pullback/retest zone, not a chase into resistance/support, has reduced risk share normally `<=25%`, L1+L2 remains around `1.2` (`1.15-1.20` soft-warning only), all-filled remains `>=1.5` hard gate, margin/leverage/risk pass, and TP is realistic. Mark passing exception candidates as `VALID_FOR_BEST_FILL_PROBABILITY_ONLY`.
 
 The scan chooses the best valid static ticket, not the most optimistic one. Tighter SLs are allowed only beyond real support/invalidation and outside normal 4H noise. Far TP targets must be structurally meaningful.
 
