@@ -1529,6 +1529,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "static_safety": "If all entries fill and price goes directly to SL, total loss must remain near planned risk.",
             "forbidden_assumptions": ["no live execution", "no dynamic management", "no trailing", "no future cancellation assumption", "no SL movement or post-fill adjustment"],
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
+            "rejection_audit": "Always justify rejected sides/options/candidates and broken rules with item, exact rule/gate, observed value, required value/threshold, why it blocks, and what would fix it. Prefer packet fields static_ticket_reject_reasons, warnings, best_candidate.reject_reasons, and rejected_candidate_examples_compact.",
         },
         "manifest": {k: manifest.get(k) for k in [
             "symbol", "tv_symbol", "side", "family", "score", "rank", "screener_version",

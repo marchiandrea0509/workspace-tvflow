@@ -12,6 +12,7 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - Target planned risk: `100 USDT` by default.
 - Cap: `1500 USDT max margin` at planned leverage, not total notional.
 - Live execution is excluded. Any real order placement requires a separate explicit user request.
+- Rejections and broken rules must always be justified. Every WAIT/NO_TRADE, omitted side, rejected option, invalid candidate, and material warning must state the exact rule/gate, observed value, required value/threshold, why it blocks orderability, and what would fix it.
 - Delegate simple deterministic support tasks to cheap mini/nano subagents using Codex OAuth/local zero-cost routes, not paid API keys. Keep `tvflow` responsible for coordination, final trade judgment, and any user-confirmation boundary.
 
 ## Main files
@@ -139,6 +140,8 @@ Preferred gates:
 - Option B / BEST FILL PROBABILITY: shallow L1-only R:R may be `0.90-0.99` only if L1 is structurally valid, inside/near the valid pullback/retest zone, not a chase into resistance/support, has reduced risk share normally `<=25%`, L1+L2 remains around `1.2` (`1.15-1.20` soft-warning only), all-filled remains `>=1.5` hard gate, margin/leverage/risk pass, and TP is realistic. Mark passing exception candidates as `VALID_FOR_BEST_FILL_PROBABILITY_ONLY`.
 
 The scan chooses the best valid static ticket, not the most optimistic one. Tighter SLs are allowed only beyond real support/invalidation and outside normal 4H noise. Far TP targets must be structurally meaningful.
+
+Final reports must include a compact rejection / broken-rule audit whenever anything is rejected or downgraded to WAIT. Use the format: `item | broken rule | observed value | required value | why it blocks | what would fix it`. Source the audit from `static_ticket_reject_reasons`, `warnings`, `best_candidate.reject_reasons`, and `rejected_candidate_examples_compact` before adding judgment.
 
 Leverage above `10x` may be considered only as a margin-efficiency adjustment after checking that estimated liquidation remains safely beyond the SL; it must not increase planned risk.
 

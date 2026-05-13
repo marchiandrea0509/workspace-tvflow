@@ -37,6 +37,21 @@ Do not invent levels. If a needed level is not visible/provided, say so and pref
   - **Option A — BEST QUALITY:** cleaner structure, cleaner invalidation, better R:R; may use fewer legs.
   - **Option B — BEST FILL PROBABILITY:** higher fill chance; may add a shallow valid leg, but must remain safe.
 - If one option is poor/forced/invalid, omit it and state why.
+- Always justify every rejection, omitted option, broken rule, and WAIT/NO_TRADE decision with concrete packet evidence. Do not write generic phrases like “rules failed” without the specific rule, observed value, threshold/expected condition, and why that blocks orderability.
+
+## Rejection / broken-rule audit — mandatory
+
+Every final analysis must include a compact rejection audit whenever any candidate, side, option, ladder leg, or final trade idea is rejected or downgraded to WAIT.
+
+For each rejected/broken item include:
+- `item`: side/option/leg/candidate being rejected, e.g. `LONG DIP_LADDER`, `Option B`, `S1`, `best_candidate`.
+- `broken rule`: exact rule or gate, e.g. `4H trend must be bullish-neutral for DIP_LADDER`, `all-filled R:R >= 1.5`, `SL distance <= 2.5 ATR unless exceptional HTF structure`, `needs at least 2 ladder legs`.
+- `observed value`: actual value from the packet, e.g. `4H trend bearish`, `all-filled R:R 0.69`, `SL distance 2.734 ATR`, `only 1 leg survived`.
+- `required value`: threshold or expected condition.
+- `why it matters`: one sentence explaining risk/orderability impact.
+- `what would fix it`: clear future condition, e.g. reclaim level, deeper pullback, tighter structural SL, better TP path, fresh impulse.
+
+If the packet already provides `static_ticket_reject_reasons`, `warnings`, `best_candidate.reject_reasons`, or `rejected_candidate_examples_compact`, use those first and translate them into this audit. If a side is not tradeable, explain whether the blocker is geometry, trend, R:R, ATR distance, margin/leverage/liquidation, freshness, or existing exposure.
 
 ## ATR rule
 
@@ -251,15 +266,31 @@ For each valid option state:
 
 Then give one final preferred orderability decision.
 
-### 7) Backup plan
+### 7) Rejection / broken-rule audit
+
+Mandatory. Include this even in short reports when any side/option/candidate is rejected or the final decision is WAIT/NO_TRADE.
+
+Use a compact table:
+
+`item | broken rule | observed value | required value | why it blocks | what would fix it`
+
+Minimum coverage:
+- final WAIT/NO_TRADE reason;
+- rejected long/short side if both were checked;
+- rejected Option A or B if only one option survives;
+- best rejected candidate from `static_optimisation_scan_summary.best_candidate` or `rejected_candidate_examples_compact`;
+- any hard rule breach from `static_ticket_reject_reasons`;
+- any material warning that changes orderability, such as freshness, near major S/R, existing exposure, margin cap, liquidation-vs-SL, or insufficient ladder legs.
+
+### 8) Backup plan
 
 Only if neither A nor B is placeable now and there is one clear future trigger. Do not create a third competing ticket.
 
-### 8) Risk sizing
+### 9) Risk sizing
 
 Risk budget is 100 USDT per option unless packet says otherwise. Max margin 1500 USDT per option. Max leverage 20x. Size from stop distance. Each option is independently sized.
 
-### 9) Trade plan tickets
+### 10) Trade plan tickets
 
 Separate ticket for each valid option.
 
@@ -276,7 +307,7 @@ For each option state:
 - static safety check;
 - margin note.
 
-### 10) Final verdict
+### 11) Final verdict
 
 End exactly:
 
@@ -302,6 +333,16 @@ Include final JSON with:
   "options_are_alternatives_not_simultaneous": true,
   "preferred_option": "A_or_B_or_NONE",
   "options": [],
+  "rejection_audit": [
+    {
+      "item": "LONG_DIP_LADDER",
+      "broken_rule": "example rule",
+      "observed_value": "example value",
+      "required_value": "example threshold",
+      "why_it_blocks": "example impact",
+      "what_would_fix_it": "example future condition"
+    }
+  ],
   "requires_user_confirmation": true
 }
 ```

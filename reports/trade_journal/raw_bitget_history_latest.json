@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-13T05:40:03.494Z",
+  "generatedAt": "2026-05-13T12:09:06.983Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-13T05:39:31.101Z",
+  "until": "2026-05-13T12:08:34.002Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778650771101"
+        "untilTime": "1778674114002"
       },
-      "count": 33,
+      "count": 37,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,137 @@
         },
         {
           "ok": true,
-          "count": 33,
+          "count": 37,
           "startTime": "1772236800000",
-          "endTime": "1778650771101",
+          "endTime": "1778674114002",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "NVDAUSDT",
+          "size": "9.3",
+          "orderId": "1438421676180795394",
+          "clientOid": "tvflow_nvda_20260513_4x_L3",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "218.1",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "229",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778672372860",
+          "uTime": "1778673211463"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "6.03",
+          "orderId": "1438421673240588315",
+          "clientOid": "tvflow_nvda_20260513_4x_L2",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "219.6",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "229",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778672372159",
+          "uTime": "1778673213217"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "3.47",
+          "orderId": "1438421670472347650",
+          "clientOid": "tvflow_nvda_20260513_4x_L1",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "221",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "229",
+          "presetStopLossPrice": "213.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778672371501",
+          "uTime": "1778673215057"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "10.4",
+          "orderId": "1438412344496123906",
+          "clientOid": "1438376588925161472",
+          "baseVolume": "10.4",
+          "fee": "-0.9843986",
+          "price": "",
+          "priceAvg": "225.36",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "77.49131275",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "2343.8062",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "move_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "217.91",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778670148015",
+          "uTime": "1778670148028"
+        },
         {
           "symbol": "NVDAUSDT",
           "size": "8.17",
@@ -1238,9 +1362,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778650771101"
+        "untilTime": "1778674114002"
       },
-      "count": 112,
+      "count": 115,
       "windows": [
         {
           "ok": true,
@@ -1419,13 +1543,82 @@
         },
         {
           "ok": true,
-          "count": 112,
+          "count": 115,
           "startTime": "1772236800000",
-          "endTime": "1778650771101",
+          "endTime": "1778674114002",
           "pages": 2
         }
       ],
       "data": [
+        {
+          "tradeId": "1438412344524521476",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438412344496123906",
+          "price": "225.35",
+          "baseVolume": "2.09",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.19781223"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "470.9815",
+          "profit": "15.53937362",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778670148020"
+        },
+        {
+          "tradeId": "1438412344524521474",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438412344496123906",
+          "price": "225.37",
+          "baseVolume": "8.29",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.78469326"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1868.3173",
+          "profit": "61.80283699",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778670148020"
+        },
+        {
+          "tradeId": "1438412344524521472",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438412344496123906",
+          "price": "225.37",
+          "baseVolume": "0.02",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0018931"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "4.5074",
+          "profit": "0.14910213",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778670148020"
+        },
         {
           "tradeId": "1438298496387760130",
           "symbol": "NVDAUSDT",
@@ -4011,7 +4204,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778650771101",
+        "untilTime": "1778674114002",
         "planType": "normal_plan"
       },
       "count": 9,
@@ -4195,7 +4388,7 @@
           "ok": true,
           "count": 9,
           "startTime": "1772236800000",
-          "endTime": "1778650771101",
+          "endTime": "1778674114002",
           "pages": 1
         }
       ],

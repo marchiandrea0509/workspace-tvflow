@@ -11,6 +11,7 @@ Default workflow for read-only Bitget deep analysis.
 - Target planned risk: 100 USDT by default.
 - Cap: 1500 USDT **max margin** at planned leverage, not total notional.
 - Live execution: excluded; requires separate explicit user request.
+- Rejection audit: every rejected side/option/candidate and every broken rule must be justified with the exact rule/gate, observed value, required value/threshold, why it blocks orderability, and what would fix it.
 
 ## Folder
 
@@ -57,6 +58,8 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
 - `static_ticket_reject_reasons`
 - `omitted_too_deep_levels_sample`
 - `warnings`
+
+Final V2 reports must also include a `rejection_audit` section/table whenever the final decision is WAIT/NO_TRADE or any option/candidate is rejected. Use `static_ticket_reject_reasons`, `warnings`, `static_optimisation_scan.best_candidate.reject_reasons`, and `rejected_candidate_examples_compact` as source evidence.
 
 ## Static 4H ladder rule
 
