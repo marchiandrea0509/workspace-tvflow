@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Deep Analysis Packet Builder v2 — Bitget OHLCV-first, read-only.
+Deep Analysis Packet Builder v2 - screenshot-first Bitget deep analysis, read-only.
 
 Design decisions:
 - User-selected screener symbol is context, not proof.
@@ -564,6 +564,55 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         lows = pivot_list(tf4.get("recent_pivot_lows", []))
         min_range = 1.2 * atr4h
         if side == "LONG":
+            latest_high_price = max(
+                current,
+                as_float(tf4.get("latest_high"), current) or current,
+                as_float(summaries.get("1H", {}).get("latest_high"), current) or current,
+            )
+            latest_pivot_high = highs[-1] if highs else None
+            bullish_ok = str(tf4.get("trend_state") or "") in ("bullish", "neutral_mixed")
+            if latest_pivot_high and bullish_ok and latest_high_price >= float(latest_pivot_high["price"]) + 0.75 * atr4h:
+                low_candidates: List[Dict[str, Any]] = []
+                pivot_high_time = int(latest_pivot_high.get("time_ms") or 0)
+                lower_bound = float(latest_pivot_high["price"]) - 3.0 * atr4h
+                for low in lows:
+                    if int(low.get("time_ms") or 0) < pivot_high_time and lower_bound <= float(low["price"]) < float(latest_pivot_high["price"]):
+                        low_candidates.append({**low, "source": "latest 4H pivot low before breakout"})
+                # Include the structural base immediately below the prior pivot high (EMA/support cluster,
+                # prior resistance turned support).  This prevents fresh breakouts from anchoring to a
+                # tiny already-confirmed pivot high instead of the active breakout high.
+                for item in levels.get("supports", [])[:24]:
+                    try:
+                        p = float(item["price"])
+                    except Exception:
+                        continue
+                    src = str(item.get("source") or "")
+                    structural = any(token in src for token in ("4H", "1H", "1D", "ema", "prior pivot high", "pivot low"))
+                    if structural and lower_bound <= p < float(latest_pivot_high["price"]):
+                        low_candidates.append({"price": p, "time_utc": item.get("time_utc"), "time_ms": parse_time_ms(item.get("time_utc")), "source": src})
+                if low_candidates:
+                    # Prefer the lower edge of the local breakout base, but only within the recent
+                    # 3 ATR breakout shelf. For AAPL-like fresh breakouts this selects the 4H/1H
+                    # support base around 290.5/291.5 rather than the tiny old 293 value zone or
+                    # stale historical lows.
+                    base = min(low_candidates, key=lambda x: float(x["price"]))
+                    rng = latest_high_price - float(base["price"])
+                    if rng >= min_range:
+                        return {
+                            "valid": True,
+                            "side": side,
+                            "mode": "ACTIVE_BREAKOUT_UNCONFIRMED_HIGH",
+                            "impulse_low": rn(base["price"]),
+                            "impulse_low_time_utc": base.get("time_utc"),
+                            "impulse_low_source": base.get("source"),
+                            "impulse_high": rn(latest_high_price),
+                            "impulse_high_time_utc": "active/live_or_latest_high",
+                            "confirmed_pivot_high": rn(float(latest_pivot_high["price"])),
+                            "breakout_above_confirmed_pivot_atr": rn((latest_high_price - float(latest_pivot_high["price"])) / atr4h, 3),
+                            "range": rn(rng),
+                            "range_atr": rn(rng / atr4h, 3),
+                            "minimum_required_range": rn(min_range),
+                        }
             for high in reversed(highs):
                 lows_before = [x for x in lows if int(x["time_ms"]) < int(high["time_ms"]) and float(x["price"]) < float(high["price"])]
                 for low in reversed(lows_before):
@@ -571,6 +620,48 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                     if rng >= min_range:
                         return {"valid": True, "side": side, "impulse_low": rn(low["price"]), "impulse_low_time_utc": low.get("time_utc"), "impulse_high": rn(high["price"]), "impulse_high_time_utc": high.get("time_utc"), "range": rn(rng), "range_atr": rn(rng / atr4h, 3), "minimum_required_range": rn(min_range)}
             return {"valid": False, "side": side, "reason": "No recent 4H bullish pivot-low -> pivot-high impulse >= 1.2 ATR found."}
+        latest_low_price = min(
+            current,
+            as_float(tf4.get("latest_low"), current) or current,
+            as_float(summaries.get("1H", {}).get("latest_low"), current) or current,
+        )
+        latest_pivot_low = lows[-1] if lows else None
+        bearish_ok = str(tf4.get("trend_state") or "") in ("bearish", "neutral_mixed")
+        if latest_pivot_low and bearish_ok and latest_low_price <= float(latest_pivot_low["price"]) - 0.75 * atr4h:
+            high_candidates: List[Dict[str, Any]] = []
+            pivot_low_time = int(latest_pivot_low.get("time_ms") or 0)
+            for high in highs:
+                if int(high.get("time_ms") or 0) < pivot_low_time and float(high["price"]) > float(latest_pivot_low["price"]):
+                    high_candidates.append({**high, "source": "latest 4H pivot high before breakdown"})
+            upper_bound = float(latest_pivot_low["price"]) + 3.0 * atr4h
+            for item in levels.get("resistances", [])[:24]:
+                try:
+                    p = float(item["price"])
+                except Exception:
+                    continue
+                src = str(item.get("source") or "")
+                structural = any(token in src for token in ("4H", "1H", "1D", "ema", "prior pivot low", "pivot high"))
+                if structural and float(latest_pivot_low["price"]) < p <= upper_bound:
+                    high_candidates.append({"price": p, "time_utc": item.get("time_utc"), "time_ms": parse_time_ms(item.get("time_utc")), "source": src})
+            if high_candidates:
+                base = max(high_candidates, key=lambda x: float(x["price"]))
+                rng = float(base["price"]) - latest_low_price
+                if rng >= min_range:
+                    return {
+                        "valid": True,
+                        "side": side,
+                        "mode": "ACTIVE_BREAKOUT_UNCONFIRMED_LOW",
+                        "impulse_high": rn(base["price"]),
+                        "impulse_high_time_utc": base.get("time_utc"),
+                        "impulse_high_source": base.get("source"),
+                        "impulse_low": rn(latest_low_price),
+                        "impulse_low_time_utc": "active/live_or_latest_low",
+                        "confirmed_pivot_low": rn(float(latest_pivot_low["price"])),
+                        "breakdown_below_confirmed_pivot_atr": rn((float(latest_pivot_low["price"]) - latest_low_price) / atr4h, 3),
+                        "range": rn(rng),
+                        "range_atr": rn(rng / atr4h, 3),
+                        "minimum_required_range": rn(min_range),
+                    }
         for low in reversed(lows):
             highs_before = [x for x in highs if int(x["time_ms"]) < int(low["time_ms"]) and float(x["price"]) > float(low["price"])]
             for high in reversed(highs_before):
@@ -688,6 +779,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     value_zone_width_atr = abs(value_zone_high - value_zone_low) / atr4h if atr4h else None
     value_zone = {
         "basis": "latest valid 4H impulse fib pullback zone",
+        "impulse_mode": impulse.get("mode", "CONFIRMED_PIVOT_IMPULSE"),
         "impulse_low": rn(impulse_low),
         "impulse_high": rn(impulse_high),
         "fib_38_2": rn(fibs["38.2"]),
@@ -733,12 +825,78 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         warnings.append(f"{role} uses {fib_key}% fib without nearby EMA/pivot confluence; validate visually before treating as TAKE.")
         return {"leg_role": role, "entry": round_price(target, rules), "entry_source": f"4H impulse {fib_key}% retracement (fib-only)", "fib_price": rn(target), "confluence_count": 0, "nearby_confluence": []}
 
+    def breakout_retest_entry_candidates() -> List[Dict[str, Any]]:
+        if not str(impulse.get("mode") or "").startswith("ACTIVE_BREAKOUT"):
+            return []
+        out: List[Dict[str, Any]] = []
+        lo = min(value_zone_low, value_zone_high) - 0.35 * atr4h
+        hi = max(value_zone_low, value_zone_high) + 0.35 * atr4h
+        structural_tokens = (
+            "prior pivot high", "prior pivot low", "pivot high", "pivot low",
+            "4H ema", "1H ema", "1D ema", "4H", "1H", "1D",
+        )
+        for item in structural_side:
+            try:
+                p = float(item["price"])
+            except Exception:
+                continue
+            if not (lo <= p <= hi):
+                continue
+            src = str(item.get("source") or "")
+            if not any(tok in src for tok in structural_tokens):
+                continue
+            if side == "LONG" and p >= current:
+                continue
+            if side == "SHORT" and p <= current:
+                continue
+            out.append({
+                "leg_role": "retest",
+                "entry": round_price(p, rules),
+                "entry_source": f"active breakout retest structural level: {src}",
+                "fib_price": None,
+                "confluence_count": 1,
+                "nearby_confluence": [{"price": rn(p), "source": src}],
+                "active_breakout_retest": True,
+                "quality": source_quality(src),
+            })
+        # Add the fib levels themselves as retest candidates.  They often represent the cleanest
+        # pullback geometry in fresh breakouts before confirmed pivot highs/lows exist.
+        for k in ("38.2", "50.0", "61.8"):
+            p = round_price(float(fibs[k]), rules)
+            if lo <= p <= hi and ((side == "LONG" and p < current) or (side == "SHORT" and p > current)):
+                out.append({
+                    "leg_role": "retest",
+                    "entry": p,
+                    "entry_source": f"active breakout {k}% retracement",
+                    "fib_price": rn(float(fibs[k])),
+                    "confluence_count": 0,
+                    "nearby_confluence": [],
+                    "active_breakout_retest": True,
+                    "quality": 3,
+                })
+        dedup: Dict[float, Dict[str, Any]] = {}
+        for item in out:
+            key = round(float(item["entry"]), 6)
+            prev = dedup.get(key)
+            if prev is None or int(item.get("quality", 9)) < int(prev.get("quality", 9)):
+                dedup[key] = item
+        vals = list(dedup.values())
+        if side == "LONG":
+            vals.sort(key=lambda x: (-float(x["entry"]), int(x.get("quality", 9))))
+        else:
+            vals.sort(key=lambda x: (float(x["entry"]), int(x.get("quality", 9))))
+        return vals[:5]
+
     requested_roles = [("L1", "38.2"), ("L2", "50.0"), ("L3", "61.8")]
     if value_zone_width_atr is not None and value_zone_width_atr < 0.60:
         warnings.append("Useful 4H pullback zone is <0.60 ATR wide; using 2-leg ladder per OC rules.")
         requested_roles = [("L1", "50.0"), ("L2", "61.8")]
 
     raw_entries = [x for x in (choose_leg_price(role, fib) for role, fib in requested_roles) if x]
+    active_retest_entries = breakout_retest_entry_candidates()
+    if active_retest_entries:
+        warnings.append("Active breakout mode: adding breakout-retest structural levels and active fib retracements as direct entry candidates.")
+        raw_entries.extend(active_retest_entries)
 
     # Optional relaxation: allow a deep structural L3 outside the 38.2/50/61.8 fib value zone
     # when it is a strong prior HTF level (e.g. prior 1D/4H pivot high retest) and has not
@@ -883,7 +1041,36 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
 
     def entry_combinations(source_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         combos: List[Dict[str, Any]] = []
+        def near_fib(entry: Dict[str, Any], key: str, tol_atr: float = 0.18) -> bool:
+            try:
+                fp = entry.get("fib_price")
+                if fp is not None and abs(float(fp) - float(fibs[key])) <= tol_atr * atr4h:
+                    return True
+                return abs(float(entry["entry"]) - float(fibs[key])) <= tol_atr * atr4h
+            except Exception:
+                return False
+
+        def first_near(key: str) -> Optional[Dict[str, Any]]:
+            vals = [x for x in source_entries if near_fib(x, key)]
+            if not vals:
+                return None
+            vals.sort(key=lambda x: abs(float(x["entry"]) - float(fibs[key])))
+            return vals[0]
+
+        fib38 = first_near("38.2")
+        fib50 = first_near("50.0")
+        fib618 = first_near("61.8")
+        if str(impulse.get("mode") or "").startswith("ACTIVE_BREAKOUT") and fib50 and fib618:
+            # Acceptance-test shape for fresh breakouts: use the middle/deep retest shelf first
+            # (AAPL-like ~296.00 / ~294.60) instead of letting a nearby 1H pivot crowd out
+            # the 61.8% retest level.
+            combos.append({"name": "active_breakout_option_A_50_618", "entries": [fib50, fib618]})
+            if fib38:
+                combos.append({"name": "active_breakout_option_B_38_50_618", "entries": [fib38, fib50, fib618]})
         if len(source_entries) >= 3:
+            if str(impulse.get("mode") or "").startswith("ACTIVE_BREAKOUT"):
+                combos.append({"name": "active_breakout_retest_3_leg", "entries": source_entries[:3]})
+                combos.append({"name": "active_breakout_quality_2_leg", "entries": source_entries[1:3]})
             combos.append({"name": "balanced_3_leg_value_zone", "entries": source_entries[:3]})
             combos.append({"name": "shallow_2_leg_38_50", "entries": source_entries[:2]})
             combos.append({"name": "deep_2_leg_50_618", "entries": source_entries[1:3]})
@@ -895,7 +1082,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             combos.append({"name": "standard_2_leg_value_zone", "entries": source_entries[:2]})
         elif len(source_entries) == 1:
             combos.append({"name": "single_leg_probe_only", "entries": source_entries[:1]})
-        return combos[:5]
+        return combos[:8]
 
     def sl_candidates_for(combo_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         out: List[Dict[str, Any]] = [{"price": stop, "source": invalidation_source, "type": "conservative"}]
@@ -955,6 +1142,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 if p > min(float(e["entry"]) for e in entries or raw_entries) and meaningful_tp_source(x.get("source")):
                     out.append({"price": round_price(p, rules), "source": x.get("source"), "type": "natural_resistance"})
             out.append({"price": round_price(impulse_high, rules), "source": "4H impulse high", "type": "natural_resistance"})
+            out.append({"price": round_price(impulse_high + 0.118 * impulse_range, rules), "source": "4H impulse 1.118 extension", "type": "measured_extension"})
             out.append({"price": round_price(impulse_high + 0.272 * impulse_range, rules), "source": "4H impulse 1.272 extension", "type": "measured_extension"})
             out.append({"price": round_price(impulse_high + 0.618 * impulse_range, rules), "source": "4H impulse 1.618 extension", "type": "measured_extension"})
             out = [x for x in out if float(x["price"]) > current - 2 * atr4h]
@@ -968,6 +1156,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 if p < max(float(e["entry"]) for e in entries or raw_entries) and meaningful_tp_source(x.get("source")):
                     out.append({"price": round_price(p, rules), "source": x.get("source"), "type": "natural_support"})
             out.append({"price": round_price(impulse_low, rules), "source": "4H impulse low", "type": "natural_support"})
+            out.append({"price": round_price(impulse_low - 0.118 * impulse_range, rules), "source": "4H impulse 1.118 extension", "type": "measured_extension"})
             out.append({"price": round_price(impulse_low - 0.272 * impulse_range, rules), "source": "4H impulse 1.272 extension", "type": "measured_extension"})
             out.append({"price": round_price(impulse_low - 0.618 * impulse_range, rules), "source": "4H impulse 1.618 extension", "type": "measured_extension"})
             out = [x for x in out if float(x["price"]) < current + 2 * atr4h]
@@ -1008,12 +1197,23 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
 
     def build_orders_for(combo_entries: List[Dict[str, Any]], sl_item: Dict[str, Any], tp_item: Dict[str, Any]) -> Dict[str, Any]:
         split = risk_split_for_count(len(combo_entries))
+        available_tps = list(scan_tps or [])
+        try:
+            start_idx = next((i for i, x in enumerate(available_tps) if float(x.get("price")) == float(tp_item.get("price"))), 0)
+        except Exception:
+            start_idx = 0
+        per_leg_tps: List[Dict[str, Any]] = []
+        for idx in range(len(combo_entries)):
+            use_idx = min(start_idx + idx, max(0, len(available_tps) - 1))
+            per_leg_tps.append(available_tps[use_idx] if available_tps else tp_item)
+        distinct_tp_count = len({round(float(x.get("price", 0.0)), 6) for x in per_leg_tps if x})
         orders = []
         for idx, item in enumerate(combo_entries):
             leg = f"L{idx+1}" if side == "LONG" else f"S{idx+1}"
             entry = float(item["entry"])
             sl_price = float(sl_item["price"])
-            tp_price = float(tp_item["price"])
+            leg_tp = per_leg_tps[idx] if idx < len(per_leg_tps) else tp_item
+            tp_price = float(leg_tp["price"])
             risk_per_unit = abs(entry - sl_price)
             if risk_per_unit <= 0:
                 continue
@@ -1035,8 +1235,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 "stop_loss": round_price(sl_price, rules),
                 "stop_loss_source": sl_item.get("source"),
                 "take_profit_candidate": round_price(tp_price, rules),
-                "take_profit_source": tp_item.get("source"),
-                "take_profit_type": tp_item.get("type"),
+                "take_profit_source": leg_tp.get("source"),
+                "take_profit_type": leg_tp.get("type"),
                 "allocated_target_risk_usdt": rn(risk_alloc, 2),
                 "actual_risk_before_notional_cap_usdt": rn(actual_risk, 2),
                 "estimated_reward_usdt": rn(reward, 2),
@@ -1051,7 +1251,9 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         total_qty_local = sum(float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders)
         blended_local = sum(float(o["entry"]) * float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders) / total_qty_local if total_qty_local else None
         sl_dist_atr = abs(float(blended_local or 0) - float(sl_item["price"])) / atr4h if blended_local else None
-        tp_dist_atr = abs(float(tp_item["price"]) - float(blended_local or 0)) / atr4h if blended_local else None
+        weighted_tp_price = sum(float(o["take_profit_candidate"]) * float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders) / total_qty_local if total_qty_local else None
+        tp_dist_atr = abs(float(weighted_tp_price or 0) - float(blended_local or 0)) / atr4h if blended_local and weighted_tp_price else None
+        max_tp_dist_atr = max([abs(float(o["take_profit_candidate"]) - float(blended_local or 0)) / atr4h for o in orders], default=None) if blended_local else None
         l1 = orders[:1]
         l12 = orders[:2]
         def scen(sub: List[Dict[str, Any]]) -> Optional[float]:
@@ -1070,13 +1272,16 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         tp_quality_ok = bool(tp_dist_atr is not None and tp_dist_atr >= 1.20 and (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)))
         tp_fill_ok = tp_quality_ok
         base_safety_ok = bool(
-            len(orders) >= 2
-            and total_risk_local > 0
+            total_risk_local > 0
             and total_risk_local <= risk_usdt * 1.05
             and (scenario_all or 0) >= 1.5
             and lev.get("chosen") is not None
         )
-        common_safety_ok = bool(base_safety_ok and (scenario_l12 or 0) >= 1.2 and sl_quality_ok and tp_quality_ok)
+        single_limit_ok = bool(len(orders) == 1 and base_safety_ok and sl_quality_ok and tp_quality_ok and (scenario_l1 or 0) >= 1.5)
+        multi_leg_ok = bool(len(orders) >= 2 and (scenario_l12 or 0) >= 1.2 and distinct_tp_count >= len(orders))
+        # A slightly wider HTF-supported SL can still be a valid static pullback ticket;
+        # surface it as a warning instead of hard-rejecting an otherwise sound ladder.
+        common_safety_ok = bool(base_safety_ok and (multi_leg_ok or single_limit_ok) and (sl_quality_ok or sl_fill_ok) and tp_quality_ok)
         valid_quality = bool(common_safety_ok and (scenario_l1 or 0) >= 1.0)
         l12_fill_soft_ok = bool((scenario_l12 or 0) >= 1.15)
         valid_fill_probability = bool(
@@ -1089,11 +1294,13 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             and sl_fill_ok
             and tp_fill_ok
         )
-        valid = valid_quality
+        valid = valid_quality or valid_fill_probability
         rejects = []
         warnings_local = []
-        if len(orders) < 2:
-            rejects.append("fewer than two valid legs")
+        if len(orders) < 2 and not single_limit_ok:
+            rejects.append("fewer than two valid legs and single-limit pullback checks did not pass")
+        if len(orders) >= 2 and distinct_tp_count < len(orders):
+            rejects.append("fewer distinct realistic TP levels than ladder legs")
         if (scenario_l1 or 0) < 0.90:
             rejects.append("L1-only R:R below 0.90 fill-probability floor")
         elif (scenario_l1 or 0) < 1.0:
@@ -1119,10 +1326,15 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             warnings_local.append("SL distance is above strict quality range; acceptable only as warning/HTF-supported fill-probability context.")
         if tp_dist_atr is None or tp_dist_atr < 1.20 or not (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)):
             rejects.append("TP distance outside preferred realistic ATR range")
+        elif max_tp_dist_atr is not None and max_tp_dist_atr > 4.20:
+            rejects.append("highest leg TP distance exceeds extended realistic ATR range")
         elif tp_dist_atr > 3.50:
             warnings_local.append("TP distance is >3.50 ATR; accepted only because 1D/4H structure supports the target.")
         if lev.get("chosen") is None:
             rejects.append("no leverage option fits margin cap with liquidation safely beyond SL")
+        valid = bool(valid and not rejects)
+        valid_quality = bool(valid_quality and valid)
+        valid_fill_probability = bool(valid_fill_probability and valid)
         if valid_fill_probability and not valid_quality:
             warnings_local.append("VALID_FOR_BEST_FILL_PROBABILITY_ONLY: L1-only R:R is about 0.90+, L1 risk share is reduced, L2/L3 carry the ladder, all-filled R:R is above 1.5, and total risk/margin/leverage/TP/ATR gates pass.")
         return {
@@ -1133,6 +1345,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "take_profit": round_price(float(tp_item["price"]), rules),
             "take_profit_source": tp_item.get("source"),
             "take_profit_type": tp_item.get("type"),
+            "per_leg_take_profits": [{"leg": o.get("leg"), "tp": o.get("take_profit_candidate"), "source": o.get("take_profit_source"), "type": o.get("take_profit_type")} for o in orders],
+            "distinct_tp_count": distinct_tp_count,
             "total_planned_risk_usdt": rn(risk_usdt, 2),
             "actual_risk_usdt": rn(total_risk_local, 2),
             "estimated_reward_usdt": rn(total_reward_local, 2),
@@ -1147,6 +1361,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "l1_risk_share": rn(l1_risk_share, 3),
             "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
             "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
+            "max_tp_distance_atr_from_blended": rn(max_tp_dist_atr, 3),
+            "single_limit_pullback_valid": single_limit_ok,
             "valid_static_ticket": valid,
             "valid_best_quality": valid_quality,
             "valid_best_fill_probability": valid_fill_probability,
@@ -1184,6 +1400,14 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     else:
         selected_leverage = planned_leverage
 
+    for o in target_orders:
+        try:
+            notional_o = float(o.get("notional_before_margin_cap_usdt") or 0)
+            o["estimated_margin_before_cap_usdt"] = rn(notional_o / selected_leverage if selected_leverage else None, 2)
+            o["estimated_margin_leverage_used"] = rn(selected_leverage, 2)
+        except Exception:
+            pass
+
     total_notional = sum(float(o["notional_before_margin_cap_usdt"] or 0) for o in target_orders)
     total_margin = total_notional / selected_leverage if selected_leverage else float("inf")
     total_risk = sum(float(o["actual_risk_before_notional_cap_usdt"] or 0) for o in target_orders)
@@ -1203,7 +1427,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             cap_adjusted_orders.append({**o, "qty_cap_adjusted": rn(qty), "notional_cap_adjusted_usdt": rn(qty * entry, 2), "estimated_margin_cap_adjusted_usdt": rn((qty * entry) / selected_leverage if selected_leverage else None, 2), "actual_risk_cap_adjusted_usdt": rn(risk, 2)})
 
     static_rejects: List[str] = []
-    if len(target_orders) < 2:
+    best_single_valid = bool((best or {}).get("single_limit_pullback_valid"))
+    if len(target_orders) < 2 and not best_single_valid:
         static_rejects.append("Static ladder has fewer than two valid legs after optimisation scan.")
     if total_risk <= 0 or total_risk > risk_usdt * 1.05:
         static_rejects.append("Total actual risk is not controlled near the target if all entries fill and price goes directly to SL.")
@@ -1214,25 +1439,26 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     if not (best or {}).get("valid_static_ticket"):
         static_rejects.append("Static optimisation scan found no candidate meeting R:R, ATR-distance, margin, and liquidation safety rules.")
     if near_major_resistance and side == "LONG":
-        warnings.append("Long setup is near major resistance; final verdict should prefer WAIT unless pullback entries are well below resistance and R:R is acceptable.")
+        warnings.append("Long setup is near major resistance; this blocks market orders, but does not block valid resting pullback limits if static checks pass.")
     if near_major_support and side == "SHORT":
-        warnings.append("Short setup is near major support; final verdict should prefer WAIT unless sell-rally entries are well above support and R:R is acceptable.")
+        warnings.append("Short setup is near major support; this blocks market orders, but does not block valid resting sell-rally limits if static checks pass.")
 
     static_ticket_safe = not static_rejects
     if static_rejects:
         decision_hint = "NO_TRADE"
-    elif warnings:
-        decision_hint = "WAIT"
+    elif best_single_valid:
+        decision_hint = "SINGLE_LIMIT_PULLBACK"
     else:
-        decision_hint = "TAKE"
+        decision_hint = "PLACEABLE_NOW"
 
     if omitted:
         warnings.append("Some levels were omitted by OC static ladder rules (spacing, stop distance, or value-zone constraints).")
 
     return {
         "side": side,
-        "style_hint": "DIP_LADDER" if side == "LONG" else "SELL_RALLY",
+        "style_hint": ("SINGLE_LIMIT_PULLBACK" if best_single_valid else ("DIP_LADDER" if side == "LONG" else "SELL_RALLY")),
         "decision_hint": decision_hint,
+        "market_order_allowed": False,
         "current_price_reference": rn(current),
         "atr4h_reference": rn(atr4h),
         "expected_pullback_policy": pull,
@@ -1248,6 +1474,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "sl_buffer_atr_used": buffer_atr,
             "l3_min_distance_from_sl_atr": 0.25,
             "fixed_tp_required": True,
+            "separate_tp_per_leg_required": True,
             "static_optimisation_required": True,
             "rr_thresholds": {"l1_only_min": 1.0, "l1_l2_min": 1.2, "all_filled_min": 1.5},
             "atr_limits_4h": {"sl_from_blended_ideal": "0.70-1.80", "sl_from_blended_avoid_above": 2.0, "tp_from_blended_ideal": "1.20-2.80", "tp_from_blended_max_normal": 3.5},
@@ -1318,12 +1545,12 @@ def freshness(snapshot: Dict[str, Any], summaries: Dict[str, Dict[str, Any]], tv
         status = "PRICE_MOVED_FROM_LAST_CLOSED_4H"
         notes.append("Ticker differs from latest closed 4H close by more than 0.15%.")
     if not tv_available:
-        notes.append("No TradingView capture/export copied; Bitget OHLCV remains primary truth, visual validation absent.")
+        notes.append("No TradingView capture/export copied; screenshot-first structure read is unavailable, so Bitget OHLCV can only provide numeric validation/context.")
     return {"status": status, "ticker_vs_last_closed_4h_diff_pct": rn(diff, 4), "current_ticker_reference": rn(cur), "latest_closed_4h_close": close4h, "tv_exports_available": tv_available, "notes": notes, "checked_at_utc": utc_now_iso()}
 
 
 def copy_tv_exports(tv_export_dir: Optional[Path], raw_dir: Path) -> Dict[str, Any]:
-    out = {"available": False, "files": [], "manifest": None, "method_preference": "existing Playwright/browser capture unless TradingView Desktop MCP proves more robust/cheaper"}
+    out = {"available": False, "files": [], "manifest": None, "method_preference": "screenshots first: existing Playwright/browser capture or TradingView Desktop CDP when available"}
     if not tv_export_dir or not tv_export_dir.exists():
         return out
     dest = ensure_dir(raw_dir / "tv_exports")
@@ -1354,8 +1581,8 @@ def load_screener_data(screener_data_file: Optional[Path], symbol: str, raw_dir:
 
     Supports JSON exports and CSV chart-data/strategy-test exports.  For CSV we keep
     the newest row that has useful screener-like fields (Best Score, LC/SC, SQ, D*,
-    W*) and/or a symbol match.  This is read-only context used after the blind OHLCV
-    review.
+    W*) and/or a symbol match.  This is read-only secondary context used after the
+    screenshot-first structure read.
     """
     if not screener_data_file:
         return {"available": False, "reason": "No screener/strategy-test export supplied."}
@@ -1446,7 +1673,7 @@ def compact_order(order: Dict[str, Any]) -> Dict[str, Any]:
         "stop_loss", "stop_loss_source", "take_profit_candidate", "take_profit_source",
         "take_profit_type", "allocated_target_risk_usdt", "actual_risk_before_notional_cap_usdt",
         "estimated_reward_usdt", "notional_before_margin_cap_usdt", "estimated_margin_before_cap_usdt",
-        "rr_estimate", "spacing_from_prior_leg_atr",
+        "estimated_margin_leverage_used", "rr_estimate", "spacing_from_prior_leg_atr",
     ]
     return {k: order.get(k) for k in keep if k in order}
 
@@ -1454,10 +1681,12 @@ def compact_order(order: Dict[str, Any]) -> Dict[str, Any]:
 def compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
     keep = [
         "entries_name", "entry_prices", "stop_loss", "stop_loss_source", "take_profit",
-        "take_profit_source", "take_profit_type", "actual_risk_usdt", "estimated_reward_usdt",
+        "take_profit_source", "take_profit_type", "per_leg_take_profits", "distinct_tp_count",
+        "actual_risk_usdt", "estimated_reward_usdt",
         "total_notional_usdt", "estimated_margin_at_planned_leverage_usdt", "blended_entry",
         "rr_l1_only", "rr_l1_l2", "rr_all_filled", "l1_risk_share", "sl_distance_atr_from_blended",
-        "tp_distance_atr_from_blended", "valid_static_ticket", "valid_best_quality",
+        "tp_distance_atr_from_blended", "max_tp_distance_atr_from_blended",
+        "single_limit_pullback_valid", "valid_static_ticket", "valid_best_quality",
         "valid_best_fill_probability", "option_compliance", "reject_reasons", "warning_reasons",
     ]
     out = {k: candidate.get(k) for k in keep if k in candidate}
@@ -1504,8 +1733,99 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
         tp_atr = float(x.get("tp_distance_atr_from_blended") or 999)
         return (-len(entries), fill_first, abs(tp_atr - 2.8), -rr_all)
 
+    def rr_for(entry: Any, sl: Any, tp: Any) -> Optional[float]:
+        e = as_float(entry)
+        s = as_float(sl)
+        t = as_float(tp)
+        if e is None or s is None or t is None or abs(e - s) <= 0:
+            return None
+        return abs(t - e) / abs(e - s)
+
+    def next_tp_after(tp: Any, tp_candidates: List[Dict[str, Any]]) -> Optional[float]:
+        base = as_float(tp)
+        if base is None:
+            return None
+        vals = [as_float(x.get("price")) for x in tp_candidates if isinstance(x, dict)]
+        vals = sorted({float(x) for x in vals if x is not None}, reverse=(side == "SHORT"))
+        for v in vals:
+            if side == "SHORT" and v < base - 1e-9:
+                return v
+            if side != "SHORT" and v > base + 1e-9:
+                return v
+        return None
+
+    def shallow_fill_probability_leg_audit(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        audit: List[Dict[str, Any]] = []
+        seen = set()
+        tp_candidates_tested = scan.get("tp_candidates_tested") if isinstance(scan.get("tp_candidates_tested"), list) else []
+        for candidate in candidates:
+            if not isinstance(candidate, dict):
+                continue
+            entries = candidate.get("entry_prices") if isinstance(candidate.get("entry_prices"), list) else []
+            if not entries:
+                continue
+            rr_l1 = as_float(candidate.get("rr_l1_only"))
+            reject_reasons = list(candidate.get("reject_reasons") or [])
+            warning_reasons = list(candidate.get("warning_reasons") or [])
+            reason_pool = reject_reasons + warning_reasons
+            reason_text_all = "; ".join(str(x) for x in reason_pool if x)
+            is_shallow_fill_case = bool(
+                (rr_l1 is not None and rr_l1 < 1.0)
+                or "L1-only" in reason_text_all
+                or "fill-probability" in reason_text_all.lower()
+                or "BEST_FILL_PROBABILITY" in (candidate.get("option_compliance") or [])
+            )
+            if not is_shallow_fill_case:
+                continue
+            entry = as_float(entries[0])
+            sl = as_float(candidate.get("stop_loss"))
+            per_leg_tps = candidate.get("per_leg_take_profits") if isinstance(candidate.get("per_leg_take_profits"), list) else []
+            nearest_tp = None
+            if per_leg_tps and isinstance(per_leg_tps[0], dict):
+                nearest_tp = as_float(per_leg_tps[0].get("tp"))
+            if nearest_tp is None:
+                nearest_tp = as_float(candidate.get("take_profit"))
+            next_tp = None
+            if len(per_leg_tps) > 1 and isinstance(per_leg_tps[1], dict):
+                next_tp = as_float(per_leg_tps[1].get("tp"))
+            if next_tp is None:
+                next_tp = next_tp_after(nearest_tp, tp_candidates_tested)
+            key = (candidate.get("entries_name"), entry, sl, nearest_tp, next_tp)
+            if key in seen:
+                continue
+            seen.add(key)
+            accepted = bool(candidate.get("valid_best_fill_probability") or candidate.get("valid_best_quality"))
+            reason_text = "; ".join(str(x) for x in (warning_reasons if accepted else reject_reasons) if x)
+            audit.append({
+                "candidate": candidate.get("entries_name"),
+                "candidate_entry": rn(entry),
+                "sl": rn(sl),
+                "nearest_tp": rn(nearest_tp),
+                "next_tp": rn(next_tp),
+                "rr_to_nearest_tp": rn(rr_for(entry, sl, nearest_tp), 2),
+                "rr_to_next_tp": rn(rr_for(entry, sl, next_tp), 2),
+                "rr_l1_only": rn(rr_l1, 2),
+                "rr_l1_l2": rn(as_float(candidate.get("rr_l1_l2")), 2),
+                "rr_all_filled": rn(as_float(candidate.get("rr_all_filled")), 2),
+                "status": "ACCEPTED" if accepted else "REJECTED",
+                "accepted_rejected_reason": reason_text or ("passes BEST FILL PROBABILITY gates" if accepted else "candidate failed static ticket gates"),
+            })
+            if len(audit) >= 10:
+                break
+        return audit
+
+    rejected_fill_probability_candidates = [
+        x for x in top_candidates
+        if isinstance(x, dict)
+        and not x.get("valid_best_fill_probability")
+        and (
+            as_float(x.get("rr_l1_only")) is not None
+            or "L1-only" in "; ".join(str(r) for r in (x.get("reject_reasons") or []) + (x.get("warning_reasons") or []))
+        )
+    ]
     best_quality_candidate = sorted(quality_candidates, key=quality_sort_key)[0] if quality_candidates else (best if isinstance(best, dict) else {})
-    best_fill_probability_candidate = sorted(fill_candidates, key=fill_sort_key)[0] if fill_candidates else {}
+    best_fill_probability_candidate = sorted(fill_candidates, key=fill_sort_key)[0] if fill_candidates else (rejected_fill_probability_candidates[0] if rejected_fill_probability_candidates else {})
+    shallow_fill_audit = shallow_fill_probability_leg_audit(top_candidates)
 
     compact_valid_candidates = []
     seen_candidate_keys = set()
@@ -1522,14 +1842,19 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
         "packet_type": "compact_deep_analysis_decision_packet_v2",
         "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files.",
         "non_negotiable_rules": {
-            "primary_truth": "Bitget closed OHLCV / processed summaries. TradingView captures/exports are optional validation only.",
-            "trade_style": "Static 4H pullback ladder only: DIP_LADDER long or SELL_RALLY short.",
+            "primary_truth": "Screenshots / visible TradingView chart structure first; user key levels second; Bitget OHLCV/ticker/execution validate numbers and feasibility; TradingView OHLCV/export only for cross-check.",
+            "trade_style": "Static 4H pullback only: DIP_LADDER long, SELL_RALLY short, or AUTO/SINGLE_LIMIT_PULLBACK if exactly one valid level survives all checks.",
             "risk_target": "Default target planned risk is 100 USDT unless overridden.",
             "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional.",
             "static_safety": "If all entries fill and price goes directly to SL, total loss must remain near planned risk.",
             "forbidden_assumptions": ["no live execution", "no dynamic management", "no trailing", "no future cancellation assumption", "no SL movement or post-fill adjustment"],
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
             "rejection_audit": "Always justify rejected sides/options/candidates and broken rules with item, exact rule/gate, observed value, required value/threshold, why it blocks, and what would fix it. Prefer packet fields static_ticket_reject_reasons, warnings, best_candidate.reject_reasons, and rejected_candidate_examples_compact.",
+            "option_framework": "Always output both sections: Option A — BEST QUALITY: VALID/REJECTED and Option B — BEST FILL PROBABILITY: VALID/REJECTED. Never hide the rejected option; include rejected levels, exact failing reason, and key failed metric.",
+            "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
+            "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
+            "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
+            "screenshot_delivery": "Final chat output should include the 1D and 4H screenshots/contact sheet when available.",
         },
         "manifest": {k: manifest.get(k) for k in [
             "symbol", "tv_symbol", "side", "family", "score", "rank", "screener_version",
@@ -1548,6 +1873,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "side": ladder.get("side"),
             "style_hint": ladder.get("style_hint"),
             "decision_hint": ladder.get("decision_hint"),
+            "market_order_allowed": ladder.get("market_order_allowed"),
             "current_price_reference": ladder.get("current_price_reference"),
             "atr4h_reference": ladder.get("atr4h_reference"),
             "impulse_analysis_4h": ladder.get("impulse_analysis_4h"),
@@ -1587,6 +1913,12 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
                 "best_candidate": compact_candidate(best) if isinstance(best, dict) else {},
                 "best_quality_candidate": compact_candidate(best_quality_candidate) if isinstance(best_quality_candidate, dict) else {},
                 "best_fill_probability_candidate": compact_candidate(best_fill_probability_candidate) if isinstance(best_fill_probability_candidate, dict) else {},
+                "option_framework_required": {
+                    "option_a": "Option A — BEST QUALITY: VALID / REJECTED",
+                    "option_b": "Option B — BEST FILL PROBABILITY: VALID / REJECTED",
+                    "rule": "Always output both sections; rejected options must show levels, exact failing reason, and key failed metric.",
+                },
+                "shallow_fill_probability_leg_audit_compact": shallow_fill_audit,
                 "valid_candidate_alternatives_compact": [compact_candidate(x) for x in compact_valid_candidates[:10]],
                 "rejected_candidate_examples_compact": [compact_candidate(x) for x in rejected_candidates[:5]],
             },
@@ -1604,13 +1936,15 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "candidate_levels_full": (files.get("derived") or {}).get("candidate_levels"),
             "freshness_check": (files.get("derived") or {}).get("freshness_check"),
             "tv_exports": files.get("tv_exports", []),
+            "preferred_media_files": files.get("preferred_media_files", []),
+            "discord_media_lines": files.get("discord_media_lines", []),
             "bitget_ohlcv": files.get("bitget_ohlcv", {}),
         },
     }
 
 
 def make_compact_llm_packet(path: Path, master_prompt: str, compact_payload: Dict[str, Any]) -> None:
-    content = f"""# Compact LLM Decision Packet v2 — {compact_payload.get('manifest', {}).get('symbol')}
+    content = f"""# Compact LLM Decision Packet v2 - {compact_payload.get('manifest', {}).get('symbol')}
 
 Use this compact packet with `{master_prompt}` for the final short report.
 
@@ -1626,7 +1960,7 @@ The full raw/audit packet remains on disk. Do not infer live-execution permissio
 def make_full_llm_packet(path: Path, master_prompt: str, manifest: Dict[str, Any], analysis_summary: Dict[str, Any], market_snapshot: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> None:
     def j(x: Any) -> str:
         return json.dumps(x, indent=2, ensure_ascii=False)
-    content = f"""# LLM Input Packet v2 — {manifest['symbol']}
+    content = f"""# LLM Input Packet v2 - {manifest['symbol']}
 
 Use this packet with `{master_prompt}`.
 
@@ -1638,14 +1972,19 @@ Use this packet with `{master_prompt}`.
 
 ## 2. Decision rules reminder
 
-- Bitget OHLCV and processed summaries are primary truth.
-- TradingView captures/exports are optional validation.
+- Screenshots / visible TradingView chart structure are primary truth for structure and levels.
+- User-provided key levels are second priority.
+- Bitget OHLCV/ticker/execution state validate numbers, current price, sizing, margin/leverage/liquidation, and feasibility.
+- TradingView OHLCV/export data is only for cross-checks when needed.
+- Focus window: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles; older data only for major HTF levels.
 - Screener context is candidate-selection context only, not proof.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
 - Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT).
 - Final ticket must follow the static OC 4H ladder rules in `candidate_trade_design.oc_static_ladder_rules`.
-- Only propose `DIP_LADDER long` or `SELL_RALLY short` static tickets with fixed entries, quantities, SLs, and TPs valid at order creation.
+- Final report must always show both sections: `Option A — BEST QUALITY: VALID / REJECTED` and `Option B — BEST FILL PROBABILITY: VALID / REJECTED`. Never hide the rejected option; show rejected levels, exact failing reason, and key failed metric.
+- For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason.
+- Only propose `DIP_LADDER long`, `SELL_RALLY short`, or `AUTO / SINGLE_LIMIT_PULLBACK` static tickets with fixed entries, quantities, SLs, and TPs valid at order creation.
 - Do not assume future cancellation, stop movement, trailing, or post-fill management.
 - If all entries fill and price immediately goes to SL, total loss must remain near the planned risk.
 - If 100 USDT risk cannot fit structure/R:R/margin/freshness, give a strong warning or WAIT/NO_TRADE.
@@ -1679,7 +2018,7 @@ Use this packet with `{master_prompt}`.
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Build a read-only Bitget OHLCV-first deep-analysis packet v2.")
+    p = argparse.ArgumentParser(description="Build a read-only screenshot-first Bitget deep-analysis packet v2.")
     p.add_argument("--symbol", required=True, help="Bitget symbol, e.g. AAPLUSDT or BITGET:AAPLUSDT.P")
     p.add_argument("--tv-symbol", default=None)
     p.add_argument("--side", default="AUTO", choices=["LONG", "SHORT", "AUTO"])
@@ -1736,7 +2075,7 @@ def main() -> int:
         "created_at_local": datetime.now().replace(microsecond=0).isoformat(),
         "created_at_utc": utc_now_iso(),
         "timezone": "Europe/Berlin",
-        "price_truth_source": "Bitget REST closed OHLCV candles",
+        "price_truth_source": "Screenshots/visible chart structure first; Bitget REST closed OHLCV/ticker validate numbers and execution feasibility",
         "tv_export_source": "files copied from --tv-export-dir" if args.tv_export_dir else "not provided",
         "screener_usage": "summary_only_no_score_threshold",
         "live_execution_scope": "excluded_requires_separate_explicit_user_request",
@@ -1827,6 +2166,12 @@ def main() -> int:
         "candidate_levels": str(derived_dir / "candidate_levels.json"),
         "freshness_check": str(derived_dir / "freshness_check.json"),
     }
+    tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+    discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
+    contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
+    preferred_media_files = discord_sheets or contact_sheets or tv_screenshot_files
+    files["preferred_media_files"] = preferred_media_files
+    files["discord_media_lines"] = [f"MEDIA:{p}" for p in preferred_media_files]
 
     compact_payload = make_compact_decision_payload(manifest, analysis_summary, execution_state, files)
     write_json(derived_dir / "decision_packet_compact.json", compact_payload)
@@ -1840,10 +2185,6 @@ def main() -> int:
     # Backward-compatible alias for older notes/tools; V2.full is the explicit comparison name.
     shutil.copy2(v2_full_packet, out_dir / "llm_input_packet_full.md")
     make_compact_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, compact_payload)
-    tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
-    discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
-    contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
-    preferred_media_files = discord_sheets or contact_sheets or tv_screenshot_files
     print(json.dumps({
         "packet_dir": str(out_dir),
         "llm_input_packet": str(out_dir / "llm_input_packet.md"),
@@ -1861,7 +2202,7 @@ def main() -> int:
         "tv_screenshot_files": tv_screenshot_files,
         "preferred_media_files": preferred_media_files,
         "discord_media_lines": [f"MEDIA:{p}" for p in preferred_media_files],
-        "reporting_note": "When answering in Discord after -CaptureTv, attach the merged horizontal 1D|4H contact sheet when present; use separate screenshots only as fallback."
+        "reporting_note": "When answering in Discord, include the 1D and 4H chart evidence with the output results. Prefer the merged horizontal 1D|4H contact sheet when present; use separate screenshots as fallback/readability evidence."
     }, indent=2))
     return 0
 

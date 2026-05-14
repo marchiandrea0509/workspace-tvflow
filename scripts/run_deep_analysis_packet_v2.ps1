@@ -14,7 +14,9 @@ param(
   [string]$ScreenerDataFile = '',
   [string]$ExecutionStateJson = '',
   [string]$OutRoot = 'reports/deep_analysis_packets_v2',
-  [switch]$CaptureTv,
+  # Screenshots are now the default deep-analysis evidence path. Use -NoCaptureTv only for explicit OHLCV-only/debug runs.
+  [switch]$CaptureTv = $true,
+  [switch]$NoCaptureTv,
   [switch]$CaptureStrict,
   [ValidateSet('Auto','Web','DesktopCdp')][string]$CaptureBackend = 'Auto',
   [string]$CaptureLayout = 'Openclaw-structure',
@@ -89,6 +91,7 @@ function Test-CaptureImageUsable([string]$path) {
 
 $ApiSymbol = Normalize-ApiSymbol $Symbol
 $EffectiveTvSymbol = Normalize-TvSymbol $ApiSymbol $TvSymbol
+if ($NoCaptureTv) { $CaptureTv = $false }
 
 if ($CaptureTv -and $TvExportDir -eq '') {
   $stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
@@ -238,7 +241,7 @@ if ($CaptureTv) {
     layout = $CaptureLayout
     exports = $exports
     failures = $failures
-    note = 'TradingView evidence is optional validation; Bitget OHLCV remains primary truth. Prefer the merged horizontal 1D|4H contact sheet for Discord delivery/readability.'
+    note = 'Screenshot-first deep analysis evidence. Analyze visible 1D|4H chart structure first; use Bitget OHLCV/ticker/execution to validate numbers and feasibility. Prefer the merged horizontal 1D|4H contact sheet for Discord delivery/readability.'
   }
   $manifestPath = Join-Path $TvExportDir 'manifest.json'
   $manifestJson = $manifest | ConvertTo-Json -Depth 8
