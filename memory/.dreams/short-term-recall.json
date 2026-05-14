@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-14T04:57:39.530Z",
+  "updatedAt": "2026-05-14T11:27:27.671Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -1419,13 +1419,13 @@
       "endLine": 17,
       "source": "memory",
       "snippet": "- L1: buy/open long `2.00 @ 279.00`, TP `287.50`, SL `270.30`, orderId `1435664008835919873`, clientOid `tvflow_aapl_20260505_ladder_L1` - L2: buy/open long `6.00 @ 277.10`, TP `292.30`, SL `270.30`, orderId `1435664027584458753`, clientOid `tvflow_aapl_20260505_ladder_L2` - L3: buy/open long `9.00 @ 274.20`, TP `293.30`, SL `270.30`, orderId `1435664049562611713`, clientOid `tvflow_aapl_20260505_ladder_L3` - Verification immediately after placement: 3 AAPLUSDT regular pending orders, all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 4`, `baseVolume: 0`; no AAPLUSDT position listed yet because limits were unfilled/resting. - Drew the live AAPL l",
-      "recallCount": 17,
+      "recallCount": 18,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 7.463725546002387,
+      "totalScore": 7.900499269366263,
       "maxScore": 0.5091856151819228,
       "firstRecalledAt": "2026-05-06T05:08:51.338Z",
-      "lastRecalledAt": "2026-05-13T19:42:04.720Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
       "queryHashes": [
         "cd6bbf71900e",
         "8f3261d9e2df",
@@ -1443,7 +1443,8 @@
         "7049834f2578",
         "d30f948edc27",
         "575943a9d158",
-        "d6781310a3ba"
+        "d6781310a3ba",
+        "1b03d21270a3"
       ],
       "recallDays": [
         "2026-05-06",
@@ -1451,7 +1452,8 @@
         "2026-05-08",
         "2026-05-11",
         "2026-05-12",
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "buy/open",
@@ -2496,21 +2498,23 @@
       "endLine": 46,
       "source": "memory",
       "snippet": "- Final pre-check: AAPLUSDT open regular/plan orders `0/0`, current futures positions `0`, account live/not paper, available USDT about `4,867.34`; ticker last/mark about `287.96/287.96`. - Set/confirmed AAPLUSDT isolated margin mode and 4x long/short leverage. - Used one-shot environment unlock for the placement command only; no persistent harness config change was made. - Placed live Bitget isolated 4x `AAPLUSDT` tactical fixed-TP long limit ladder: - L1: buy/open long `4.20 @ 286.20`, TP `292.30`, SL `279.80`, orderId `1436416624356388865`, clientOid `tvflow_aapl_20260508_tactical_L1` - L2: buy/open long `6.00 @ 284.70`, TP `292.30`, SL `279.80`, orderId `1436416627011383297`, clientO",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.1985304981470106,
+      "totalScore": 1.628835156559944,
       "maxScore": 0.4536492764949798,
       "firstRecalledAt": "2026-05-11T11:18:32.670Z",
-      "lastRecalledAt": "2026-05-12T21:15:19.162Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
       "queryHashes": [
         "18255ed079fd",
         "38e8bb5181b2",
-        "d30f948edc27"
+        "d30f948edc27",
+        "1b03d21270a3"
       ],
       "recallDays": [
         "2026-05-11",
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-14"
       ],
       "conceptTags": [
         "pre-check",
@@ -4286,20 +4290,22 @@
       "endLine": 134,
       "source": "memory",
       "snippet": "- L1: buy/open long `4.01 @ 291.74`, TP `297.36`, SL `285.52`, orderId `1438204754273136644`, clientOid `tvflow_aapl_20260512_optB_L1` - L2: buy/open long `6.98 @ 290.53`, TP `297.36`, SL `285.52`, orderId `1438204756928131073`, clientOid `tvflow_aapl_20260512_optB_L2` - L3: buy/open long `10.12 @ 289.47`, TP `297.36`, SL `285.52`, orderId `1438204759788646401`, clientOid `tvflow_aapl_20260512_optB_L3` - Verification after placement: 3 AAPLUSDT regular pending orders all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 6`, `baseVolume: 0`; planCount `0`; no AAPLUSDT position yet. Verification saved to `reports/deep_analysis/2026-05-12_AAPLUSDT_opti",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.441975750029087,
+      "totalScore": 1.9171576872467995,
       "maxScore": 0.5366120710968971,
       "firstRecalledAt": "2026-05-13T05:38:38.270Z",
-      "lastRecalledAt": "2026-05-13T19:42:04.720Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
       "queryHashes": [
         "22f4009e8ea0",
         "575943a9d158",
-        "d6781310a3ba"
+        "d6781310a3ba",
+        "1b03d21270a3"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "buy/open",
@@ -4319,18 +4325,20 @@
       "endLine": 84,
       "source": "memory",
       "snippet": "- Precheck: NVDAUSDT open regular/plan orders `0/0`; no NVDA position; account available `3733.00084763 USDT`; NVDA ticker around `221.66`; existing unrelated INTC long remained open. Safety estimate at 6x: total notional `6982.92`, margin `1163.82`, total SL risk `98.56`, approx all-filled liquidation `182.89`, SL `213.80` about `30.91` points above estimated liquidation. - Set NVDAUSDT isolated margin and leverage `6x` successfully. The harness required both `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRADING=true`; first two attempts stopped at guards before sending any order. Final placement process used both flags ephemerally. - Live/resting NVDAUSDT orders placed and ver",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.5220068365335464,
-      "maxScore": 0.5220068365335464,
+      "totalScore": 1.0448625117540358,
+      "maxScore": 0.5228556752204895,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-13T11:35:28.161Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
       "queryHashes": [
-        "a47393d9b308"
+        "a47393d9b308",
+        "7bc1edc6f6eb"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "regular/plan",
@@ -4350,19 +4358,22 @@
       "endLine": 101,
       "source": "memory",
       "snippet": "- Precheck before placement: NVDAUSDT open regular/plan orders `0/0`; no NVDA position; account available `3733.00084763 USDT`; NVDA ticker around `221.80`; ticker guard passed because price remained above highest limit entry `219.13`. Existing unrelated INTC long remained open. - Set/confirmed NVDAUSDT isolated margin and leverage `6x`. Live/resting NVDAUSDT orders placed and verified: - L1 orderId `1437772001941549057`, clientOid `tvflow_nvda_20260511_rev_6x_L1`, buy/open long `5.73 @ 219.13`, SL `213.80`, TP `222.40`, isolated 6x. - L2 orderId `1437772004864978945`, clientOid `tvflow_nvda_20260511_rev_6x_L2`, buy/open long `8.17 @ 218.10`, SL `213.80`, TP `224.80`, isolated 6x. - L3",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.9709300577640532,
+      "totalScore": 1.9208206236362455,
       "maxScore": 0.5211448550224304,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-13T11:53:52.649Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
       "queryHashes": [
         "a47393d9b308",
-        "ff85a948393a"
+        "ff85a948393a",
+        "1b03d21270a3",
+        "7bc1edc6f6eb"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "regular/plan",
@@ -4382,20 +4393,22 @@
       "endLine": 96,
       "source": "memory",
       "snippet": "- User said they manually cancelled the prior NVDAUSDT orders and requested a new proposal: replace L1 with `219.13`, L2 becomes `218.10`, L3 becomes `217.10`, keep risk `100$`. - Verified read-only state: NVDAUSDT open regular/plan orders `0/0`, no NVDA position; ticker around `221.87`; unrelated INTC long still open. - Proposed revised 6x isolated fixed-TP ladder, keeping shared SL `213.80` and prior TP levels `222.40/224.80/225.80`, sizing to total risk about `99.99 USDT`: L1 `5.73 @ 219.13`, SL `213.80`, TP `222.40`, risk `30.54`, reward `18.74`, RR `0.61`; L2 `8.17 @ 218.10`, SL `213.80`, TP `224.80`, risk `35.13`, reward `54.74`, RR `1.56`; L3 `10.40 @ 217.10`, SL `213.80`, fixed TP `2",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.3928682863712312,
+      "totalScore": 1.8747472852468492,
       "maxScore": 0.5006607413291931,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-13T12:00:08.403Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
       "queryHashes": [
         "a47393d9b308",
         "ff85a948393a",
-        "c13ff2553454"
+        "c13ff2553454",
+        "7bc1edc6f6eb"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "219.13",
@@ -4415,19 +4428,21 @@
       "endLine": 78,
       "source": "memory",
       "snippet": "- Verified arithmetic: notionals `1526.70`, `2279.55`, `3176.67`; total notional `6982.92`; at 4x estimated margin `1745.73`; total qty `32.20`; stop risk `30.10 + 34.65 + 33.81 = 98.56 USDT`; L1 RR `1.00`, L2 RR `2.33`, L3 activation gain/RR `142.59 / 4.22R`. - Read-only live check at review time: NVDA ticker around `221.88`, NVDA open regular/plan orders `0/0`, no NVDA position seen; unrelated INTC long position still present. Note: this ticket exceeds the previously used `1500 USDT` max margin cap unless quantities are scaled down or cap is intentionally waived. - Harness caveat: current `bitget-futures-harness/scripts/place-order.js` supports fixed `presetStopSurplusPrice` and `presetSto",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.944165739417076,
+      "totalScore": 1.4251723885536194,
       "maxScore": 0.48651950061321253,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-13T11:53:52.649Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
       "queryHashes": [
         "a47393d9b308",
-        "ff85a948393a"
+        "ff85a948393a",
+        "7bc1edc6f6eb"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "1526.70",
@@ -4447,19 +4462,22 @@
       "endLine": 90,
       "source": "memory",
       "snippet": "- Postcheck: NVDAUSDT regular pending orders `3`, plan orders `0`; no NVDA position yet because all limits were resting/unfilled. Execution log `reports/live_execution/20260511_162815_NVDAUSDT_option2_6x_live_place_confirmed.log`; manual result `reports/live_execution/20260511_162815_NVDAUSDT_option2_6x_live_result_manual.json`. - TradingView Desktop MCP drawing succeeded on `BITGET:NVDAUSDT.P` 4H with 3 orders drawn (Entry/SL/TP for L1/L2/L3) from `C:\\Users\\anmar\\tools\\trade_plan_from_oc.json`. - Trade journal refreshed with NVDA included using `scripts/run_bitget_journal_update.ps1 -Symbols 'GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT' -NoSend`; latest workbook `reports/trade_jou",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.9063930541276931,
-      "maxScore": 0.45659287273883814,
+      "totalScore": 1.8207956999540327,
+      "maxScore": 0.4703998059034347,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-13T11:53:52.649Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
       "queryHashes": [
         "a47393d9b308",
-        "ff85a948393a"
+        "ff85a948393a",
+        "1b03d21270a3",
+        "7bc1edc6f6eb"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "resting/unfilled",
@@ -4603,18 +4621,20 @@
       "endLine": 128,
       "source": "memory",
       "snippet": "- Postcheck after staggered placement: NVDA regular orders `3`, plan orders `0`, no NVDA position yet, all resting/baseVolume `0`, isolated `4x`. Summary/log: `reports/live_execution/20260513_140704_NVDAUSDT_staggered_4x_live_place/summary.json`. Drew staggered ladder on TradingView Desktop 4H. ## AAPLUSDT fresh analysis - User asked `Can you analyse aapl`; treated as `AAPLUSDT` / `BITGET:AAPLUSDT.P`. - Ran fresh compact v2 OHLCV-first packet: `reports/deep_analysis_packets_v2/20260513_195100_AAPLUSDT/`; report saved to `reports/deep_analysis/2026-05-13_AAPLUSDT_fresh_analysis.md`; open-order check saved to `reports/deep_analysis/2026-05-13_AAPLUSDT_open_orders_check.json`. - Verdict: `WAIT",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.49642987847328185,
+      "totalScore": 0.9624904662370681,
       "maxScore": 0.49642987847328185,
       "firstRecalledAt": "2026-05-13T19:42:04.720Z",
-      "lastRecalledAt": "2026-05-13T19:42:04.720Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
       "queryHashes": [
-        "d6781310a3ba"
+        "d6781310a3ba",
+        "1b03d21270a3"
       ],
       "recallDays": [
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-14"
       ],
       "conceptTags": [
         "resting/basevolume",
@@ -4966,6 +4986,163 @@
         "support/resistance",
         "logged-in",
         "second"
+      ]
+    },
+    "memory:memory/2026-05-13.md:113:124": {
+      "key": "memory:memory/2026-05-13.md:113:124",
+      "path": "memory/2026-05-13.md",
+      "startLine": 113,
+      "endLine": 124,
+      "source": "memory",
+      "snippet": "- L2 `6.69 @ 221.00`, SL `215.77`, TP `229.80`, risk `34.99`, reward `58.87`, R:R `1.68` - L3 `10.44 @ 219.60`, SL `215.77`, TP `230.40`, risk `39.99`, reward `112.75`, R:R `2.82` - Total risk `99.97`, total reward `196.88`, aggregate R:R `1.97`, estimated margin @4x `1152.39`. Highest TP distance from blended entry `2.77 ATR`, inside ideal 1.20-2.80 ATR. - User confirmed live placement with `Great. Place the live order please`. Fresh guard checked/aborted if existing NVDA orders/position or price not above highest entry; placement proceeded. - LIVE PLACED NVDAUSDT isolated 4x staggered TP ladder: - L1 `3.77 @ 222.40`, SL `215.77`, TP `229.10`, orderId `1438428616051027970`, clientOi",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.96959710419178,
+      "maxScore": 0.49295554161071775,
+      "firstRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "queryHashes": [
+        "1b03d21270a3",
+        "7bc1edc6f6eb"
+      ],
+      "recallDays": [
+        "2026-05-14"
+      ],
+      "conceptTags": [
+        "6.69",
+        "221.00",
+        "215.77",
+        "229.80",
+        "34.99",
+        "58.87",
+        "1.68",
+        "10.44"
+      ]
+    },
+    "memory:memory/2026-05-13.md:68:79": {
+      "key": "memory:memory/2026-05-13.md:68:79",
+      "path": "memory/2026-05-13.md",
+      "startLine": 68,
+      "endLine": 79,
+      "source": "memory",
+      "snippet": "- Initial scripted attempt failed before placement due PowerShell parsing of inline node ticker command; follow-up precheck confirmed NVDAUSDT regular/plan orders `0/0`, no position, ticker `226.28` above highest limit `222.40`. - Set/confirmed NVDAUSDT isolated margin and 4x leverage. - Placed live Bitget isolated 4x NVDAUSDT long limit ladder with fixed preset TP/SL: - L1 orderId `1438428616051027970`, clientOid `tvflow_nvda_20260513_stag4x_L1`, buy/open long `3.77 @ 222.40`, SL `215.77`, TP `229.10`. - L2 orderId `1438428619163201537`, clientOid `tvflow_nvda_20260513_stag4x_L2`, buy/open long `6.69 @ 221.00`, SL `215.77`, TP `229.80`. - L3 orderId `1438428622342483969`, clientOid `t",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.9270424127578735,
+      "maxScore": 0.49319701492786405,
+      "firstRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "queryHashes": [
+        "1b03d21270a3",
+        "7bc1edc6f6eb"
+      ],
+      "recallDays": [
+        "2026-05-14"
+      ],
+      "conceptTags": [
+        "follow-up",
+        "regular/plan",
+        "0/0",
+        "226.28",
+        "222.40",
+        "set/confirmed",
+        "tp/sl",
+        "tvflow-nvda-20260513-stag4x-l1"
+      ]
+    },
+    "memory:memory/2026-05-13.md:156:162": {
+      "key": "memory:memory/2026-05-13.md:156:162",
+      "path": "memory/2026-05-13.md",
+      "startLine": 156,
+      "endLine": 162,
+      "source": "memory",
+      "snippet": "- Valid new static candidate: L1 `8.16 @ 295.65`, SL `290.75`, TP `300.77`, risk `39.98`, RR `1.04`; L2 `16.39 @ 294.41`, SL `290.75`, TP `301.98`, risk `59.99`, RR `2.07`; total risk `99.97`, reward `165.85`, all-filled RR `1.66`, selected leverage `6x`, estimated margin `1206.31`, estimated liquidation `247.45` safely below SL. - Critical execution-state note: existing older AAPL live 6x isolated ladder is still present and unfilled (`baseVolume=0`), regular orders `3`, plan `0`: L1 `4.01 @ 291.74`, L2 `6.98 @ 290.53`, L3 `10.12 @ 289.47`, shared SL `285.52`, TP `297.36`. No AAPL position observed; positions output showed NVDA long only. Do not add the new AAPL ladder on top without explic",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.42915042638778683,
+      "maxScore": 0.42915042638778683,
+      "firstRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
+      "queryHashes": [
+        "1b03d21270a3"
+      ],
+      "recallDays": [
+        "2026-05-14"
+      ],
+      "conceptTags": [
+        "8.16",
+        "295.65",
+        "290.75",
+        "300.77",
+        "39.98",
+        "1.04",
+        "16.39",
+        "294.41"
+      ]
+    },
+    "memory:memory/2026-05-12.md:120:130": {
+      "key": "memory:memory/2026-05-12.md:120:130",
+      "path": "memory/2026-05-12.md",
+      "startLine": 120,
+      "endLine": 130,
+      "source": "memory",
+      "snippet": "- New compact packet shows `best_fill_probability_candidate`: 3-leg `291.74/290.53/289.47`, SL `285.52`, TP `297.36`, L1 R:R `0.90`, L1+L2 `1.17`, all-filled `1.50`, L1 share `0.25`, leverage `6x`, margin `1021.20`, marked `BEST_FILL_PROBABILITY` + `VALID_FOR_BEST_FILL_PROBABILITY_ONLY` with ATR/TP warnings. - Corrected report written: `reports/deep_analysis/2026-05-12_AAPLUSDT_AB_corrected_with_L3.md`. ## AAPLUSDT Option B live placement - User explicitly requested live placement of corrected AAPL Option B. - Pre-check: AAPLUSDT open regular/plan orders `0/0`; no AAPLUSDT position; account env live, papTrading false; available USDT about `4098.41`; existing position only NVDAUSDT long. -",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.428773957490921,
+      "maxScore": 0.428773957490921,
+      "firstRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
+      "queryHashes": [
+        "1b03d21270a3"
+      ],
+      "recallDays": [
+        "2026-05-14"
+      ],
+      "conceptTags": [
+        "best-fill-probability-candidate",
+        "3-leg",
+        "291.74/290.53/289.47",
+        "285.52",
+        "297.36",
+        "0.90",
+        "1.17",
+        "all-filled"
+      ]
+    },
+    "memory:memory/2026-05-13.md:99:109": {
+      "key": "memory:memory/2026-05-13.md:99:109",
+      "path": "memory/2026-05-13.md",
+      "startLine": 99,
+      "endLine": 109,
+      "source": "memory",
+      "snippet": "- Short valid conditional plan: S1 `3.29 @ 211.54`, S2 `7.10 @ 215.23`, shared SL `223.67`, TP `198.46`, total risk `99.83`, reward `162.10`, blended R:R `1.62`, estimated margin @4x `556.03`; static safety passed. Current price around `209.7-209.9`, so no market short. - Read-only Bitget state: ARMUSDT regular/plan orders `0/0`; no ARM position observed. ## NVDAUSDT live execution and revised staggered ticket workflow - User requested live placement of a provided NVDA ticket: L1 `221.00`, L2 `219.60`, L3 `218.10`, SL `213.80`, TP `229.00` for all legs. Asked for leverage confirmation; user replied `CONFIRM NVDA 4X LIVE`. - Placed live NVDAUSDT isolated 4x long limit ladder with fixed TP/SL",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.506231963634491,
+      "maxScore": 0.506231963634491,
+      "firstRecalledAt": "2026-05-14T11:27:27.671Z",
+      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "queryHashes": [
+        "7bc1edc6f6eb"
+      ],
+      "recallDays": [
+        "2026-05-14"
+      ],
+      "conceptTags": [
+        "3.29",
+        "211.54",
+        "7.10",
+        "215.23",
+        "223.67",
+        "198.46",
+        "99.83",
+        "162.10"
       ]
     }
   }
