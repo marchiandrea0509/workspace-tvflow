@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-14T11:27:27.671Z",
+  "updatedAt": "2026-05-14T22:41:46.170Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -267,13 +267,13 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "## Live execution: GOOGLUSDT ladder - Time: 2026-04-29 ~07:55 Europe/Berlin - User explicitly confirmed: `CONFIRM GOOGL LIVE LADDER` - Placed live Bitget isolated 4x GOOGLUSDT long pullback ladder via API. - L1: limit buy `4.30 @ 349.20`, TP `353.40`, SL `341.20`, orderId `1433261681713770501`, clientOid `tvflow_googl_20260429_L1` - L2: limit buy `5.77 @ 346.40`, TP `358.80`, SL `341.20`, orderId `1433261686591746049`, clientOid `tvflow_googl_20260429_L2` - L3: limit buy `7.28 @ 343.60`, TP `364.00`, SL `341.20`, orderId `1433261691314532353`, clientOid `tvflow_googl_20260429_L3` - Verification immediately after placement: 3 regular pending orders, all `status: live`, `tradeSide: open`, `p",
-      "recallCount": 12,
+      "recallCount": 13,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 5.1588369488716115,
+      "totalScore": 5.6680789321660985,
       "maxScore": 0.5259791612625122,
       "firstRecalledAt": "2026-04-30T06:33:00.432Z",
-      "lastRecalledAt": "2026-05-12T21:15:19.162Z",
+      "lastRecalledAt": "2026-05-14T22:41:46.170Z",
       "queryHashes": [
         "e1d9ed05f284",
         "0a47ebeefbbd",
@@ -286,14 +286,16 @@
         "895793ee70c6",
         "0ddb86382c3a",
         "8f3261d9e2df",
-        "d30f948edc27"
+        "d30f948edc27",
+        "af9dff0adfdc"
       ],
       "recallDays": [
         "2026-04-30",
         "2026-05-02",
         "2026-05-05",
         "2026-05-07",
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-15"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -345,22 +347,24 @@
       "endLine": 16,
       "source": "memory",
       "snippet": "## GOOGLUSDT fresh deep analysis - Time: 2026-04-30 ~08:36 Europe/Berlin - Ran OHLCV-first Bitget deep analysis for `GOOGLUSDT` / `BITGET:GOOGL` after price broke out to ~374.5. - Public data snapshot: last/mark ~374.49/374.44, 24h range 344.44-376.43, 24h change +6.52%, 4H RSI ~81.96, 1D RSI ~85.93, 4H EMA20 ~355.38, 4H EMA50 ~347.77. - Verdict: bullish market but bad immediate entry; do not chase at market. Orderability is `PLACEABLE_CONDITIONAL_ONLY` via pullback ladder or confirmed breakout above ~376.60. - Suggested fresh pullback analysis levels: 356.00 / 348.00 / 343.60 with refreshed invalidation around 340.80, but any order changes require explicit confirmation. - Read-only live ord",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.518591580127879,
+      "totalScore": 3.02924314174573,
       "maxScore": 0.7808816436282832,
       "firstRecalledAt": "2026-04-30T14:53:53.388Z",
-      "lastRecalledAt": "2026-04-30T20:47:25.964Z",
+      "lastRecalledAt": "2026-05-14T22:41:46.170Z",
       "queryHashes": [
         "9b3d8896f9ec",
         "22507dc88771",
         "706f649d530a",
         "39db3ae6927e",
-        "2ccc2b60837f"
+        "2ccc2b60837f",
+        "af9dff0adfdc"
       ],
       "recallDays": [
-        "2026-04-30"
+        "2026-04-30",
+        "2026-05-15"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -444,19 +448,21 @@
       "endLine": 28,
       "source": "memory",
       "snippet": "- Cancelled old GOOGL L3 order `1433261691314532353` (`tvflow_googl_20260429_L3`). - Confirmed GOOGLUSDT margin mode isolated and leverage 4x. - Placed refreshed live Bitget isolated 4x GOOGLUSDT long pullback ladder: - L1: limit buy `2.00 @ 356.00`, TP `371.00`, SL `340.80`, orderId `1433651634121633795`, clientOid `tvflow_googl_20260430_refresh_L1` - L2: limit buy `4.00 @ 348.00`, TP `376.40`, SL `340.80`, orderId `1433651636873097218`, clientOid `tvflow_googl_20260430_refresh_L2` - L3: limit buy `11.30 @ 343.60`, TP `384.60`, SL `340.80`, orderId `1433651639444205569`, clientOid `tvflow_googl_20260430_refresh_L3` - Verification immediately after placement: 3 GOOGLUSDT regular pendin",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7642823666334151,
-      "maxScore": 0.3979543268680572,
+      "totalScore": 1.2705395311117171,
+      "maxScore": 0.5062571644783019,
       "firstRecalledAt": "2026-04-30T20:25:11.409Z",
-      "lastRecalledAt": "2026-04-30T20:47:25.964Z",
+      "lastRecalledAt": "2026-05-14T22:41:46.170Z",
       "queryHashes": [
         "39db3ae6927e",
-        "2ccc2b60837f"
+        "2ccc2b60837f",
+        "af9dff0adfdc"
       ],
       "recallDays": [
-        "2026-04-30"
+        "2026-04-30",
+        "2026-05-15"
       ],
       "conceptTags": [
         "tvflow-googl-20260429-l3",
@@ -1388,18 +1394,20 @@
       "endLine": 108,
       "source": "memory",
       "snippet": "- Cancelled old GOOGL L3 order `1433261691314532353` (`tvflow_googl_20260429_L3`). - Confirmed GOOGLUSDT margin mode isolated and leverage 4x. - Placed refreshed live Bitget isolated 4x GOOGLUSDT long pullback ladder: - L1: limit buy `2.00 @ 356.00`, TP `371.00`, SL `340.80`, orderId `1433651634121633795`, clientOid `tvflow_googl_20260430_refresh_L1` - L2: limit buy `4.00 @ 348.00`, TP `376.40`, SL `340.80`, orderId `1433651636873097218`, clientOid `tvflow_googl_20260430_refresh_L2` - L3: limit buy `11.30 @ 343.60`, TP `384.60`, SL `340.80`, orderId `1433651639444205569`, clientOid `tvflow_googl_20260430_refresh_L3` - Verification immediately after placement: 3 GOOGLUSDT regular pendin",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3843241751194,
-      "maxScore": 0.3843241751194,
+      "totalScore": 0.8905813395977019,
+      "maxScore": 0.5062571644783019,
       "firstRecalledAt": "2026-05-05T20:59:20.638Z",
-      "lastRecalledAt": "2026-05-05T20:59:20.638Z",
+      "lastRecalledAt": "2026-05-14T22:41:46.170Z",
       "queryHashes": [
-        "0ddb86382c3a"
+        "0ddb86382c3a",
+        "af9dff0adfdc"
       ],
       "recallDays": [
-        "2026-05-05"
+        "2026-05-05",
+        "2026-05-15"
       ],
       "conceptTags": [
         "tvflow-googl-20260429-l3",
@@ -4393,22 +4401,24 @@
       "endLine": 96,
       "source": "memory",
       "snippet": "- User said they manually cancelled the prior NVDAUSDT orders and requested a new proposal: replace L1 with `219.13`, L2 becomes `218.10`, L3 becomes `217.10`, keep risk `100$`. - Verified read-only state: NVDAUSDT open regular/plan orders `0/0`, no NVDA position; ticker around `221.87`; unrelated INTC long still open. - Proposed revised 6x isolated fixed-TP ladder, keeping shared SL `213.80` and prior TP levels `222.40/224.80/225.80`, sizing to total risk about `99.99 USDT`: L1 `5.73 @ 219.13`, SL `213.80`, TP `222.40`, risk `30.54`, reward `18.74`, RR `0.61`; L2 `8.17 @ 218.10`, SL `213.80`, TP `224.80`, risk `35.13`, reward `54.74`, RR `1.56`; L3 `10.40 @ 217.10`, SL `213.80`, fixed TP `2",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.8747472852468492,
+      "totalScore": 2.2683757036924366,
       "maxScore": 0.5006607413291931,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
       "queryHashes": [
         "a47393d9b308",
         "ff85a948393a",
         "c13ff2553454",
-        "7bc1edc6f6eb"
+        "7bc1edc6f6eb",
+        "623fa97eb059"
       ],
       "recallDays": [
         "2026-05-13",
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-15"
       ],
       "conceptTags": [
         "219.13",
@@ -5121,18 +5131,20 @@
       "endLine": 109,
       "source": "memory",
       "snippet": "- Short valid conditional plan: S1 `3.29 @ 211.54`, S2 `7.10 @ 215.23`, shared SL `223.67`, TP `198.46`, total risk `99.83`, reward `162.10`, blended R:R `1.62`, estimated margin @4x `556.03`; static safety passed. Current price around `209.7-209.9`, so no market short. - Read-only Bitget state: ARMUSDT regular/plan orders `0/0`; no ARM position observed. ## NVDAUSDT live execution and revised staggered ticket workflow - User requested live placement of a provided NVDA ticket: L1 `221.00`, L2 `219.60`, L3 `218.10`, SL `213.80`, TP `229.00` for all legs. Asked for leverage confirmation; user replied `CONFIRM NVDA 4X LIVE`. - Placed live NVDAUSDT isolated 4x long limit ladder with fixed TP/SL",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.506231963634491,
+      "totalScore": 0.9224356859922409,
       "maxScore": 0.506231963634491,
       "firstRecalledAt": "2026-05-14T11:27:27.671Z",
-      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
       "queryHashes": [
-        "7bc1edc6f6eb"
+        "7bc1edc6f6eb",
+        "623fa97eb059"
       ],
       "recallDays": [
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-15"
       ],
       "conceptTags": [
         "3.29",
@@ -5143,6 +5155,129 @@
         "198.46",
         "99.83",
         "162.10"
+      ]
+    },
+    "memory:memory/2026-05-14.md:28:35": {
+      "key": "memory:memory/2026-05-14.md:28:35",
+      "path": "memory/2026-05-14.md",
+      "startLine": 28,
+      "endLine": 35,
+      "source": "memory",
+      "snippet": "- User asked to place provided live NVDAUSDT.P long ladder. Precheck found existing NVDAUSDT live 4x isolated orders: L2 6.69 @ 221.00 TP 229.80 SL 215.77, orderId 1438428619163201537; L3 10.44 @ 219.60 TP 230.40 SL 215.77, orderId 1438428622342483969; no NVDA position. - User confirmed cancel old and place new based on 4x isolated and rounded quantities. Guard checked ticker 230.22 above highest new limit 227.60; old orders matched expected IDs exactly. - Cancelled old NVDA orders successfully, set/confirmed isolated margin and 4x leverage. - Placed new live Bitget isolated 4x NVDAUSDT long limit ladder: L1 orderId 1438783251412578305, clientOid vflow_nvda_20260514_repl4x_L1, 3.67 @ 227.60",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.43919231593608854,
+      "maxScore": 0.43919231593608854,
+      "firstRecalledAt": "2026-05-14T22:12:42.700Z",
+      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
+      "queryHashes": [
+        "623fa97eb059"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "nvdausdt.p",
+        "6.69",
+        "221.00",
+        "229.80",
+        "215.77",
+        "10.44",
+        "219.60",
+        "230.40"
+      ]
+    },
+    "memory:memory/2026-05-14.md:21:30": {
+      "key": "memory:memory/2026-05-14.md:21:30",
+      "path": "memory/2026-05-14.md",
+      "startLine": 21,
+      "endLine": 30,
+      "source": "memory",
+      "snippet": "- Freshness OK: ticker 298.59, latest closed 4H 298.52, diff",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.40985824167728424,
+      "maxScore": 0.40985824167728424,
+      "firstRecalledAt": "2026-05-14T22:12:42.700Z",
+      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
+      "queryHashes": [
+        "623fa97eb059"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "298.59",
+        "298.52",
+        "freshness",
+        "ticker",
+        "latest",
+        "closed",
+        "diff"
+      ]
+    },
+    "memory:memory/2026-05-13.md:60:71": {
+      "key": "memory:memory/2026-05-13.md:60:71",
+      "path": "memory/2026-05-13.md",
+      "startLine": 60,
+      "endLine": 71,
+      "source": "memory",
+      "snippet": "- User clarified they do not want the same TP for all three NVDA legs and asked for a new proposal. - Updated proposal saved to `reports/deep_analysis/2026-05-13_NVDAUSDT_custom_ticket_staggered_TPs.md`. - Entries remain L1 `222.40`, L2 `221.00`, L3 `219.60`, shared SL `215.77`; selected staggered TPs: L1 `229.10`, L2 `229.80`, L3 `230.40`. - Rationale: 4H ATR `3.55`, blended entry `220.5532`, SL distance `1.35 ATR`, highest TP distance from blended `2.77 ATR`, weighted average TP distance about `2.65 ATR`; keeps highest target inside preferred ~`1.20-2.80 ATR` range. - Bitget-rounded quantities and economics: L1 `3.77` risk `25.00`, reward `25.26`, RR `1.01`; L2 `6.69` risk `34.99`, reward",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3949932485818863,
+      "maxScore": 0.3949932485818863,
+      "firstRecalledAt": "2026-05-14T22:12:42.700Z",
+      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
+      "queryHashes": [
+        "623fa97eb059"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "222.40",
+        "221.00",
+        "219.60",
+        "215.77",
+        "229.10",
+        "229.80",
+        "230.40",
+        "3.55"
+      ]
+    },
+    "memory:memory/2026-04-30.md:81:96": {
+      "key": "memory:memory/2026-04-30.md:81:96",
+      "path": "memory/2026-04-30.md",
+      "startLine": 81,
+      "endLine": 96,
+      "source": "memory",
+      "snippet": "## GOOGLUSDT fresh deep analysis - Time: 2026-04-30 ~08:36 Europe/Berlin - Ran OHLCV-first Bitget deep analysis for `GOOGLUSDT` / `BITGET:GOOGL` after price broke out to ~374.5. - Public data snapshot: last/mark ~374.49/374.44, 24h range 344.44-376.43, 24h change +6.52%, 4H RSI ~81.96, 1D RSI ~85.93, 4H EMA20 ~355.38, 4H EMA50 ~347.77. - Verdict: bullish market but bad immediate entry; do not chase at market. Orderability is `PLACEABLE_CONDITIONAL_ONLY` via pullback ladder or confirmed breakout above ~376.60. - Suggested fresh pullback analysis levels: 356.00 / 348.00 / 343.60 with refreshed invalidation around 340.80, but any order changes require explicit confirmation. - Read-only live ord",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5106515616178512,
+      "maxScore": 0.5106515616178512,
+      "firstRecalledAt": "2026-05-14T22:41:46.170Z",
+      "lastRecalledAt": "2026-05-14T22:41:46.170Z",
+      "queryHashes": [
+        "af9dff0adfdc"
+      ],
+      "recallDays": [
+        "2026-05-15"
+      ],
+      "conceptTags": [
+        "europe/berlin",
+        "ohlcv-first",
+        "374.5",
+        "last/mark",
+        "374.49/374.44",
+        "344.44-376.43",
+        "6.52",
+        "81.96"
       ]
     }
   }

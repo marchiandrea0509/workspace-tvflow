@@ -1,5 +1,9 @@
 ﻿Time Berlin,Update Berlin,Exchange,Symbol,Status,Trade Side,Order Side,Position Side,Order Type,Source,Qty,Order Qty,Limit Price,Avg Price,Quote Volume,Leverage,Margin Mode,TP,SL,Fee,Realized PnL,Net PnL Est,Order ID,Client OID,Notes
+2026-05-14 13:36:19,2026-05-15 00:13:38,Bitget Futures,NVDAUSDT,canceled,open,buy,long,limit,api,0,15.38,223.4,,0,4,isolated,235.2,220.8,0,0,0.0,1438783253786554369,tvflow_nvda_20260514_repl4x_L3,
+2026-05-14 13:36:19,2026-05-15 00:13:39,Bitget Futures,NVDAUSDT,canceled,open,buy,long,limit,api,0,7.44,225.5,,0,4,isolated,234.8,220.8,0,0,0.0,1438783252645703681,tvflow_nvda_20260514_repl4x_L2,
+2026-05-14 13:36:19,2026-05-15 00:13:39,Bitget Futures,NVDAUSDT,canceled,open,buy,long,limit,api,0,3.67,227.6,,0,4,isolated,233.8,220.8,0,0,0.0,1438783251412578305,tvflow_nvda_20260514_repl4x_L1,
 2026-05-14 02:50:52,2026-05-14 02:50:52,Bitget Futures,NVDAUSDT,filled,close,buy,long,market,sys,3.77,3.77,,229.1,863.707,4,isolated,,,-0.36275694,25.259,24.89624306,1438620821730521090,1438454128540889088,
+2026-05-13 23:04:46,2026-05-14 18:50:34,Bitget Futures,AAPLUSDT,filled,open,buy,long,limit,android,7.69,7.69,296,296,2276.24,6,isolated,301.17,290.8,0,0,0.0,1438563920737103873,1438563920745492480,
 2026-05-13 14:07:07,2026-05-13 15:48:30,Bitget Futures,NVDAUSDT,filled,open,buy,long,limit,api,3.77,3.77,222.4,222.4,838.448,4,isolated,229.1,215.77,0,0,0.0,1438428616051027970,tvflow_nvda_20260513_stag4x_L1,
 2026-05-13 13:02:28,2026-05-13 13:02:28,Bitget Futures,NVDAUSDT,filled,close,buy,long,market,android,10.4,10.4,,225.36,2343.8062,6,isolated,,,-0.9843986,77.49131275,76.50691415,1438412344496123906,1438376588925161472,
 2026-05-13 05:30:04,2026-05-13 05:30:04,Bitget Futures,NVDAUSDT,filled,close,buy,long,market,sys,8.17,8.17,,224.78,1836.4526,6,isolated,,,-0.77131009,56.08792415,55.31661406,1438298496363556865,1437906666830950400,
