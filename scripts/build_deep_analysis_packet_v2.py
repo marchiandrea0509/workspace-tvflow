@@ -1840,9 +1840,10 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
 
     return {
         "packet_type": "compact_deep_analysis_decision_packet_v2",
-        "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files.",
+        "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files. The final trade design must be screenshot-first; candidate scans, static optimisation output, OHLCV-derived value zones, and old packet ladder levels are secondary validation only.",
         "non_negotiable_rules": {
             "primary_truth": "Screenshots / visible TradingView chart structure first; user key levels second; Bitget OHLCV/ticker/execution validate numbers and feasibility; TradingView OHLCV/export only for cross-check.",
+            "candidate_scan_priority": "Do NOT use precomputed candidate levels, static optimisation scan output, OHLCV-derived value zones, or old packet ladder levels as the main source of trade levels. Use them only as secondary validation if they confirm the 1D/4H/1H screenshots. If packet levels conflict with screenshots, screenshots win.",
             "trade_style": "Static 4H pullback only: DIP_LADDER long, SELL_RALLY short, or AUTO/SINGLE_LIMIT_PULLBACK if exactly one valid level survives all checks.",
             "risk_target": "Default target planned risk is 100 USDT unless overridden.",
             "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional.",
@@ -1851,10 +1852,14 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
             "rejection_audit": "Always justify rejected sides/options/candidates and broken rules with item, exact rule/gate, observed value, required value/threshold, why it blocks, and what would fix it. Prefer packet fields static_ticket_reject_reasons, warnings, best_candidate.reject_reasons, and rejected_candidate_examples_compact.",
             "option_framework": "Always output both sections: Option A — BEST QUALITY: VALID/REJECTED and Option B — BEST FILL PROBABILITY: VALID/REJECTED. Never hide the rejected option; include rejected levels, exact failing reason, and key failed metric.",
+            "full_output_required": "Always print all required sections in order: Chart Context Read, Market State, Key Levels, Trade Quality, Option A, Option B, Orderability, Risk Sizing, Trade Plan Tickets, Rejection Audit when anything is rejected/conditional/wait, and Final Verdict. Do not collapse the answer into only chart context plus final verdict.",
+            "valid_conditional_ticket_required": "Every VALID option must include a complete Trade Plan Ticket table, including PLACEABLE_CONDITIONAL_ONLY options. Conditional means wait for the stated trigger/rejection before placing; it does not mean omit the ticket. Required columns: leg | order type | entry | notional $ | quantity | SL | loss at SL $ | TP/profit $ | R:R | trigger. If exact quantity cannot be calculated, provide an approximate ticket and mark values approximate.",
+            "option_ab_path_separation": "Option A and Option B must represent different trade paths, not just two versions of the same ladder. Option A uses the cleanest 4H parent-structure setup. Option B is the best higher-probability alternative path: shallow pullback/rally only if structurally better, otherwise BREAKOUT/BREAKDOWN continuation when price is near major resistance/support. In bearish setups near major support, test BREAKDOWN below support before defaulting to shallow sell-rally. In bullish setups near major resistance, test BREAKOUT above resistance before defaulting to shallow dip-ladder. Always state Option A path, Option B path, why Option B was chosen, why shallow ladder was chosen/rejected, and why breakout/breakdown was chosen/rejected.",
+            "chat_report_parity": "Never save/report a deep analysis as complete if the chat summary omitted mandatory ticket tables for valid options. Prefer printing valid tickets in chat; otherwise explicitly say: Ticket table omitted from chat, full ticket available in saved report.",
             "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
             "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
-            "screenshot_delivery": "Final chat output should include the 1D and 4H screenshots/contact sheet when available.",
+            "screenshot_delivery": "Final chat output should include the individual 1D, 4H, and 1H screenshots when available; if any screenshot is missing, unclear, or not used, say so explicitly.",
         },
         "manifest": {k: manifest.get(k) for k in [
             "symbol", "tv_symbol", "side", "family", "score", "rank", "screener_version",
@@ -1870,6 +1875,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "resistances": compact_level_list(levels.get("resistances"), 8),
         },
         "candidate_trade_design": {
+            "source_priority_warning": "Candidate trade design, value_zone, orders, and static optimisation scan fields are generated from data and are secondary validation only. Final entries/SL/TP must come from visible 1D/4H/1H chart structure and may use these fields only when they confirm the screenshots.",
             "side": ladder.get("side"),
             "style_hint": ladder.get("style_hint"),
             "decision_hint": ladder.get("decision_hint"),
@@ -1904,6 +1910,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
                 "atr_source": "4H ATR(14) only",
             },
             "static_optimisation_scan_summary": {
+                "priority": "secondary_validation_only_not_primary_trade_design",
                 "candidate_count": scan.get("candidate_count"),
                 "entry_combinations_tested": scan.get("entry_combinations_tested"),
                 "tp_candidates_tested": [
@@ -2167,9 +2174,19 @@ def main() -> int:
         "freshness_check": str(derived_dir / "freshness_check.json"),
     }
     tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+    non_sheet_screenshots = [p for p in tv_screenshot_files if "contact_sheet" not in Path(str(p)).name.lower()]
+
+    def screenshot_for_tf(tf: str) -> Optional[str]:
+        tf_l = f"_{tf.lower()}_"
+        for p in non_sheet_screenshots:
+            if tf_l in Path(str(p)).name.lower():
+                return p
+        return None
+
+    individual_3tf_screenshots = [screenshot_for_tf(tf) for tf in ("1D", "4H", "1H")]
     discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
     contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
-    preferred_media_files = discord_sheets or contact_sheets or tv_screenshot_files
+    preferred_media_files = individual_3tf_screenshots if all(individual_3tf_screenshots) else (discord_sheets or contact_sheets or tv_screenshot_files)
     files["preferred_media_files"] = preferred_media_files
     files["discord_media_lines"] = [f"MEDIA:{p}" for p in preferred_media_files]
 
@@ -2202,7 +2219,7 @@ def main() -> int:
         "tv_screenshot_files": tv_screenshot_files,
         "preferred_media_files": preferred_media_files,
         "discord_media_lines": [f"MEDIA:{p}" for p in preferred_media_files],
-        "reporting_note": "When answering in Discord, include the 1D and 4H chart evidence with the output results. Prefer the merged horizontal 1D|4H contact sheet when present; use separate screenshots as fallback/readability evidence."
+        "reporting_note": "When answering in Discord, include the individual 1D, 4H, and 1H chart screenshots used for the analysis. If any screenshot is missing, unclear, or not used, say so explicitly. Use merged contact sheets only as fallback/preview evidence."
     }, indent=2))
     return 0
 

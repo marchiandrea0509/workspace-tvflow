@@ -120,7 +120,7 @@ if ($CaptureTv) {
   $exports = @()
   $failures = @()
 
-  foreach ($tf in @('1D', '4H')) {
+  foreach ($tf in @('1D', '4H', '1H')) {
     if ($useDesktopCdp) {
       $nodeArgs = @(
         $CaptureDesktopCdpJs,
@@ -166,21 +166,22 @@ if ($CaptureTv) {
     }
   }
 
-  # Discord often renders/delivers only one of several screenshot attachments in this workflow.
-  # Build a single horizontal 1D | 4H contact sheet and make it the preferred chat artifact.
-  # 1H was removed from the default sheet because it made the evidence too small/unusable in Discord.
+  # Keep a merged preview sheet for fallback/debug, but the final prompt now requires
+  # explicit 1D, 4H, and 1H screenshot reads. The builder prefers the individual
+  # timeframe screenshots for Discord media when all three are present.
   $byTf = @{}
   foreach ($item in $exports) { if ($item.type -eq 'screenshot') { $byTf[$item.timeframe] = [string]$item.path } }
-  if ($byTf.ContainsKey('1D') -and $byTf.ContainsKey('4H')) {
+  if ($byTf.ContainsKey('1D') -and $byTf.ContainsKey('4H') -and $byTf.ContainsKey('1H')) {
     $ffmpeg = Get-Command ffmpeg -ErrorAction SilentlyContinue
     if ($ffmpeg) {
-      $sheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_contact_sheet.png"
+      $sheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_1H_contact_sheet.png"
       $sheetLog = Join-Path $TvExportDir 'contact_sheet_ffmpeg.log'
       $ffArgs = @(
         '-y',
         '-i', $byTf['1D'],
         '-i', $byTf['4H'],
-        '-filter_complex', '[0:v]scale=-2:3000[v0];[1:v]scale=-2:3000[v1];[v0][v1]hstack=inputs=2[out]',
+        '-i', $byTf['1H'],
+        '-filter_complex', '[0:v]scale=-2:3000[v0];[1:v]scale=-2:3000[v1];[2:v]scale=-2:3000[v2];[v0][v1][v2]hstack=inputs=3[out]',
         '-map', '[out]',
         '-frames:v', '1',
         $sheetPath
@@ -195,11 +196,11 @@ if ($CaptureTv) {
       }
       [System.IO.File]::WriteAllText($sheetLog, ($ffOut | Out-String), [System.Text.UTF8Encoding]::new($false))
       if ($ffExitCode -eq 0 -and (Test-Path $sheetPath)) {
-        $discordSheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_contact_sheet_discord.png"
+        $discordSheetPath = Join-Path $TvExportDir "${ApiSymbol}_1D_4H_1H_contact_sheet_discord.png"
         $scaleArgs = @(
           '-y',
           '-i', $sheetPath,
-          '-vf', 'scale=6144:-2',
+          '-vf', 'scale=9216:-2',
           '-frames:v', '1',
           $discordSheetPath
         )
@@ -213,9 +214,9 @@ if ($CaptureTv) {
         }
         [System.IO.File]::AppendAllText($sheetLog, "`n=== discord-scale ===`n" + ($scaleOut | Out-String), [System.Text.UTF8Encoding]::new($false))
         if ($scaleExitCode -eq 0 -and (Test-Path $discordSheetPath)) {
-          $exports += [ordered]@{ type = 'contact_sheet_discord'; timeframe = '1D|4H'; path = $discordSheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Preferred Discord artifact: merged horizontal 1D and 4H screenshot scaled for reliable Discord delivery/readability.' }
+          $exports += [ordered]@{ type = 'contact_sheet_discord'; timeframe = '1D|4H|1H'; path = $discordSheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Fallback Discord preview: merged horizontal 1D, 4H, and 1H screenshot. Prefer individual timeframe screenshots for final evidence when possible.' }
         }
-        $exports += [ordered]@{ type = 'contact_sheet_fullres'; timeframe = '1D|4H'; path = $sheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Full-resolution merged horizontal 1D and 4H screenshot.' }
+        $exports += [ordered]@{ type = 'contact_sheet_fullres'; timeframe = '1D|4H|1H'; path = $sheetPath; layout = $CaptureLayout; chart_url = $CaptureChartUrl; note = 'Full-resolution merged horizontal 1D, 4H, and 1H screenshot.' }
       } else {
         $failures += "contact_sheet: ffmpeg failed; see $sheetLog"
         if ($CaptureStrict) { throw "TradingView contact sheet generation failed; see $sheetLog" }
@@ -241,7 +242,7 @@ if ($CaptureTv) {
     layout = $CaptureLayout
     exports = $exports
     failures = $failures
-    note = 'Screenshot-first deep analysis evidence. Analyze visible 1D|4H chart structure first; use Bitget OHLCV/ticker/execution to validate numbers and feasibility. Prefer the merged horizontal 1D|4H contact sheet for Discord delivery/readability.'
+    note = 'Screenshot-first deep analysis evidence. Analyze visible 1D, 4H, and 1H chart structure first; use Bitget OHLCV/ticker/execution to validate numbers and feasibility. Prefer individual timeframe screenshots for final evidence; use the merged 1D|4H|1H sheet only as fallback/preview.'
   }
   $manifestPath = Join-Path $TvExportDir 'manifest.json'
   $manifestJson = $manifest | ConvertTo-Json -Depth 8

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-14T22:42:37.537Z",
+  "generatedAt": "2026-05-17T16:40:15.430Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-14T22:42:05.114Z",
+  "until": "2026-05-17T16:39:42.226Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778798525114"
+        "untilTime": "1779035982226"
       },
-      "count": 40,
+      "count": 51,
       "windows": [
         {
           "ok": true,
@@ -199,21 +199,269 @@
         },
         {
           "ok": true,
-          "count": 40,
+          "count": 51,
           "startTime": "1772236800000",
-          "endTime": "1778798525114",
+          "endTime": "1779035982226",
           "pages": 1
         }
       ],
       "data": [
         {
+          "symbol": "GOOGLUSDT",
+          "size": "11.56",
+          "orderId": "1439277205526573059",
+          "clientOid": "1439277205526573060",
+          "baseVolume": "11.56",
+          "fee": "-1.92469317",
+          "price": "",
+          "priceAvg": "396.41",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "26.49779999",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "4582.6028",
+          "leverage": "8",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "394.12",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778876346951",
+          "uTime": "1778876346968"
+        },
+        {
+          "symbol": "AAPLUSDT",
+          "size": "15.79",
+          "orderId": "1439233031091679233",
+          "clientOid": "1439145126346616832",
+          "baseVolume": "15.79",
+          "fee": "-2.00868158",
+          "price": "",
+          "priceAvg": "302.88",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "123.60120255",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "4782.5752",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "profit_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "295.05",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778865814947",
+          "uTime": "1778865814962"
+        },
+        {
+          "symbol": "AAPLUSDT",
+          "size": "7.69",
+          "orderId": "1439195648619081729",
+          "clientOid": "1438862335448981504",
+          "baseVolume": "7.69",
+          "fee": "-0.97252062",
+          "price": "",
+          "priceAvg": "301.1",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "46.52529744",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "2315.5253",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "profit_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "295.05",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778856902271",
+          "uTime": "1778856902286"
+        },
+        {
           "symbol": "NVDAUSDT",
-          "size": "15.38",
-          "orderId": "1438783253786554369",
-          "clientOid": "tvflow_nvda_20260514_repl4x_L3",
+          "size": "7.69",
+          "orderId": "1439178597527613446",
+          "clientOid": "1439110449808285696",
+          "baseVolume": "7.69",
+          "fee": "-0.72518699",
+          "price": "",
+          "priceAvg": "224.53",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "-30.81395576",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1726.6357",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "loss_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "228.53",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778852836972",
+          "uTime": "1778852836986"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "13.11",
+          "orderId": "1439178597527613443",
+          "clientOid": "1439174686291259393",
+          "baseVolume": "13.11",
+          "fee": "-1.23630708",
+          "price": "",
+          "priceAvg": "224.53",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "-52.5319844",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "2943.5883",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "loss_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "228.53",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778852836972",
+          "uTime": "1778852836986"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "4.27",
+          "orderId": "1439178597515030529",
+          "clientOid": "1439060801177526273",
+          "baseVolume": "4.27",
+          "fee": "-0.4026721",
+          "price": "",
+          "priceAvg": "224.53",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "-17.10995983",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "958.7431",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "loss_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "228.53",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1778852836972",
+          "uTime": "1778852836985"
+        },
+        {
+          "symbol": "GOOGLUSDT",
+          "size": "6.9",
+          "orderId": "1438957266336903174",
+          "clientOid": "1438957266336903175",
+          "baseVolume": "6.9",
+          "fee": "0",
+          "price": "395.6",
+          "priceAvg": "395.6",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "2729.64",
+          "leverage": "8",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "modify_order_limit",
+          "presetStopSurplusPrice": "406.6",
+          "presetStopLossPrice": "389.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778800067504",
+          "uTime": "1778822595228"
+        },
+        {
+          "symbol": "GOOGLUSDT",
+          "size": "16.22",
+          "orderId": "1438956943417438213",
+          "clientOid": "1438956943417438214",
+          "baseVolume": "16.22",
+          "fee": "0",
+          "price": "393.5",
+          "priceAvg": "393.5",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "6382.57",
+          "leverage": "8",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "modify_order_limit",
+          "presetStopSurplusPrice": "408.8",
+          "presetStopLossPrice": "389.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778799990514",
+          "uTime": "1778824652242"
+        },
+        {
+          "symbol": "GOOGLUSDT",
+          "size": "21.42",
+          "orderId": "1438953410366435329",
+          "clientOid": "1438953410370629632",
           "baseVolume": "0",
           "fee": "0",
-          "price": "223.4",
+          "price": "393.5",
           "priceAvg": "",
           "status": "canceled",
           "side": "buy",
@@ -222,29 +470,29 @@
           "posSide": "long",
           "marginCoin": "USDT",
           "quoteVolume": "0",
-          "leverage": "4",
+          "leverage": "8",
           "marginMode": "isolated",
-          "enterPointSource": "api",
+          "enterPointSource": "android",
           "tradeSide": "open",
           "posMode": "hedge_mode",
           "orderType": "limit",
           "orderSource": "normal",
-          "presetStopSurplusPrice": "235.2",
-          "presetStopLossPrice": "220.8",
+          "presetStopSurplusPrice": "408.8",
+          "presetStopLossPrice": "390.7",
           "posAvg": "",
           "reduceOnly": "NO",
           "liqPrice": "",
-          "cTime": "1778758579680",
-          "uTime": "1778796818975"
+          "cTime": "1778799148170",
+          "uTime": "1778799990509"
         },
         {
-          "symbol": "NVDAUSDT",
-          "size": "7.44",
-          "orderId": "1438783252645703681",
-          "clientOid": "tvflow_nvda_20260514_repl4x_L2",
+          "symbol": "GOOGLUSDT",
+          "size": "8.16",
+          "orderId": "1438953065221353473",
+          "clientOid": "1438953065233936384",
           "baseVolume": "0",
           "fee": "0",
-          "price": "225.5",
+          "price": "395.6",
           "priceAvg": "",
           "status": "canceled",
           "side": "buy",
@@ -253,37 +501,37 @@
           "posSide": "long",
           "marginCoin": "USDT",
           "quoteVolume": "0",
-          "leverage": "4",
+          "leverage": "8",
           "marginMode": "isolated",
-          "enterPointSource": "api",
+          "enterPointSource": "android",
           "tradeSide": "open",
           "posMode": "hedge_mode",
           "orderType": "limit",
           "orderSource": "normal",
-          "presetStopSurplusPrice": "234.8",
-          "presetStopLossPrice": "220.8",
+          "presetStopSurplusPrice": "406.6",
+          "presetStopLossPrice": "390.7",
           "posAvg": "",
           "reduceOnly": "NO",
           "liqPrice": "",
-          "cTime": "1778758579408",
-          "uTime": "1778796819260"
+          "cTime": "1778799065883",
+          "uTime": "1778800067500"
         },
         {
           "symbol": "NVDAUSDT",
-          "size": "3.67",
-          "orderId": "1438783251412578305",
-          "clientOid": "tvflow_nvda_20260514_repl4x_L1",
-          "baseVolume": "0",
+          "size": "13.11",
+          "orderId": "1438943650292330497",
+          "clientOid": "tvflow_nvda_20260515_repl4x_L3",
+          "baseVolume": "13.11",
           "fee": "0",
           "price": "227.6",
-          "priceAvg": "",
-          "status": "canceled",
+          "priceAvg": "227.6",
+          "status": "filled",
           "side": "buy",
           "force": "gtc",
           "totalProfits": "0",
           "posSide": "long",
           "marginCoin": "USDT",
-          "quoteVolume": "0",
+          "quoteVolume": "2983.836",
           "leverage": "4",
           "marginMode": "isolated",
           "enterPointSource": "api",
@@ -291,13 +539,75 @@
           "posMode": "hedge_mode",
           "orderType": "limit",
           "orderSource": "normal",
-          "presetStopSurplusPrice": "233.8",
-          "presetStopLossPrice": "220.8",
+          "presetStopSurplusPrice": "242",
+          "presetStopLossPrice": "224.55",
           "posAvg": "",
           "reduceOnly": "NO",
           "liqPrice": "",
-          "cTime": "1778758579116",
-          "uTime": "1778796819533"
+          "cTime": "1778796821186",
+          "uTime": "1778851904438"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "7.69",
+          "orderId": "1438943649151479809",
+          "clientOid": "tvflow_nvda_20260515_repl4x_L2",
+          "baseVolume": "7.69",
+          "fee": "0",
+          "price": "229.1",
+          "priceAvg": "229.1",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1761.779",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "239.8",
+          "presetStopLossPrice": "224.55",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778796820915",
+          "uTime": "1778836600603"
+        },
+        {
+          "symbol": "NVDAUSDT",
+          "size": "4.27",
+          "orderId": "1438943648014823427",
+          "clientOid": "tvflow_nvda_20260515_repl4x_L1",
+          "baseVolume": "4.27",
+          "fee": "0",
+          "price": "230.4",
+          "priceAvg": "230.4",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "983.808",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "236.36",
+          "presetStopLossPrice": "224.55",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778796820644",
+          "uTime": "1778824752108"
         },
         {
           "symbol": "NVDAUSDT",
@@ -329,6 +639,37 @@
           "liqPrice": "",
           "cTime": "1778719852861",
           "uTime": "1778719852874"
+        },
+        {
+          "symbol": "AAPLUSDT",
+          "size": "15.79",
+          "orderId": "1438564283473096705",
+          "clientOid": "1438564283477291008",
+          "baseVolume": "15.79",
+          "fee": "0",
+          "price": "294.6",
+          "priceAvg": "294.6",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "4651.734",
+          "leverage": "6",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "303",
+          "presetStopLossPrice": "290.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1778706373089",
+          "uTime": "1778844856799"
         },
         {
           "symbol": "AAPLUSDT",
@@ -1455,9 +1796,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778798525114"
+        "untilTime": "1779035982226"
       },
-      "count": 120,
+      "count": 165,
       "windows": [
         {
           "ok": true,
@@ -1636,13 +1977,1048 @@
         },
         {
           "ok": true,
-          "count": 120,
+          "count": 165,
           "startTime": "1772236800000",
-          "endTime": "1778798525114",
+          "endTime": "1779035982226",
           "pages": 2
         }
       ],
       "data": [
+        {
+          "tradeId": "1439277205546582038",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.34",
+          "baseVolume": "2.62",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.43613253"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1038.4108",
+          "profit": "5.79876712",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582036",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.36",
+          "baseVolume": "0.55",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.09155916"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "217.998",
+          "profit": "1.22829844",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582034",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.37",
+          "baseVolume": "0.53",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.08823196"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "210.0761",
+          "profit": "1.18893304",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582032",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.39",
+          "baseVolume": "0.16",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0266374"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "63.4224",
+          "profit": "0.36212318",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582030",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.4",
+          "baseVolume": "0.55",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0915684"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "218.02",
+          "profit": "1.25029844",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582028",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.43",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0832503"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "198.215",
+          "profit": "1.15163494",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582026",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.43",
+          "baseVolume": "0.15",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02497509"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "59.4645",
+          "profit": "0.34549048",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582024",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.45",
+          "baseVolume": "4.76",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.79258284"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1887.102",
+          "profit": "11.0587647",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582022",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.47",
+          "baseVolume": "0.7",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.11656218"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "277.529",
+          "profit": "1.64028892",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582020",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.5",
+          "baseVolume": "0.39",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0649467"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "154.635",
+          "profit": "0.92557525",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582018",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.5",
+          "baseVolume": "0.15",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0249795"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "59.475",
+          "profit": "0.35599048",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439277205546582016",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1439277205526573059",
+          "price": "396.51",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0832671"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "198.255",
+          "profit": "1.19163494",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778876346956"
+        },
+        {
+          "tradeId": "1439233031115882518",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.85",
+          "baseVolume": "1.78",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.22641066"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "539.073",
+          "profit": "13.86883816",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882516",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.86",
+          "baseVolume": "6.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.79246347"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1886.8178",
+          "profit": "48.60323356",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882514",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.86",
+          "baseVolume": "1.57",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.19970588"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "475.4902",
+          "profit": "12.24832691",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882512",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.88",
+          "baseVolume": "1.57",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.19971907"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "475.5216",
+          "profit": "12.27972691",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882510",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.88",
+          "baseVolume": "0.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.03816288"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "90.864",
+          "profit": "2.34644463",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882508",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.89",
+          "baseVolume": "0.84",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.10685959"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "254.4276",
+          "profit": "6.57844497",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882506",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.94",
+          "baseVolume": "0.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.03817044"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "90.882",
+          "profit": "2.36444463",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882504",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.95",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0636195"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "151.475",
+          "profit": "3.94574105",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882502",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.97",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0636237"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "151.485",
+          "profit": "3.95574105",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882500",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.97",
+          "baseVolume": "0.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.03817422"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "90.891",
+          "profit": "2.37344463",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882498",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.97",
+          "baseVolume": "1.4",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.17814636"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "424.158",
+          "profit": "11.07607495",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439233031115882496",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439233031091679233",
+          "price": "302.98",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0636258"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "151.49",
+          "profit": "3.96074105",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778865814951"
+        },
+        {
+          "tradeId": "1439195648647479304",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439195648619081729",
+          "price": "301.03",
+          "baseVolume": "0.33",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.04172275"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "99.3399",
+          "profit": "1.97058909",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778856902276"
+        },
+        {
+          "tradeId": "1439195648647479302",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439195648619081729",
+          "price": "301.05",
+          "baseVolume": "0.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0379323"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "90.315",
+          "profit": "1.79744463",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778856902276"
+        },
+        {
+          "tradeId": "1439195648647479300",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439195648619081729",
+          "price": "301.08",
+          "baseVolume": "3.38",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.42741316"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1017.6504",
+          "profit": "20.35260954",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778856902276"
+        },
+        {
+          "tradeId": "1439195648647479298",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439195648619081729",
+          "price": "301.11",
+          "baseVolume": "0.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.03793986"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "90.333",
+          "profit": "1.81544463",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778856902276"
+        },
+        {
+          "tradeId": "1439195648647479296",
+          "symbol": "AAPLUSDT",
+          "orderId": "1439195648619081729",
+          "price": "301.15",
+          "baseVolume": "3.38",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.42751254"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1017.887",
+          "profit": "20.58920954",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778856902276"
+        },
+        {
+          "tradeId": "1439178597547622410",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597527613446",
+          "price": "224.53",
+          "baseVolume": "6.2",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.58467612"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1392.086",
+          "profit": "-24.84350139",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439178597547622408",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597527613446",
+          "price": "224.53",
+          "baseVolume": "1.49",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.14051087"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "334.5497",
+          "profit": "-5.97045436",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439178597547622406",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597527613443",
+          "price": "224.53",
+          "baseVolume": "4.51",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.42530472"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1012.6303",
+          "profit": "-18.07164375",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439178597547622404",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597527613443",
+          "price": "224.53",
+          "baseVolume": "6.49",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.61202387"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1457.1997",
+          "profit": "-26.00553613",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439178597547622402",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597527613443",
+          "price": "224.53",
+          "baseVolume": "2.11",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.19897848"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "473.7583",
+          "profit": "-8.4548045",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439178597547622400",
+          "symbol": "NVDAUSDT",
+          "orderId": "1439178597515030529",
+          "price": "224.53",
+          "baseVolume": "4.27",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.4026721"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "958.7431",
+          "profit": "-17.10995983",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1778852836977"
+        },
+        {
+          "tradeId": "1439174686115872769",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438943650292330497",
+          "price": "227.6",
+          "baseVolume": "13.11",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "2983.836",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778851904419"
+        },
+        {
+          "tradeId": "1439145126221561859",
+          "symbol": "AAPLUSDT",
+          "orderId": "1438564283473096705",
+          "price": "294.6",
+          "baseVolume": "1.65",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "486.09",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778844856791"
+        },
+        {
+          "tradeId": "1439145126221561857",
+          "symbol": "AAPLUSDT",
+          "orderId": "1438564283473096705",
+          "price": "294.6",
+          "baseVolume": "14.14",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "4165.644",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778844856791"
+        },
+        {
+          "tradeId": "1439110497208877059",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438943649151479809",
+          "price": "229.1",
+          "baseVolume": "4.07",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "932.437",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778836600591"
+        },
+        {
+          "tradeId": "1439110449658052609",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438943649151479809",
+          "price": "229.1",
+          "baseVolume": "3.62",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "829.342",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778836589254"
+        },
+        {
+          "tradeId": "1439060801027293189",
+          "symbol": "NVDAUSDT",
+          "orderId": "1438943648014823427",
+          "price": "230.4",
+          "baseVolume": "4.27",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "983.808",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778824752098"
+        },
+        {
+          "tradeId": "1439060382171512835",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1438956943417438213",
+          "price": "393.5",
+          "baseVolume": "5.3",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "2085.55",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778824652235"
+        },
+        {
+          "tradeId": "1439060382171512833",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1438956943417438213",
+          "price": "393.5",
+          "baseVolume": "5.85",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "2301.975",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778824652235"
+        },
+        {
+          "tradeId": "1439060382163124227",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1438956943417438213",
+          "price": "393.5",
+          "baseVolume": "5.07",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1995.045",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778824652233"
+        },
+        {
+          "tradeId": "1439051754387521547",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1438957266336903174",
+          "price": "395.6",
+          "baseVolume": "6.9",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "2729.64",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1778822595211"
+        },
         {
           "tradeId": "1438862335319719937",
           "symbol": "AAPLUSDT",
@@ -4412,7 +5788,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1778798525114",
+        "untilTime": "1779035982226",
         "planType": "normal_plan"
       },
       "count": 9,
@@ -4596,7 +5972,7 @@
           "ok": true,
           "count": 9,
           "startTime": "1772236800000",
-          "endTime": "1778798525114",
+          "endTime": "1779035982226",
           "pages": 1
         }
       ],
