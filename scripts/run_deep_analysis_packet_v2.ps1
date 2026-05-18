@@ -167,8 +167,8 @@ if ($CaptureTv) {
   }
 
   # Keep a merged preview sheet for fallback/debug, but the final prompt now requires
-  # explicit 1D, 4H, and 1H screenshot reads. The builder prefers the individual
-  # timeframe screenshots for Discord media when all three are present.
+  # explicit 1D, 4H, and 1H screenshot reads. Discord delivery is handled later by
+  # the builder as separate follow-up messages with only full-resolution 4H and 1D.
   $byTf = @{}
   foreach ($item in $exports) { if ($item.type -eq 'screenshot') { $byTf[$item.timeframe] = [string]$item.path } }
   if ($byTf.ContainsKey('1D') -and $byTf.ContainsKey('4H') -and $byTf.ContainsKey('1H')) {
@@ -242,7 +242,7 @@ if ($CaptureTv) {
     layout = $CaptureLayout
     exports = $exports
     failures = $failures
-    note = 'Screenshot-first deep analysis evidence. Analyze visible 1D, 4H, and 1H chart structure first; use Bitget OHLCV/ticker/execution to validate numbers and feasibility. Prefer individual timeframe screenshots for final evidence; use the merged 1D|4H|1H sheet only as fallback/preview.'
+    note = 'Screenshot-first deep analysis evidence. Analyze visible 1D, 4H, and 1H chart structure first; use Bitget OHLCV/ticker/execution to validate numbers and feasibility. For Discord delivery, send analysis text first, then separate full-resolution 4H and 1D screenshots only; use the merged 1D|4H|1H sheet only as fallback/preview.'
   }
   $manifestPath = Join-Path $TvExportDir 'manifest.json'
   $manifestJson = $manifest | ConvertTo-Json -Depth 8

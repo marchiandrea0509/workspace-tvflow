@@ -520,7 +520,7 @@ def structure_risk_diagnostics(side: str, summaries: Dict[str, Dict[str, Any]], 
 
 
 
-def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None, current_price_reference: Optional[float] = None) -> Dict[str, Any]:
+def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], risk_usdt: float, max_margin: float, planned_leverage: float, rules: Dict[str, Any], screener_data: Optional[Dict[str, Any]] = None, current_price_reference: Optional[float] = None, symbol: str = "") -> Dict[str, Any]:
     """Build a static OC 4H pullback ladder ticket.
 
     The ladder is intentionally static: all entries, quantities, SLs and TPs must be
@@ -534,10 +534,12 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     closed_current = float(summaries.get("4H", {}).get("latest_close") or summaries.get("1H", {}).get("latest_close"))
     current = float(current_price_reference or closed_current)
     tf4 = summaries.get("4H", {})
+    tf1 = summaries.get("1H", {})
     atr4h = float(tf4.get("atr14") or summaries.get("1H", {}).get("atr14") or 0.0)
     max_effective_notional = max_margin * planned_leverage
     warnings: List[str] = []
     omitted: List[Dict[str, Any]] = []
+    near_market_rejected_entries: List[Dict[str, Any]] = []
     screener_row = (screener_data or {}).get("selected_row") or {}
 
     if atr4h <= 0:
@@ -686,6 +688,88 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     hot_or_at_resistance = bool(side == "LONG" and (rsi4h >= 75 or (nearest_res_atr is not None and float(nearest_res_atr) <= 1.0)))
     cold_or_at_support = bool(side == "SHORT" and (rsi4h <= 25 or (nearest_sup_atr is not None and float(nearest_sup_atr) <= 1.0)))
 
+    def one_h_trade_state() -> str:
+        close1 = as_float(tf1.get("latest_close"), None)
+        ema20_1 = as_float(tf1.get("ema20"), None)
+        ema50_1 = as_float(tf1.get("ema50"), None)
+        trend1 = str(tf1.get("trend_state") or "").lower()
+        below_fast = bool(close1 is not None and ema20_1 is not None and close1 < ema20_1)
+        below_mid = bool(close1 is not None and ema50_1 is not None and close1 < ema50_1)
+        above_fast = bool(close1 is not None and ema20_1 is not None and close1 > ema20_1)
+        above_mid = bool(close1 is not None and ema50_1 is not None and close1 > ema50_1)
+        if side == "LONG":
+            if trend1 == "bearish" or (below_fast and below_mid):
+                return "bearish_for_long"
+            if trend1 == "neutral_mixed" or below_fast:
+                return "corrective"
+        elif side == "SHORT":
+            if trend1 == "bullish" or (above_fast and above_mid):
+                return "bullish_for_short"
+            if trend1 == "neutral_mixed" or above_fast:
+                return "corrective"
+        return "supportive_or_neutral"
+
+    one_h_state = one_h_trade_state()
+    near_major_sr = bool(near_major_resistance or near_major_support)
+    strict_distance_reasons: List[str] = []
+    if one_h_state in ("against_trade", "corrective_against_trade", "bearish_for_long", "bullish_for_short", "corrective"):
+        strict_distance_reasons.append(f"1H state {one_h_state}")
+    if near_major_resistance:
+        strict_distance_reasons.append("price near major resistance for long")
+    if near_major_support:
+        strict_distance_reasons.append("price near major support for short")
+    if hot_or_at_resistance or cold_or_at_support:
+        strict_distance_reasons.append("market entry/chase disallowed by current structure")
+
+    def resting_entry_distance_gate(item: Dict[str, Any], option_target: str = "raw", is_fill_probability_leg: bool = False) -> Tuple[bool, Dict[str, Any]]:
+        setup_type = "DIP_LADDER" if side == "LONG" else "SELL_RALLY"
+        entry = float(item["entry"])
+        if atr4h <= 0:
+            distance = None
+            distance_atr = None
+            threshold = 0.25
+            reason = "ATR4H unavailable for resting-entry distance gate"
+            ok = False
+        else:
+            distance = (current - entry) if side == "LONG" else (entry - current)
+            distance_atr = distance / atr4h
+            reasons = list(strict_distance_reasons)
+            if is_fill_probability_leg:
+                reasons.append("fill-probability leg")
+            threshold = 0.50 if reasons else 0.25
+            if distance_atr <= 0:
+                reason = f"entry is at/through current price: distance {distance_atr:.2f} ATR4H"
+                ok = False
+            elif distance_atr < 0.25:
+                reason = f"near-market/chase: entry distance {distance_atr:.2f} ATR4H < hard minimum 0.25"
+                ok = False
+            elif distance_atr < threshold:
+                reason = f"near-market in strict context: entry distance {distance_atr:.2f} ATR4H < preferred minimum {threshold:.2f}"
+                ok = False
+            else:
+                reason = f"resting entry distance OK: {distance_atr:.2f} ATR4H"
+                ok = True
+        audit = {
+            "symbol": symbol,
+            "side": side,
+            "setup_type": setup_type,
+            "option_target": option_target,
+            "entry": rn(entry),
+            "current_price_used": rn(current),
+            "atr4h_used": rn(atr4h),
+            "atr4h_source": "Bitget calculated 4H ATR(14); explicit TradingView screenshot ATR not machine-readable in packet",
+            "distance_price": rn(distance) if distance is not None else None,
+            "distance_atr4h": rn(distance_atr, 3) if distance_atr is not None else None,
+            "threshold_applied_atr4h": threshold,
+            "strict_context": bool(threshold > 0.25),
+            "strict_context_reasons": list(strict_distance_reasons) + (["fill-probability leg"] if is_fill_probability_leg else []),
+            "one_h_state": one_h_state,
+            "near_major_sr": near_major_sr,
+            "rejection_reason": None if ok else reason,
+            "message": reason,
+        }
+        return ok, audit
+
     if screener_lc_action_inactive() and side == "LONG":
         warnings.append("Screener LC action/window fields are inactive; static ladder must rely on 4H impulse/value-zone structure, not near-market noise.")
     if hot_or_at_resistance:
@@ -746,6 +830,15 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "target_risk_feasible_under_margin_cap": True,
             "cap_adjusted_orders_if_needed": [],
             "omitted_too_deep_levels_sample": omitted[:8],
+            "near_market_rejected_entries": near_market_rejected_entries,
+            "resting_entry_distance_policy": {
+                "hard_min_atr4h": 0.25,
+                "strict_min_atr4h": 0.50,
+                "one_h_state": one_h_state,
+                "strict_context_reasons": strict_distance_reasons,
+                "atr4h_used": rn(atr4h),
+                "atr4h_source": "Bitget calculated 4H ATR(14); explicit TradingView screenshot ATR not machine-readable in packet",
+            },
             "static_ticket_safe": False,
             "static_ticket_reject_reasons": hard_reject_reasons,
             "warnings": warnings + hard_reject_reasons,
@@ -959,6 +1052,22 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     else:
         raw_entries = [x for x in raw_entries if float(x["entry"]) > current]
         raw_entries.sort(key=lambda x: float(x["entry"]))
+
+    distance_gated_entries: List[Dict[str, Any]] = []
+    for item in raw_entries:
+        ok, audit = resting_entry_distance_gate(item, option_target="raw", is_fill_probability_leg=False)
+        item["resting_entry_distance_gate"] = audit
+        item["distance_from_current_price"] = audit.get("distance_price")
+        item["distance_from_current_atr4h"] = audit.get("distance_atr4h")
+        if ok:
+            distance_gated_entries.append(item)
+        else:
+            rejected = {**item, "reason": "near_market_resting_entry_rejected", "resting_entry_distance_gate": audit}
+            omitted.append(rejected)
+            near_market_rejected_entries.append(audit)
+    raw_entries = distance_gated_entries
+    if near_market_rejected_entries:
+        warnings.append(f"Rejected {len(near_market_rejected_entries)} resting ladder candidate(s) as near-market/chase using the universal current-price distance gate.")
 
     entries: List[Dict[str, Any]] = []
     min_spacing = 0.25 * atr4h
@@ -1228,6 +1337,9 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 "order_type": "limit",
                 "entry": round_price(entry, rules),
                 "entry_source": item.get("entry_source"),
+                "resting_entry_distance_gate": item.get("resting_entry_distance_gate"),
+                "distance_from_current_price": item.get("distance_from_current_price"),
+                "distance_from_current_atr4h": item.get("distance_from_current_atr4h"),
                 "fib_price": item.get("fib_price"),
                 "confluence_count": item.get("confluence_count"),
                 "nearby_confluence": item.get("nearby_confluence"),
@@ -1265,6 +1377,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         scenario_l12 = scen(l12) if len(orders) >= 2 else None
         scenario_all = total_reward_local / total_risk_local if total_risk_local else None
         l1_risk_share = (float(orders[0].get("actual_risk_before_notional_cap_usdt") or 0) / total_risk_local) if orders and total_risk_local else None
+        first_entry_distance_atr = as_float(orders[0].get("distance_from_current_atr4h"), None) if orders else None
+        fill_probability_distance_ok = bool(first_entry_distance_atr is not None and first_entry_distance_atr >= 0.50)
         sl_quality_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.00)
         sl_fill_warning_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.20)
         sl_fill_strong_ok = bool(sl_dist_atr is not None and 2.20 < sl_dist_atr <= 2.75 and daily_strong)
@@ -1290,6 +1404,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             and (scenario_l1 or 0) < 1.0
             and l1_risk_share is not None
             and l1_risk_share <= 0.25
+            and fill_probability_distance_ok
             and l12_fill_soft_ok
             and sl_fill_ok
             and tp_fill_ok
@@ -1308,6 +1423,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 warnings_local.append("L1-only R:R is 0.90-0.99; can be BEST FILL PROBABILITY only if all total ladder quality / ATR / TP / margin / structure gates pass.")
             else:
                 rejects.append("Rejected due to total ladder quality / ATR / TP / margin / structure gates, not because L1 R:R is below 1.0: L1 risk share is too large for BEST FILL PROBABILITY exception")
+        if first_entry_distance_atr is not None and first_entry_distance_atr < 0.50:
+            warnings_local.append(f"First resting leg is {first_entry_distance_atr:.2f} ATR4H from current price; not eligible for BEST FILL PROBABILITY option ranking (<0.50 ATR4H).")
         if (scenario_l12 or 0) < 1.15:
             rejects.append("L1+L2 R:R below 1.2")
         elif (scenario_l12 or 0) < 1.2:
@@ -1359,6 +1476,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "rr_l1_l2": rn(scenario_l12, 2),
             "rr_all_filled": rn(scenario_all, 2),
             "l1_risk_share": rn(l1_risk_share, 3),
+            "first_entry_distance_atr4h": rn(first_entry_distance_atr, 3),
+            "fill_probability_distance_ok": fill_probability_distance_ok,
             "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
             "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
             "max_tp_distance_atr_from_blended": rn(max_tp_dist_atr, 3),
@@ -1366,7 +1485,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "valid_static_ticket": valid,
             "valid_best_quality": valid_quality,
             "valid_best_fill_probability": valid_fill_probability,
-            "option_compliance": [x for x, ok in (("BEST_QUALITY", valid_quality), ("BEST_FILL_PROBABILITY", valid_fill_probability or valid_quality)) if ok] + (["VALID_FOR_BEST_FILL_PROBABILITY_ONLY"] if valid_fill_probability and not valid_quality else []),
+            "option_compliance": [x for x, ok in (("BEST_QUALITY", valid_quality), ("BEST_FILL_PROBABILITY", (valid_fill_probability or valid_quality) and fill_probability_distance_ok)) if ok] + (["VALID_FOR_BEST_FILL_PROBABILITY_ONLY"] if valid_fill_probability and not valid_quality else []),
             "reject_reasons": rejects,
             "warning_reasons": warnings_local,
         }
@@ -1516,6 +1635,17 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "top_candidates": [{k: v for k, v in x.items() if k != "orders"} for x in scan_results],
         },
         "omitted_too_deep_levels_sample": omitted[:8],
+        "near_market_rejected_entries": near_market_rejected_entries,
+        "resting_entry_distance_policy": {
+            "hard_min_atr4h": 0.25,
+            "strict_min_atr4h": 0.50,
+            "one_h_state": one_h_state,
+            "strict_context_reasons": strict_distance_reasons,
+            "atr4h_used": rn(atr4h),
+            "atr4h_source": "Bitget calculated 4H ATR(14); explicit TradingView screenshot ATR not machine-readable in packet",
+            "atr_mismatch_warning": None,
+            "scope": "Universal gate for resting DIP_LADDER / SELL_RALLY / SINGLE_LIMIT_PULLBACK candidates before spacing, scan, and Option A/B ranking.",
+        },
         "static_ticket_safe": static_ticket_safe,
         "static_ticket_reject_reasons": static_rejects,
         "warnings": warnings + static_rejects,
@@ -1674,6 +1804,7 @@ def compact_order(order: Dict[str, Any]) -> Dict[str, Any]:
         "take_profit_type", "allocated_target_risk_usdt", "actual_risk_before_notional_cap_usdt",
         "estimated_reward_usdt", "notional_before_margin_cap_usdt", "estimated_margin_before_cap_usdt",
         "estimated_margin_leverage_used", "rr_estimate", "spacing_from_prior_leg_atr",
+        "distance_from_current_price", "distance_from_current_atr4h", "resting_entry_distance_gate",
     ]
     return {k: order.get(k) for k in keep if k in order}
 
@@ -1685,6 +1816,7 @@ def compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "actual_risk_usdt", "estimated_reward_usdt",
         "total_notional_usdt", "estimated_margin_at_planned_leverage_usdt", "blended_entry",
         "rr_l1_only", "rr_l1_l2", "rr_all_filled", "l1_risk_share", "sl_distance_atr_from_blended",
+        "first_entry_distance_atr4h", "fill_probability_distance_ok",
         "tp_distance_atr_from_blended", "max_tp_distance_atr_from_blended",
         "single_limit_pullback_valid", "valid_static_ticket", "valid_best_quality",
         "valid_best_fill_probability", "option_compliance", "reject_reasons", "warning_reasons",
@@ -1857,9 +1989,10 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "option_ab_path_separation": "Option A and Option B must represent different trade paths, not just two versions of the same ladder. Option A uses the cleanest 4H parent-structure setup. Option B is the best higher-probability alternative path: shallow pullback/rally only if structurally better, otherwise BREAKOUT/BREAKDOWN continuation when price is near major resistance/support. In bearish setups near major support, test BREAKDOWN below support before defaulting to shallow sell-rally. In bullish setups near major resistance, test BREAKOUT above resistance before defaulting to shallow dip-ladder. Always state Option A path, Option B path, why Option B was chosen, why shallow ladder was chosen/rejected, and why breakout/breakdown was chosen/rejected.",
             "chat_report_parity": "Never save/report a deep analysis as complete if the chat summary omitted mandatory ticket tables for valid options. Prefer printing valid tickets in chat; otherwise explicitly say: Ticket table omitted from chat, full ticket available in saved report.",
             "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
+            "resting_entry_distance_gate": "Universal hard gate for resting ladder candidates before combo selection: LONG buy limits must be at least 0.25 ATR4H below current price; SHORT sell limits at least 0.25 ATR4H above current price. In strict contexts (1H against/corrective, price near major S/R, or fill-probability use), require 0.50 ATR4H. Failing entries are NEAR_MARKET_REJECTED and cannot enter Option A/B tickets.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
             "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
-            "screenshot_delivery": "Final chat output should include the individual 1D, 4H, and 1H screenshots when available; if any screenshot is missing, unclear, or not used, say so explicitly.",
+            "screenshot_delivery": "Analyze 1D, 4H, and 1H screenshots when available, but Discord screenshot delivery should happen only after the analysis text is released: send exactly one image per follow-up message, full-resolution original files, and only 4H then 1D. Do not inline screenshots in the analysis message. If a required analysis screenshot is missing, unclear, or not used, say so explicitly.",
         },
         "manifest": {k: manifest.get(k) for k in [
             "symbol", "tv_symbol", "side", "family", "score", "rank", "screener_version",
@@ -1899,6 +2032,8 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "target_risk_feasible_under_margin_cap": ladder.get("target_risk_feasible_under_margin_cap"),
             "static_ticket_safe": ladder.get("static_ticket_safe"),
             "static_ticket_reject_reasons": ladder.get("static_ticket_reject_reasons"),
+            "near_market_rejected_entries": ladder.get("near_market_rejected_entries"),
+            "resting_entry_distance_policy": ladder.get("resting_entry_distance_policy"),
             "warnings": ladder.get("warnings"),
             "orders": [compact_order(o) for o in (ladder.get("target_orders_before_margin_cap") or []) if isinstance(o, dict)],
             "static_rules_summary": {
@@ -1945,6 +2080,8 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "tv_exports": files.get("tv_exports", []),
             "preferred_media_files": files.get("preferred_media_files", []),
             "discord_media_lines": files.get("discord_media_lines", []),
+            "discord_media_delivery_mode": files.get("discord_media_delivery_mode"),
+            "discord_media_messages": files.get("discord_media_messages", []),
             "bitget_ohlcv": files.get("bitget_ohlcv", {}),
         },
     }
@@ -2127,7 +2264,7 @@ def main() -> int:
     current = float(ticker_current) if ticker_current and ticker_diff_pct is not None and ticker_diff_pct > 0.15 else closed_current
     levels = collect_levels(summaries, current)
     rules = contract_rules(market_snapshot)
-    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data, current_price_reference=current)
+    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data, current_price_reference=current, symbol=symbol)
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
     screener_summary = {
@@ -2184,11 +2321,16 @@ def main() -> int:
         return None
 
     individual_3tf_screenshots = [screenshot_for_tf(tf) for tf in ("1D", "4H", "1H")]
+    # Discord delivery preference: keep 1H available for analysis/audit, but only send
+    # full-resolution 4H and 1D screenshots after the analysis, one image per message.
+    individual_discord_screenshots = [screenshot_for_tf(tf) for tf in ("4H", "1D")]
     discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
     contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
-    preferred_media_files = individual_3tf_screenshots if all(individual_3tf_screenshots) else (discord_sheets or contact_sheets or tv_screenshot_files)
+    preferred_media_files = individual_discord_screenshots if all(individual_discord_screenshots) else (discord_sheets or contact_sheets or tv_screenshot_files)
     files["preferred_media_files"] = preferred_media_files
     files["discord_media_lines"] = [f"MEDIA:{p}" for p in preferred_media_files]
+    files["discord_media_delivery_mode"] = "after_analysis_separate_messages_one_image_each_4H_then_1D"
+    files["discord_media_messages"] = [{"message_index": i + 1, "media_file": p, "media_line": f"MEDIA:{p}"} for i, p in enumerate(preferred_media_files)]
 
     compact_payload = make_compact_decision_payload(manifest, analysis_summary, execution_state, files)
     write_json(derived_dir / "decision_packet_compact.json", compact_payload)
@@ -2219,7 +2361,9 @@ def main() -> int:
         "tv_screenshot_files": tv_screenshot_files,
         "preferred_media_files": preferred_media_files,
         "discord_media_lines": [f"MEDIA:{p}" for p in preferred_media_files],
-        "reporting_note": "When answering in Discord, include the individual 1D, 4H, and 1H chart screenshots used for the analysis. If any screenshot is missing, unclear, or not used, say so explicitly. Use merged contact sheets only as fallback/preview evidence."
+        "discord_media_delivery_mode": files["discord_media_delivery_mode"],
+        "discord_media_messages": files["discord_media_messages"],
+        "reporting_note": "When answering in Discord, release the analysis text first with no screenshots attached. After the analysis is released, send full-resolution original screenshots as separate follow-up messages, one image per message, only 4H first and 1D second. 1H remains analysis evidence but is not sent unless explicitly requested. Use merged contact sheets only as emergency fallback/preview evidence."
     }, indent=2))
     return 0
 

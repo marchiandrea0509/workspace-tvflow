@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-17T16:40:15.430Z",
+  "generatedAt": "2026-05-18T14:49:41.072Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-17T16:39:42.226Z",
+  "until": "2026-05-18T14:49:07.509Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779035982226"
+        "untilTime": "1779115747509"
       },
-      "count": 51,
+      "count": 56,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,168 @@
         },
         {
           "ok": true,
-          "count": 51,
+          "count": 56,
           "startTime": "1772236800000",
-          "endTime": "1779035982226",
+          "endTime": "1779115747509",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "GOOGLUSDT",
+          "size": "8.06",
+          "orderId": "1440271696131682305",
+          "clientOid": "1440271696131682306",
+          "baseVolume": "8.06",
+          "fee": "-1.37625306",
+          "price": "",
+          "priceAvg": "406.55",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "100.13155536",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "3276.793",
+          "leverage": "8",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "394.12",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779113451988",
+          "uTime": "1779113452002"
+        },
+        {
+          "symbol": "GOOGLUSDT",
+          "size": "3.5",
+          "orderId": "1440270721648062465",
+          "clientOid": "1439051754550337536",
+          "baseVolume": "3.5",
+          "fee": "-0.59753946",
+          "price": "",
+          "priceAvg": "406.48",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "43.26944463",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1422.713",
+          "leverage": "8",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "profit_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "394.12",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779113219653",
+          "uTime": "1779113219668"
+        },
+        {
+          "symbol": "AAPLUSDT",
+          "size": "5.48",
+          "orderId": "1440196897959211009",
+          "clientOid": "tvflow_aapl_20260518_optb10x_L1",
+          "baseVolume": "5.48",
+          "fee": "0",
+          "price": "297.36",
+          "priceAvg": "297.36",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1629.5328",
+          "leverage": "10",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "301.72",
+          "presetStopLossPrice": "292.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779095618715",
+          "uTime": "1779113085472"
+        },
+        {
+          "symbol": "MRVLUSDT",
+          "size": "8.16",
+          "orderId": "1440166939132063750",
+          "clientOid": "1440166939132063751",
+          "baseVolume": "8.16",
+          "fee": "0",
+          "price": "172.5",
+          "priceAvg": "172.5",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1407.6",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "modify_order_limit",
+          "presetStopSurplusPrice": "182.8",
+          "presetStopLossPrice": "167.3",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779088475973",
+          "uTime": "1779112654004"
+        },
+        {
+          "symbol": "MRVLUSDT",
+          "size": "19.35",
+          "orderId": "1440165114412691457",
+          "clientOid": "tvflow_mrvl_20260518_optb4x_B2",
+          "baseVolume": "19.35",
+          "fee": "0",
+          "price": "170.4",
+          "priceAvg": "170.4",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "3297.24",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "191.8",
+          "presetStopLossPrice": "167.3",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779088040927",
+          "uTime": "1779114573254"
+        },
         {
           "symbol": "GOOGLUSDT",
           "size": "11.56",
@@ -1796,9 +1951,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779035982226"
+        "untilTime": "1779115747509"
       },
-      "count": 165,
+      "count": 178,
       "windows": [
         {
           "ok": true,
@@ -1977,13 +2132,312 @@
         },
         {
           "ok": true,
-          "count": 165,
+          "count": 178,
           "startTime": "1772236800000",
-          "endTime": "1779035982226",
+          "endTime": "1779115747509",
           "pages": 2
         }
       ],
       "data": [
+        {
+          "tradeId": "1440276399027634177",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440165114412691457",
+          "price": "170.4",
+          "baseVolume": "4.17",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "710.568",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779114573246"
+        },
+        {
+          "tradeId": "1440276398469791745",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440165114412691457",
+          "price": "170.4",
+          "baseVolume": "3.12",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "531.648",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779114573113"
+        },
+        {
+          "tradeId": "1440276398453014529",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440165114412691457",
+          "price": "170.4",
+          "baseVolume": "2",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "340.8",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779114573109"
+        },
+        {
+          "tradeId": "1440276398343962625",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440165114412691457",
+          "price": "170.4",
+          "baseVolume": "1.47",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "250.488",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779114573083"
+        },
+        {
+          "tradeId": "1440271696151691264",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1440271696131682305",
+          "price": "406.55",
+          "baseVolume": "8.06",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-1.37625306"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "3276.793",
+          "profit": "100.13155536",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779113451993"
+        },
+        {
+          "tradeId": "1440270721672265734",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1440270721648062465",
+          "price": "406.45",
+          "baseVolume": "0.28",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.04779852"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "113.806",
+          "profit": "3.45051557",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779113219659"
+        },
+        {
+          "tradeId": "1440270721672265732",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1440270721648062465",
+          "price": "406.46",
+          "baseVolume": "1.13",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.19290591"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "459.2998",
+          "profit": "13.93659498",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779113219659"
+        },
+        {
+          "tradeId": "1440270721672265730",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1440270721648062465",
+          "price": "406.51",
+          "baseVolume": "1.96",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.33463903"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "796.7596",
+          "profit": "24.27120899",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779113219659"
+        },
+        {
+          "tradeId": "1440270721672265728",
+          "symbol": "GOOGLUSDT",
+          "orderId": "1440270721648062465",
+          "price": "406.52",
+          "baseVolume": "0.13",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02219599"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "52.8476",
+          "profit": "1.61112508",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779113219659"
+        },
+        {
+          "tradeId": "1440270482227838985",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440165114412691457",
+          "price": "170.4",
+          "baseVolume": "8.59",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1463.736",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779113162571"
+        },
+        {
+          "tradeId": "1440270158826029065",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440196897959211009",
+          "price": "297.36",
+          "baseVolume": "0.43",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "127.8648",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779113085466"
+        },
+        {
+          "tradeId": "1440269972271775755",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440196897959211009",
+          "price": "297.36",
+          "baseVolume": "5.05",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1501.668",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779113040988"
+        },
+        {
+          "tradeId": "1440268349118070785",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440166939132063750",
+          "price": "172.5",
+          "baseVolume": "8.16",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1407.6",
+          "profit": "0",
+          "enterPointSource": "android",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779112653998"
+        },
         {
           "tradeId": "1439277205546582038",
           "symbol": "GOOGLUSDT",
@@ -5788,195 +6242,227 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779035982226",
+        "untilTime": "1779115747509",
         "planType": "normal_plan"
       },
-      "count": 9,
+      "count": 10,
       "windows": [
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1577836800000",
           "endTime": "1585612799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1585612800000",
           "endTime": "1593388799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1593388800000",
           "endTime": "1601164799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1601164800000",
           "endTime": "1608940799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1608940800000",
           "endTime": "1616716799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1616716800000",
           "endTime": "1624492799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1624492800000",
           "endTime": "1632268799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1632268800000",
           "endTime": "1640044799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1640044800000",
           "endTime": "1647820799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1647820800000",
           "endTime": "1655596799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1655596800000",
           "endTime": "1663372799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1663372800000",
           "endTime": "1671148799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1671148800000",
           "endTime": "1678924799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1678924800000",
           "endTime": "1686700799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1686700800000",
           "endTime": "1694476799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1694476800000",
           "endTime": "1702252799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1702252800000",
           "endTime": "1710028799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1710028800000",
           "endTime": "1717804799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1717804800000",
           "endTime": "1725580799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1725580800000",
           "endTime": "1733356799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1733356800000",
           "endTime": "1741132799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1741132800000",
           "endTime": "1748908799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1748908800000",
           "endTime": "1756684799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1756684800000",
           "endTime": "1764460799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1764460800000",
           "endTime": "1772236799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 9,
+          "count": 10,
           "startTime": "1772236800000",
-          "endTime": "1779035982226",
+          "endTime": "1779115747509",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "planType": "normal_plan",
+          "symbol": "GOOGLUSDT",
+          "size": "11.56",
+          "orderId": "1439833741754060800",
+          "executeOrderId": "",
+          "clientOid": "1439833741741477888",
+          "planStatus": "cancelled",
+          "price": "399",
+          "executePrice": "399",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "398.5",
+          "triggerType": "fill_price",
+          "side": "buy",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "ANDROID",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "406.6",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "393.8",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779009035528",
+          "uTime": "1779079152025"
+        },
         {
           "planType": "normal_plan",
           "symbol": "GOOGLUSDT",

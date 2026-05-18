@@ -17,6 +17,7 @@ Default workflow for read-only Bitget deep analysis.
 - Rejection audit: every rejected side/option/candidate and every broken rule must be justified with the exact rule/gate, observed value, required value/threshold, why it blocks orderability, and what would fix it.
 - Option framework: final reports must always show both `Option A — BEST QUALITY: VALID / REJECTED` and `Option B — BEST FILL PROBABILITY: VALID / REJECTED`; never hide the rejected option.
 - Shallow fill-probability audit: every rejected shallow fill-probability leg must show candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason.
+- Universal resting-entry distance gate: every resting `DIP_LADDER`, `SELL_RALLY`, or resting `AUTO / SINGLE_LIMIT_PULLBACK` candidate must pass the no-chase current-price distance filter before combo construction and Option A/B ranking. Long buy limits need distance `(current - entry) / ATR4H >= 0.25`; short sell limits need `(entry - current) / ATR4H >= 0.25`. In strict contexts (1H against/corrective, near major S/R, market chase disallowed, or fill-probability use), require `>= 0.50`. Failing entries must be stored in `near_market_rejected_entries` and excluded from tickets.
 
 ## Folder
 
@@ -62,6 +63,8 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
 - `market_order_allowed`
 - `static_ticket_safe`
 - `static_ticket_reject_reasons`
+- `near_market_rejected_entries`
+- `resting_entry_distance_policy`
 - `omitted_too_deep_levels_sample`
 - `warnings`
 
@@ -84,9 +87,9 @@ Never mark a saved report complete if the chat summary omitted mandatory ticket 
 
 ## Static 4H ladder rule
 
-Deep Analysis v2 may build static OC 4H pullback ticket candidates for validation: `DIP_LADDER long`, `SELL_RALLY short`, or `AUTO / SINGLE_LIMIT_PULLBACK` when exactly one valid pullback level survives all static checks. These candidates are secondary validation only; the final trade levels must be designed from the 1D / 4H / 1H screenshot structure. If generated value zones or static scan candidates conflict with visible structure, screenshots win. Do not choose old pivots merely because they are confirmed. In fresh breakouts the impulse may be `ACTIVE_BREAKOUT_UNCONFIRMED_HIGH/LOW` using the live/latest 4H/1H extreme and the latest meaningful pullback base instead of waiting for a confirmed pivot extreme. Breakout-retest structural levels are direct entry candidates. Tickets use 1-3 legs maximum, a common structural SL with 0.25-0.50 ATR buffer, fixed TP/SL at order creation, and risk splits by risk not quantity. Each ladder leg must have its own meaningful TP; do not assign the same TP to all legs. R:R is calculated per leg with that leg's TP, and all-filled R:R is summed reward divided by summed planned risk. A valid ticket must remain risk-controlled near the target risk if all entries fill and price immediately goes to SL. No ticket may depend on future cancellation, trailing, SL movement, or post-fill adjustment. Hot RSI / near major S/R blocks market chasing but is not a hard reject for resting pullback limits when static checks pass.
+Deep Analysis v2 may build static OC 4H pullback ticket candidates for validation: `DIP_LADDER long`, `SELL_RALLY short`, or `AUTO / SINGLE_LIMIT_PULLBACK` when exactly one valid pullback level survives all static checks. These candidates are secondary validation only; the final trade levels must be designed from the 1D / 4H / 1H screenshot structure. If generated value zones or static scan candidates conflict with visible structure, screenshots win. Do not choose old pivots merely because they are confirmed. In fresh breakouts the impulse may be `ACTIVE_BREAKOUT_UNCONFIRMED_HIGH/LOW` using the live/latest 4H/1H extreme and the latest meaningful pullback base instead of waiting for a confirmed pivot extreme. Breakout-retest structural levels are direct entry candidates. Tickets use 1-3 legs maximum, a common structural SL with 0.25-0.50 ATR buffer, fixed TP/SL at order creation, and risk splits by risk not quantity. Each ladder leg must have its own meaningful TP; do not assign the same TP to all legs. R:R is calculated per leg with that leg's TP, and all-filled R:R is summed reward divided by summed planned risk. A valid ticket must remain risk-controlled near the target risk if all entries fill and price immediately goes to SL. No ticket may depend on future cancellation, trailing, SL movement, or post-fill adjustment. Hot RSI / near major S/R blocks market chasing and activates the stricter 0.50 ATR4H resting-entry distance gate; it is not a hard reject for deeper valid resting pullback limits when static checks pass.
 
-Final chat delivery must include the individual 1D, 4H, and 1H screenshots when available, alongside the output results. If any screenshot is missing, unreadable, or not used, say so explicitly.
+Final Discord delivery must send the analysis text first, then attach only the full-resolution 4H and 1D screenshots as separate follow-up messages, one image per message, 4H first and 1D second. 1H remains mandatory analysis evidence but should not be attached unless explicitly requested. If any analysis screenshot is missing, unreadable, or not used, say so explicitly.
 
 ## Screener / strategy-test export context
 

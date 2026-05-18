@@ -127,6 +127,14 @@ Option B can be slightly less clean:
 - shallow leg R:R about 0.90+ is acceptable only if risk share is reduced and full setup remains good
 - all-filled R:R should still be around 1.5+
 If R:R is poor, do not force the trade.
+RESTING ENTRY DISTANCE GATE:
+Every resting ladder candidate must represent a real pullback/rally, not a near-market chase.
+This applies to DIP_LADDER longs, SELL_RALLY shorts, and AUTO/SINGLE_LIMIT_PULLBACK when implemented as resting limits, for both Option A and Option B.
+It does not apply to explicit MARKET entries or stop-entry BREAKOUT/BREAKDOWN triggers; those use separate chase/trap checks.
+Use one ATR4H source consistently for entry distance, spacing, SL buffer, and TP distance. Prefer explicit 4H screenshot ATR when available; otherwise use calculated Bitget 4H ATR. If ATR sources differ by >20%, warn and use the larger ATR for no-chase checks.
+For LONG resting buy limits: distance = current price - entry. Reject if distance / ATR4H < 0.25. If 1H is corrective/against the long, price is near major resistance, market chase is disallowed, or the leg is for fill probability, require >= 0.50 ATR4H.
+For SHORT resting sell limits: distance = entry - current price. Reject if distance / ATR4H < 0.25. If 1H is corrective/against the short, price is near major support, market chase is disallowed, or the leg is for fill probability, require >= 0.50 ATR4H.
+Entries closer than 0.25 ATR4H are NEAR_MARKET_REJECTED and must not be classified as DIP_LADDER or SELL_RALLY. Option B may improve fill probability, but not by accepting near-market/chase legs.
 EXISTING ORDERS / POSITIONS:
 If open orders or positions exist on the same symbol, do not stack blindly.
 Report existing entries, SL, TP, quantity, leverage, and risk if available.
@@ -167,6 +175,7 @@ Reject / WAIT if:
 - trade is just averaging without clear invalidation
 OUTPUT FORMAT:
 Full output format is mandatory whenever Andrea asks to run a deep analysis. Do not collapse the answer into only Chart Context Read + Final Verdict. Print every required section in order.
+Discord screenshot delivery must happen after the analysis text is released: send one full-resolution original image per follow-up message, only 4H first and 1D second. Do not attach screenshots to the analysis message. Do not send 1H unless explicitly requested, but still read/use 1H in the analysis.
 
 1) Chart Context Read
 - 1D read
