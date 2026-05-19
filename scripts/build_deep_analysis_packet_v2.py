@@ -1304,6 +1304,38 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 chosen = checks[-1]
         return {"chosen": chosen, "checks": checks}
 
+    def uncleared_structure_beyond_sl(sl_price: float) -> List[Dict[str, Any]]:
+        """Find nearby same-side structure beyond a candidate SL.
+
+        A tighter stop should not sit just before another visible 1H/4H/1D level
+        where the thesis could still validly reject. This is only an OHLCV-derived
+        proxy; screenshots remain the primary truth in the final report.
+        """
+        if atr4h <= 0:
+            return []
+        source_levels = levels.get("supports" if side == "LONG" else "resistances", [])
+        out: List[Dict[str, Any]] = []
+        for item in source_levels:
+            try:
+                p = float(item.get("price"))
+            except Exception:
+                continue
+            if side == "LONG":
+                beyond = p < sl_price
+                dist_atr = (sl_price - p) / atr4h
+            else:
+                beyond = p > sl_price
+                dist_atr = (p - sl_price) / atr4h
+            if beyond and 0 < dist_atr <= 1.00:
+                out.append({
+                    "price": rn(p),
+                    "source": item.get("source"),
+                    "distance_from_sl_atr4h": rn(dist_atr, 3),
+                    "rule": "nearby same-side structure beyond proposed SL; tighter SL may be inside retest noise / R:R-optimised",
+                })
+        out.sort(key=lambda x: float(x.get("distance_from_sl_atr4h") or 999))
+        return out[:5]
+
     def build_orders_for(combo_entries: List[Dict[str, Any]], sl_item: Dict[str, Any], tp_item: Dict[str, Any]) -> Dict[str, Any]:
         split = risk_split_for_count(len(combo_entries))
         available_tps = list(scan_tps or [])
@@ -1366,6 +1398,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         weighted_tp_price = sum(float(o["take_profit_candidate"]) * float(o["qty_target_risk_before_margin_cap"] or 0) for o in orders) / total_qty_local if total_qty_local else None
         tp_dist_atr = abs(float(weighted_tp_price or 0) - float(blended_local or 0)) / atr4h if blended_local and weighted_tp_price else None
         max_tp_dist_atr = max([abs(float(o["take_profit_candidate"]) - float(blended_local or 0)) / atr4h for o in orders], default=None) if blended_local else None
+        sl_hierarchy_uncleared = uncleared_structure_beyond_sl(float(sl_item["price"]))
+        sl_hierarchy_clear = not sl_hierarchy_uncleared
         l1 = orders[:1]
         l12 = orders[:2]
         def scen(sub: List[Dict[str, Any]]) -> Optional[float]:
@@ -1433,13 +1467,17 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             rejects.append("all-filled R:R below 1.5")
         if sl_dist_atr is None or sl_dist_atr < 0.70:
             rejects.append("SL distance below minimum preferred 0.70 ATR")
-        elif sl_dist_atr > 2.50 and not daily_strong:
+        if sl_hierarchy_uncleared and str(sl_item.get("type") or "") == "tighter_structural":
+            rejects.append("tighter SL leaves nearby same-side 1H/4H/1D structure beyond stop; likely inside retest noise / R:R-optimised")
+        elif sl_hierarchy_uncleared:
+            warnings_local.append("SL hierarchy warning: nearby same-side structure exists beyond the selected stop; final screenshot read must justify why the thesis is invalid before those levels.")
+        if sl_dist_atr is not None and sl_dist_atr > 2.50 and not daily_strong:
             rejects.append("SL distance >2.50 ATR without exceptional HTF structure")
-        elif sl_dist_atr > 2.20 and not daily_strong:
+        elif sl_dist_atr is not None and sl_dist_atr > 2.20 and not daily_strong:
             rejects.append("SL distance >2.20 ATR requires very strong HTF structure")
-        elif sl_dist_atr > 2.50:
+        elif sl_dist_atr is not None and sl_dist_atr > 2.50:
             warnings_local.append("SL distance is >2.50 ATR; accepted only because exceptional 1D/HTF structure and realistic TP support the fill-probability exception.")
-        elif sl_dist_atr > 2.00:
+        elif sl_dist_atr is not None and sl_dist_atr > 2.00:
             warnings_local.append("SL distance is above strict quality range; acceptable only as warning/HTF-supported fill-probability context.")
         if tp_dist_atr is None or tp_dist_atr < 1.20 or not (tp_dist_atr <= 3.50 or (daily_strong and tp_dist_atr <= 4.20)):
             rejects.append("TP distance outside preferred realistic ATR range")
@@ -1479,6 +1517,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "first_entry_distance_atr4h": rn(first_entry_distance_atr, 3),
             "fill_probability_distance_ok": fill_probability_distance_ok,
             "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
+            "sl_hierarchy_clear": sl_hierarchy_clear,
+            "sl_hierarchy_uncleared_levels": sl_hierarchy_uncleared,
             "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
             "max_tp_distance_atr_from_blended": rn(max_tp_dist_atr, 3),
             "single_limit_pullback_valid": single_limit_ok,
@@ -1816,6 +1856,7 @@ def compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "actual_risk_usdt", "estimated_reward_usdt",
         "total_notional_usdt", "estimated_margin_at_planned_leverage_usdt", "blended_entry",
         "rr_l1_only", "rr_l1_l2", "rr_all_filled", "l1_risk_share", "sl_distance_atr_from_blended",
+        "sl_hierarchy_clear", "sl_hierarchy_uncleared_levels",
         "first_entry_distance_atr4h", "fill_probability_distance_ok",
         "tp_distance_atr_from_blended", "max_tp_distance_atr_from_blended",
         "single_limit_pullback_valid", "valid_static_ticket", "valid_best_quality",
@@ -1990,6 +2031,8 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "chat_report_parity": "Never save/report a deep analysis as complete if the chat summary omitted mandatory ticket tables for valid options. Prefer printing valid tickets in chat; otherwise explicitly say: Ticket table omitted from chat, full ticket available in saved report.",
             "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
             "resting_entry_distance_gate": "Universal hard gate for resting ladder candidates before combo selection: LONG buy limits must be at least 0.25 ATR4H below current price; SHORT sell limits at least 0.25 ATR4H above current price. In strict contexts (1H against/corrective, price near major S/R, or fill-probability use), require 0.50 ATR4H. Failing entries are NEAR_MARKET_REJECTED and cannot enter Option A/B tickets.",
+            "structural_sl_hierarchy": "SL must be visible-structure invalidation first, not R:R optimisation. Before accepting a tight SL, check same-side 1H/4H/1D structure beyond it. If the thesis could still validly reject at the next level beyond the proposed SL, reject the tight SL, recalc R:R with the wider structural SL, and remove shallow legs that no longer pass.",
+            "tp_realism_hierarchy": "Far 4H/1D targets beyond nearer major support/resistance are valid only when the nearer level is assigned to an earlier leg or the setup explicitly requires a break/retest. Do not use far targets to rescue weak shallow legs.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
             "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
             "screenshot_delivery": "Analyze 1D, 4H, and 1H screenshots when available, but Discord screenshot delivery should happen only after the analysis text is released: send exactly one image per follow-up message, full-resolution original files, and only 4H then 1D. Do not inline screenshots in the analysis message. If a required analysis screenshot is missing, unclear, or not used, say so explicitly.",
@@ -2042,6 +2085,9 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
                 "risk_split_used": (ladder.get("oc_static_ladder_rules") or {}).get("risk_split_used"),
                 "rr_thresholds": (ladder.get("oc_static_ladder_rules") or {}).get("rr_thresholds"),
                 "atr_limits_4h": (ladder.get("oc_static_ladder_rules") or {}).get("atr_limits_4h"),
+                "structural_sl_hierarchy_required": True,
+                "tight_sl_rule": "Reject tighter SLs that leave nearby same-side 1H/4H/1D structure beyond the stop where the thesis could still validly reject; recalc R:R with wider structural SL and remove failing shallow legs.",
+                "tp_realism_hierarchy_required": True,
                 "atr_source": "4H ATR(14) only",
             },
             "static_optimisation_scan_summary": {

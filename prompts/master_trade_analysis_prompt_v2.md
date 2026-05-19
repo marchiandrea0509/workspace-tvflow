@@ -117,8 +117,19 @@ S2 TP = next meaningful support / measured move.
 S3 TP = lower 4H/1D target only if realistic.
 Do not invent fantasy targets only to improve R:R.
 Do not lift TP only to make a weak entry acceptable.
+Far TP hierarchy: if a proposed TP is beyond a nearer major 1D/4H support or resistance, the nearer level must either be assigned to an earlier leg or the setup must explicitly require a confirmed break/retest through that nearer level. Do not use a far target to rescue a weak shallow leg.
 Check R:R per leg using that leg’s own TP.
 If only one valid TP/entry pair exists, reduce to SINGLE_LIMIT_PULLBACK.
+STRUCTURAL SL / HIERARCHY AUDIT:
+SL must be chosen from visible invalidation first, not from desired R:R.
+For every candidate option, explicitly identify the exact 4H parent swing and the exact level whose break invalidates the idea.
+Before accepting any tighter SL, scan the visible 1H / 4H / 1D same-side structure beyond the stop:
+- For longs, check support / higher-low / shelf levels just below the proposed SL.
+- For shorts, check resistance / lower-high / shelf levels just above the proposed SL.
+If the trade thesis would still be valid after price crosses the proposed SL and rejects from the next visible same-side level, the SL is too tight and must be rejected as R:R-optimised.
+Do not place SL inside normal retest noise or below/above the first level only when a nearby stronger 1H/4H cluster remains untested.
+When comparing a tight SL and a wider structural SL, recalculate R:R with the wider SL. If the shallow/fill-probability leg fails under the wider SL, remove that leg, convert to a deeper 2-leg plan, SINGLE_LIMIT_PULLBACK, or WAIT.
+In the report, state why the selected SL is structural and list any nearby same-side levels that were considered and accepted/rejected.
 R:R QUALITY:
 Option A should be clean:
 - all-filled R:R ideally >= 1.5

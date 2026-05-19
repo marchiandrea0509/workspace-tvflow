@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-18T17:32:17.729Z",
+  "updatedAt": "2026-05-19T05:58:48.916Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -585,25 +585,27 @@
       "endLine": 141,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 6,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.4286268681287764,
+      "totalScore": 2.8191555410623548,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-05T20:59:20.638Z",
+      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
         "f0682907215f",
         "895793ee70c6",
         "d8385fba69dc",
-        "0ddb86382c3a"
+        "0ddb86382c3a",
+        "5ff0a97a9148"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
-        "2026-05-05"
+        "2026-05-05",
+        "2026-05-19"
       ],
       "conceptTags": [
         "discord-safe",
@@ -623,25 +625,27 @@
       "endLine": 61,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 6,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.4286268681287764,
+      "totalScore": 2.8191555410623548,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-05T20:59:20.638Z",
+      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
         "f0682907215f",
         "895793ee70c6",
         "d8385fba69dc",
-        "0ddb86382c3a"
+        "0ddb86382c3a",
+        "5ff0a97a9148"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
-        "2026-05-05"
+        "2026-05-05",
+        "2026-05-19"
       ],
       "conceptTags": [
         "discord-safe",
@@ -1491,13 +1495,13 @@
       "endLine": 12,
       "source": "memory",
       "snippet": "# 2026-05-05 ## AAPLUSDT deep analysis and live ladder execution - Ran OHLCV-first Bitget deep analysis for `BITGET:AAPLUSDT.P` / `AAPLUSDT` using Bitget public market data plus latest TradingView screener/strategy CSV context. - Analysis verdict before execution: long bias, but do not chase; preferred conditional dip ladder. Initial report saved to `reports/deep_analysis/2026-05-05_AAPLUSDT.md`; metrics saved to `reports/deep_analysis/2026-05-05_AAPLUSDT_metrics.json`; OHLCV CSVs saved for 4H and 1D. - User adjusted the AAPL DIP_LADDER ticket and explicitly confirmed live execution with `CONFIRM AAPL LIVE 4X FIXED TP`. - Pre-placement checks: AAPLUSDT open regular orders `0`, plan orders `",
-      "recallCount": 18,
+      "recallCount": 19,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 7.742501869797706,
+      "totalScore": 8.162665900588035,
       "maxScore": 0.5045062899589539,
       "firstRecalledAt": "2026-05-06T05:08:51.338Z",
-      "lastRecalledAt": "2026-05-13T19:42:04.720Z",
+      "lastRecalledAt": "2026-05-19T05:22:54.356Z",
       "queryHashes": [
         "cd6bbf71900e",
         "fffb38fc8dd6",
@@ -1516,7 +1520,8 @@
         "28ee9e86122b",
         "d30f948edc27",
         "575943a9d158",
-        "d6781310a3ba"
+        "d6781310a3ba",
+        "7885727aae19"
       ],
       "recallDays": [
         "2026-05-06",
@@ -1525,7 +1530,8 @@
         "2026-05-09",
         "2026-05-11",
         "2026-05-12",
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-19"
       ],
       "conceptTags": [
         "ohlcv-first",
@@ -1648,22 +1654,24 @@
       "endLine": 26,
       "source": "memory",
       "snippet": "- Attempted to place the three limit legs, but the harness blocked live order placement before sending orders because active config has `BITGET_ALLOW_ORDER_PLACEMENT=false` and `BITGET_ALLOW_LIVE_TRADING=false`. - Post-check verified NEARUSDT open regular orders `0`, plan orders `0`, positions `0`; no NEARUSDT orders were placed. ## NEARUSDT live ladder execution - User explicitly confirmed proceeding after the harness safety block. - Used one-shot environment unlock for the placement command only; no persistent harness config change was made. - Pre-placement checks: NEARUSDT open regular orders `0`, plan orders `0`, positions `0`, account available USDT about `4867.34`. - Set/confirmed NEA",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2900067031383513,
+      "totalScore": 1.6826954096555709,
       "maxScore": 0.4689431220293045,
       "firstRecalledAt": "2026-05-07T01:54:27.952Z",
-      "lastRecalledAt": "2026-05-17T16:37:17.880Z",
+      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
       "queryHashes": [
         "8f3261d9e2df",
         "38e8bb5181b2",
-        "48b7b936b4da"
+        "48b7b936b4da",
+        "5ff0a97a9148"
       ],
       "recallDays": [
         "2026-05-07",
         "2026-05-11",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-19"
       ],
       "conceptTags": [
         "bitget-allow-order-placement",
@@ -2792,25 +2800,27 @@
       "endLine": 17,
       "source": "memory",
       "snippet": "- Market read: long-biased but extended/unclean immediate entry. Last/mark about `108.46/108.45`; 24h range `106.74-114.59`, 24h change `-2.01%`; 4H EMA20 decision area around `108.29`, daily RSI `80.69`, daily 20-bar move about `+59.61%`. - TradingView context: latest local strategy-test CSV from `BITGET_TRADFI_subset_wait10_2026-05-06T05-35-54-740Z` had Best Score `51.34`, Final Long `51.34`, Final Short `0`, Trend/Macro `+1/+1`, ResearchValid `1`; older screener row from 2026-05-01 had stronger Best Score `70.78`, Conviction `3`, but is stale. - Verdict: `PLACEABLE_CONDITIONAL_ONLY`; market order now `NO`. Preferred pullback ladder: `102.50 / 96.00` with structural SL `91.50`; example 4x",
-      "recallCount": 6,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.4547061115503306,
+      "totalScore": 2.821130490303039,
       "maxScore": 0.4805350303649902,
       "firstRecalledAt": "2026-05-11T12:03:10.765Z",
-      "lastRecalledAt": "2026-05-17T16:37:17.880Z",
+      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
       "queryHashes": [
         "ddf2a7089f43",
         "08e9c1908edc",
         "07ff3e690b75",
         "38e8bb5181b2",
         "d48135bfa782",
-        "48b7b936b4da"
+        "48b7b936b4da",
+        "c223bee16c34"
       ],
       "recallDays": [
         "2026-05-11",
         "2026-05-13",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-18"
       ],
       "conceptTags": [
         "long-biased",
@@ -2830,21 +2840,23 @@
       "endLine": 22,
       "source": "memory",
       "snippet": "- Final pre-check: INTCUSDT open regular/plan orders `0/0`, current futures positions `0`, account live/not paper, available USDT about `4,867.34`. - Set/confirmed INTCUSDT isolated margin mode and 4x long/short leverage. - Used one-shot environment unlock for the placement command only; no persistent harness config change was made. - Placed live Bitget isolated 4x `INTCUSDT` fixed-TP long limit ladder: - L1: buy/open long `4.00 @ 102.50`, TP `114.50`, SL `91.50`, orderId `1436410836862791681`, clientOid `tvflow_intc_20260508_ladder_L1` - L2: buy/open long `12.00 @ 96.00`, TP `117.20`, SL `91.50`, orderId `1436410839689752577`, clientOid `tvflow_intc_20260508_ladder_L2` - Verification im",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.1731196612119674,
+      "totalScore": 1.568126094341278,
       "maxScore": 0.4235196232795715,
       "firstRecalledAt": "2026-05-11T12:03:10.765Z",
-      "lastRecalledAt": "2026-05-18T17:32:17.729Z",
+      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
       "queryHashes": [
         "ddf2a7089f43",
         "38e8bb5181b2",
-        "c44d03903c0e"
+        "c44d03903c0e",
+        "5ff0a97a9148"
       ],
       "recallDays": [
         "2026-05-11",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-19"
       ],
       "conceptTags": [
         "pre-check",
@@ -3267,20 +3279,22 @@
       "endLine": 106,
       "source": "memory",
       "snippet": "- Postcheck: NVDAUSDT regular pending orders `3`, plan orders `0`; no NVDA position yet because all limits were resting/unfilled. Execution log `reports/live_execution/20260511_163753_NVDAUSDT_revised_6x_live_place.log`; manual summary `reports/live_execution/20260511_163753_NVDAUSDT_revised_6x_live_result_manual.json`. - TradingView Desktop MCP drawing succeeded on `BITGET:NVDAUSDT.P` 4H with 3 revised orders drawn (Entry/SL/TP). Trade journal refreshed with NVDA included; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-11T16-38-25-587Z.xls`. ## Deep-analysis v2 static OC 4H ladder rules im",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8040015459060669,
+      "totalScore": 1.2452842384576797,
       "maxScore": 0.45108886659145353,
       "firstRecalledAt": "2026-05-12T06:10:07.744Z",
-      "lastRecalledAt": "2026-05-17T15:57:24.623Z",
+      "lastRecalledAt": "2026-05-19T05:22:54.356Z",
       "queryHashes": [
         "28ee9e86122b",
-        "ec6d48491f3e"
+        "ec6d48491f3e",
+        "7885727aae19"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-19"
       ],
       "conceptTags": [
         "resting/unfilled",
@@ -5142,19 +5156,21 @@
       "endLine": 79,
       "source": "memory",
       "snippet": "- Initial scripted attempt failed before placement due PowerShell parsing of inline node ticker command; follow-up precheck confirmed NVDAUSDT regular/plan orders `0/0`, no position, ticker `226.28` above highest limit `222.40`. - Set/confirmed NVDAUSDT isolated margin and 4x leverage. - Placed live Bitget isolated 4x NVDAUSDT long limit ladder with fixed preset TP/SL: - L1 orderId `1438428616051027970`, clientOid `tvflow_nvda_20260513_stag4x_L1`, buy/open long `3.77 @ 222.40`, SL `215.77`, TP `229.10`. - L2 orderId `1438428619163201537`, clientOid `tvflow_nvda_20260513_stag4x_L2`, buy/open long `6.69 @ 221.00`, SL `215.77`, TP `229.80`. - L3 orderId `1438428622342483969`, clientOid `t",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.9270424127578735,
+      "totalScore": 1.308534100651741,
       "maxScore": 0.49319701492786405,
       "firstRecalledAt": "2026-05-14T08:15:24.930Z",
-      "lastRecalledAt": "2026-05-14T11:27:27.671Z",
+      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
       "queryHashes": [
         "1b03d21270a3",
-        "7bc1edc6f6eb"
+        "7bc1edc6f6eb",
+        "5ff0a97a9148"
       ],
       "recallDays": [
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-19"
       ],
       "conceptTags": [
         "follow-up",
@@ -5467,20 +5483,22 @@
       "endLine": 38,
       "source": "memory",
       "snippet": "- Short candidate valid static ticket: S1 `3.29 @ 211.54`, S2 `7.10 @ 215.23`, shared SL `223.67`, TP `198.46`, total risk `99.83`, reward `162.10`, blended RR `1.62`, estimated 4x margin `556.03`. Decision remains WAIT because current price around `209.7-209.9` is near support/current area, not in sell-rally entries. - Read-only Bitget check: ARMUSDT regular/plan orders `0/0`, no ARM position observed. Journal refreshed NoSend at `reports/trade_journal/bitget_futures_trade_report_latest.xls`. ## Deep Analysis V2 rejection audit requirement - User asked to add to Analyzer V2: always justify rejections and broken rules. - Patched `prompts/master_trade_analysis_prompt_v2.md` with mandatory r",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.1497701823711395,
-      "maxScore": 0.4047189801931381,
+      "totalScore": 1.5947538524866103,
+      "maxScore": 0.44498367011547085,
       "firstRecalledAt": "2026-05-17T15:37:27.534Z",
-      "lastRecalledAt": "2026-05-17T15:57:24.623Z",
+      "lastRecalledAt": "2026-05-19T05:22:54.356Z",
       "queryHashes": [
         "1525b0f17928",
         "b33aef3ce32e",
-        "ec6d48491f3e"
+        "ec6d48491f3e",
+        "7885727aae19"
       ],
       "recallDays": [
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-19"
       ],
       "conceptTags": [
         "3.29",
@@ -5770,6 +5788,161 @@
         "122.35",
         "1.1933",
         "bullish/stretched"
+      ]
+    },
+    "memory:memory/2026-05-18.md:39:46": {
+      "key": "memory:memory/2026-05-18.md:39:46",
+      "path": "memory/2026-05-18.md",
+      "startLine": 39,
+      "endLine": 46,
+      "source": "memory",
+      "snippet": "- History summary: orders-history `56`, fills `178`, orders-plan-history `10`; current openOrders `5`, positions `2`; report net PnL estimate `607.9061798 USDT`. - Closed-trade/exit-leg stats since start of reporting (filled `Trade Side=close`, using `Net PnL Est`): total `26`, won `17`, lost `9`, breakeven `0`, win rate `65.38%`, gross wins `919.46192802`, gross losses `-311.55574822`, net `607.9061798`. ## BTCUSDT deep analysis - Andrea requested deep analysis on `BTCUSDT.P`; ran screenshot-first packet `reports/deep_analysis_packets_v2/20260518_193337_BTCUSDT/` with 1D/4H/1H TradingView Desktop screenshots, then ran short-side validation packet `reports/deep_analysis_packets_v2/20260518_",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4166462182998657,
+      "maxScore": 0.4166462182998657,
+      "firstRecalledAt": "2026-05-18T19:44:15.096Z",
+      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
+      "queryHashes": [
+        "c223bee16c34"
+      ],
+      "recallDays": [
+        "2026-05-18"
+      ],
+      "conceptTags": [
+        "orders-history",
+        "orders-plan-history",
+        "607.9061798",
+        "closed-trade/exit-leg",
+        "65.38",
+        "919.46192802",
+        "311.55574822",
+        "btcusdt.p"
+      ]
+    },
+    "memory:memory/2026-05-18.md:45:54": {
+      "key": "memory:memory/2026-05-18.md:45:54",
+      "path": "memory/2026-05-18.md",
+      "startLine": 45,
+      "endLine": 54,
+      "source": "memory",
+      "snippet": "- Long validation rejected: 4H trend is bearish and below EMA20/50/200; DIP_LADDER long requires bullish/bullish-neutral 4H. - Short validation: directionally preferred as sell-rally/breakdown, but static sell-rally candidate failed R:R (candidate blended R:R about `0.65` with SL around `83.05k` vs TP near `76.0k/75.2k`), and breakdown below `75k` not confirmed yet. - Final report saved to `reports/deep_analysis/2026-05-18_BTCUSDT_deep_analysis.md`; verdict `WAIT / NO_TRADE`. Watch for failed retest `77.6k-78.0k` or confirmed breakdown/retest below `75k` toward `72k`. ## BTCUSDT live short 6x execution - 2026-05-18: User explicitly confirmed `CONFIRM BTCUSDT SHORT 6X ISOLATED LIVE` for two",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4127366870641708,
+      "maxScore": 0.4127366870641708,
+      "firstRecalledAt": "2026-05-18T19:44:15.096Z",
+      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
+      "queryHashes": [
+        "c223bee16c34"
+      ],
+      "recallDays": [
+        "2026-05-18"
+      ],
+      "conceptTags": [
+        "ema20/50/200",
+        "dip-ladder",
+        "bullish/bullish-neutral",
+        "sell-rally/breakdown",
+        "sell-rally",
+        "0.65",
+        "83.05k",
+        "76.0k/75.2k"
+      ]
+    },
+    "memory:memory/2026-05-13.md:53:62": {
+      "key": "memory:memory/2026-05-13.md:53:62",
+      "path": "memory/2026-05-13.md",
+      "startLine": 53,
+      "endLine": 62,
+      "source": "memory",
+      "snippet": "- Ran fresh NVDA compact packet for ATR/levels: `reports/deep_analysis_packets_v2_ticketcalc/20260513_135412_NVDAUSDT/`; 4H ATR `3.55`, 4H bullish, current ticker around `225.89`. Read-only Bitget check during proposal showed NVDAUSDT open orders `0`, positions none; history check showed the just-placed `20260513_4x` NVDA orders were canceled with baseVolume `0` before this proposal. - Proposal saved to `reports/deep_analysis/2026-05-13_NVDAUSDT_custom_ticket_22240_22100_21960.md`. - Selected TP `229.00`: blended entry `220.5532`, SL distance `1.35 ATR`, TP distance `2.38 ATR`, total risk `99.97`, reward `176.54`, all-filled RR `1.77`, estimated 4x margin `1152.39`. - Bitget-rounded quantiti",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3778261750936508,
+      "maxScore": 0.3778261750936508,
+      "firstRecalledAt": "2026-05-18T19:44:15.096Z",
+      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
+      "queryHashes": [
+        "c223bee16c34"
+      ],
+      "recallDays": [
+        "2026-05-18"
+      ],
+      "conceptTags": [
+        "atr/levels",
+        "3.55",
+        "225.89",
+        "read-only",
+        "just-placed",
+        "20260513-4x",
+        "229.00",
+        "220.5532"
+      ]
+    },
+    "memory:memory/2026-05-17.md:90:120": {
+      "key": "memory:memory/2026-05-17.md:90:120",
+      "path": "memory/2026-05-17.md",
+      "startLine": 90,
+      "endLine": 120,
+      "source": "memory",
+      "snippet": "Every analysis must state: - Option A setup path: parent pullback/rally OR other - Option B setup path: shallow pullback/rally OR breakout/breakdown - why Option B was chosen as the fill-probability alternative - why shallow ladder was chosen/rejected - why breakout/breakdown stop was chosen/rejected ## FUTUUSDT.P analyses on 2026-05-17 Several FUTUUSDT.P analyses were run while prompt/workflow was being refined. Treat the latest rerun as the best current decision-useful reference: Final latest report: - `reports/deep_analysis/2026-05-17_FUTUUSDT_ab_breakdown_rerun.md` - Packet: `reports/deep_analysis_packets_v2/20260517_181631_FUTUUSDT/` - Screenshots: - 1D: `reports/deep_analysis_pack",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3693230807781219,
+      "maxScore": 0.3693230807781219,
+      "firstRecalledAt": "2026-05-18T19:44:15.096Z",
+      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
+      "queryHashes": [
+        "c223bee16c34"
+      ],
+      "recallDays": [
+        "2026-05-18"
+      ],
+      "conceptTags": [
+        "pullback/rally",
+        "breakout/breakdown",
+        "fill-probability",
+        "chosen/rejected",
+        "futuusdt.p",
+        "prompt/workflow",
+        "decision-useful",
+        "reports/deep-analysis-pack"
+      ]
+    },
+    "memory:memory/2026-05-13.md:23:32": {
+      "key": "memory:memory/2026-05-13.md:23:32",
+      "path": "memory/2026-05-13.md",
+      "startLine": 23,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "- User asked to check `ARMUSDT.p`; treated as `ARMUSDT` / `BITGET:ARMUSDT.P`. - Ran both LONG/LC and SHORT/AUTO v2 compact OHLCV-first packets because no side was supplied. - LONG packet: `reports/deep_analysis_packets_v2/20260513_073847_ARMUSDT/`; SHORT packet: `reports/deep_analysis_packets_v2/20260513_073910_ARMUSDT/`; report: `reports/deep_analysis/2026-05-13_ARMUSDT_deep_analysis.md`. - Verdict: `WAIT`, but short side has `PLACEABLE_CONDITIONAL_ONLY` sell-rally candidate if price rallies into entries. Market order now `NO`. - Long candidate invalid: only one probe survived (`209.67`, SL `206.03`, TP `216.35`, RR `1.84`, margin @4x `1439.91`), so no valid 2+ leg OC ladder; trend mixed an",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4332568496465683,
+      "maxScore": 0.4332568496465683,
+      "firstRecalledAt": "2026-05-19T05:22:54.356Z",
+      "lastRecalledAt": "2026-05-19T05:22:54.356Z",
+      "queryHashes": [
+        "7885727aae19"
+      ],
+      "recallDays": [
+        "2026-05-19"
+      ],
+      "conceptTags": [
+        "armusdt.p",
+        "long/lc",
+        "short/auto",
+        "ohlcv-first",
+        "placeable-conditional-only",
+        "sell-rally",
+        "209.67",
+        "206.03"
       ]
     }
   }

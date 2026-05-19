@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-18T14:49:41.072Z",
+  "generatedAt": "2026-05-19T06:02:26.046Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-18T14:49:07.509Z",
+  "until": "2026-05-19T06:01:51.923Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779115747509"
+        "untilTime": "1779170511923"
       },
-      "count": 56,
+      "count": 59,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,75 @@
         },
         {
           "ok": true,
-          "count": 56,
+          "count": 59,
           "startTime": "1772236800000",
-          "endTime": "1779115747509",
+          "endTime": "1779170511923",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "MRVLUSDT",
+          "size": "16.75",
+          "orderId": "1440305675203407873",
+          "clientOid": "1440273352015958016",
+          "baseVolume": "16.75",
+          "fee": "-1.17644927",
+          "price": "",
+          "priceAvg": "167.22",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "-63.56388778",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "2801.0697",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "pos_loss_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "171.02",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779121553230",
+          "uTime": "1779121553296"
+        },
+        {
+          "symbol": "MRVLUSDT",
+          "size": "10.76",
+          "orderId": "1440305674746228737",
+          "clientOid": "1440276398586458112",
+          "baseVolume": "10.76",
+          "fee": "-0.75576127",
+          "price": "",
+          "priceAvg": "167.23",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "-40.77481221",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1799.4316",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "loss_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "171.02",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779121553123",
+          "uTime": "1779121553139"
+        },
         {
           "symbol": "GOOGLUSDT",
           "size": "8.06",
@@ -267,6 +329,37 @@
           "liqPrice": "",
           "cTime": "1779113219653",
           "uTime": "1779113219668"
+        },
+        {
+          "symbol": "AAPLUSDT",
+          "size": "10.94",
+          "orderId": "1440196928879620099",
+          "clientOid": "tvflow_aapl_20260518_optb10x_L2",
+          "baseVolume": "10.94",
+          "fee": "0",
+          "price": "296",
+          "priceAvg": "296",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "3238.24",
+          "leverage": "10",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "303.46",
+          "presetStopLossPrice": "292.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779095626087",
+          "uTime": "1779118150173"
         },
         {
           "symbol": "AAPLUSDT",
@@ -1951,9 +2044,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779115747509"
+        "untilTime": "1779170511923"
       },
-      "count": 178,
+      "count": 205,
       "windows": [
         {
           "ok": true,
@@ -2132,13 +2225,634 @@
         },
         {
           "ok": true,
-          "count": 178,
+          "count": 205,
           "startTime": "1772236800000",
-          "endTime": "1779115747509",
-          "pages": 2
+          "endTime": "1779170511923",
+          "pages": 3
         }
       ],
       "data": [
+        {
+          "tradeId": "1440305675223416872",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.15",
+          "baseVolume": "0.86",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.06037458"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "143.749",
+          "profit": "-3.33069465",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416870",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.16",
+          "baseVolume": "0.05",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00351036"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "8.358",
+          "profit": "-0.19314503",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416866",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.16",
+          "baseVolume": "0.31",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02176423"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "51.8196",
+          "profit": "-1.19749923",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416864",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.19",
+          "baseVolume": "0.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01615055"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "38.4537",
+          "profit": "-0.88156717",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416862",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.21",
+          "baseVolume": "0.18",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01264107"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "30.0978",
+          "profit": "-0.68632213",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416860",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.21",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02457987"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.5235",
+          "profit": "-1.33451526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416858",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.22",
+          "baseVolume": "9.77",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.68617054"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1633.7394",
+          "profit": "-37.15434045",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416856",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.23",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02458281"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.5305",
+          "profit": "-1.32751526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416854",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.23",
+          "baseVolume": "1.32",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.09271231"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "220.7436",
+          "profit": "-5.006629",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416852",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.24",
+          "baseVolume": "0.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01615538"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "38.4652",
+          "profit": "-0.87006717",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416850",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.25",
+          "baseVolume": "0.29",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02037105"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "48.5025",
+          "profit": "-1.09414122",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416848",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.25",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02458575"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.5375",
+          "profit": "-1.32051526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416846",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.28",
+          "baseVolume": "0.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01615924"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "38.4744",
+          "profit": "-0.86086717",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416844",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.28",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02459016"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.548",
+          "profit": "-1.31001526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416842",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.28",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0351288"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "83.64",
+          "profit": "-1.87145038",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416840",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.3",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0245931"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.555",
+          "profit": "-1.30301526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416838",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.3",
+          "baseVolume": "0.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01616118"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "38.479",
+          "profit": "-0.85626717",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416836",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.32",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02459604"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.562",
+          "profit": "-1.29601526",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416834",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.32",
+          "baseVolume": "0.15",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01054116"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "25.098",
+          "profit": "-0.55543511",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305675223416832",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305675203407873",
+          "price": "167.34",
+          "baseVolume": "0.25",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0175707"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "41.835",
+          "profit": "-0.92072519",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553235"
+        },
+        {
+          "tradeId": "1440305674774626312",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305674746228737",
+          "price": "167.23",
+          "baseVolume": "9.33",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.65530747"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1560.2559",
+          "profit": "-35.38776412",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553128"
+        },
+        {
+          "tradeId": "1440305674774626310",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305674746228737",
+          "price": "167.24",
+          "baseVolume": "0.23",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01615538"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "38.4652",
+          "profit": "-0.87006717",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553128"
+        },
+        {
+          "tradeId": "1440305674774626308",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305674746228737",
+          "price": "167.25",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0351225"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "83.625",
+          "profit": "-1.88645038",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553128"
+        },
+        {
+          "tradeId": "1440305674774626306",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305674746228737",
+          "price": "167.25",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02458575"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.5375",
+          "profit": "-1.32051526",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553128"
+        },
+        {
+          "tradeId": "1440305674774626304",
+          "symbol": "MRVLUSDT",
+          "orderId": "1440305674746228737",
+          "price": "167.28",
+          "baseVolume": "0.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.02459016"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "58.548",
+          "profit": "-1.31001526",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779121553128"
+        },
+        {
+          "tradeId": "1440291401650388993",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440196928879620099",
+          "price": "296",
+          "baseVolume": "9.39",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "2779.44",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779118150150"
+        },
+        {
+          "tradeId": "1440291401646194699",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440196928879620099",
+          "price": "296",
+          "baseVolume": "1.55",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "458.8",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779118150149"
+        },
         {
           "tradeId": "1440276399027634177",
           "symbol": "MRVLUSDT",
@@ -6242,7 +6956,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779115747509",
+        "untilTime": "1779170511923",
         "planType": "normal_plan"
       },
       "count": 10,
@@ -6426,7 +7140,7 @@
           "ok": true,
           "count": 10,
           "startTime": "1772236800000",
-          "endTime": "1779115747509",
+          "endTime": "1779170511923",
           "pages": 1
         }
       ],
