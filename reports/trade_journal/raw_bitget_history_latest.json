@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-19T20:22:29.127Z",
+  "generatedAt": "2026-05-20T09:41:43.336Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-19T20:21:55.101Z",
+  "until": "2026-05-20T09:41:09.996Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779222115101"
+        "untilTime": "1779270069996"
       },
-      "count": 61,
+      "count": 62,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,44 @@
         },
         {
           "ok": true,
-          "count": 61,
+          "count": 62,
           "startTime": "1772236800000",
-          "endTime": "1779222115101",
+          "endTime": "1779270069996",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "JDUSDT",
+          "size": "28.09",
+          "orderId": "1440727188457025537",
+          "clientOid": "tvflow_jd_20260519_long7x_L1",
+          "baseVolume": "28.09",
+          "fee": "0",
+          "price": "32.24",
+          "priceAvg": "32.24",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "905.6216",
+          "leverage": "7",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "33.35",
+          "presetStopLossPrice": "31.35",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779222049823",
+          "uTime": "1779240982247"
+        },
         {
           "symbol": "ARMUSDT",
           "size": "2.48",
@@ -2106,9 +2137,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779222115101"
+        "untilTime": "1779270069996"
       },
-      "count": 217,
+      "count": 219,
       "windows": [
         {
           "ok": true,
@@ -2287,13 +2318,59 @@
         },
         {
           "ok": true,
-          "count": 217,
+          "count": 219,
           "startTime": "1772236800000",
-          "endTime": "1779222115101",
+          "endTime": "1779270069996",
           "pages": 3
         }
       ],
       "data": [
+        {
+          "tradeId": "1440806596739055617",
+          "symbol": "JDUSDT",
+          "orderId": "1440727188457025537",
+          "price": "32.24",
+          "baseVolume": "22.54",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "726.6896",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779240982231"
+        },
+        {
+          "tradeId": "1440806596734861313",
+          "symbol": "JDUSDT",
+          "orderId": "1440727188457025537",
+          "price": "32.24",
+          "baseVolume": "5.55",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "178.932",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779240982230"
+        },
         {
           "tradeId": "1440625319314440210",
           "symbol": "ARMUSDT",
@@ -7294,195 +7371,355 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779222115101",
+        "untilTime": "1779270069996",
         "planType": "normal_plan"
       },
-      "count": 10,
+      "count": 15,
       "windows": [
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1577836800000",
           "endTime": "1585612799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1585612800000",
           "endTime": "1593388799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1593388800000",
           "endTime": "1601164799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1601164800000",
           "endTime": "1608940799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1608940800000",
           "endTime": "1616716799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1616716800000",
           "endTime": "1624492799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1624492800000",
           "endTime": "1632268799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1632268800000",
           "endTime": "1640044799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1640044800000",
           "endTime": "1647820799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1647820800000",
           "endTime": "1655596799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1655596800000",
           "endTime": "1663372799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1663372800000",
           "endTime": "1671148799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1671148800000",
           "endTime": "1678924799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1678924800000",
           "endTime": "1686700799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1686700800000",
           "endTime": "1694476799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1694476800000",
           "endTime": "1702252799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1702252800000",
           "endTime": "1710028799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1710028800000",
           "endTime": "1717804799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1717804800000",
           "endTime": "1725580799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1725580800000",
           "endTime": "1733356799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1733356800000",
           "endTime": "1741132799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1741132800000",
           "endTime": "1748908799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1748908800000",
           "endTime": "1756684799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1756684800000",
           "endTime": "1764460799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1764460800000",
           "endTime": "1772236799999",
           "pages": 1
         },
         {
           "ok": true,
-          "count": 10,
+          "count": 15,
           "startTime": "1772236800000",
-          "endTime": "1779222115101",
+          "endTime": "1779270069996",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "planType": "normal_plan",
+          "symbol": "FUTUUSDT",
+          "size": "17.39",
+          "orderId": "1440926790743744512",
+          "executeOrderId": "",
+          "clientOid": "tvflow_futu_20260520_short6xB_S2",
+          "planStatus": "cancelled",
+          "price": "130.3",
+          "executePrice": "130.3",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "130.3",
+          "triggerType": "fill_price",
+          "side": "sell",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "API",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "122.5",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "133.75",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779269638715",
+          "uTime": "1779270028258"
+        },
+        {
+          "planType": "normal_plan",
+          "symbol": "FUTUUSDT",
+          "size": "8.51",
+          "orderId": "1440926787885850624",
+          "executeOrderId": "",
+          "clientOid": "tvflow_futu_20260520_short6xB_S1",
+          "planStatus": "cancelled",
+          "price": "129.05",
+          "executePrice": "129.05",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "129.05",
+          "triggerType": "fill_price",
+          "side": "sell",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "API",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "124.2",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "133.75",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779269638034",
+          "uTime": "1779270028256"
+        },
+        {
+          "planType": "normal_plan",
+          "symbol": "FUTUUSDT",
+          "size": "18.61",
+          "orderId": "1439946679252934656",
+          "executeOrderId": "",
+          "clientOid": "tvflow_futu_20260517_short6x_S3",
+          "planStatus": "cancelled",
+          "price": "143.1",
+          "executePrice": "143.1",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "143.1",
+          "triggerType": "fill_price",
+          "side": "sell",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "API",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "128",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "145.25",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779035961926",
+          "uTime": "1779269613412"
+        },
+        {
+          "planType": "normal_plan",
+          "symbol": "FUTUUSDT",
+          "size": "8.44",
+          "orderId": "1439946677898145792",
+          "executeOrderId": "",
+          "clientOid": "tvflow_futu_20260517_short6x_S2",
+          "planStatus": "cancelled",
+          "price": "141.1",
+          "executePrice": "141.1",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "141.1",
+          "triggerType": "fill_price",
+          "side": "sell",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "API",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "130.3",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "145.25",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779035961603",
+          "uTime": "1779269613410"
+        },
+        {
+          "planType": "normal_plan",
+          "symbol": "FUTUUSDT",
+          "size": "3.91",
+          "orderId": "1439946675799449600",
+          "executeOrderId": "",
+          "clientOid": "tvflow_futu_20260517_short6x_S1",
+          "planStatus": "cancelled",
+          "price": "139.05",
+          "executePrice": "139.05",
+          "feeDetail": null,
+          "baseVolume": "0",
+          "callbackRatio": "",
+          "triggerPrice": "139.05",
+          "triggerType": "fill_price",
+          "side": "sell",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "marginMode": "isolated",
+          "enterPointSource": "API",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "stopSurplusTriggerPrice": "132.35",
+          "stopSurplusExecutePrice": "",
+          "stopSurplusTriggerType": "fill_price",
+          "stopLossTriggerPrice": "145.25",
+          "stopLossExecutePrice": "",
+          "stopLossTriggerType": "fill_price",
+          "cTime": "1779035961103",
+          "uTime": "1779269613407"
+        },
         {
           "planType": "normal_plan",
           "symbol": "GOOGLUSDT",
