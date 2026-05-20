@@ -1,4 +1,6 @@
 ﻿Time Berlin,Update Berlin,Exchange,Symbol,Status,Trade Side,Order Side,Position Side,Order Type,Source,Qty,Order Qty,Limit Price,Avg Price,Quote Volume,Leverage,Margin Mode,TP,SL,Fee,Realized PnL,Net PnL Est,Order ID,Client OID,Notes
+2026-05-19 15:36:02,2026-05-19 15:36:02,Bitget Futures,ARMUSDT,filled,close,buy,long,market,sys,2.48,2.48,,217.93,540.4874,3,isolated,,,-0.2270047,24.1514,23.9243953,1440625319286042625,1440623901697634304,
+2026-05-19 08:00:00,2026-05-19 15:30:24,Bitget Futures,ARMUSDT,filled,open,buy,long,limit,api,2.48,2.48,208.2,208.2,516.336,3,isolated,218.5,198.1,0,0,0.0,1440510554052128769,tvflow_arm_20260519_long3x_L1,
 2026-05-18 18:25:53,2026-05-18 18:25:53,Bitget Futures,MRVLUSDT,filled,close,buy,long,market,android,16.75,16.75,,167.22,2801.0697,4,isolated,,,-1.17644927,-63.56388778,-64.74033705,1440305675203407873,1440273352015958016,
 2026-05-18 18:25:53,2026-05-18 18:25:53,Bitget Futures,MRVLUSDT,filled,close,buy,long,market,sys,10.76,10.76,,167.23,1799.4316,4,isolated,,,-0.75576127,-40.77481221,-41.53057348,1440305674746228737,1440276398586458112,
 2026-05-18 16:10:51,2026-05-18 16:10:52,Bitget Futures,GOOGLUSDT,filled,close,buy,long,market,android,8.06,8.06,,406.55,3276.793,8,isolated,,,-1.37625306,100.13155536,98.7553023,1440271696131682305,1440271696131682306,

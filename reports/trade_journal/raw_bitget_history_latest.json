@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-19T06:02:26.046Z",
+  "generatedAt": "2026-05-19T20:22:29.127Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-19T06:01:51.923Z",
+  "until": "2026-05-19T20:21:55.101Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779170511923"
+        "untilTime": "1779222115101"
       },
-      "count": 59,
+      "count": 61,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,75 @@
         },
         {
           "ok": true,
-          "count": 59,
+          "count": 61,
           "startTime": "1772236800000",
-          "endTime": "1779170511923",
+          "endTime": "1779222115101",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "ARMUSDT",
+          "size": "2.48",
+          "orderId": "1440625319286042625",
+          "clientOid": "1440623901697634304",
+          "baseVolume": "2.48",
+          "fee": "-0.2270047",
+          "price": "",
+          "priceAvg": "217.93",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "24.1514",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "540.4874",
+          "leverage": "3",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "profit_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "208.2",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779197762320",
+          "uTime": "1779197762333"
+        },
+        {
+          "symbol": "ARMUSDT",
+          "size": "2.48",
+          "orderId": "1440510554052128769",
+          "clientOid": "tvflow_arm_20260519_long3x_L1",
+          "baseVolume": "2.48",
+          "fee": "0",
+          "price": "208.2",
+          "priceAvg": "208.2",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "516.336",
+          "leverage": "3",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "218.5",
+          "presetStopLossPrice": "198.1",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779170400155",
+          "uTime": "1779197424441"
+        },
         {
           "symbol": "MRVLUSDT",
           "size": "16.75",
@@ -2044,9 +2106,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779170511923"
+        "untilTime": "1779222115101"
       },
-      "count": 205,
+      "count": 217,
       "windows": [
         {
           "ok": true,
@@ -2225,13 +2287,289 @@
         },
         {
           "ok": true,
-          "count": 205,
+          "count": 217,
           "startTime": "1772236800000",
-          "endTime": "1779170511923",
+          "endTime": "1779222115101",
           "pages": 3
         }
       ],
       "data": [
+        {
+          "tradeId": "1440625319314440210",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "217.76",
+          "baseVolume": "1.67",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.15273686"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "363.6592",
+          "profit": "15.9652",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440208",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "217.79",
+          "baseVolume": "0.12",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01097661"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "26.1348",
+          "profit": "1.1508",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440206",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "217.83",
+          "baseVolume": "0.11",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01006374"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "23.9613",
+          "profit": "1.0593",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440204",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.22",
+          "baseVolume": "0.06",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00549914"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "13.0932",
+          "profit": "0.6012",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440202",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.27",
+          "baseVolume": "0.07",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00641713"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "15.2789",
+          "profit": "0.7049",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440200",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.32",
+          "baseVolume": "0.06",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00550166"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "13.0992",
+          "profit": "0.6072",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440198",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.54",
+          "baseVolume": "0.1",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00917868"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "21.854",
+          "profit": "1.034",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440196",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.57",
+          "baseVolume": "0.14",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.01285191"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "30.5998",
+          "profit": "1.4518",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440194",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.62",
+          "baseVolume": "0.08",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.00734563"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "17.4896",
+          "profit": "0.8336",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440625319314440192",
+          "symbol": "ARMUSDT",
+          "orderId": "1440625319286042625",
+          "price": "218.82",
+          "baseVolume": "0.07",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0064333"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "15.3174",
+          "profit": "0.7434",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779197762325"
+        },
+        {
+          "tradeId": "1440623902088478721",
+          "symbol": "ARMUSDT",
+          "orderId": "1440510554052128769",
+          "price": "208.2",
+          "baseVolume": "2.35",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "489.27",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779197424432"
+        },
+        {
+          "tradeId": "1440623901559996425",
+          "symbol": "ARMUSDT",
+          "orderId": "1440510554052128769",
+          "price": "208.2",
+          "baseVolume": "0.13",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "0"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "27.066",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779197424306"
+        },
         {
           "tradeId": "1440305675223416872",
           "symbol": "MRVLUSDT",
@@ -6956,7 +7294,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779170511923",
+        "untilTime": "1779222115101",
         "planType": "normal_plan"
       },
       "count": 10,
@@ -7140,7 +7478,7 @@
           "ok": true,
           "count": 10,
           "startTime": "1772236800000",
-          "endTime": "1779170511923",
+          "endTime": "1779222115101",
           "pages": 1
         }
       ],
