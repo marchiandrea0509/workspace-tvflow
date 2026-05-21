@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-21T04:50:50.026Z",
+  "updatedAt": "2026-05-21T16:54:22.776Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -587,13 +587,13 @@
       "endLine": 141,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 8,
+      "recallCount": 9,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.2005744010210035,
+      "totalScore": 3.6078747570514675,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-20T09:32:32.134Z",
+      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
@@ -602,14 +602,16 @@
         "d8385fba69dc",
         "0ddb86382c3a",
         "5ff0a97a9148",
-        "706a54adc532"
+        "706a54adc532",
+        "1e37e3ebf42e"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
         "2026-05-05",
         "2026-05-19",
-        "2026-05-20"
+        "2026-05-20",
+        "2026-05-21"
       ],
       "conceptTags": [
         "discord-safe",
@@ -629,13 +631,13 @@
       "endLine": 61,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 7,
+      "recallCount": 8,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.8191555410623548,
+      "totalScore": 3.2264558970928188,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
+      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
@@ -643,13 +645,15 @@
         "895793ee70c6",
         "d8385fba69dc",
         "0ddb86382c3a",
-        "5ff0a97a9148"
+        "5ff0a97a9148",
+        "1e37e3ebf42e"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
         "2026-05-05",
-        "2026-05-19"
+        "2026-05-19",
+        "2026-05-21"
       ],
       "conceptTags": [
         "discord-safe",
@@ -2548,23 +2552,25 @@
       "endLine": 46,
       "source": "memory",
       "snippet": "- Final pre-check: AAPLUSDT open regular/plan orders `0/0`, current futures positions `0`, account live/not paper, available USDT about `4,867.34`; ticker last/mark about `287.96/287.96`. - Set/confirmed AAPLUSDT isolated margin mode and 4x long/short leverage. - Used one-shot environment unlock for the placement command only; no persistent harness config change was made. - Placed live Bitget isolated 4x `AAPLUSDT` tactical fixed-TP long limit ladder: - L1: buy/open long `4.20 @ 286.20`, TP `292.30`, SL `279.80`, orderId `1436416624356388865`, clientOid `tvflow_aapl_20260508_tactical_L1` - L2: buy/open long `6.00 @ 284.70`, TP `292.30`, SL `279.80`, orderId `1436416627011383297`, clientO",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.628835156559944,
+      "totalScore": 2.033644217252731,
       "maxScore": 0.4536492764949798,
       "firstRecalledAt": "2026-05-11T11:18:32.670Z",
-      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
       "queryHashes": [
         "18255ed079fd",
         "38e8bb5181b2",
         "d30f948edc27",
-        "1b03d21270a3"
+        "1b03d21270a3",
+        "d0061d60cb02"
       ],
       "recallDays": [
         "2026-05-11",
         "2026-05-12",
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-21"
       ],
       "conceptTags": [
         "pre-check",
@@ -4406,24 +4412,26 @@
       "endLine": 134,
       "source": "memory",
       "snippet": "- L1: buy/open long `4.01 @ 291.74`, TP `297.36`, SL `285.52`, orderId `1438204754273136644`, clientOid `tvflow_aapl_20260512_optB_L1` - L2: buy/open long `6.98 @ 290.53`, TP `297.36`, SL `285.52`, orderId `1438204756928131073`, clientOid `tvflow_aapl_20260512_optB_L2` - L3: buy/open long `10.12 @ 289.47`, TP `297.36`, SL `285.52`, orderId `1438204759788646401`, clientOid `tvflow_aapl_20260512_optB_L3` - Verification after placement: 3 AAPLUSDT regular pending orders all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 6`, `baseVolume: 0`; planCount `0`; no AAPLUSDT position yet. Verification saved to `reports/deep_analysis/2026-05-12_AAPLUSDT_opti",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.400996156036854,
+      "totalScore": 2.8028754517436028,
       "maxScore": 0.5366120710968971,
       "firstRecalledAt": "2026-05-13T05:38:38.270Z",
-      "lastRecalledAt": "2026-05-18T09:10:16.627Z",
+      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
       "queryHashes": [
         "22f4009e8ea0",
         "575943a9d158",
         "d6781310a3ba",
         "1b03d21270a3",
-        "36506e2be942"
+        "36506e2be942",
+        "d0061d60cb02"
       ],
       "recallDays": [
         "2026-05-13",
         "2026-05-14",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-21"
       ],
       "conceptTags": [
         "buy/open",
@@ -6128,15 +6136,17 @@
       "endLine": 27,
       "source": "memory",
       "snippet": "- Journal refreshed NoSend after placement; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-19T06-01-51-815Z.xls`; openOrders `9`, positions `1`, netPnlEst `501.63526927`. ## JDUSDT live Option B 7x placement - Andrea requested live placement of `BITGET:JDUSDT.P` Option B with leverage chosen so margin stays below `1000 USDT`, then explicitly confirmed: `CONFIRM JDUSDT LONG 7X ISOLATED LIVE`. - Fresh precheck before placement: JDUSDT open regular/plan orders `0/0`, no JD position observed; ticker around last `32.44`, ask `32.46`, bid `32.44`, mark `32.45`, so entries were passive below market",
-      "recallCount": 1,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3966938257217407,
-      "maxScore": 0.3966938257217407,
+      "totalScore": 1.1941890686750412,
+      "maxScore": 0.4082025170326233,
       "firstRecalledAt": "2026-05-21T04:50:50.026Z",
-      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
       "queryHashes": [
-        "a05ae017a0d6"
+        "a05ae017a0d6",
+        "1e37e3ebf42e",
+        "d0061d60cb02"
       ],
       "recallDays": [
         "2026-05-21"
@@ -6150,6 +6160,130 @@
         "32.46",
         "32.45",
         "journal"
+      ]
+    },
+    "memory:memory/2026-05-19.md:10:19": {
+      "key": "memory:memory/2026-05-19.md:10:19",
+      "path": "memory/2026-05-19.md",
+      "startLine": 10,
+      "endLine": 19,
+      "source": "memory",
+      "snippet": "- L1 orderId `1440510554052128769`, clientOid `tvflow_arm_20260519_long3x_L1`, buy/open `2.48 @ 208.20`, SL `198.10`, TP `218.50`. - L2 orderId `1440510556589682689`, clientOid `tvflow_arm_20260519_long3x_L2`, buy/open `4.22 @ 206.40`, SL `198.10`, TP `222.00`. - L3 orderId `1440510559471169537`, clientOid `tvflow_arm_20260519_long3x_L3`, buy/open `5.97 @ 204.80`, SL `198.10`, TP `229.20`. - Correct postcheck with `--symbol ARMUSDT`: regularCount `3`, planCount `0`, all three orders `status=live`, `baseVolume=0`, `leverage=3`, `marginMode=isolated`, preset SL/TP present. Positions check showed only AAPLUSDT; no ARM position yet. - Estimated totals: risk `~100.07 USDT`, reward `~236.95",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4309965968132019,
+      "maxScore": 0.4309965968132019,
+      "firstRecalledAt": "2026-05-21T16:09:11.739Z",
+      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
+      "queryHashes": [
+        "1e37e3ebf42e"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "tvflow-arm-20260519-long3x-l1",
+        "buy/open",
+        "2.48",
+        "208.20",
+        "198.10",
+        "218.50",
+        "tvflow-arm-20260519-long3x-l2",
+        "4.22"
+      ]
+    },
+    "memory:memory/2026-05-19.md:1:12": {
+      "key": "memory:memory/2026-05-19.md:1:12",
+      "path": "memory/2026-05-19.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "# 2026-05-19 — tvflow durable memory ## ARMUSDT deep analysis and live long placement - Andrea requested ARMUSDT deep analysis from 1D/4H/1H screenshots. Screenshot-first report saved at `reports/deep_analysis/2026-05-19_ARMUSDT_deep_analysis.md`; packet `reports/deep_analysis_packets_v2/20260519_072438_ARMUSDT/`; LONG numeric packet `reports/deep_analysis_packets_v2/20260519_072503_ARMUSDT/`; SHORT numeric packet `reports/deep_analysis_packets_v2_short/20260519_072538_ARMUSDT/`. - Analysis verdict before execution was `WAIT / CONDITIONAL_ONLY`; assistant preferred conditional short sell-rally, while the user then explicitly selected the long Option B ticket and requested live placement wit",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4103063702583313,
+      "maxScore": 0.4103063702583313,
+      "firstRecalledAt": "2026-05-21T16:09:11.739Z",
+      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
+      "queryHashes": [
+        "1e37e3ebf42e"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "1d/4h/1h",
+        "screenshot-first",
+        "conditional-only",
+        "sell-rally",
+        "tvflow",
+        "durable",
+        "armusdt",
+        "deep"
+      ]
+    },
+    "memory:memory/2026-05-18.md:24:33": {
+      "key": "memory:memory/2026-05-18.md:24:33",
+      "path": "memory/2026-05-18.md",
+      "startLine": 24,
+      "endLine": 33,
+      "source": "memory",
+      "snippet": "- Updated compact payload `screenshot_delivery` rule, CLI reporting note, `scripts/run_deep_analysis_packet_v2.ps1` manifest note/comments, `README_DEEP_ANALYSIS_V2.md`, `prompts/master_trade_analysis_prompt_v2.md`, and `schemas/deep_analysis_packet_contract_v2.md`. - Validation: `python -m py_compile scripts/build_deep_analysis_packet_v2.py` passed; PowerShell parse of `scripts/run_deep_analysis_packet_v2.ps1` passed; grep confirmed the new `4H first / 1D second / one image per follow-up message` rules are present. ## AAPLUSDT Option B 10x live placement - Andrea requested live placement of AAPLUSDT Option B and then explicitly confirmed `CONFIRM AAPLUSDT OPTION B 10X ISOLATED LIVE`. - Fre",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4036417484283447,
+      "maxScore": 0.4036417484283447,
+      "firstRecalledAt": "2026-05-21T16:54:22.776Z",
+      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
+      "queryHashes": [
+        "d0061d60cb02"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "screenshot-delivery",
+        "note/comments",
+        "readme-deep-analysis-v2.md",
+        "py-compile",
+        "follow-up",
+        "updated",
+        "compact",
+        "payload"
+      ]
+    },
+    "memory:memory/2026-05-21.md:1:12": {
+      "key": "memory:memory/2026-05-21.md:1:12",
+      "path": "memory/2026-05-21.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "# 2026-05-21 — tvflow durable memory ## ARMUSDT live Option A 3x placement - Andrea requested live placement of `ARMUSDT.P` Option A best-quality long ladder and then explicitly confirmed: `CONFIRM ARMUSDT LONG 3X ISOLATED LIVE`. - Fresh precheck before placement: ARMUSDT regular orders `0`, plan orders `0`, no ARM position observed. Ticker before placement was around last `289.19`; after placement around last/mark `288.66`, so buy-limit entries `260.20 / 251.60` were passive below market. - Set/confirmed isolated margin mode and long leverage `3x`. - ARMUSDT size precision is `0.01`; rounded user quantities down from `1.961 / 5.085` to `1.96 / 5.08` to avoid exceeding planned risk. - Place",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.398220145702362,
+      "maxScore": 0.398220145702362,
+      "firstRecalledAt": "2026-05-21T16:54:22.776Z",
+      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
+      "queryHashes": [
+        "d0061d60cb02"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "armusdt.p",
+        "best-quality",
+        "289.19",
+        "last/mark",
+        "288.66",
+        "buy-limit",
+        "260.20",
+        "251.60"
       ]
     }
   }

@@ -1,10 +1,10 @@
 {
   "messages": [
-    "Bitget semi-auto trade report\nGenerated: 2026-05-21 06:54:19 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 63 | fills 223 | plan/order-plan history 15\nCurrent: active orders 3 | positions 2\nRealized PnL gross: 571.98 USDT | fees: -18.48 | net est: 553.50 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
-    "Order state changes since previous refresh: none detected.",
-    "Active Bitget futures orders / planned legs\n- JDUSDT open/buy long qty 121.21 @ 31.68 | TP 34.1 SL 31.35 | isolated 7x | id 1440727193641185281\n- JDUSDT open/buy long qty 55.56 @ 31.98 | TP 33.87 SL 31.35 | isolated 7x | id 1440727190944247809\n- AAPLUSDT open/buy long qty 20.73 @ 294.73 | TP 305.8 SL 292.8 | isolated 10x | id 1440196967689515009",
-    "Current Bitget futures positions\n- AAPLUSDT long qty 10.94 | avg 296.453885505482 mark 302.01 | uPnL 60.783892570026 | liq 267.990882231317 | isolated 10x\n- JDUSDT long qty 28.09 | avg 32.24 mark 32.1 | uPnL -3.9326 | liq 28.354871856888 | isolated 7x",
-    "Recent Bitget futures executions (latest 8)\n- 2026-05-20 15:44:47 | AAPLUSDT close/buy long qty 5.48 avg 301.67 | status filled | PnL 28.63 fee -0.69 net 27.94 | id 1440989910134321153\n- 2026-05-19 22:20:49 | JDUSDT open/buy long qty 28.09 avg 32.24 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1440727188457025537\n- 2026-05-19 15:36:02 | ARMUSDT close/buy long qty 2.48 avg 217.93 | status filled | PnL 24.15 fee -0.23 net 23.92 | id 1440625319286042625\n- 2026-05-19 08:00:00 | ARMUSDT open/buy long qty 2.48 avg 208.2 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1440510554052128769\n- 2026-05-18 18:25:53 | MRVLUSDT close/buy long qty 16.75 avg 167.22 | status filled | PnL -63.56 fee -1.18 net -64.74 | id 1440305675203407873\n- 2026-05-18 18:25:53 | MRVLUSDT close/buy long qty 10.76 avg 167.23 | status filled | PnL -40.77 fee -0.76 net -41.53 | id 1440305674746228737\n- 2026-05-18 16:10:51 | GOOGLUSDT close/buy long qty 8.06 avg 406.55 | status filled | PnL 100.13 fee -1.38 net 98.76 | id 1440271696131682305\n- 2026-05-18 16:06:59 | GOOGLUSDT close/buy long qty 3.5 avg 406.48 | status filled | PnL 43.27 fee -0.60 net 42.67 | id 1440270721648062465"
+    "Bitget semi-auto trade report\nGenerated: 2026-05-21 18:57:37 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 74 | fills 292 | plan/order-plan history 15\nCurrent: active orders 0 | positions 0\nRealized PnL gross: 486.85 USDT | fees: -22.55 | net est: 464.30 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
+    "Order state changes since previous refresh: previous snapshot unavailable.",
+    "Active Bitget futures orders: none.",
+    "Current Bitget futures positions: none.",
+    "Recent Bitget futures executions (latest 8)\n- 2026-05-21 17:35:40 | AAPLUSDT close/buy long qty 10.94 avg 303.43 | status filled | PnL 76.41 fee -1.39 net 75.02 | id 1441380203304218627\n- 2026-05-21 15:33:29 | JDUSDT close/buy long qty 121.21 avg 30.96 | status filled | PnL -105.33 fee -1.58 net -106.91 | id 1441349452072382473\n- 2026-05-21 15:33:29 | JDUSDT close/buy long qty 28.09 avg 31.06 | status filled | PnL -21.77 fee -0.37 net -22.14 | id 1441349452072382468\n- 2026-05-21 15:33:29 | JDUSDT close/buy long qty 55.56 avg 31.21 | status filled | PnL -34.44 fee -0.73 net -35.17 | id 1441349452059799619\n- 2026-05-20 15:44:47 | AAPLUSDT close/buy long qty 5.48 avg 301.67 | status filled | PnL 28.63 fee -0.69 net 27.94 | id 1440989910134321153\n- 2026-05-19 22:20:51 | JDUSDT open/buy long qty 121.21 avg 31.68 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1440727193641185281\n- 2026-05-19 22:20:50 | JDUSDT open/buy long qty 55.56 avg 31.98 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1440727190944247809\n- 2026-05-19 22:20:49 | JDUSDT open/buy long qty 28.09 avg 32.24 | status filled | PnL 0.00 fee 0.00 net 0.00 | id 1440727188457025537"
   ],
   "source": {
     "history_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_bitget_history_latest.json",
@@ -13,16 +13,14 @@
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GMEUSDT_latest.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_AAPLUSDT_latest.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NEARUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_latest.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_latest.json"
     ],
     "previous_open_orders_json": [
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GOOGLUSDT_previous.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GMEUSDT_previous.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_AAPLUSDT_previous.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NEARUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_previous.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_previous.json"
     ],
     "positions_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_positions_latest.json",
     "workbook": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls"
