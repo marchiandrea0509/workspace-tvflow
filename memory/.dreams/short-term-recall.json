@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-20T09:40:00.964Z",
+  "updatedAt": "2026-05-21T04:50:50.026Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -5166,21 +5166,23 @@
       "endLine": 79,
       "source": "memory",
       "snippet": "- Initial scripted attempt failed before placement due PowerShell parsing of inline node ticker command; follow-up precheck confirmed NVDAUSDT regular/plan orders `0/0`, no position, ticker `226.28` above highest limit `222.40`. - Set/confirmed NVDAUSDT isolated margin and 4x leverage. - Placed live Bitget isolated 4x NVDAUSDT long limit ladder with fixed preset TP/SL: - L1 orderId `1438428616051027970`, clientOid `tvflow_nvda_20260513_stag4x_L1`, buy/open long `3.77 @ 222.40`, SL `215.77`, TP `229.10`. - L2 orderId `1438428619163201537`, clientOid `tvflow_nvda_20260513_stag4x_L2`, buy/open long `6.69 @ 221.00`, SL `215.77`, TP `229.80`. - L3 orderId `1438428622342483969`, clientOid `t",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.308534100651741,
+      "totalScore": 1.7056015372276305,
       "maxScore": 0.49319701492786405,
       "firstRecalledAt": "2026-05-14T08:15:24.930Z",
-      "lastRecalledAt": "2026-05-19T05:58:48.916Z",
+      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
       "queryHashes": [
         "1b03d21270a3",
         "7bc1edc6f6eb",
-        "5ff0a97a9148"
+        "5ff0a97a9148",
+        "a05ae017a0d6"
       ],
       "recallDays": [
         "2026-05-14",
-        "2026-05-19"
+        "2026-05-19",
+        "2026-05-21"
       ],
       "conceptTags": [
         "follow-up",
@@ -5302,22 +5304,24 @@
       "endLine": 35,
       "source": "memory",
       "snippet": "- User asked to place provided live NVDAUSDT.P long ladder. Precheck found existing NVDAUSDT live 4x isolated orders: L2 6.69 @ 221.00 TP 229.80 SL 215.77, orderId 1438428619163201537; L3 10.44 @ 219.60 TP 230.40 SL 215.77, orderId 1438428622342483969; no NVDA position. - User confirmed cancel old and place new based on 4x isolated and rounded quantities. Guard checked ticker 230.22 above highest new limit 227.60; old orders matched expected IDs exactly. - Cancelled old NVDA orders successfully, set/confirmed isolated margin and 4x leverage. - Placed new live Bitget isolated 4x NVDAUSDT long limit ladder: L1 orderId 1438783251412578305, clientOid vflow_nvda_20260514_repl4x_L1, 3.67 @ 227.60",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2717961102724074,
+      "totalScore": 1.659635281562805,
       "maxScore": 0.43919231593608854,
       "firstRecalledAt": "2026-05-14T22:12:42.700Z",
-      "lastRecalledAt": "2026-05-20T09:32:32.134Z",
+      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
       "queryHashes": [
         "623fa97eb059",
         "48b7b936b4da",
-        "706a54adc532"
+        "706a54adc532",
+        "a05ae017a0d6"
       ],
       "recallDays": [
         "2026-05-15",
         "2026-05-17",
-        "2026-05-20"
+        "2026-05-20",
+        "2026-05-21"
       ],
       "conceptTags": [
         "nvdausdt.p",
@@ -5685,18 +5689,20 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "# 2026-05-18 — tvflow durable memory ## MRVLUSDT live Option B placement - Andrea first requested MRVLUSDT.P analysis; screenshot-first analysis produced a pullback-long bias, then Andrea corrected Option B levels and explicitly confirmed: `CONFIRM ENABLE LIVE GATE AND PLACE MRVL OPTION B 4X ISOLATED`. - Fresh precheck before placement: MRVLUSDT regular orders `0`, plan orders `0`, no MRVL position observed. Ticker before placement was around last `177.14`, ask `177.21`, bid `177.09`, so entries `172.20` and `170.40` were passive below market. - Set MRVLUSDT margin mode isolated and long leverage `4x`. Used one-shot process env `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRA",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.41750701069831847,
-      "maxScore": 0.41750701069831847,
+      "totalScore": 0.8803803384304046,
+      "maxScore": 0.46287332773208617,
       "firstRecalledAt": "2026-05-18T07:14:34.615Z",
-      "lastRecalledAt": "2026-05-18T07:14:34.615Z",
+      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
       "queryHashes": [
-        "fc23d4e19743"
+        "fc23d4e19743",
+        "a05ae017a0d6"
       ],
       "recallDays": [
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-21"
       ],
       "conceptTags": [
         "mrvlusdt.p",
@@ -6082,6 +6088,68 @@
         "124.17-132.35",
         "set/confirmed",
         "normal-plan"
+      ]
+    },
+    "memory:memory/2026-05-18.md:10:18": {
+      "key": "memory:memory/2026-05-18.md:10:18",
+      "path": "memory/2026-05-18.md",
+      "startLine": 10,
+      "endLine": 18,
+      "source": "memory",
+      "snippet": "- Postcheck: MRVLUSDT regular orders `2`, plan orders `0`, both orders `status=live`, `baseVolume=0`, no MRVL position observed. Rounded risk `~99.96 USDT`, reward `~500.59`, notional `~4702.39`, estimated margin @4x `~1175.60`. - Drew the two-order long ladder on TradingView Desktop MCP `BITGET:MRVLUSDT.P` 4H. Execution summary saved at `reports/live_execution/20260518_mrvl_optionb_4x_live/summary.json`. - Journal refreshed with -NoSend after MRVL placement; latest workbook eports/trade_journal/bitget_futures_trade_report_latest.xls, snapshot eports/trade_journal/bitget_futures_trade_report_2026-05-18T07-09-25-152Z.xls; openOrders 5, positions 1. ## Universal resting-entry distance gat",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.456593707203865,
+      "maxScore": 0.456593707203865,
+      "firstRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "queryHashes": [
+        "a05ae017a0d6"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "99.96",
+        "500.59",
+        "4702.39",
+        "1175.60",
+        "two-order",
+        "mrvlusdt.p",
+        "resting-entry",
+        "postcheck"
+      ]
+    },
+    "memory:memory/2026-05-19.md:16:27": {
+      "key": "memory:memory/2026-05-19.md:16:27",
+      "path": "memory/2026-05-19.md",
+      "startLine": 16,
+      "endLine": 27,
+      "source": "memory",
+      "snippet": "- Journal refreshed NoSend after placement; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-19T06-01-51-815Z.xls`; openOrders `9`, positions `1`, netPnlEst `501.63526927`. ## JDUSDT live Option B 7x placement - Andrea requested live placement of `BITGET:JDUSDT.P` Option B with leverage chosen so margin stays below `1000 USDT`, then explicitly confirmed: `CONFIRM JDUSDT LONG 7X ISOLATED LIVE`. - Fresh precheck before placement: JDUSDT open regular/plan orders `0/0`, no JD position observed; ticker around last `32.44`, ask `32.46`, bid `32.44`, mark `32.45`, so entries were passive below market",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3966938257217407,
+      "maxScore": 0.3966938257217407,
+      "firstRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "queryHashes": [
+        "a05ae017a0d6"
+      ],
+      "recallDays": [
+        "2026-05-21"
+      ],
+      "conceptTags": [
+        "501.63526927",
+        "jdusdt.p",
+        "regular/plan",
+        "0/0",
+        "32.44",
+        "32.46",
+        "32.45",
+        "journal"
       ]
     }
   }

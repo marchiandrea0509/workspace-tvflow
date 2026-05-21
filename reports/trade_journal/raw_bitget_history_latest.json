@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-20T09:41:43.336Z",
+  "generatedAt": "2026-05-21T04:54:11.586Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-20T09:41:09.996Z",
+  "until": "2026-05-21T04:53:37.267Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779270069996"
+        "untilTime": "1779339217267"
       },
-      "count": 62,
+      "count": 63,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,44 @@
         },
         {
           "ok": true,
-          "count": 62,
+          "count": 63,
           "startTime": "1772236800000",
-          "endTime": "1779270069996",
+          "endTime": "1779339217267",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "AAPLUSDT",
+          "size": "5.48",
+          "orderId": "1440989910134321153",
+          "clientOid": "1440269972384247808",
+          "baseVolume": "5.48",
+          "fee": "-0.69434341",
+          "price": "",
+          "priceAvg": "301.67",
+          "status": "filled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "28.63130742",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "1653.1986",
+          "leverage": "10",
+          "marginMode": "isolated",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "profit_market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "296.45",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1779284687552",
+          "uTime": "1779284687564"
+        },
         {
           "symbol": "JDUSDT",
           "size": "28.09",
@@ -2137,9 +2168,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779270069996"
+        "untilTime": "1779339217267"
       },
-      "count": 219,
+      "count": 223,
       "windows": [
         {
           "ok": true,
@@ -2318,13 +2349,105 @@
         },
         {
           "ok": true,
-          "count": 219,
+          "count": 223,
           "startTime": "1772236800000",
-          "endTime": "1779270069996",
+          "endTime": "1779339217267",
           "pages": 3
         }
       ],
       "data": [
+        {
+          "tradeId": "1440989910166913030",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440989910134321153",
+          "price": "301.66",
+          "baseVolume": "1.14",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.1444348"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "343.8924",
+          "profit": "5.93497052",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779284687558"
+        },
+        {
+          "tradeId": "1440989910166913028",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440989910134321153",
+          "price": "301.68",
+          "baseVolume": "3.34",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.4231967"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "1007.6112",
+          "profit": "17.45522241",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779284687558"
+        },
+        {
+          "tradeId": "1440989910166913026",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440989910134321153",
+          "price": "301.68",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0633528"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "150.84",
+          "profit": "2.61305724",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779284687558"
+        },
+        {
+          "tradeId": "1440989910166913024",
+          "symbol": "AAPLUSDT",
+          "orderId": "1440989910134321153",
+          "price": "301.71",
+          "baseVolume": "0.5",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.0633591"
+            }
+          ],
+          "side": "buy",
+          "quoteVolume": "150.855",
+          "profit": "2.62805724",
+          "enterPointSource": "sys",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1779284687558"
+        },
         {
           "tradeId": "1440806596739055617",
           "symbol": "JDUSDT",
@@ -7371,7 +7494,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779270069996",
+        "untilTime": "1779339217267",
         "planType": "normal_plan"
       },
       "count": 15,
@@ -7555,7 +7678,7 @@
           "ok": true,
           "count": 15,
           "startTime": "1772236800000",
-          "endTime": "1779270069996",
+          "endTime": "1779339217267",
           "pages": 1
         }
       ],
