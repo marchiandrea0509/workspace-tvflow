@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-21T16:54:22.776Z",
+  "updatedAt": "2026-05-22T03:55:54.970Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -5312,24 +5312,26 @@
       "endLine": 35,
       "source": "memory",
       "snippet": "- User asked to place provided live NVDAUSDT.P long ladder. Precheck found existing NVDAUSDT live 4x isolated orders: L2 6.69 @ 221.00 TP 229.80 SL 215.77, orderId 1438428619163201537; L3 10.44 @ 219.60 TP 230.40 SL 215.77, orderId 1438428622342483969; no NVDA position. - User confirmed cancel old and place new based on 4x isolated and rounded quantities. Guard checked ticker 230.22 above highest new limit 227.60; old orders matched expected IDs exactly. - Cancelled old NVDA orders successfully, set/confirmed isolated margin and 4x leverage. - Placed new live Bitget isolated 4x NVDAUSDT long limit ladder: L1 orderId 1438783251412578305, clientOid vflow_nvda_20260514_repl4x_L1, 3.67 @ 227.60",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.659635281562805,
+      "totalScore": 2.091977661848068,
       "maxScore": 0.43919231593608854,
       "firstRecalledAt": "2026-05-14T22:12:42.700Z",
-      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-22T03:26:28.215Z",
       "queryHashes": [
         "623fa97eb059",
         "48b7b936b4da",
         "706a54adc532",
-        "a05ae017a0d6"
+        "a05ae017a0d6",
+        "978d5d9f4806"
       ],
       "recallDays": [
         "2026-05-15",
         "2026-05-17",
         "2026-05-20",
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "nvdausdt.p",
@@ -5349,21 +5351,23 @@
       "endLine": 30,
       "source": "memory",
       "snippet": "- Freshness OK: ticker 298.59, latest closed 4H 298.52, diff",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.3535760402679444,
+      "totalScore": 1.7640241444110871,
       "maxScore": 0.5059036642313003,
       "firstRecalledAt": "2026-05-14T22:12:42.700Z",
-      "lastRecalledAt": "2026-05-18T09:10:16.627Z",
+      "lastRecalledAt": "2026-05-22T03:26:28.215Z",
       "queryHashes": [
         "623fa97eb059",
         "601ee6b5d476",
-        "36506e2be942"
+        "36506e2be942",
+        "978d5d9f4806"
       ],
       "recallDays": [
         "2026-05-15",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-22"
       ],
       "conceptTags": [
         "298.59",
@@ -5635,18 +5639,20 @@
       "endLine": 9,
       "source": "memory",
       "snippet": "# 2026-05-15 ## NVDAUSDT live replacement ladder - User asked to replace current NVDAUSDT.P order with new 3-leg long ladder: L1 4.27 @ 230.40 SL 224.55 TP 236.36; L2 7.69 @ 229.10 SL 224.55 TP 239.80; L3 13.11 @ 227.60 SL 224.55 TP 242.00. - Treated as replacement of existing isolated 4x NVDA ladder. Precheck: current NVDA orders matched expected 2026-05-14 replacement IDs exactly (1438783251412578305, 1438783252645703681, 1438783253786554369), all live/baseVolume",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4087839096784591,
-      "maxScore": 0.4087839096784591,
+      "totalScore": 0.8385032951831817,
+      "maxScore": 0.42971938550472255,
       "firstRecalledAt": "2026-05-17T16:37:17.880Z",
-      "lastRecalledAt": "2026-05-17T16:37:17.880Z",
+      "lastRecalledAt": "2026-05-22T03:26:28.215Z",
       "queryHashes": [
-        "48b7b936b4da"
+        "48b7b936b4da",
+        "978d5d9f4806"
       ],
       "recallDays": [
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "nvdausdt.p",
@@ -6136,20 +6142,22 @@
       "endLine": 27,
       "source": "memory",
       "snippet": "- Journal refreshed NoSend after placement; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-19T06-01-51-815Z.xls`; openOrders `9`, positions `1`, netPnlEst `501.63526927`. ## JDUSDT live Option B 7x placement - Andrea requested live placement of `BITGET:JDUSDT.P` Option B with leverage chosen so margin stays below `1000 USDT`, then explicitly confirmed: `CONFIRM JDUSDT LONG 7X ISOLATED LIVE`. - Fresh precheck before placement: JDUSDT open regular/plan orders `0/0`, no JD position observed; ticker around last `32.44`, ask `32.46`, bid `32.44`, mark `32.45`, so entries were passive below market",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.1941890686750412,
+      "totalScore": 1.5841159254312513,
       "maxScore": 0.4082025170326233,
       "firstRecalledAt": "2026-05-21T04:50:50.026Z",
-      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
+      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
       "queryHashes": [
         "a05ae017a0d6",
         "1e37e3ebf42e",
-        "d0061d60cb02"
+        "d0061d60cb02",
+        "626815eb3696"
       ],
       "recallDays": [
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "501.63526927",
@@ -6169,18 +6177,21 @@
       "endLine": 19,
       "source": "memory",
       "snippet": "- L1 orderId `1440510554052128769`, clientOid `tvflow_arm_20260519_long3x_L1`, buy/open `2.48 @ 208.20`, SL `198.10`, TP `218.50`. - L2 orderId `1440510556589682689`, clientOid `tvflow_arm_20260519_long3x_L2`, buy/open `4.22 @ 206.40`, SL `198.10`, TP `222.00`. - L3 orderId `1440510559471169537`, clientOid `tvflow_arm_20260519_long3x_L3`, buy/open `5.97 @ 204.80`, SL `198.10`, TP `229.20`. - Correct postcheck with `--symbol ARMUSDT`: regularCount `3`, planCount `0`, all three orders `status=live`, `baseVolume=0`, `leverage=3`, `marginMode=isolated`, preset SL/TP present. Positions check showed only AAPLUSDT; no ARM position yet. - Estimated totals: risk `~100.07 USDT`, reward `~236.95",
-      "recallCount": 1,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4309965968132019,
+      "totalScore": 1.2261104851961135,
       "maxScore": 0.4309965968132019,
       "firstRecalledAt": "2026-05-21T16:09:11.739Z",
-      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
+      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
       "queryHashes": [
-        "1e37e3ebf42e"
+        "1e37e3ebf42e",
+        "978d5d9f4806",
+        "626815eb3696"
       ],
       "recallDays": [
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "tvflow-arm-20260519-long3x-l1",
@@ -6284,6 +6295,100 @@
         "buy-limit",
         "260.20",
         "251.60"
+      ]
+    },
+    "memory:memory/2026-05-19.md:26:31": {
+      "key": "memory:memory/2026-05-19.md:26:31",
+      "path": "memory/2026-05-19.md",
+      "startLine": 26,
+      "endLine": 31,
+      "source": "memory",
+      "snippet": "- L3 orderId `1440727193641185281`, clientOid `tvflow_jd_20260519_long7x_L3`, buy/open `121.21 @ 31.68`, SL `31.35`, TP `34.10`. - Postcheck with `--symbol JDUSDT`: regularCount `3`, planCount `0`, all three orders `status=live`, `baseVolume=0`, leverage `7`, marginMode `isolated`, preset SL/TP present. Positions check showed only AAPLUSDT; no JD position yet. - Estimated totals: risk `~100.00 USDT`, reward `~429.52 USDT`, notional `~6523.36 USDT`, estimated margin @7x `~931.91 USDT`. - Drew visual ladder on TradingView Desktop MCP `BITGET:JDUSDT.P` 4H, 3 orders, all Entry/SL/TP segments returned success. Execution summary `reports/live_execution/20260519_jd_long7x_live/summary.json`; post",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8553984999656676,
+      "maxScore": 0.4416470408439636,
+      "firstRecalledAt": "2026-05-22T03:26:28.215Z",
+      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "queryHashes": [
+        "978d5d9f4806",
+        "626815eb3696"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "tvflow-jd-20260519-long7x-l3",
+        "buy/open",
+        "121.21",
+        "31.68",
+        "31.35",
+        "34.10",
+        "sl/tp",
+        "100.00"
+      ]
+    },
+    "memory:memory/2026-05-22.md:9:12": {
+      "key": "memory:memory/2026-05-22.md:9:12",
+      "path": "memory/2026-05-22.md",
+      "startLine": 9,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "- Root cause: Bitget preset SL executed as market stop into a thin JDUSDT order book during a fast sell sweep. The SL trigger existed, but execution was not guaranteed at `31.35`. - Investigation report/export saved under `reports/investigations/jd_sl_20260522/`: `JDUSDT_stop_loss_investigation.md`, `JDUSDT_stop_loss_investigation_export.zip`, raw account history, account fill distribution CSV, public 1m candles, and public trades window. - Durable rule: future live TradFi-perp ladders need a live liquidity/slippage gate; planned risk must include stop-market slippage on thin symbols. If depth/recent-volume cannot absorb the full stop size within tolerance, reduce size/leverage, skip large L",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.46152873337268824,
+      "maxScore": 0.46152873337268824,
+      "firstRecalledAt": "2026-05-22T03:55:54.970Z",
+      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "queryHashes": [
+        "626815eb3696"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "31.35",
+        "report/export",
+        "tradfi-perp",
+        "liquidity/slippage",
+        "stop-market",
+        "depth/recent-volume",
+        "size/leverage",
+        "root"
+      ]
+    },
+    "memory:memory/2026-05-22.md:1:10": {
+      "key": "memory:memory/2026-05-22.md:1:10",
+      "path": "memory/2026-05-22.md",
+      "startLine": 1,
+      "endLine": 10,
+      "source": "memory",
+      "snippet": "# 2026-05-22 — tvflow durable memory ## JDUSDT SL investigation - Andrea asked why the JDUSDT.P live 7x long ladder lost about `160 USDT` despite planned SL `31.35` and planned risk `~100 USDT`. - Read-only Bitget account export for `JDUSDT` since 2026-05-19 found the original entry orders all filled: L1 `28.09 @ 32.24`, L2 `55.56 @ 31.98`, L3 `121.21 @ 31.68`, each with preset SL `31.35`. - Stop exits were Bitget system `loss_market` orders created around `2026-05-21T13:33:29Z`, not missing/cancelled SLs. Aggregate position was `204.86 JD`, blended entry `31.83815`, blended exit `31.04958`. - Planned SL risk at `31.35` was `~100.00 USDT`; actual price loss was `~161.55 USDT`; close fees we",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.44014145731925963,
+      "maxScore": 0.44014145731925963,
+      "firstRecalledAt": "2026-05-22T03:55:54.970Z",
+      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "queryHashes": [
+        "626815eb3696"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "jdusdt.p",
+        "31.35",
+        "read-only",
+        "28.09",
+        "32.24",
+        "55.56",
+        "31.98",
+        "121.21"
       ]
     }
   }
