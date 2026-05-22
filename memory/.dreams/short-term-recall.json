@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-22T03:55:54.970Z",
+  "updatedAt": "2026-05-22T17:46:30.205Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -587,13 +587,13 @@
       "endLine": 141,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 9,
+      "recallCount": 10,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.6078747570514675,
+      "totalScore": 3.9956781089305875,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
@@ -603,7 +603,8 @@
         "0ddb86382c3a",
         "5ff0a97a9148",
         "706a54adc532",
-        "1e37e3ebf42e"
+        "1e37e3ebf42e",
+        "1e96b4a778c7"
       ],
       "recallDays": [
         "2026-05-01",
@@ -611,7 +612,8 @@
         "2026-05-05",
         "2026-05-19",
         "2026-05-20",
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "discord-safe",
@@ -631,13 +633,13 @@
       "endLine": 61,
       "source": "memory",
       "snippet": "- Inspected both files. Reusable pieces: Discord-safe thread-message/chunking pattern, compact status first, transparent execution/report summary, local workbook + future upload path. Not reusable as-is: MT5 planner/executor/validator/open-compact-report internals because Bitget API/order schema differs. - Added Bitget equivalent script: `scripts/build_bitget_thread_messages.py`. - Added draft reporting cron prompt: `prompts/cron_bitget_futures_trade_report.md`. - Ran Bitget thread-message builder against current artifacts, output: `reports/trade_journal/bitget_thread_messages_2026-04-30.json` with 4 Discord-safe messages. ## Live execution: GMEUSDT partial TP - Time: 2026-04-30 ~22:25 Eur",
-      "recallCount": 8,
+      "recallCount": 9,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.2264558970928188,
+      "totalScore": 3.6142592489719387,
       "maxScore": 0.4291385769844055,
       "firstRecalledAt": "2026-05-01T04:40:08.089Z",
-      "lastRecalledAt": "2026-05-21T16:09:11.739Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
       "queryHashes": [
         "eb3fb32532eb",
         "9436ee5ea114",
@@ -646,14 +648,16 @@
         "d8385fba69dc",
         "0ddb86382c3a",
         "5ff0a97a9148",
-        "1e37e3ebf42e"
+        "1e37e3ebf42e",
+        "1e96b4a778c7"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
         "2026-05-05",
         "2026-05-19",
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "discord-safe",
@@ -1876,24 +1880,26 @@
       "endLine": 34,
       "source": "memory",
       "snippet": "- L3: buy/open long `600 @ 1.3700`, TP `1.6000`, SL `1.3150`, orderId `1436099229427331073`, clientOid `tvflow_near_20260507_ladder_L3` - Verification immediately after placement: 3 NEARUSDT regular pending orders, all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 4`, `baseVolume: 0`; no NEARUSDT position listed yet because limits were unfilled/resting. - Planned risk to SL `1.3150`: `101.05 USDT`; fixed-TP reward: `222.40 USDT`; estimated margin at 4x: `452.64 USDT`. - Refreshed Bitget journal/report artifacts after placement. Latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`; snapshot `reports/trade_journal/bitget_futu",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.7578851103782653,
+      "totalScore": 2.1469309598207476,
       "maxScore": 0.48386552631855007,
       "firstRecalledAt": "2026-05-07T06:56:17.950Z",
-      "lastRecalledAt": "2026-05-12T21:15:19.162Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
       "queryHashes": [
         "402c41a3547e",
         "c9f1a7eea881",
         "6a226190ac42",
-        "d30f948edc27"
+        "d30f948edc27",
+        "1e96b4a778c7"
       ],
       "recallDays": [
         "2026-05-07",
         "2026-05-08",
         "2026-05-11",
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-22"
       ],
       "conceptTags": [
         "buy/open",
@@ -2307,13 +2313,13 @@
       "endLine": 93,
       "source": "memory",
       "snippet": "- Sent through direct Discord media route replying to message `1503153297706586182`; Discord messageId `1503153956057120778`. ## MRVLUSDT Deep Analysis v2 - User requested Deep Analysis V2 for `BITGET:MRVLUSDT.P` in the Bitget Trades thread. - Ran `scripts/run_deep_analysis_packet_v2.ps1 -Symbol MRVLUSDT -Side AUTO -Family AUTO -RiskUsdt 100 -MaxNotionalUsdt 1500 -CaptureTv`. - Packet saved to `reports/deep_analysis_packets_v2/20260510_131904_MRVLUSDT/`; final report saved to `reports/deep_analysis/2026-05-10_MRVLUSDT_v2.md`. - Original decision: `WAIT`; bias long but no clean current entry because MRVL was under/inside the 171-176 resistance shelf after a steep daily run, 4H RSI was stretc",
-      "recallCount": 7,
+      "recallCount": 8,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.741963019967079,
+      "totalScore": 3.1957104086875914,
       "maxScore": 0.4877595573663711,
       "firstRecalledAt": "2026-05-11T06:14:52.859Z",
-      "lastRecalledAt": "2026-05-18T06:42:22.136Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
         "1b6a051de424",
         "e1681a277887",
@@ -2321,14 +2327,16 @@
         "9b8817c17f62",
         "9ead4691105c",
         "e585f33ab645",
-        "33251a281b2d"
+        "33251a281b2d",
+        "32f8b46e8b17"
       ],
       "recallDays": [
         "2026-05-11",
         "2026-05-12",
         "2026-05-13",
         "2026-05-17",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-22"
       ],
       "conceptTags": [
         "mrvlusdt.p",
@@ -2443,18 +2451,20 @@
       "endLine": 157,
       "source": "memory",
       "snippet": "- Fixed Windows UTF-8 BOM handling in `scripts/build_deep_analysis_packet_v2.py` so PowerShell-created JSON manifests can be copied/read correctly. - Smoke-tested Playwright capture on `AAPLUSDT`: screenshots were created for 1D/4H/1H in `reports/deep_analysis_tv_exports/20260510_122936_AAPLUSDT/`, then reused successfully in a v2 packet. Verification showed `tv_available=true`, 8 TV files copied, `freshness=OK`, and the expected notional-cap warning. - Added `README_DEEP_ANALYSIS_V2.md` with normal run and `-CaptureTv` commands. ## MRVLUSDT Deep Analysis v2 - User requested Deep Analysis V2 for `BITGET:MRVLUSDT.P` in the Bitget Trades thread. - Ran `scripts/run_deep_analysis_packet_v2.ps1",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4211161345243454,
-      "maxScore": 0.4211161345243454,
+      "totalScore": 0.8634136408567428,
+      "maxScore": 0.44229750633239745,
       "firstRecalledAt": "2026-05-11T06:47:04.052Z",
-      "lastRecalledAt": "2026-05-11T06:47:04.052Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
-        "9eaf75571074"
+        "9eaf75571074",
+        "32f8b46e8b17"
       ],
       "recallDays": [
-        "2026-05-11"
+        "2026-05-11",
+        "2026-05-22"
       ],
       "conceptTags": [
         "utf-8",
@@ -3550,18 +3560,20 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "# 2026-05-10 ## Deep-analysis starter pack decisions - Andrea approved making the new generic OHLCV-first deep-analysis packet workflow the default, while keeping the old analyser/scripts/prompts for early comparison and reference. - Initial v2 design used `1500` as max total notional, but Andrea corrected this later: the `1500` cap in deep-analysis trade tickets now means **max margin at planned leverage**, not max total notional. - Live execution is excluded from deep-analysis rounds. Deep analysis may propose a ticket only; Andrea will always ask separately and explicitly for any live execution. - Remove hardcoded screener score eligibility such as `score >=70`. Andrea will point to a se",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3694525897502899,
-      "maxScore": 0.3694525897502899,
+      "totalScore": 0.7971458733081818,
+      "maxScore": 0.4276932835578918,
       "firstRecalledAt": "2026-05-12T09:23:16.102Z",
-      "lastRecalledAt": "2026-05-12T09:23:16.102Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
-        "5fb4e08b270f"
+        "5fb4e08b270f",
+        "32f8b46e8b17"
       ],
       "recallDays": [
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-22"
       ],
       "conceptTags": [
         "deep-analysis",
@@ -3676,21 +3688,23 @@
       "endLine": 31,
       "source": "memory",
       "snippet": "- Verified with `-CaptureBackend DesktopCdp -CaptureStrict`: packet `reports/deep_analysis_packets_v2_desktopfix_test/20260512_094516_AAPLUSDT/`; preferred sheet `reports/deep_analysis_packets_v2_desktopfix_test/20260512_094516_AAPLUSDT/raw/tv_exports/AAPLUSDT_1D_4H_contact_sheet_discord.png`. Vision verification confirmed both 1D and 4H show AAPLUSDT.P `Openclaw-structure` with EMA lines, S/R levels, channel lines, volume/ATR indicators, and no red exclamation marks or blocking popups. ## Deep-analysis bottleneck audit - User asked to identify what makes deep analysis long/expensive and whether heavy tasks are strictly required. - Measured current AAPL v2 wrapper: OHLCV-only packet builder",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.5125792786062355,
+      "totalScore": 1.9830035551965828,
       "maxScore": 0.7861497893512841,
       "firstRecalledAt": "2026-05-12T10:06:47.096Z",
-      "lastRecalledAt": "2026-05-17T12:17:41.243Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
         "7027bbdd85d8",
         "761944f2b6d2",
-        "cb61c4238f5d"
+        "cb61c4238f5d",
+        "32f8b46e8b17"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "aaplusdt.p",
@@ -3907,20 +3921,22 @@
       "endLine": 52,
       "source": "memory",
       "snippet": "- Updated `README_DEEP_ANALYSIS_V2.md` with comparison rule: run compact vs `V2.full` final LLM analyses in isolated contexts with only their own packet and the same master prompt/model; do not paste the first result into the second, because same-chat sequential runs can influence the second via conversation context. - Regression test passed: packet `reports/deep_analysis_packets_v2_v2full_test/20260512_120743_AAPLUSDT/`; compact `llm_input_packet.md` `16,485` bytes, `llm_input_packet_V2.full.md` and alias `llm_input_packet_full.md` both `62,424` bytes. ## AAPLUSDT compact deep analysis latest - User requested deep analysis on `AAAPLUSDT.P`; Bitget check showed `AAAPLUSDT` invalid and `AAP",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.784076127409935,
-      "maxScore": 0.4281849294900894,
+      "totalScore": 1.2388494282960891,
+      "maxScore": 0.45477330088615414,
       "firstRecalledAt": "2026-05-12T16:49:56.816Z",
-      "lastRecalledAt": "2026-05-17T12:17:41.243Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
         "781b8b394bb0",
-        "cb61c4238f5d"
+        "cb61c4238f5d",
+        "32f8b46e8b17"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "readme-deep-analysis-v2.md",
@@ -4919,20 +4935,22 @@
       "endLine": 147,
       "source": "memory",
       "snippet": "- Andrea changed the deep-analysis strategy back to screenshot-first: analyze visible TradingView screenshots/chart structure first, use user key levels second, use Bitget OHLCV/ticker/execution only to validate numbers/current price/sizing/margin/leverage/liquidation, and use TradingView OHLCV/export only for cross-checks. - Patched `prompts/master_trade_analysis_prompt_v2.md` with source priority, primary task, focus window (`4H` last 40 candles, `1H` last 80, `1D` last 80; older data only for major HTF levels), and explicit DO NOT rules: do not choose old pivots just because confirmed, ignore fresh breakout highs/lows, reject resting limit ladders only because price is hot, or require 2+",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7926966100931168,
-      "maxScore": 0.39773801267147063,
+      "totalScore": 1.2273700475692748,
+      "maxScore": 0.4346734374761581,
       "firstRecalledAt": "2026-05-14T04:57:39.530Z",
-      "lastRecalledAt": "2026-05-18T09:05:48.832Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
         "cb9c4fdc8bcc",
-        "470032467f5b"
+        "470032467f5b",
+        "32f8b46e8b17"
       ],
       "recallDays": [
         "2026-05-14",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-22"
       ],
       "conceptTags": [
         "deep-analysis",
@@ -4952,20 +4970,22 @@
       "endLine": 143,
       "source": "memory",
       "snippet": "- Acceptance run passed for AAPL packet `reports/deep_analysis_packets_v2_patchtest/20260513_211125_AAPLUSDT/`: active mode used, impulse `290.53 -> 300.77`, value zone `296.86-294.44` (live high was `300.77`; with `301.17` it would map near `297.1-294.6`), decision `PLACEABLE_NOW`, market order `false`, static ticket safe `true`. - Accepted test ladder: L1 `295.65`, SL `290.75`, TP `300.77`, qty `8.16`, risk `39.98`, RR `1.04`; L2 `294.41`, SL `290.75`, TP `301.98`, qty `16.39`, risk `59.99`, RR `2.07`; selected leverage `6x`, estimated margin `1206.31`, all-filled RR `1.66`. - Updated `README_DEEP_ANALYSIS_V2.md`, `schemas/deep_analysis_packet_contract_v2.md`, and `prompts/master_trade_ana",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7810054004192353,
-      "maxScore": 0.39620326459407806,
+      "totalScore": 1.222178590297699,
+      "maxScore": 0.4411731898784637,
       "firstRecalledAt": "2026-05-14T04:57:39.530Z",
-      "lastRecalledAt": "2026-05-17T15:37:27.534Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
         "cb9c4fdc8bcc",
-        "1525b0f17928"
+        "1525b0f17928",
+        "32f8b46e8b17"
       ],
       "recallDays": [
         "2026-05-14",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "290.53",
@@ -5448,18 +5468,20 @@
       "endLine": 37,
       "source": "memory",
       "snippet": "- Conclusion: deterministic Bitget OHLCV build and static optimisation scan are cheap and should stay. Major bottlenecks are optional TradingView capture, optional vision verification, optional screener/strategy CSV export, and oversized final LLM packet. Screenshot/vision/export are validation/debug/evidence tasks, not strictly required for normal OHLCV-first decisions. - Wrote audit: `reports/deep_analysis/2026-05-12_workflow_bottleneck_audit.md`. Recommended lean default: OHLCV-only + compact decision packet; run Desktop CDP screenshots/screener export/vision only on demand or after deterministic ticket passes gates. ## Compact deep-analysis packet implementation - User approved lean wor",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.36843057870864865,
-      "maxScore": 0.36843057870864865,
+      "totalScore": 0.8217950731515884,
+      "maxScore": 0.45336449444293975,
       "firstRecalledAt": "2026-05-17T12:17:41.243Z",
-      "lastRecalledAt": "2026-05-17T12:17:41.243Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
       "queryHashes": [
-        "cb61c4238f5d"
+        "cb61c4238f5d",
+        "32f8b46e8b17"
       ],
       "recallDays": [
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "screener/strategy",
@@ -5703,20 +5725,22 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "# 2026-05-18 — tvflow durable memory ## MRVLUSDT live Option B placement - Andrea first requested MRVLUSDT.P analysis; screenshot-first analysis produced a pullback-long bias, then Andrea corrected Option B levels and explicitly confirmed: `CONFIRM ENABLE LIVE GATE AND PLACE MRVL OPTION B 4X ISOLATED`. - Fresh precheck before placement: MRVLUSDT regular orders `0`, plan orders `0`, no MRVL position observed. Ticker before placement was around last `177.14`, ask `177.21`, bid `177.09`, so entries `172.20` and `170.40` were passive below market. - Set MRVLUSDT margin mode isolated and long leverage `4x`. Used one-shot process env `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRA",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8803803384304046,
+      "totalScore": 1.283375397324562,
       "maxScore": 0.46287332773208617,
       "firstRecalledAt": "2026-05-18T07:14:34.615Z",
-      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
       "queryHashes": [
         "fc23d4e19743",
-        "a05ae017a0d6"
+        "a05ae017a0d6",
+        "1e96b4a778c7"
       ],
       "recallDays": [
         "2026-05-18",
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "mrvlusdt.p",
@@ -6111,18 +6135,20 @@
       "endLine": 18,
       "source": "memory",
       "snippet": "- Postcheck: MRVLUSDT regular orders `2`, plan orders `0`, both orders `status=live`, `baseVolume=0`, no MRVL position observed. Rounded risk `~99.96 USDT`, reward `~500.59`, notional `~4702.39`, estimated margin @4x `~1175.60`. - Drew the two-order long ladder on TradingView Desktop MCP `BITGET:MRVLUSDT.P` 4H. Execution summary saved at `reports/live_execution/20260518_mrvl_optionb_4x_live/summary.json`. - Journal refreshed with -NoSend after MRVL placement; latest workbook eports/trade_journal/bitget_futures_trade_report_latest.xls, snapshot eports/trade_journal/bitget_futures_trade_report_2026-05-18T07-09-25-152Z.xls; openOrders 5, positions 1. ## Universal resting-entry distance gat",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.456593707203865,
+      "totalScore": 0.8529627382755278,
       "maxScore": 0.456593707203865,
       "firstRecalledAt": "2026-05-21T04:50:50.026Z",
-      "lastRecalledAt": "2026-05-21T04:50:50.026Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
       "queryHashes": [
-        "a05ae017a0d6"
+        "a05ae017a0d6",
+        "1e96b4a778c7"
       ],
       "recallDays": [
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-22"
       ],
       "conceptTags": [
         "99.96",
@@ -6389,6 +6415,223 @@
         "55.56",
         "31.98",
         "121.21"
+      ]
+    },
+    "memory:memory/2026-05-21.md:34:43": {
+      "key": "memory:memory/2026-05-21.md:34:43",
+      "path": "memory/2026-05-21.md",
+      "startLine": 34,
+      "endLine": 43,
+      "source": "memory",
+      "snippet": "- MRVLUSDT size precision is `0.01`; rounded user quantities down from `2.604 / 5.072 / 9.524` to `2.60 / 5.07 / 9.52` to avoid exceeding risk. - Placed live Bitget MRVLUSDT isolated 4x regular limit buys with preset TP/SL: - B1 orderId `1441218573773729793`, clientOid `tvflow_mrvl_20260521_optb4x_B1`, buy/open `2.60 @ 183.00`, SL `173.40`, TP `193.20`. - B2 orderId `1441218576793628673`, clientOid `tvflow_mrvl_20260521_optb4x_B2`, buy/open `5.07 @ 180.30`, SL `173.40`, TP `198.00`. - B3 orderId `1441218579817721858`, clientOid `tvflow_mrvl_20260521_optb4x_B3`, buy/open `9.52 @ 177.60`, SL `173.40`, TP `202.50`. - Postcheck: MRVLUSDT regular orders `3`, plan orders `0`, all `status=liv",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4457420110702514,
+      "maxScore": 0.4457420110702514,
+      "firstRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "queryHashes": [
+        "1e96b4a778c7"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "0.01",
+        "2.604",
+        "5.072",
+        "9.524",
+        "2.60",
+        "5.07",
+        "9.52",
+        "tp/sl"
+      ]
+    },
+    "memory:memory/2026-05-21.md:26:36": {
+      "key": "memory:memory/2026-05-21.md:26:36",
+      "path": "memory/2026-05-21.md",
+      "startLine": 26,
+      "endLine": 36,
+      "source": "memory",
+      "snippet": "- Used one-shot process env `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRADING=true` for placement commands only; did not persistently enable `.env.local` live gate. - Journal refreshed with `-NoSend`; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-21T16-13-39-267Z.xls`. Direct ARM postcheck is the source of truth for the fresh resting orders. - Drew the two-order long ladder on TradingView Desktop MCP `BITGET:ARMUSDT.P` 4H. Execution summary saved at `reports/live_execution/20260521_arm_optiona_3x_live/summary.json`. ## MRVLUSDT live Option B 4x placement - Andrea requested",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.42202111184597013,
+      "maxScore": 0.42202111184597013,
+      "firstRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "queryHashes": [
+        "1e96b4a778c7"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "one-shot",
+        "bitget-allow-order-placement",
+        "bitget-allow-live-trading",
+        "env.local",
+        "two-order",
+        "armusdt.p",
+        "used",
+        "one"
+      ]
+    },
+    "memory:memory/2026-05-20.md:25:29": {
+      "key": "memory:memory/2026-05-20.md:25:29",
+      "path": "memory/2026-05-20.md",
+      "startLine": 25,
+      "endLine": 29,
+      "source": "memory",
+      "snippet": "- Postcheck: FUTUUSDT regular orders `0`, plan orders `2`, both `planStatus=live`; no FUTUUSDT position yet. Estimated totals: notional `~3364.13`, risk `~99.99`, reward `~176.92`, margin at 6x `~560.69`. - Refreshed Bitget journal locally with `-NoSend`; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`. - Drew the two-leg short ladder on TradingView Desktop MCP `BITGET:FUTUUSDT.P` 4H. - Execution artifacts: `reports/live_execution/20260520_futu_short_6xB/summary.json`, `post_orders.json`, `positions_after.json`, `ticker_after.json`.",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4063257217407226,
+      "maxScore": 0.4063257217407226,
+      "firstRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "queryHashes": [
+        "1e96b4a778c7"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "3364.13",
+        "99.99",
+        "176.92",
+        "560.69",
+        "two-leg",
+        "futuusdt.p",
+        "post-orders.json",
+        "positions-after.json"
+      ]
+    },
+    "memory:memory/2026-05-20.md:18:27": {
+      "key": "memory:memory/2026-05-20.md:18:27",
+      "path": "memory/2026-05-20.md",
+      "startLine": 18,
+      "endLine": 27,
+      "source": "memory",
+      "snippet": "- User requested cancel previous FUTUUSDT.P orders and place Option B “Best Fill Probability” live short ladder. - Precheck: FUTUUSDT regular orders `0`, plan orders `3`; existing plans were the 2026-05-17 isolated 6x short ladder (`tvflow_futu_20260517_short6x_S1/S2/S3`); no FUTUUSDT position was present. Ticker around last/mark `125.68`, bid/ask `125.74/125.79`, 24h range `124.17-132.35`. - Cancelled prior live FUTUUSDT plan orders: `1439946675799449600`, `1439946677898145792`, `1439946679252934656`. - Set/confirmed FUTUUSDT isolated margin and short leverage `6x`. - Placed two new live Bitget `normal_plan` conditional limit shorts, trigger price = limit price, attached TP/SL trigger price",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4001430660486221,
+      "maxScore": 0.4001430660486221,
+      "firstRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "queryHashes": [
+        "1e96b4a778c7"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "futuusdt.p",
+        "last/mark",
+        "125.68",
+        "bid/ask",
+        "125.74/125.79",
+        "124.17-132.35",
+        "set/confirmed",
+        "normal-plan"
+      ]
+    },
+    "memory:memory/2026-05-20.md:10:19": {
+      "key": "memory:memory/2026-05-20.md:10:19",
+      "path": "memory/2026-05-20.md",
+      "startLine": 10,
+      "endLine": 19,
+      "source": "memory",
+      "snippet": "- S2 orderId `1440928505293955072`, clientOid `tvflow_futu_20260520_short6xA2_S2`, sell `9.72 @ 131.65`, SL `135.25`, TP `122.50`; qty rounded from user `9.722`; estimated risk `~34.99`, reward `~88.94`, notional `~1279.64`. - S3 orderId `1440928508172791808`, clientOid `tvflow_futu_20260520_short6xA2_S3`, sell `13.79 @ 132.35`, SL `135.25`, TP `120.00`; qty rounded from user `13.793`; estimated risk `~39.99`, reward `~170.26`, notional `~1825.11`. - Postcheck: FUTUUSDT regular orders `0`, plan orders `3`, all `planStatus=live`; no FUTUUSDT position yet. Estimated totals: notional `~3762.76`, risk `~99.98`, reward `~289.49`, margin at 6x `~627.13`. Ticker after around last `125.84`, mark",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3943352937698364,
+      "maxScore": 0.3943352937698364,
+      "firstRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "queryHashes": [
+        "1e96b4a778c7"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "9.72",
+        "131.65",
+        "135.25",
+        "122.50",
+        "9.722",
+        "34.99",
+        "88.94",
+        "1279.64"
+      ]
+    },
+    "memory:memory/2026-05-11.md:25:32": {
+      "key": "memory:memory/2026-05-11.md:25:32",
+      "path": "memory/2026-05-11.md",
+      "startLine": 25,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "- Created combined horizontal contact sheet for latest AAPL updated v2 packet: `reports/deep_analysis_packets_v2/20260511_132915_AAPLUSDT/raw/tv_exports/AAPLUSDT_1D_4H_1H_contact_sheet.png` (`15360x3200`, about `2.45 MB`). - Patched `scripts/run_deep_analysis_packet_v2.ps1` so future `-CaptureTv` runs automatically generate `SYMBOL_1D_4H_1H_contact_sheet.png` via ffmpeg after capturing 1D/4H/1H. - Patched `scripts/build_deep_analysis_packet_v2.py` so `discord_media_lines` prefer the contact sheet when present, using separate screenshots only as fallback. Updated `README_DEEP_ANALYSIS_V2.md` accordingly. Verified Python compile and PowerShell scriptblock parse. ## INTCUSDT deep analysis v2 -",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4333335995674133,
+      "maxScore": 0.4333335995674133,
+      "firstRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "queryHashes": [
+        "32f8b46e8b17"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "2.45",
+        "1d/4h/1h",
+        "discord-media-lines",
+        "readme-deep-analysis-v2.md",
+        "created",
+        "combined",
+        "horizontal",
+        "contact"
+      ]
+    },
+    "memory:memory/2026-05-18.md:16:22": {
+      "key": "memory:memory/2026-05-18.md:16:22",
+      "path": "memory/2026-05-18.md",
+      "startLine": 16,
+      "endLine": 22,
+      "source": "memory",
+      "snippet": "- Patched scripts/build_deep_analysis_packet_v2.py: added universal resting-entry distance gate before leg spacing, SL/TP, scan combo construction, static optimisation ranking, and Option A/B selection. Long buy limits require distance (current-entry)/ATR4H >= 0.25; short sell limits require (entry-current)/ATR4H >= 0.25; strict contexts require >=0.50 ATR4H (1H against/corrective, near major S/R, market chase disallowed, fill-probability use). Rejected candidates are stored in ear_market_rejected_entries with symbol/side/setup/entry/current/ATR/distance/threshold/strict reason/rejection reason. - Updated compact payload rules and exposed esting_entry_distance_policy, ear_market_rejected_",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.42902567386627194,
+      "maxScore": 0.42902567386627194,
+      "firstRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "queryHashes": [
+        "32f8b46e8b17"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "resting-entry",
+        "sl/tp",
+        "a/b",
+        "current-entry",
+        "0.25",
+        "entry-current",
+        "0.50",
+        "against/corrective"
       ]
     }
   }
