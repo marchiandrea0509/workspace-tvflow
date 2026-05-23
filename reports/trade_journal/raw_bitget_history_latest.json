@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-22T17:03:06.269Z",
+  "generatedAt": "2026-05-22T21:19:37.631Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-22T17:02:30.370Z",
+  "until": "2026-05-22T21:19:03.555Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779469350370"
+        "untilTime": "1779484743555"
       },
-      "count": 75,
+      "count": 72,
       "windows": [
         {
           "ok": true,
@@ -199,9 +199,9 @@
         },
         {
           "ok": true,
-          "count": 75,
+          "count": 72,
           "startTime": "1772236800000",
-          "endTime": "1779469350370",
+          "endTime": "1779484743555",
           "pages": 1
         }
       ],
@@ -422,99 +422,6 @@
           "liqPrice": "",
           "cTime": "1779370409027",
           "uTime": "1779370409052"
-        },
-        {
-          "symbol": "MRVLUSDT",
-          "size": "9.52",
-          "orderId": "1441218579817721858",
-          "clientOid": "tvflow_mrvl_20260521_optb4x_B3",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "177.6",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "api",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "normal",
-          "presetStopSurplusPrice": "202.5",
-          "presetStopLossPrice": "173.4",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1779339206652",
-          "uTime": "1779469284032"
-        },
-        {
-          "symbol": "MRVLUSDT",
-          "size": "5.07",
-          "orderId": "1441218576793628673",
-          "clientOid": "tvflow_mrvl_20260521_optb4x_B2",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "180.3",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "api",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "normal",
-          "presetStopSurplusPrice": "198",
-          "presetStopLossPrice": "173.4",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1779339205931",
-          "uTime": "1779469284396"
-        },
-        {
-          "symbol": "MRVLUSDT",
-          "size": "2.6",
-          "orderId": "1441218573773729793",
-          "clientOid": "tvflow_mrvl_20260521_optb4x_B1",
-          "baseVolume": "0",
-          "fee": "0",
-          "price": "183",
-          "priceAvg": "",
-          "status": "canceled",
-          "side": "buy",
-          "force": "gtc",
-          "totalProfits": "0",
-          "posSide": "long",
-          "marginCoin": "USDT",
-          "quoteVolume": "0",
-          "leverage": "4",
-          "marginMode": "isolated",
-          "enterPointSource": "api",
-          "tradeSide": "open",
-          "posMode": "hedge_mode",
-          "orderType": "limit",
-          "orderSource": "normal",
-          "presetStopSurplusPrice": "193.2",
-          "presetStopLossPrice": "173.4",
-          "posAvg": "",
-          "reduceOnly": "NO",
-          "liqPrice": "",
-          "cTime": "1779339205213",
-          "uTime": "1779469284666"
         },
         {
           "symbol": "AAPLUSDT",
@@ -2540,7 +2447,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779469350370"
+        "untilTime": "1779484743555"
       },
       "count": 295,
       "windows": [
@@ -2723,7 +2630,7 @@
           "ok": true,
           "count": 295,
           "startTime": "1772236800000",
-          "endTime": "1779469350370",
+          "endTime": "1779484743555",
           "pages": 3
         }
       ],
@@ -9522,7 +9429,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779469350370",
+        "untilTime": "1779484743555",
         "planType": "normal_plan"
       },
       "count": 18,
@@ -9706,7 +9613,7 @@
           "ok": true,
           "count": 18,
           "startTime": "1772236800000",
-          "endTime": "1779469350370",
+          "endTime": "1779484743555",
           "pages": 1
         }
       ],

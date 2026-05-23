@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { BitgetClient, getDefaultTradingConfig, assertPlacementAllowed } = require('../lib/bitgetClient');
 const { parseArgs, pickDefined } = require('../lib/cli');
+const { assertLiquidityGateForLiveOpenOrder, spawnPostFillLiquidityMonitor } = require('../lib/liquidityGate');
 
 (async () => {
   const args = parseArgs(process.argv.slice(2));
@@ -38,10 +39,13 @@ const { parseArgs, pickDefined } = require('../lib/cli');
 
   if (!send) return;
 
+  const liquidityGate = await assertLiquidityGateForLiveOpenOrder(args, payload, cfg);
+
   const client = new BitgetClient();
   const result = await client.post('/api/v2/mix/order/place-order', payload);
-  console.log(JSON.stringify({ ok: true, result }, null, 2));
+  const liquidityMonitor = spawnPostFillLiquidityMonitor(args, payload, liquidityGate);
+  console.log(JSON.stringify({ ok: true, result, liquidityMonitor }, null, 2));
 })().catch((err) => {
   console.error(err.message || String(err));
-  process.exit(1);
+  process.exitCode = 1;
 });

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-22T17:46:30.205Z",
+  "updatedAt": "2026-05-23T05:12:24.743Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -174,13 +174,13 @@
       "endLine": 7,
       "source": "memory",
       "snippet": "# 2026-04-27 - Ran the TradingView Pine Screener manually for `BITGET_TRADFI`, indicator `OC Hybrid Edge Screener v6`, timeframe `4H`, with filter `02 Best Setup Code >= 2`. Top result was `GMEUSDT.P` with Best Score about `69.3`; 15 rows passed the filter. - Built a Bitget OHLCV-first deep-analysis packet for `GMEUSDT.P` from latest screener output. Analysis classified it as a valid long-biased breakout/continuation market but **bad market-entry location**, with preferred conditional pullback ladder. - After explicit Discord confirmations (`CONFIRM LIVE 2X`, then `ENABLE FLAGS AND PLACE GME LADDER`), placed three **live Bitget USDT futures** GMEUSDT isolated 2x long limit orders via `bitge",
-      "recallCount": 11,
+      "recallCount": 12,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 4.421377876400946,
+      "totalScore": 4.796338436007498,
       "maxScore": 0.47747629880905146,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-05-20T09:32:32.134Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
       "queryHashes": [
         "e3e1321e6742",
         "0a47ebeefbbd",
@@ -192,7 +192,8 @@
         "0ddb86382c3a",
         "6c90ed120bcf",
         "9b8817c17f62",
-        "706a54adc532"
+        "706a54adc532",
+        "f150ed0b0db1"
       ],
       "recallDays": [
         "2026-04-28",
@@ -202,7 +203,8 @@
         "2026-05-05",
         "2026-05-08",
         "2026-05-13",
-        "2026-05-20"
+        "2026-05-20",
+        "2026-05-22"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -269,13 +271,13 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "## Live execution: GOOGLUSDT ladder - Time: 2026-04-29 ~07:55 Europe/Berlin - User explicitly confirmed: `CONFIRM GOOGL LIVE LADDER` - Placed live Bitget isolated 4x GOOGLUSDT long pullback ladder via API. - L1: limit buy `4.30 @ 349.20`, TP `353.40`, SL `341.20`, orderId `1433261681713770501`, clientOid `tvflow_googl_20260429_L1` - L2: limit buy `5.77 @ 346.40`, TP `358.80`, SL `341.20`, orderId `1433261686591746049`, clientOid `tvflow_googl_20260429_L2` - L3: limit buy `7.28 @ 343.60`, TP `364.00`, SL `341.20`, orderId `1433261691314532353`, clientOid `tvflow_googl_20260429_L3` - Verification immediately after placement: 3 regular pending orders, all `status: live`, `tradeSide: open`, `p",
-      "recallCount": 14,
+      "recallCount": 15,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 6.081906306743621,
+      "totalScore": 6.464430791139602,
       "maxScore": 0.5259791612625122,
       "firstRecalledAt": "2026-04-30T06:33:00.432Z",
-      "lastRecalledAt": "2026-05-17T16:37:17.880Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
       "queryHashes": [
         "e1d9ed05f284",
         "0a47ebeefbbd",
@@ -290,7 +292,8 @@
         "8f3261d9e2df",
         "d30f948edc27",
         "af9dff0adfdc",
-        "48b7b936b4da"
+        "48b7b936b4da",
+        "f150ed0b0db1"
       ],
       "recallDays": [
         "2026-04-30",
@@ -299,7 +302,8 @@
         "2026-05-07",
         "2026-05-12",
         "2026-05-15",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-22"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -677,22 +681,24 @@
       "endLine": 130,
       "source": "memory",
       "snippet": "- Time: 2026-04-30 ~19:19 Europe/Berlin - User asked to reuse the MT5-style trade report in tvflow for past/future Bitget trades, initially as xls and later Google Sheets. - Exact MT5 workbook/template was not found in the accessible workspace search, so created a Google-Sheets-ready MT5-style Bitget futures workbook from live Bitget API history. - Bitget API retrieval succeeded: 90-day history returned 19 historical orders, 59 fills, 9 plan history rows; current snapshot included 3 open GOOGLUSDT FVG ladder orders and 1 open GMEUSDT position. - Created report: `reports/trade_journal/bitget_futures_trade_report_2026-04-30.xls` plus CSV sidecar `reports/trade_journal/bitget_futures_order_hist",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2686050117015837,
+      "totalScore": 1.645937058329582,
       "maxScore": 0.4549909710884094,
       "firstRecalledAt": "2026-05-01T04:44:40.849Z",
-      "lastRecalledAt": "2026-05-18T14:49:00.730Z",
+      "lastRecalledAt": "2026-05-23T04:43:48.407Z",
       "queryHashes": [
         "9436ee5ea114",
         "d8385fba69dc",
-        "fbc09f840b31"
+        "fbc09f840b31",
+        "6ee7c2bdc91a"
       ],
       "recallDays": [
         "2026-05-01",
         "2026-05-02",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-23"
       ],
       "conceptTags": [
         "europe/berlin",
@@ -968,20 +974,22 @@
       "endLine": 21,
       "source": "memory",
       "snippet": "- Updated `prompts/cron_bitget_futures_trade_report.md`: renamed to Bitget Semi-Auto Futures Trade Report, removed MT5-workflow framing, kept only generic Discord-safe reporting/chunking pattern as reused, and documented that Bitget live changes require explicit confirmation unless a separate approved execution workflow exists. - Updated `tmp/build_bitget_trade_report.py`: workbook title/sheet changed to Bitget Semi-Auto Futures Trade Report / Semi-Auto Trade Log; removed MT5-style wording and unused MT5-ish review columns; replaced with TradingView/Analysis Ref and Risk/Invalidation Notes. - Regenerated `reports/trade_journal/bitget_futures_trade_report_2026-04-30.xls` and `reports/trade_jo",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.9387537330389022,
+      "totalScore": 1.320234489440918,
       "maxScore": 0.4772514313459396,
       "firstRecalledAt": "2026-05-02T10:11:52.163Z",
-      "lastRecalledAt": "2026-05-18T14:49:00.730Z",
+      "lastRecalledAt": "2026-05-23T04:43:48.407Z",
       "queryHashes": [
         "d8385fba69dc",
-        "fbc09f840b31"
+        "fbc09f840b31",
+        "6ee7c2bdc91a"
       ],
       "recallDays": [
         "2026-05-02",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-23"
       ],
       "conceptTags": [
         "semi-auto",
@@ -1666,26 +1674,28 @@
       "endLine": 26,
       "source": "memory",
       "snippet": "- Attempted to place the three limit legs, but the harness blocked live order placement before sending orders because active config has `BITGET_ALLOW_ORDER_PLACEMENT=false` and `BITGET_ALLOW_LIVE_TRADING=false`. - Post-check verified NEARUSDT open regular orders `0`, plan orders `0`, positions `0`; no NEARUSDT orders were placed. ## NEARUSDT live ladder execution - User explicitly confirmed proceeding after the harness safety block. - Used one-shot environment unlock for the placement command only; no persistent harness config change was made. - Pre-placement checks: NEARUSDT open regular orders `0`, plan orders `0`, positions `0`, account available USDT about `4867.34`. - Set/confirmed NEA",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.0836467802524563,
+      "totalScore": 2.46865573823452,
       "maxScore": 0.4689431220293045,
       "firstRecalledAt": "2026-05-07T01:54:27.952Z",
-      "lastRecalledAt": "2026-05-20T09:32:32.134Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
       "queryHashes": [
         "8f3261d9e2df",
         "38e8bb5181b2",
         "48b7b936b4da",
         "5ff0a97a9148",
-        "706a54adc532"
+        "706a54adc532",
+        "f150ed0b0db1"
       ],
       "recallDays": [
         "2026-05-07",
         "2026-05-11",
         "2026-05-17",
         "2026-05-19",
-        "2026-05-20"
+        "2026-05-20",
+        "2026-05-22"
       ],
       "conceptTags": [
         "bitget-allow-order-placement",
@@ -1775,13 +1785,13 @@
       "endLine": 13,
       "source": "memory",
       "snippet": "# 2026-05-06 ## AAPLUSDT manual L1 entry change and journal refresh - User reported a manual Bitget change to AAPLUSDT ladder L1 entry from `279.00` to `280.20`. - Refreshed the Bitget futures journal locally with tracked symbols `GOOGLUSDT,GMEUSDT,AAPLUSDT` and no Discord send. Latest workbook: `reports/trade_journal/bitget_futures_trade_report_latest.xls`; snapshot: `reports/trade_journal/bitget_futures_trade_report_2026-05-06T05-12-37-493Z.xls`. - API/open-order verification after refresh: 3 live AAPLUSDT regular pending orders, positions 0. - L1: qty `2.00 @ 280.20`, SL `270.30`, TP `287.50`, orderId `1435665509704691717`, clientOid `1435665509704691718`, isolated 4x. - L2: qty `6.0",
-      "recallCount": 7,
+      "recallCount": 8,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.040082097053528,
+      "totalScore": 3.4280427247285843,
       "maxScore": 0.48301009535789485,
       "firstRecalledAt": "2026-05-07T06:26:51.242Z",
-      "lastRecalledAt": "2026-05-12T21:15:19.162Z",
+      "lastRecalledAt": "2026-05-22T21:13:18.500Z",
       "queryHashes": [
         "fffb38fc8dd6",
         "402c41a3547e",
@@ -1789,13 +1799,15 @@
         "a096d1aed791",
         "b9d906e73fb1",
         "31035540f2c1",
-        "d30f948edc27"
+        "d30f948edc27",
+        "8aa07472a6f0"
       ],
       "recallDays": [
         "2026-05-07",
         "2026-05-08",
         "2026-05-11",
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-22"
       ],
       "conceptTags": [
         "279.00",
@@ -1880,19 +1892,20 @@
       "endLine": 34,
       "source": "memory",
       "snippet": "- L3: buy/open long `600 @ 1.3700`, TP `1.6000`, SL `1.3150`, orderId `1436099229427331073`, clientOid `tvflow_near_20260507_ladder_L3` - Verification immediately after placement: 3 NEARUSDT regular pending orders, all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 4`, `baseVolume: 0`; no NEARUSDT position listed yet because limits were unfilled/resting. - Planned risk to SL `1.3150`: `101.05 USDT`; fixed-TP reward: `222.40 USDT`; estimated margin at 4x: `452.64 USDT`. - Refreshed Bitget journal/report artifacts after placement. Latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`; snapshot `reports/trade_journal/bitget_futu",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.1469309598207476,
+      "totalScore": 2.524364331364632,
       "maxScore": 0.48386552631855007,
       "firstRecalledAt": "2026-05-07T06:56:17.950Z",
-      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T21:13:18.500Z",
       "queryHashes": [
         "402c41a3547e",
         "c9f1a7eea881",
         "6a226190ac42",
         "d30f948edc27",
-        "1e96b4a778c7"
+        "1e96b4a778c7",
+        "8aa07472a6f0"
       ],
       "recallDays": [
         "2026-05-07",
@@ -1963,18 +1976,20 @@
       "endLine": 40,
       "source": "memory",
       "snippet": "- Refreshed the Bitget futures journal locally with tracked symbols `GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT` and no Discord send. Latest workbook: `reports/trade_journal/bitget_futures_trade_report_latest.xls`; snapshot: `reports/trade_journal/bitget_futures_trade_report_2026-05-07T06-27-34-106Z.xls`. - API/open-order verification after refresh: AAPLUSDT regular/plan orders `0/0`; GOOGLUSDT `0/0`; GMEUSDT `0/0`; current futures positions `0`. - Active orders now total `3`, all NEARUSDT live/resting ladder legs only; no AAPLUSDT exposure remains in open orders or positions. - Order-history summary now shows the three AAPLUSDT ladder orders as `status canceled`, qty/fill `0`, zero PnL impact: L1",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3501537501811981,
-      "maxScore": 0.3501537501811981,
+      "totalScore": 0.7416718691587447,
+      "maxScore": 0.3915181189775467,
       "firstRecalledAt": "2026-05-07T22:36:18.196Z",
-      "lastRecalledAt": "2026-05-07T22:36:18.196Z",
+      "lastRecalledAt": "2026-05-22T21:13:18.500Z",
       "queryHashes": [
-        "c9f1a7eea881"
+        "c9f1a7eea881",
+        "8aa07472a6f0"
       ],
       "recallDays": [
-        "2026-05-08"
+        "2026-05-08",
+        "2026-05-22"
       ],
       "conceptTags": [
         "api/open-order",
@@ -2087,20 +2102,22 @@
       "endLine": 29,
       "source": "memory",
       "snippet": "- Refreshed Bitget journal/report artifacts after placement with tracked symbols `GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT`. Latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`; snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-07T22-29-37-792Z.xls`. Journal state-change detector reported 2 new INTCUSDT active orders; active orders now total 5 (2 INTCUSDT + 3 NEARUSDT), positions 0. - Drew the live INTC ladder in TradingView Desktop MCP for `BITGET:INTCUSDT.P` on `4H`: two Entry/SL/TP groups, 6 line segments total; all script calls returned success. - Updated `reports/deep_analysis/2026-05-08_INTCUSDT.md`, `PROJECT_STATE.md`, and `scripts/run_",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.784445983171463,
+      "totalScore": 1.1644177556037902,
       "maxScore": 0.39962252676486965,
       "firstRecalledAt": "2026-05-09T15:28:23.500Z",
-      "lastRecalledAt": "2026-05-11T12:03:10.765Z",
+      "lastRecalledAt": "2026-05-22T21:13:18.500Z",
       "queryHashes": [
         "c49bf331721f",
-        "ddf2a7089f43"
+        "ddf2a7089f43",
+        "8aa07472a6f0"
       ],
       "recallDays": [
         "2026-05-09",
-        "2026-05-11"
+        "2026-05-11",
+        "2026-05-22"
       ],
       "conceptTags": [
         "journal/report",
@@ -6168,22 +6185,25 @@
       "endLine": 27,
       "source": "memory",
       "snippet": "- Journal refreshed NoSend after placement; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-19T06-01-51-815Z.xls`; openOrders `9`, positions `1`, netPnlEst `501.63526927`. ## JDUSDT live Option B 7x placement - Andrea requested live placement of `BITGET:JDUSDT.P` Option B with leverage chosen so margin stays below `1000 USDT`, then explicitly confirmed: `CONFIRM JDUSDT LONG 7X ISOLATED LIVE`. - Fresh precheck before placement: JDUSDT open regular/plan orders `0/0`, no JD position observed; ticker around last `32.44`, ask `32.46`, bid `32.44`, mark `32.45`, so entries were passive below market",
-      "recallCount": 4,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.5841159254312513,
+      "totalScore": 2.3835070520639414,
       "maxScore": 0.4082025170326233,
       "firstRecalledAt": "2026-05-21T04:50:50.026Z",
-      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
       "queryHashes": [
         "a05ae017a0d6",
         "1e37e3ebf42e",
         "d0061d60cb02",
-        "626815eb3696"
+        "626815eb3696",
+        "8aa07472a6f0",
+        "3d4cc28b8a82"
       ],
       "recallDays": [
         "2026-05-21",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-23"
       ],
       "conceptTags": [
         "501.63526927",
@@ -6330,19 +6350,22 @@
       "endLine": 31,
       "source": "memory",
       "snippet": "- L3 orderId `1440727193641185281`, clientOid `tvflow_jd_20260519_long7x_L3`, buy/open `121.21 @ 31.68`, SL `31.35`, TP `34.10`. - Postcheck with `--symbol JDUSDT`: regularCount `3`, planCount `0`, all three orders `status=live`, `baseVolume=0`, leverage `7`, marginMode `isolated`, preset SL/TP present. Positions check showed only AAPLUSDT; no JD position yet. - Estimated totals: risk `~100.00 USDT`, reward `~429.52 USDT`, notional `~6523.36 USDT`, estimated margin @7x `~931.91 USDT`. - Drew visual ladder on TradingView Desktop MCP `BITGET:JDUSDT.P` 4H, 3 orders, all Entry/SL/TP segments returned success. Execution summary `reports/live_execution/20260519_jd_long7x_live/summary.json`; post",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8553984999656676,
-      "maxScore": 0.4416470408439636,
+      "totalScore": 1.7117176234722136,
+      "maxScore": 0.44251163005828853,
       "firstRecalledAt": "2026-05-22T03:26:28.215Z",
-      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
       "queryHashes": [
         "978d5d9f4806",
-        "626815eb3696"
+        "626815eb3696",
+        "8aa07472a6f0",
+        "3d4cc28b8a82"
       ],
       "recallDays": [
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-23"
       ],
       "conceptTags": [
         "tvflow-jd-20260519-long7x-l3",
@@ -6393,18 +6416,21 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "# 2026-05-22 — tvflow durable memory ## JDUSDT SL investigation - Andrea asked why the JDUSDT.P live 7x long ladder lost about `160 USDT` despite planned SL `31.35` and planned risk `~100 USDT`. - Read-only Bitget account export for `JDUSDT` since 2026-05-19 found the original entry orders all filled: L1 `28.09 @ 32.24`, L2 `55.56 @ 31.98`, L3 `121.21 @ 31.68`, each with preset SL `31.35`. - Stop exits were Bitget system `loss_market` orders created around `2026-05-21T13:33:29Z`, not missing/cancelled SLs. Aggregate position was `204.86 JD`, blended entry `31.83815`, blended exit `31.04958`. - Planned SL risk at `31.35` was `~100.00 USDT`; actual price loss was `~161.55 USDT`; close fees we",
-      "recallCount": 1,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.44014145731925963,
-      "maxScore": 0.44014145731925963,
+      "totalScore": 1.3520322799682616,
+      "maxScore": 0.47375506460666655,
       "firstRecalledAt": "2026-05-22T03:55:54.970Z",
-      "lastRecalledAt": "2026-05-22T03:55:54.970Z",
+      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
       "queryHashes": [
-        "626815eb3696"
+        "626815eb3696",
+        "8aa07472a6f0",
+        "3d4cc28b8a82"
       ],
       "recallDays": [
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-23"
       ],
       "conceptTags": [
         "jdusdt.p",
@@ -6455,15 +6481,16 @@
       "endLine": 36,
       "source": "memory",
       "snippet": "- Used one-shot process env `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRADING=true` for placement commands only; did not persistently enable `.env.local` live gate. - Journal refreshed with `-NoSend`; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-21T16-13-39-267Z.xls`. Direct ARM postcheck is the source of truth for the fresh resting orders. - Drew the two-order long ladder on TradingView Desktop MCP `BITGET:ARMUSDT.P` 4H. Execution summary saved at `reports/live_execution/20260521_arm_optiona_3x_live/summary.json`. ## MRVLUSDT live Option B 4x placement - Andrea requested",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.42202111184597013,
+      "totalScore": 0.8216383188962936,
       "maxScore": 0.42202111184597013,
       "firstRecalledAt": "2026-05-22T16:59:18.302Z",
-      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
       "queryHashes": [
-        "1e96b4a778c7"
+        "1e96b4a778c7",
+        "f150ed0b0db1"
       ],
       "recallDays": [
         "2026-05-22"
@@ -6632,6 +6659,228 @@
         "entry-current",
         "0.50",
         "against/corrective"
+      ]
+    },
+    "memory:memory/2026-05-21.md:1:13": {
+      "key": "memory:memory/2026-05-21.md:1:13",
+      "path": "memory/2026-05-21.md",
+      "startLine": 1,
+      "endLine": 13,
+      "source": "memory",
+      "snippet": "# 2026-05-21 — tvflow durable memory ## APPUSDT live Option B 3x placement - Andrea requested live placement of `APPUSDT.P` Option B best-fill-probability long ladder and then explicitly confirmed: `CONFIRM APPUSDT LONG 3X ISOLATED LIVE`. - Fresh precheck before placement: APPUSDT regular orders `0`, plan orders `0`, no APP position observed. Ticker before confirmation was around last `484.69`; all buy-limit entries `482.50 / 477.20 / 473.90` were passive below market. - Set/confirmed isolated margin mode and long leverage `3x`. - APPUSDT size precision is `0.01`; rounded user quantities down from `1.101 / 2.011 / 2.837` to `1.10 / 2.01 / 2.83` to avoid exceeding planned risk. - Placed live",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3855152696371078,
+      "maxScore": 0.3855152696371078,
+      "firstRecalledAt": "2026-05-22T20:40:21.726Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
+      "queryHashes": [
+        "f150ed0b0db1"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "appusdt.p",
+        "best-fill-probability",
+        "484.69",
+        "buy-limit",
+        "482.50",
+        "477.20",
+        "473.90",
+        "set/confirmed"
+      ]
+    },
+    "memory:memory/2026-05-21.md:19:27": {
+      "key": "memory:memory/2026-05-21.md:19:27",
+      "path": "memory/2026-05-21.md",
+      "startLine": 19,
+      "endLine": 27,
+      "source": "memory",
+      "snippet": "- Fresh precheck before placement: ARMUSDT regular orders `0`, plan orders `0`, no ARM position observed. Ticker before placement was around last `289.19`; after placement around last/mark `288.66`, so buy-limit entries `260.20 / 251.60` were passive below market. - Set/confirmed isolated margin mode and long leverage `3x`. - ARMUSDT size precision is `0.01`; rounded user quantities down from `1.961 / 5.085` to `1.96 / 5.08` to avoid exceeding planned risk. - Placed live Bitget ARMUSDT isolated 3x regular limit buys with preset TP/SL: - L1 orderId `1441389673002463236`, clientOid `tvflow_arm_20260521_optA3x_L1`, buy/open `1.96 @ 260.20`, SL `239.80`, TP `287.10`. - L2 orderId `1441389677",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.38151290416717526,
+      "maxScore": 0.38151290416717526,
+      "firstRecalledAt": "2026-05-22T20:40:21.726Z",
+      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
+      "queryHashes": [
+        "f150ed0b0db1"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "289.19",
+        "last/mark",
+        "288.66",
+        "buy-limit",
+        "260.20",
+        "251.60",
+        "set/confirmed",
+        "0.01"
+      ]
+    },
+    "memory:memory/2026-05-22.md:9:17": {
+      "key": "memory:memory/2026-05-22.md:9:17",
+      "path": "memory/2026-05-22.md",
+      "startLine": 9,
+      "endLine": 17,
+      "source": "memory",
+      "snippet": "- Root cause: Bitget preset SL executed as market stop into a thin JDUSDT order book during a fast sell sweep. The SL trigger existed, but execution was not guaranteed at `31.35`. - Investigation report/export saved under `reports/investigations/jd_sl_20260522/`: `JDUSDT_stop_loss_investigation.md`, `JDUSDT_stop_loss_investigation_export.zip`, raw account history, account fill distribution CSV, public 1m candles, and public trades window. - Durable rule: future live TradFi-perp ladders need a live liquidity/slippage gate; planned risk must include stop-market slippage on thin symbols. If depth/recent-volume cannot absorb the full stop size within tolerance, reduce size/leverage, skip large L",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8493297487497329,
+      "maxScore": 0.44128338098526,
+      "firstRecalledAt": "2026-05-22T21:13:18.500Z",
+      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
+      "queryHashes": [
+        "8aa07472a6f0",
+        "3d4cc28b8a82"
+      ],
+      "recallDays": [
+        "2026-05-22",
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "31.35",
+        "report/export",
+        "tradfi-perp",
+        "liquidity/slippage",
+        "stop-market",
+        "depth/recent-volume",
+        "size/leverage",
+        "root"
+      ]
+    },
+    "memory:memory/2026-05-18.md:35:41": {
+      "key": "memory:memory/2026-05-18.md:35:41",
+      "path": "memory/2026-05-18.md",
+      "startLine": 35,
+      "endLine": 41,
+      "source": "memory",
+      "snippet": "- Drew the 3-order long ladder on TradingView Desktop MCP `BITGET:AAPLUSDT.P` 4H. Journal refreshed NoSend; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-18T09-15-26-548Z.xls`; openOrders `8`, positions `1`. Execution summary saved at `reports/live_execution/20260518_aapl_optionb_10x_live/summary.json`. ## Bitget trade report refresh / performance counts - Refreshed Bitget trade journal NoSend on 2026-05-18 16:49 Berlin via `scripts/run_bitget_journal_update.ps1 -NoSend -Symbols GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT,FUTUUSDT,MRVLUSDT`. - Latest artifacts: workbook `reports/t",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7937526255846024,
+      "maxScore": 0.4033640384674072,
+      "firstRecalledAt": "2026-05-22T21:13:18.500Z",
+      "lastRecalledAt": "2026-05-23T04:43:48.407Z",
+      "queryHashes": [
+        "8aa07472a6f0",
+        "6ee7c2bdc91a"
+      ],
+      "recallDays": [
+        "2026-05-22",
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "3-order",
+        "aaplusdt.p",
+        "reports/t",
+        "drew",
+        "the",
+        "order",
+        "ladder",
+        "tradingview"
+      ]
+    },
+    "memory:memory/2026-05-07.md:37:44": {
+      "key": "memory:memory/2026-05-07.md:37:44",
+      "path": "memory/2026-05-07.md",
+      "startLine": 37,
+      "endLine": 44,
+      "source": "memory",
+      "snippet": "- Updated `reports/deep_analysis/2026-05-05_AAPLUSDT.md`, `PROJECT_STATE.md`, and `scripts/run_bitget_journal_update.ps1` default tracked symbols to include `NEARUSDT` so future journal refreshes keep the active NEAR ladder. ## Bitget journal manual-change detection hardening - User asked whether the journal would have independently detected the AAPLUSDT manual cancellation if they had not reported it. - Answer/assessment: the previous logger fetched the correct current Bitget state for tracked symbols and recent order history, so the AAPL cancellation was inferable from AAPL open orders `0` plus `status canceled` order-history rows; however, it did not explicitly compare previous active-or",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3866172224283218,
+      "maxScore": 0.3866172224283218,
+      "firstRecalledAt": "2026-05-22T21:13:18.500Z",
+      "lastRecalledAt": "2026-05-22T21:13:18.500Z",
+      "queryHashes": [
+        "8aa07472a6f0"
+      ],
+      "recallDays": [
+        "2026-05-22"
+      ],
+      "conceptTags": [
+        "project-state.md",
+        "manual-change",
+        "answer/assessment",
+        "order-history",
+        "active-or",
+        "updated",
+        "reports",
+        "deep-analysis"
+      ]
+    },
+    "memory:memory/2026-05-22.md:44:48": {
+      "key": "memory:memory/2026-05-22.md:44:48",
+      "path": "memory/2026-05-22.md",
+      "startLine": 44,
+      "endLine": 48,
+      "source": "memory",
+      "snippet": "- Andrea asked to add the JD-style liquidity/slippage metrics to the recurring Bitget journal report so threshold tuning can be done periodically from statistics. - Added `bitget-futures-harness/scripts/export-market-metrics.js` and npm alias `market-metrics`; it fetches Bitget ticker + orderbook for tracked symbols and computes spread bps, 24h quote volume, holding amount, and bid/ask depth within 0.5%, 1%, and 2%. - Patched `scripts/run_bitget_journal_update.ps1` default tracked symbols to include current/recent TradFi symbols `NVDAUSDT,FUTUUSDT,MRVLUSDT,JDUSDT,ARMUSDT,APPUSDT,CLUSDT`, exports `raw_market_metrics_latest.json`, and passes it into the workbook builder. - Patched `scripts/bui",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4060113161802292,
+      "maxScore": 0.4060113161802292,
+      "firstRecalledAt": "2026-05-23T04:43:48.407Z",
+      "lastRecalledAt": "2026-05-23T04:43:48.407Z",
+      "queryHashes": [
+        "6ee7c2bdc91a"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "jd-style",
+        "liquidity/slippage",
+        "market-metrics",
+        "bid/ask",
+        "0.5",
+        "current/recent",
+        "raw-market-metrics-latest.json",
+        "scripts/bui"
+      ]
+    },
+    "memory:memory/2026-05-22.md:37:45": {
+      "key": "memory:memory/2026-05-22.md:37:45",
+      "path": "memory/2026-05-22.md",
+      "startLine": 37,
+      "endLine": 45,
+      "source": "memory",
+      "snippet": "- Read-only Bitget livecheck: CLUSDT regular orders `0`, plan orders `0`, no CLUSDT position; live reference around last/mark `95.945`, bid/ask `95.95/95.963`. - Final report saved `reports/deep_analysis/2026-05-22_CLUSDT_deep_analysis.md`. Verdict: `WAIT FOR OPTION A SELL-RALLY`; current market is bearish but current entry is bad because price sits near 95.7/95.1 support. - Option A valid: single short sell-limit `29.54 @ 101.913`, SL `105.300`, TP `94.500`, planned loss `~100.04`, profit `~219.05`, R:R `~2.19`, estimated margin @4x `~752.6`. Uses wider structural SL above 104-105 resistance cluster instead of packet's tighter 103.537 warning stop. - Option B rejected: breakdown below 94.45",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7922021895647049,
+      "maxScore": 0.4090571343898773,
+      "firstRecalledAt": "2026-05-23T04:43:48.407Z",
+      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
+      "queryHashes": [
+        "6ee7c2bdc91a",
+        "3d4cc28b8a82"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "read-only",
+        "last/mark",
+        "95.945",
+        "bid/ask",
+        "95.95/95.963",
+        "sell-rally",
+        "95.7/95.1",
+        "sell-limit"
       ]
     }
   }

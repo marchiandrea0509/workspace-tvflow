@@ -1,7 +1,7 @@
 param(
   [string]$Target = '1499631210283008002',
   [string]$Since = '2020-01-01',
-  [string]$Symbols = 'GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT',
+  [string]$Symbols = 'GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT,FUTUUSDT,MRVLUSDT,JDUSDT,ARMUSDT,APPUSDT,CLUSDT',
   [string]$MessagePrefix = '',
   [switch]$NoSend,
   [switch]$Strict
@@ -29,6 +29,8 @@ $historyLatest = Join-Path $reportDir 'raw_bitget_history_latest.json'
 $historyStamped = Join-Path $reportDir "raw_bitget_history_$stamp.json"
 $positionsLatest = Join-Path $reportDir 'raw_positions_latest.json'
 $positionsStamped = Join-Path $reportDir "raw_positions_$stamp.json"
+$marketMetricsLatest = Join-Path $reportDir 'raw_market_metrics_latest.json'
+$marketMetricsStamped = Join-Path $reportDir "raw_market_metrics_$stamp.json"
 $workbookLatest = Join-Path $reportDir 'bitget_futures_trade_report_latest.xls'
 $workbookStamped = Join-Path $reportDir "bitget_futures_trade_report_$stamp.xls"
 $csvLatest = Join-Path $reportDir 'bitget_futures_order_history_latest.csv'
@@ -72,12 +74,24 @@ foreach ($sym in $tracked) {
   $openOrderFiles += $openLatest
 }
 
+if ($tracked.Count -gt 0) {
+  $trackedCsv = ($tracked -join ',')
+  & node bitget-futures-harness\scripts\export-market-metrics.js --symbols $trackedCsv > $marketMetricsLatest
+  if ($LASTEXITCODE -ne 0) {
+    if ($Strict) { throw "export-market-metrics.js failed with exit code $LASTEXITCODE" }
+  } elseif (Test-Path $marketMetricsLatest) {
+    Copy-Item $marketMetricsLatest $marketMetricsStamped -Force
+  }
+}
+
 $openArgs = @()
 foreach ($f in $openOrderFiles) { $openArgs += @('--open-orders-json', $f) }
 $previousOpenArgs = @()
 foreach ($f in $previousOpenOrderFiles) { $previousOpenArgs += @('--previous-open-orders-json', $f) }
+$marketArgs = @()
+if (Test-Path $marketMetricsLatest) { $marketArgs += @('--market-metrics-json', $marketMetricsLatest) }
 
-& python scripts\build_bitget_trade_report.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest --out-xls $workbookLatest --out-csv $csvLatest
+& python scripts\build_bitget_trade_report.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest @marketArgs --out-xls $workbookLatest --out-csv $csvLatest
 if ($LASTEXITCODE -ne 0) { throw "build_bitget_trade_report.py failed with exit code $LASTEXITCODE" }
 Copy-Item $workbookLatest $workbookStamped -Force
 Copy-Item $csvLatest $csvStamped -Force
@@ -113,6 +127,8 @@ $summary = @($history.results | ForEach-Object { [pscustomobject]@{ label = $_.l
   workbook = $workbookLatest
   workbookSnapshot = $workbookStamped
   csv = $csvLatest
+  marketMetrics = $marketMetricsLatest
+  marketMetricsSnapshot = $marketMetricsStamped
   messages = $messagesLatest
   messagesSnapshot = $messagesStamped
   sent = -not [bool]$NoSend

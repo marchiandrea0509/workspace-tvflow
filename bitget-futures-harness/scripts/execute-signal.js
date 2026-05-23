@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { BitgetClient, getDefaultTradingConfig, assertPlacementAllowed } = require('../lib/bitgetClient');
 const { parseArgs, pickDefined } = require('../lib/cli');
+const { assertLiquidityGateForLiveOpenOrder, spawnPostFillLiquidityMonitor } = require('../lib/liquidityGate');
 
 (async () => {
   const args = parseArgs(process.argv.slice(2));
@@ -55,6 +56,17 @@ const { parseArgs, pickDefined } = require('../lib/cli');
   console.log(JSON.stringify(plan, null, 2));
   if (!send) return;
 
+  const gateArgs = {
+    ...args,
+    gateMaxQty: args.gateMaxQty || signal.gateMaxQty || signal.maxQty,
+    gatePositionNotional: args.gatePositionNotional || signal.gatePositionNotional || signal.positionNotional,
+    gatePlannedRisk: args.gatePlannedRisk || signal.gatePlannedRisk || signal.plannedRiskUsdt || signal.plannedRisk,
+    gateStopLossPrice: args.gateStopLossPrice || signal.gateStopLossPrice || signal.presetStopLossPrice,
+    gateSide: args.gateSide || signal.gateSide || signal.holdSide,
+    liquidityMonitorPrefix: args.liquidityMonitorPrefix || signal.liquidityMonitorPrefix,
+  };
+  const liquidityGate = await assertLiquidityGateForLiveOpenOrder(gateArgs, orderPayload, cfg);
+
   const client = new BitgetClient();
 
   const outputs = {};
@@ -79,9 +91,10 @@ const { parseArgs, pickDefined } = require('../lib/cli');
   }
 
   outputs.order = await client.post('/api/v2/mix/order/place-order', orderPayload);
+  const liquidityMonitor = spawnPostFillLiquidityMonitor(gateArgs, orderPayload, liquidityGate);
 
-  console.log(JSON.stringify({ ok: true, outputs }, null, 2));
+  console.log(JSON.stringify({ ok: true, outputs, liquidityMonitor }, null, 2));
 })().catch((err) => {
   console.error(err.message || String(err));
-  process.exit(1);
+  process.exitCode = 1;
 });

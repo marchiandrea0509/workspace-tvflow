@@ -9,6 +9,7 @@
     "all-balances": "node scripts/all-balances.js",
     "spot-assets": "node scripts/spot-assets.js",
     "transfer": "node scripts/transfer.js",
+    "market-metrics": "node scripts/export-market-metrics.js",
     "positions": "node scripts/positions.js",
     "list-open-orders": "node scripts/list-open-orders.js",
     "set-margin-mode": "node scripts/set-margin-mode.js",
