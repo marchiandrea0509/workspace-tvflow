@@ -1,0 +1,20 @@
+{
+  "name": "Trading Alert Watchdog",
+  "enabled": false,
+  "dmTarget": "user:1322306175865323552",
+  "intervalMs": 60000,
+  "dedupeWindowMinutes": 30,
+  "notes": "Template config. Add concrete rules before enabling. Supported source patterns should be implemented per rule: bitget_liquidity_gate, bitget_position_pnl, price_level, file_signal, or screener_signal.",
+  "rules": [
+    {
+      "id": "example_price_level_disabled",
+      "enabled": false,
+      "source": "price_level",
+      "symbol": "JDUSDT",
+      "productType": "USDT-FUTURES",
+      "condition": "last <= 29.80",
+      "severity": "critical",
+      "message": "JDUSDT touched SL zone 29.80"
+    }
+  ]
+}

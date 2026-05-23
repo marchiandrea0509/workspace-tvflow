@@ -67,6 +67,86 @@ function candleRows(response) {
   })).filter((row) => Number.isFinite(row.ts));
 }
 
+function asContractRow(response, symbol) {
+  const rows = response?.data || [];
+  if (!Array.isArray(rows)) return {};
+  return rows.find((row) => row?.symbol === symbol) || {};
+}
+
+function statusRank(status) {
+  if (status === STATUS.GREEN) return 0;
+  if (status === STATUS.WARN) return 1;
+  return 2;
+}
+
+function worseStatus(a, b) {
+  return statusRank(a) >= statusRank(b) ? a : b;
+}
+
+function computeRwaActiveSessionWarmup({ candles120, positionNotional }) {
+  const rows = [...candles120].sort((a, b) => a.ts - b.ts);
+  const minActiveQuoteVolume = Math.max(100, positionNotional * 0.01);
+  const inactiveStreakNeeded = 5;
+  const minActiveCandles = 10;
+  const maxWarmupCandles = 60;
+
+  let inactiveStreak = 0;
+  let boundary = -1;
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    const qv = Number(rows[i]?.quoteVolume || 0);
+    if (qv < minActiveQuoteVolume) inactiveStreak += 1;
+    else inactiveStreak = 0;
+    if (inactiveStreak >= inactiveStreakNeeded) {
+      boundary = i + inactiveStreak;
+      break;
+    }
+  }
+
+  const fallbackRecentOnly = boundary < 0;
+  const window = fallbackRecentOnly ? rows.slice(-30) : rows.slice(boundary);
+  const activeRows = window.filter((row) => Number(row.quoteVolume || 0) >= minActiveQuoteVolume);
+  const activeVolumes = activeRows.map((row) => Number(row.quoteVolume || 0)).filter(Number.isFinite);
+  const inactiveCount = Math.max(0, window.length - activeRows.length);
+  const inactivePct = window.length ? (inactiveCount / window.length) * 100 : 100;
+  const activeMedianQuoteVolume = percentile(activeVolumes, 50);
+  const activeP25QuoteVolume = percentile(activeVolumes, 25);
+  const activeAvgQuoteVolume = activeVolumes.length ? activeVolumes.reduce((a, b) => a + b, 0) / activeVolumes.length : 0;
+  const ratioPct = activeMedianQuoteVolume > 0 ? (positionNotional / activeMedianQuoteVolume) * 100 : Number.POSITIVE_INFINITY;
+  const sampleStatus = activeRows.length >= minActiveCandles && window.length <= maxWarmupCandles ? STATUS.GREEN : STATUS.BLOCK;
+  const activityStatus = sampleStatus === STATUS.GREEN ? metricStatus(inactivePct, 10, 25) : STATUS.BLOCK;
+  let volumeStatus = sampleStatus === STATUS.GREEN ? metricStatus(ratioPct, 20, 35) : STATUS.BLOCK;
+  // If Bitget RWA futures are continuously quoted and never show a clean
+  // inactive-to-active boundary, allow a recent-liquidity override only as
+  // YELLOW at best. That prevents stale p10 candles from hard-blocking while
+  // still forcing explicit confirmation for live placement.
+  if (fallbackRecentOnly && volumeStatus === STATUS.GREEN) volumeStatus = STATUS.WARN;
+
+  return {
+    applicable: activeRows.length >= minActiveCandles && window.length <= maxWarmupCandles,
+    reason: activeRows.length < minActiveCandles
+      ? 'not enough active-session candles yet'
+      : (window.length > maxWarmupCandles
+        ? 'warmup window already mature; use normal p10'
+        : (fallbackRecentOnly ? 'no inactive-to-active boundary; recent RWA liquidity override is confirmation-gated' : 'recent inactive-to-active transition detected')),
+    fallbackRecentOnly,
+    minActiveQuoteVolume,
+    inactiveStreakNeeded,
+    minActiveCandles,
+    maxWarmupCandles,
+    windowCandles: window.length,
+    activeCandles: activeRows.length,
+    inactiveCandles: inactiveCount,
+    inactivePct,
+    activeMedianQuoteVolume,
+    activeP25QuoteVolume,
+    activeAvgQuoteVolume,
+    ratioPct,
+    activityStatus,
+    volumeStatus,
+    status: worseStatus(activityStatus, volumeStatus),
+  };
+}
+
 function walkBook(levels, qty) {
   let remaining = qty;
   let consumedQty = 0;
@@ -153,9 +233,20 @@ function computeReducedSizeProposal({ metrics, inputs, simulation, depth }) {
   }
 
   if (metrics.volumeStress.status === STATUS.BLOCK || metrics.volumeStress.status === STATUS.WARN) {
-    const maxNotional = metrics.volumeStress.p10QuoteVolume * 0.10;
-    if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'position notional < 10% of p10 1m quote volume', scale: maxNotional / positionNotional });
-    else blockers.push('p10 1m quote volume is zero/unavailable');
+    if (metrics.volumeStress.effectiveMode === 'rwa_active_session_warmup') {
+      const w = metrics.rwaActiveSessionWarmup || {};
+      if (w.fallbackRecentOnly && w.status === STATUS.WARN) {
+        blockers.push('RWA recent-liquidity override is confirmation-gated, not size-fixable to GREEN');
+      } else {
+        const maxNotional = Number(w.activeMedianQuoteVolume || 0) * 0.20;
+        if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'position notional < 20% of active-session median 1m quote volume', scale: maxNotional / positionNotional });
+        else blockers.push('active-session median 1m quote volume is zero/unavailable');
+      }
+    } else {
+      const maxNotional = metrics.volumeStress.p10QuoteVolume * 0.10;
+      if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'position notional < 10% of p10 1m quote volume', scale: maxNotional / positionNotional });
+      else blockers.push('p10 1m quote volume is zero/unavailable');
+    }
   }
 
   if ((metrics.simSlippage.status === STATUS.BLOCK || metrics.simSlippage.status === STATUS.WARN) && simulation.consumedLevels?.length) {
@@ -212,12 +303,16 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
   const plannedRiskUsdt = maybeN(input.plannedRiskUsdt) ?? (entryPrice ? Math.abs(entryPrice - slPrice) * maxQty : undefined);
   if (!Number.isFinite(plannedRiskUsdt) || plannedRiskUsdt <= 0) throw new Error('Liquidity gate requires --plannedRiskUsdt or entry/SL risk derivation');
 
-  const [tickerRaw, candles60Raw, candles120Raw, orderbookRaw] = await Promise.all([
+  const [tickerRaw, candles60Raw, candles120Raw, orderbookRaw, contractsRaw] = await Promise.all([
     c.get('/api/v2/mix/market/ticker', { symbol, productType }),
     c.get('/api/v2/mix/market/candles', { symbol, productType, granularity: '1m', limit: '60' }),
     c.get('/api/v2/mix/market/candles', { symbol, productType, granularity: '1m', limit: '120' }),
     c.get('/api/v2/mix/market/orderbook', { symbol, productType, limit: '50' }),
+    c.get('/api/v2/mix/market/contracts', { productType }),
   ]);
+
+  const contract = asContractRow(contractsRaw, symbol);
+  const isRwa = String(contract.isRwa || '').toUpperCase() === 'YES';
 
   const ticker = asTickerRow(tickerRaw);
   const bid = n(ticker.bidPr, 'ticker.bidPr');
@@ -236,6 +331,18 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
   const p10QuoteVolume = percentile(candles120.map((row) => row.quoteVolume), 10);
   const p10BaseVolume = percentile(candles120.map((row) => row.baseVolume), 10);
   const volumeStressPct = p10QuoteVolume > 0 ? (positionNotional / p10QuoteVolume) * 100 : Number.POSITIVE_INFINITY;
+  const normalDeadStatus = metricStatus(deadPct, 10, 15);
+  const normalVolumeStressStatus = metricStatus(volumeStressPct, 10, 20);
+  const rwaActiveSessionWarmup = isRwa ? computeRwaActiveSessionWarmup({ candles120, positionNotional }) : { applicable: false, reason: 'symbol is not marked isRwa=YES' };
+  const useRwaWarmup = isRwa
+    && rwaActiveSessionWarmup.applicable
+    && (normalDeadStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.WARN);
+  const effectiveDeadStatus = useRwaWarmup && rwaActiveSessionWarmup.activityStatus !== STATUS.BLOCK
+    ? rwaActiveSessionWarmup.activityStatus
+    : normalDeadStatus;
+  const effectiveVolumeStressStatus = useRwaWarmup && rwaActiveSessionWarmup.volumeStatus !== STATUS.BLOCK
+    ? rwaActiveSessionWarmup.volumeStatus
+    : normalVolumeStressStatus;
 
   const orderbook = orderbookRaw.data || { bids: [], asks: [] };
   const simulation = simulateStopExit({ orderbook, positionSide, maxQty, slPrice, plannedRiskUsdt });
@@ -261,15 +368,20 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
       pct: deadPct,
       avgVolume60,
       sampleSize: vols60.length,
-      status: metricStatus(deadPct, 10, 15),
+      normalStatus: normalDeadStatus,
+      status: effectiveDeadStatus,
+      effectiveMode: effectiveDeadStatus !== normalDeadStatus ? 'rwa_active_session_warmup' : 'normal_60m',
     },
     volumeStress: {
       p10QuoteVolume,
       p10BaseVolume,
       positionNotional,
       ratioPct: volumeStressPct,
-      status: metricStatus(volumeStressPct, 10, 20),
+      normalStatus: normalVolumeStressStatus,
+      status: effectiveVolumeStressStatus,
+      effectiveMode: effectiveVolumeStressStatus !== normalVolumeStressStatus ? 'rwa_active_session_warmup' : 'normal_p10_120m',
     },
+    rwaActiveSessionWarmup,
     simSlippage: {
       simulatedExitAvg: simulation.avgPrice,
       worstPrice: simulation.worstPrice,
@@ -306,7 +418,7 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
     metrics.simSlippage.status,
   ];
   const result = metricStatuses.includes(STATUS.BLOCK) ? 'RED' : (metricStatuses.includes(STATUS.WARN) ? 'YELLOW' : 'GREEN');
-  const inputs = { symbol, productType, positionSide, maxQty, slPrice, entryPrice, positionNotional, plannedRiskUsdt };
+  const inputs = { symbol, productType, positionSide, maxQty, slPrice, entryPrice, positionNotional, plannedRiskUsdt, isRwa };
   const reducedSizeProposal = computeReducedSizeProposal({ metrics, inputs, simulation, depth });
   delete metrics._orderbook;
 
@@ -336,6 +448,10 @@ function formatGateReport(gate) {
   lines.push(`24h volume ${fmtNum(m.volume24h.quoteVolume, 2)} / req ${fmtNum(m.volume24h.requiredQuoteVolume, 2)} ${m.volume24h.status}`);
   lines.push(`Dead candles ${fmtNum(m.deadCandles.pct, 2)}% (${m.deadCandles.count}/${m.deadCandles.sampleSize}) ${m.deadCandles.status}`);
   lines.push(`Vol stress ${fmtNum(m.volumeStress.ratioPct, 2)}% of p10 1m quote vol ${m.volumeStress.status}`);
+  if (m.rwaActiveSessionWarmup?.applicable && (m.deadCandles.effectiveMode === 'rwa_active_session_warmup' || m.volumeStress.effectiveMode === 'rwa_active_session_warmup')) {
+    const w = m.rwaActiveSessionWarmup;
+    lines.push(`RWA warmup ${w.activeCandles}/${w.windowCandles} active candles, median 1m ${fmtNum(w.activeMedianQuoteVolume, 2)} USDT, ratio ${fmtNum(w.ratioPct, 2)}% ${w.status}`);
+  }
   lines.push(`Sim slippage ${fmtNum(m.simSlippage.extraLossUsdt, 2)} USDT / ${fmtNum(m.simSlippage.extraLossPct, 2)}% ${m.simSlippage.status}`);
   lines.push(`Depth to SL ${fmtNum(m.depthToSl.notional, 2)} / req ${fmtNum(m.depthToSl.requiredNotional, 2)} ${m.depthToSl.status}`);
   lines.push('─────────────────────────────');

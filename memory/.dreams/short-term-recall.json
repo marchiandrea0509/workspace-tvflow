@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-23T05:12:24.743Z",
+  "updatedAt": "2026-05-23T16:08:54.301Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -119,13 +119,13 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "- Live GME ladder details: L1 orderId `1432706985806688257`, clientOid `tvflow-gme-ladder-20260427-l1`, buy `26.66` @ `25.10`, TP `26.35`, SL `23.85`; L2 orderId `1432706988700758017`, clientOid `tvflow-gme-ladder-20260427-l2`, buy `35.08` @ `24.80`, TP `27.10`, SL `23.85`; L3 orderId `1432706991322198018`, clientOid `tvflow-gme-ladder-20260427-l3`, buy `55.57` @ `24.45`, TP `28.50`, SL `23.85`. - Exported TradingView chart data CSVs for all 30 symbols visible in watchlist radingview_real_market_stocks_watchlist using chart layout Startegy test / chart URL https://www.tradingview.com/chart/0PgkxOVV/, interval 240 / 4H. Output folder: C:\\Users\\anmar\\.openclaw\\workspace\\tradingview\\reports\\s",
-      "recallCount": 17,
+      "recallCount": 18,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 6.801541122794152,
+      "totalScore": 7.17942345738411,
       "maxScore": 0.4752642780542373,
       "firstRecalledAt": "2026-04-28T19:09:46.475Z",
-      "lastRecalledAt": "2026-05-14T04:57:39.530Z",
+      "lastRecalledAt": "2026-05-23T16:08:54.301Z",
       "queryHashes": [
         "e3e1321e6742",
         "aa50b6b9ac9f",
@@ -143,7 +143,8 @@
         "c49bf331721f",
         "a94d27845c18",
         "acd55a1d85dc",
-        "cb9c4fdc8bcc"
+        "cb9c4fdc8bcc",
+        "5bede2978355"
       ],
       "recallDays": [
         "2026-04-28",
@@ -154,7 +155,8 @@
         "2026-05-09",
         "2026-05-10",
         "2026-05-12",
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-23"
       ],
       "conceptTags": [
         "tvflow-gme-ladder-20260427-l1",
@@ -936,13 +938,13 @@
       "endLine": 153,
       "source": "memory",
       "snippet": "- Placed live reduce-only close limit order for 50%: `58.65 @ 25.05`, `tradeSide: close`, `posSide: long`, `side: buy`, `marginMode: isolated`, leverage `2`, clientOid `tvflow_gme_20260430_partial_tp_50`, orderId `1433842998482464769`. - Verification after placement: order status `live`; position now `total: 117.31`, `locked: 58.65`, `available: 58.66`. ## TradingView Strategy Test subset export - Time: 2026-04-30 ~23:34 Europe/Berlin - User requested Strategy Test layout chart-data extraction for 19 BITGET_TRADFI assets: AAPL, AMZN, ASML, BABA, COIN, CRCL, GOOGL, HOOD, MCD, META, MSTR, NVDA, PLTR, TSLA, ARM, GME, INTC, MRVL, MSFT. - Exported via `tradingview/scripts/export_strategy_test_s",
-      "recallCount": 7,
+      "recallCount": 8,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.017823005946804,
+      "totalScore": 3.3744294655644187,
       "maxScore": 0.7304618877493629,
       "firstRecalledAt": "2026-05-02T05:36:54.376Z",
-      "lastRecalledAt": "2026-05-03T12:35:33.226Z",
+      "lastRecalledAt": "2026-05-23T16:08:54.301Z",
       "queryHashes": [
         "9f638a8ca7cb",
         "895793ee70c6",
@@ -950,11 +952,13 @@
         "a2c88a43dcb4",
         "6b6b50b2574f",
         "9d45e52b55e2",
-        "93e169d2b5ba"
+        "93e169d2b5ba",
+        "5bede2978355"
       ],
       "recallDays": [
         "2026-05-02",
-        "2026-05-03"
+        "2026-05-03",
+        "2026-05-23"
       ],
       "conceptTags": [
         "reduce-only",
@@ -4184,24 +4188,26 @@
       "endLine": 88,
       "source": "memory",
       "snippet": "- Option A / BEST QUALITY: 2-leg long DIP_LADDER `290.53 qty 11.52` and `289.24 qty 27.52`, SL `287.06`, TP `294.97`, risk `99.97`, reward `208.84`, blended entry `289.621`, all-filled R:R `2.09`, leverage `8x`, margin `1413.35`, static safety PASS. Lower fill probability but cleaner R:R. - Option B / BEST FILL PROBABILITY: 2-leg long DIP_LADDER `291.74 qty 12.77` and `290.53 qty 31.25`, SL `288.61`, TP `294.97`, risk `99.97`, reward `180.00`, blended entry `290.881`, all-filled R:R `1.80`, leverage `10x`, margin `1280.46`, static safety PASS. Higher fill probability but weaker L1-only R:R (`1.03`). - A and B are alternatives, not simultaneous. Both are `PLACEABLE_CONDITIONAL_ONLY`; market o",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.0811636835336684,
+      "totalScore": 2.452747809886932,
       "maxScore": 0.49884590506553644,
       "firstRecalledAt": "2026-05-12T17:17:09.564Z",
-      "lastRecalledAt": "2026-05-18T07:14:34.615Z",
+      "lastRecalledAt": "2026-05-23T08:39:26.315Z",
       "queryHashes": [
         "6cb258bd9efe",
         "ca6509b31619",
         "f3bc4fe32b70",
         "0930a95bed2e",
-        "fc23d4e19743"
+        "fc23d4e19743",
+        "1d86fa8177fa"
       ],
       "recallDays": [
         "2026-05-12",
         "2026-05-17",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-23"
       ],
       "conceptTags": [
         "2-leg",
@@ -4552,24 +4558,26 @@
       "endLine": 96,
       "source": "memory",
       "snippet": "- User said they manually cancelled the prior NVDAUSDT orders and requested a new proposal: replace L1 with `219.13`, L2 becomes `218.10`, L3 becomes `217.10`, keep risk `100$`. - Verified read-only state: NVDAUSDT open regular/plan orders `0/0`, no NVDA position; ticker around `221.87`; unrelated INTC long still open. - Proposed revised 6x isolated fixed-TP ladder, keeping shared SL `213.80` and prior TP levels `222.40/224.80/225.80`, sizing to total risk about `99.99 USDT`: L1 `5.73 @ 219.13`, SL `213.80`, TP `222.40`, risk `30.54`, reward `18.74`, RR `0.61`; L2 `8.17 @ 218.10`, SL `213.80`, TP `224.80`, risk `35.13`, reward `54.74`, RR `1.56`; L3 `10.40 @ 217.10`, SL `213.80`, fixed TP `2",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.2683757036924366,
+      "totalScore": 2.625091060996056,
       "maxScore": 0.5006607413291931,
       "firstRecalledAt": "2026-05-13T11:35:28.161Z",
-      "lastRecalledAt": "2026-05-14T22:12:42.700Z",
+      "lastRecalledAt": "2026-05-23T08:39:26.315Z",
       "queryHashes": [
         "a47393d9b308",
         "ff85a948393a",
         "c13ff2553454",
         "7bc1edc6f6eb",
-        "623fa97eb059"
+        "623fa97eb059",
+        "1d86fa8177fa"
       ],
       "recallDays": [
         "2026-05-13",
         "2026-05-14",
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-23"
       ],
       "conceptTags": [
         "219.13",
@@ -5870,18 +5878,20 @@
       "endLine": 46,
       "source": "memory",
       "snippet": "- History summary: orders-history `56`, fills `178`, orders-plan-history `10`; current openOrders `5`, positions `2`; report net PnL estimate `607.9061798 USDT`. - Closed-trade/exit-leg stats since start of reporting (filled `Trade Side=close`, using `Net PnL Est`): total `26`, won `17`, lost `9`, breakeven `0`, win rate `65.38%`, gross wins `919.46192802`, gross losses `-311.55574822`, net `607.9061798`. ## BTCUSDT deep analysis - Andrea requested deep analysis on `BTCUSDT.P`; ran screenshot-first packet `reports/deep_analysis_packets_v2/20260518_193337_BTCUSDT/` with 1D/4H/1H TradingView Desktop screenshots, then ran short-side validation packet `reports/deep_analysis_packets_v2/20260518_",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4166462182998657,
+      "totalScore": 0.8157799988985062,
       "maxScore": 0.4166462182998657,
       "firstRecalledAt": "2026-05-18T19:44:15.096Z",
-      "lastRecalledAt": "2026-05-18T19:44:15.096Z",
+      "lastRecalledAt": "2026-05-23T08:22:55.409Z",
       "queryHashes": [
-        "c223bee16c34"
+        "c223bee16c34",
+        "5f63e689534c"
       ],
       "recallDays": [
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-23"
       ],
       "conceptTags": [
         "orders-history",
@@ -5901,20 +5911,22 @@
       "endLine": 54,
       "source": "memory",
       "snippet": "- Long validation rejected: 4H trend is bearish and below EMA20/50/200; DIP_LADDER long requires bullish/bullish-neutral 4H. - Short validation: directionally preferred as sell-rally/breakdown, but static sell-rally candidate failed R:R (candidate blended R:R about `0.65` with SL around `83.05k` vs TP near `76.0k/75.2k`), and breakdown below `75k` not confirmed yet. - Final report saved to `reports/deep_analysis/2026-05-18_BTCUSDT_deep_analysis.md`; verdict `WAIT / NO_TRADE`. Watch for failed retest `77.6k-78.0k` or confirmed breakdown/retest below `75k` toward `72k`. ## BTCUSDT live short 6x execution - 2026-05-18: User explicitly confirmed `CONFIRM BTCUSDT SHORT 6X ISOLATED LIVE` for two",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8005891054868698,
+      "totalScore": 1.192953038215637,
       "maxScore": 0.4127366870641708,
       "firstRecalledAt": "2026-05-18T19:44:15.096Z",
-      "lastRecalledAt": "2026-05-20T09:32:32.134Z",
+      "lastRecalledAt": "2026-05-23T08:22:55.409Z",
       "queryHashes": [
         "c223bee16c34",
-        "706a54adc532"
+        "706a54adc532",
+        "5f63e689534c"
       ],
       "recallDays": [
         "2026-05-18",
-        "2026-05-20"
+        "2026-05-20",
+        "2026-05-23"
       ],
       "conceptTags": [
         "ema20/50/200",
@@ -6416,17 +6428,18 @@
       "endLine": 10,
       "source": "memory",
       "snippet": "# 2026-05-22 — tvflow durable memory ## JDUSDT SL investigation - Andrea asked why the JDUSDT.P live 7x long ladder lost about `160 USDT` despite planned SL `31.35` and planned risk `~100 USDT`. - Read-only Bitget account export for `JDUSDT` since 2026-05-19 found the original entry orders all filled: L1 `28.09 @ 32.24`, L2 `55.56 @ 31.98`, L3 `121.21 @ 31.68`, each with preset SL `31.35`. - Stop exits were Bitget system `loss_market` orders created around `2026-05-21T13:33:29Z`, not missing/cancelled SLs. Aggregate position was `204.86 JD`, blended entry `31.83815`, blended exit `31.04958`. - Planned SL risk at `31.35` was `~100.00 USDT`; actual price loss was `~161.55 USDT`; close fees we",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.3520322799682616,
+      "totalScore": 1.7468140959739684,
       "maxScore": 0.47375506460666655,
       "firstRecalledAt": "2026-05-22T03:55:54.970Z",
-      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
+      "lastRecalledAt": "2026-05-23T08:22:55.409Z",
       "queryHashes": [
         "626815eb3696",
         "8aa07472a6f0",
-        "3d4cc28b8a82"
+        "3d4cc28b8a82",
+        "5f63e689534c"
       ],
       "recallDays": [
         "2026-05-22",
@@ -6730,16 +6743,18 @@
       "endLine": 17,
       "source": "memory",
       "snippet": "- Root cause: Bitget preset SL executed as market stop into a thin JDUSDT order book during a fast sell sweep. The SL trigger existed, but execution was not guaranteed at `31.35`. - Investigation report/export saved under `reports/investigations/jd_sl_20260522/`: `JDUSDT_stop_loss_investigation.md`, `JDUSDT_stop_loss_investigation_export.zip`, raw account history, account fill distribution CSV, public 1m candles, and public trades window. - Durable rule: future live TradFi-perp ladders need a live liquidity/slippage gate; planned risk must include stop-market slippage on thin symbols. If depth/recent-volume cannot absorb the full stop size within tolerance, reduce size/leverage, skip large L",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.8493297487497329,
+      "totalScore": 1.5951893389225007,
       "maxScore": 0.44128338098526,
       "firstRecalledAt": "2026-05-22T21:13:18.500Z",
-      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
+      "lastRecalledAt": "2026-05-23T11:00:01.499Z",
       "queryHashes": [
         "8aa07472a6f0",
-        "3d4cc28b8a82"
+        "3d4cc28b8a82",
+        "1d86fa8177fa",
+        "01f17779b8ba"
       ],
       "recallDays": [
         "2026-05-22",
@@ -6858,16 +6873,17 @@
       "endLine": 45,
       "source": "memory",
       "snippet": "- Read-only Bitget livecheck: CLUSDT regular orders `0`, plan orders `0`, no CLUSDT position; live reference around last/mark `95.945`, bid/ask `95.95/95.963`. - Final report saved `reports/deep_analysis/2026-05-22_CLUSDT_deep_analysis.md`. Verdict: `WAIT FOR OPTION A SELL-RALLY`; current market is bearish but current entry is bad because price sits near 95.7/95.1 support. - Option A valid: single short sell-limit `29.54 @ 101.913`, SL `105.300`, TP `94.500`, planned loss `~100.04`, profit `~219.05`, R:R `~2.19`, estimated margin @4x `~752.6`. Uses wider structural SL above 104-105 resistance cluster instead of packet's tighter 103.537 warning stop. - Option B rejected: breakdown below 94.45",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7922021895647049,
+      "totalScore": 1.151364928483963,
       "maxScore": 0.4090571343898773,
       "firstRecalledAt": "2026-05-23T04:43:48.407Z",
-      "lastRecalledAt": "2026-05-23T05:12:24.743Z",
+      "lastRecalledAt": "2026-05-23T11:00:01.499Z",
       "queryHashes": [
         "6ee7c2bdc91a",
-        "3d4cc28b8a82"
+        "3d4cc28b8a82",
+        "01f17779b8ba"
       ],
       "recallDays": [
         "2026-05-23"
@@ -6881,6 +6897,194 @@
         "sell-rally",
         "95.7/95.1",
         "sell-limit"
+      ]
+    },
+    "memory:memory/2026-05-18.md:53:59": {
+      "key": "memory:memory/2026-05-18.md:53:59",
+      "path": "memory/2026-05-18.md",
+      "startLine": 53,
+      "endLine": 59,
+      "source": "memory",
+      "snippet": "- Placed S2 live: orderId `1440353990024523779`, clientOid `tvflow_btc_20260518_short6x_S2`, sell/open limit `0.0400 @ 79150`, TP `74950`, preset SL `80650`, status `live`, baseVolume `0`. - Verification list-open-orders: BTC regularCount `2`, planCount `0`; both isolated `6x`, posSide short, status live, baseVolume `0`, presetStopLossPrice `80650` on both full order sizes. - Estimated totals: notional `4658.45 USDT`, margin at 6x `776.41 USDT`, max loss at SL `99.90 USDT`, total TP profit `216.26 USDT`, combined R:R `2.16`. - Drew visual plan on TradingView Desktop MCP `BITGET:BTCUSDT.P` 4H with 2 orders; success. Summary saved `reports/live_execution/20260518_btc_short6x_live/summary.json`",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4232997626066208,
+      "maxScore": 0.4232997626066208,
+      "firstRecalledAt": "2026-05-23T08:22:55.409Z",
+      "lastRecalledAt": "2026-05-23T08:22:55.409Z",
+      "queryHashes": [
+        "5f63e689534c"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "tvflow-btc-20260518-short6x-s2",
+        "sell/open",
+        "0.0400",
+        "list-open-orders",
+        "4658.45",
+        "776.41",
+        "99.90",
+        "216.26"
+      ]
+    },
+    "memory:memory/2026-05-20.md:1:11": {
+      "key": "memory:memory/2026-05-20.md:1:11",
+      "path": "memory/2026-05-20.md",
+      "startLine": 1,
+      "endLine": 11,
+      "source": "memory",
+      "snippet": "# 2026-05-20 ## FUTUUSDT live short ladder replacement — revised Option A - User requested cancel all current FUTUUSDT.P orders and place revised Option A “safer structural SL” short ladder. - Precheck: FUTUUSDT regular orders `0`, plan orders `2`; current plans were the just-placed `tvflow_futu_20260520_short6xB_S1/S2` ladder; no FUTUUSDT position was present. Ticker before around last/mark `125.68`, bid/ask `125.74/125.79`, 24h range `124.17-132.35`. - Cancelled current live FUTUUSDT plan orders: `1440926787885850624` and `1440926790743744512`. - Set/confirmed FUTUUSDT isolated margin and short leverage `6x`. - Placed three new live Bitget `normal_plan` conditional limit shorts, trigger p",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.36247646212577816,
+      "maxScore": 0.36247646212577816,
+      "firstRecalledAt": "2026-05-23T08:39:26.315Z",
+      "lastRecalledAt": "2026-05-23T08:39:26.315Z",
+      "queryHashes": [
+        "1d86fa8177fa"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "futuusdt.p",
+        "just-placed",
+        "last/mark",
+        "125.68",
+        "bid/ask",
+        "125.74/125.79",
+        "124.17-132.35",
+        "set/confirmed"
+      ]
+    },
+    "memory:memory/2026-05-22.md:16:24": {
+      "key": "memory:memory/2026-05-22.md:16:24",
+      "path": "memory/2026-05-22.md",
+      "startLine": 16,
+      "endLine": 24,
+      "source": "memory",
+      "snippet": "- Wired `place-order.js`, `place-trigger-order.js`, and `execute-signal.js` so live open orders run the gate before Bitget placement. RED blocks; YELLOW requires explicit `--liquidityGateOverride YELLOW`; ladder-looking clientOids ending `_L1/_B1/_S1` etc. require full-ladder `--gateMaxQty`, `--gatePositionNotional`, and `--gatePlannedRisk`. - Gate metrics: spread, 24h volume vs `500x` notional, dead 1m candles, p10 1m quote-volume stress, simulated orderbook stop-exit slippage, and depth-to-SL corridor escalation. - After successful live placement, placement scripts now spawn a detached post-fill monitor by default unless `--liquidityMonitor false`; the watcher reruns the gate on actual ope",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7210249096155166,
+      "maxScore": 0.3610795885324478,
+      "firstRecalledAt": "2026-05-23T08:39:26.315Z",
+      "lastRecalledAt": "2026-05-23T11:00:01.499Z",
+      "queryHashes": [
+        "1d86fa8177fa",
+        "01f17779b8ba"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "place-order.js",
+        "place-trigger-order.js",
+        "execute-signal.js",
+        "ladder-looking",
+        "full-ladder",
+        "quote-volume",
+        "stop-exit",
+        "depth-to-sl"
+      ]
+    },
+    "memory:memory/2026-05-22.md:30:38": {
+      "key": "memory:memory/2026-05-22.md:30:38",
+      "path": "memory/2026-05-22.md",
+      "startLine": 30,
+      "endLine": 38,
+      "source": "memory",
+      "snippet": "- Postcheck: MRVLUSDT regular `2`, plan `0`, both `status=live`, `baseVolume=0`, isolated `4x`; no MRVL/FUTU position observed. Rounded totals: risk `~99.94 USDT`, reward `~277.90`, notional `~2619.00`, margin @4x `~654.75`. - Journal refreshed with `-NoSend`; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-22T17-02-30-274Z.xls`. - Drew the two-order MRVL long ladder on TradingView Desktop MCP `BITGET:MRVLUSDT.P` 4H. Execution summary saved at `reports/live_execution/20260522_futu_cancel_mrvl_optiona_4x_refresh/summary.json`. ## CLUSDT.P deep analysis - Andrea requested deep analysis on `CLUS",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3509698778390884,
+      "maxScore": 0.3509698778390884,
+      "firstRecalledAt": "2026-05-23T11:00:01.499Z",
+      "lastRecalledAt": "2026-05-23T11:00:01.499Z",
+      "queryHashes": [
+        "01f17779b8ba"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "mrvl/futu",
+        "99.94",
+        "277.90",
+        "2619.00",
+        "654.75",
+        "two-order",
+        "mrvlusdt.p",
+        "clusdt.p"
+      ]
+    },
+    "memory:memory/2026-05-23.md:23:30": {
+      "key": "memory:memory/2026-05-23.md:23:30",
+      "path": "memory/2026-05-23.md",
+      "startLine": 23,
+      "endLine": 30,
+      "source": "memory",
+      "snippet": "- JD example results from the discussion: original-risk 5 USDT slippage cap yielded about `58.32 JD` per entry / `174.96 JD` total / planned risk `~69.98 USDT`; self-referenced 5% new-risk cap yielded about `47.88 JD` per entry / `143.64 JD` total / planned no-slippage risk `~57.456 USDT`, estimated extra slippage exactly `~5%` of that planned risk. ## Trading alert watchdog DM test status - Andrea asked to set up/test a watchdog for trading alerts that sends Discord DMs. Created disabled template config at `watchdog/trading_alert_watchdog.json` with target intended for Andrea (`1322306175865323552`) and example disabled price-level rule. - DM delivery investigation: OpenClaw/Discord cron/d",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8340234488248824,
+      "maxScore": 0.4380690217018127,
+      "firstRecalledAt": "2026-05-23T15:27:07.684Z",
+      "lastRecalledAt": "2026-05-23T16:08:54.301Z",
+      "queryHashes": [
+        "3bc6af025317",
+        "5bede2978355"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "original-risk",
+        "58.32",
+        "174.96",
+        "69.98",
+        "self-referenced",
+        "new-risk",
+        "47.88",
+        "143.64"
+      ]
+    },
+    "memory:memory/2026-05-23.md:21:26": {
+      "key": "memory:memory/2026-05-23.md:21:26",
+      "path": "memory/2026-05-23.md",
+      "startLine": 21,
+      "endLine": 26,
+      "source": "memory",
+      "snippet": "- Durable live-order fallback rule agreed with Andrea: when a live Bitget order request fails liquidity/slippage gate, immediately provide two downsized size proposals rather than only rejecting: (1) cap extra stop-market slippage cost to `slippage_pct × original/base planned risk` (default currently 5% of 100 USDT = 5 USDT), and (2) cap extra stop-market slippage cost to `slippage_pct × new planned no-slippage risk`. Keep `slippage_pct` parameterized. - For each fallback proposal, solve size from the live stop-exit orderbook depth, round down to symbol precision, and show qty per entry/total qty, planned no-slippage risk, estimated extra slippage, total risk after slippage, notional/margin,",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37352757453918456,
+      "maxScore": 0.37352757453918456,
+      "firstRecalledAt": "2026-05-23T16:08:54.301Z",
+      "lastRecalledAt": "2026-05-23T16:08:54.301Z",
+      "queryHashes": [
+        "5bede2978355"
+      ],
+      "recallDays": [
+        "2026-05-23"
+      ],
+      "conceptTags": [
+        "live-order",
+        "liquidity/slippage",
+        "stop-market",
+        "slippage-pct",
+        "original/base",
+        "no-slippage",
+        "stop-exit",
+        "entry/total"
       ]
     }
   }
