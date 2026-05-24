@@ -320,6 +320,63 @@ def collect_levels(summaries: Dict[str, Dict[str, Any]], current: float) -> Dict
     return {"supports": finish(supports, True), "resistances": finish(resistances, False)}
 
 
+def infer_analysis_side(requested_side: str, summaries: Dict[str, Dict[str, Any]], levels: Dict[str, List[Dict[str, Any]]], screener_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Infer LONG/SHORT for level-zone generation when the CLI side is AUTO.
+
+    Final trade judgment still belongs to the screenshot-first report. This inference is
+    only to avoid losing directional fib/value-zone maps when the user asks for a generic
+    deep analysis without explicitly saying LONG or SHORT.
+    """
+    side = str(requested_side or "AUTO").upper()
+    if side in ("LONG", "SHORT"):
+        return {"side": side, "source": "explicit_cli_side", "confidence": "high", "reason": f"requested side {side}"}
+
+    row = (screener_data or {}).get("selected_row") or {}
+    lc = as_float(row.get("D13 LC ContextFinal") or row.get("03 Final Long") or row.get("W01 LC ActionScore"), None)
+    sc = as_float(row.get("D16 SC Final") or row.get("04 Final Short") or row.get("W04 SC ActionScore"), None)
+    if lc is not None or sc is not None:
+        if (lc or 0.0) > (sc or 0.0):
+            return {"side": "LONG", "source": "screener_context", "confidence": "medium", "reason": f"long score/context {lc} > short {sc}"}
+        if (sc or 0.0) > (lc or 0.0):
+            return {"side": "SHORT", "source": "screener_context", "confidence": "medium", "reason": f"short score/context {sc} > long {lc}"}
+
+    trend_1d = str((summaries.get("1D") or {}).get("trend_state") or "").lower()
+    trend_4h = str((summaries.get("4H") or {}).get("trend_state") or "").lower()
+    close_4h = as_float((summaries.get("4H") or {}).get("latest_close"), None)
+    ema20_4h = as_float((summaries.get("4H") or {}).get("ema20"), None)
+    ema50_4h = as_float((summaries.get("4H") or {}).get("ema50"), None)
+    if trend_1d == "bullish" and trend_4h in ("bullish", "neutral_mixed"):
+        return {"side": "LONG", "source": "1D_4H_trend", "confidence": "medium", "reason": f"1D {trend_1d}, 4H {trend_4h}"}
+    if trend_1d == "bearish" and trend_4h in ("bearish", "neutral_mixed"):
+        return {"side": "SHORT", "source": "1D_4H_trend", "confidence": "medium", "reason": f"1D {trend_1d}, 4H {trend_4h}"}
+    if close_4h is not None and ema20_4h is not None and ema50_4h is not None:
+        if close_4h > ema20_4h > ema50_4h:
+            return {"side": "LONG", "source": "4H_ema_stack", "confidence": "low", "reason": "4H close > EMA20 > EMA50"}
+        if close_4h < ema20_4h < ema50_4h:
+            return {"side": "SHORT", "source": "4H_ema_stack", "confidence": "low", "reason": "4H close < EMA20 < EMA50"}
+    return {"side": "AUTO", "source": "unresolved", "confidence": "none", "reason": "no clear directional context"}
+
+
+def detected_level_map(levels: Dict[str, List[Dict[str, Any]]], current: float, limit_each: int = 18) -> Dict[str, Any]:
+    def pack(items: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+        out = []
+        for x in (items or [])[:limit]:
+            out.append({
+                "price": rn(as_float(x.get("price"), None)),
+                "source": x.get("source"),
+                "time_utc": x.get("time_utc"),
+                "distance_pct": x.get("distance_pct"),
+                "distance_atr": x.get("distance_atr"),
+            })
+        return out
+    return {
+        "purpose": "Use this as the compact visible/OHLCV fallback level inventory before selecting actionable tickets. Do not hide these levels just because only a few become final orders.",
+        "current_reference": rn(current),
+        "nearest_resistances": pack(levels.get("resistances", []), limit_each),
+        "nearest_supports": pack(levels.get("supports", []), limit_each),
+    }
+
+
 def first_contract(market_snapshot: Dict[str, Any]) -> Dict[str, Any]:
     specs = market_snapshot.get("contract_specs")
     if isinstance(specs, list) and specs:
@@ -785,9 +842,9 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     if not impulse.get("valid"):
         hard_reject_reasons.append(str(impulse.get("reason")))
     if side == "LONG" and trend == "bearish":
-        hard_reject_reasons.append("4H trend is bearish; DIP_LADDER long requires bullish or bullish-neutral 4H structure.")
+        warnings.append("4H trend is bearish; LONG pullback/value-zone map is countertrend and final report should reject unless screenshots show a valid reversal thesis.")
     if side == "SHORT" and trend == "bullish":
-        hard_reject_reasons.append("4H trend is bullish; SELL_RALLY short requires bearish or bearish-neutral 4H structure.")
+        warnings.append("4H trend is bullish; SHORT sell-rally/value-zone map is countertrend and final report should reject unless screenshots show a valid reversal thesis.")
     if near_major_resistance:
         warnings.append("Current price is very close to detected resistance (<0.25 ATR); static long ladder should usually WAIT unless entries are clearly in the value zone.")
     if near_major_support:
@@ -882,6 +939,108 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         "zone_high": rn(max(value_zone_low, value_zone_high)),
         "zone_width_atr": rn(value_zone_width_atr, 3),
     }
+
+    def fib_map_for(low: float, high: float, label: str, mode: str, low_source: Any = None, high_source: Any = None) -> Dict[str, Any]:
+        rng = abs(high - low)
+        if side == "LONG":
+            local_fibs = {
+                "38.2": high - 0.382 * rng,
+                "50.0": high - 0.500 * rng,
+                "61.8": high - 0.618 * rng,
+            }
+        else:
+            local_fibs = {
+                "38.2": low + 0.382 * rng,
+                "50.0": low + 0.500 * rng,
+                "61.8": low + 0.618 * rng,
+            }
+        return {
+            "label": label,
+            "mode": mode,
+            "impulse_low": rn(low),
+            "impulse_high": rn(high),
+            "impulse_low_source": low_source,
+            "impulse_high_source": high_source,
+            "range": rn(rng),
+            "range_atr4h": rn(rng / atr4h, 3) if atr4h else None,
+            "fib_38_2": rn(local_fibs["38.2"]),
+            "fib_50_0": rn(local_fibs["50.0"]),
+            "fib_61_8": rn(local_fibs["61.8"]),
+            "zone_low": rn(min(local_fibs.values())),
+            "zone_high": rn(max(local_fibs.values())),
+        }
+
+    def impulse_zone_comparison() -> Dict[str, Any]:
+        """Expose confirmed-vs-active impulse zones so the final report can compare
+        GPT-style active swing maps against stricter confirmed-pivot maps.
+        Works symmetrically for LONG and SHORT.
+        """
+        confirmed = fib_map_for(
+            impulse_low,
+            impulse_high,
+            "selected_builder_impulse",
+            str(impulse.get("mode") or "CONFIRMED_PIVOT_IMPULSE"),
+            impulse.get("impulse_low_source") or impulse.get("impulse_low_time_utc"),
+            impulse.get("impulse_high_source") or impulse.get("impulse_high_time_utc"),
+        )
+        active = None
+        structural = structural_side[:40]
+        if side == "LONG":
+            active_high = max(
+                current,
+                as_float(tf4.get("latest_high"), current) or current,
+                as_float(tf1.get("latest_high"), current) or current,
+                impulse_high,
+            )
+            candidates = []
+            for item in structural:
+                p = as_float(item.get("price"), None)
+                if p is None or p >= active_high:
+                    continue
+                src = str(item.get("source") or "")
+                major = any(token in src for token in ("1D", "4H pivot low", "4H prior pivot high", "4H ema", "1H pivot low"))
+                range_atr = (active_high - p) / atr4h if atr4h else 0.0
+                if major and 1.2 <= range_atr <= 12.0:
+                    priority = 0 if ("1D pivot low" in src or "4H pivot low" in src) else (1 if "4H" in src else 2)
+                    candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
+            if candidates:
+                # Prefer a broad but still plausible active swing base.  This catches
+                # GPT-style maps such as a prior 4H/1D major swing low -> live high,
+                # instead of always choosing the latest tiny pivot or the deepest old low.
+                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") or 9), abs(float(x.get("_range_atr") or 0.0) - 10.0), -parse_time_ms(x.get("time_utc"))))
+                base = candidates[0]
+                active = fib_map_for(float(base["price"]), active_high, "active_fresh_high_swing", "ACTIVE_VISUAL_HIGH", base.get("source"), "current/latest 4H/1H high")
+                active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
+        else:
+            active_low = min(
+                current,
+                as_float(tf4.get("latest_low"), current) or current,
+                as_float(tf1.get("latest_low"), current) or current,
+                impulse_low,
+            )
+            candidates = []
+            for item in structural:
+                p = as_float(item.get("price"), None)
+                if p is None or p <= active_low:
+                    continue
+                src = str(item.get("source") or "")
+                major = any(token in src for token in ("1D", "4H pivot high", "4H prior pivot low", "4H ema", "1H pivot high"))
+                range_atr = (p - active_low) / atr4h if atr4h else 0.0
+                if major and 1.2 <= range_atr <= 12.0:
+                    priority = 0 if ("1D pivot high" in src or "4H pivot high" in src) else (1 if "4H" in src else 2)
+                    candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
+            if candidates:
+                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") or 9), abs(float(x.get("_range_atr") or 0.0) - 10.0), -parse_time_ms(x.get("time_utc"))))
+                base = candidates[0]
+                active = fib_map_for(active_low, float(base["price"]), "active_fresh_low_swing", "ACTIVE_VISUAL_LOW", "current/latest 4H/1H low", base.get("source"))
+                active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
+        return {
+            "purpose": "Final report must compare confirmed-pivot and active/fresh-extreme impulse zones when they differ materially; use screenshot structure to decide which is more relevant.",
+            "selected": confirmed,
+            "active_visual_alternative": active,
+        }
+
+    impulse_zones = impulse_zone_comparison()
 
     def source_quality(source: str) -> int:
         s = str(source or "")
@@ -1413,6 +1572,18 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         l1_risk_share = (float(orders[0].get("actual_risk_before_notional_cap_usdt") or 0) / total_risk_local) if orders and total_risk_local else None
         first_entry_distance_atr = as_float(orders[0].get("distance_from_current_atr4h"), None) if orders else None
         fill_probability_distance_ok = bool(first_entry_distance_atr is not None and first_entry_distance_atr >= 0.50)
+        has_deep_structural_l3 = any(bool(e.get("deep_structural_l3")) for e in combo_entries)
+        clean_structural_sl_candidates = [x for x in sl_candidates_for(combo_entries[:2] or combo_entries) if x.get("type") != "conservative"]
+        if clean_structural_sl_candidates:
+            clean_ref_sl = float(clean_structural_sl_candidates[0]["price"])
+        else:
+            clean_ref_sl = float(sl_item["price"])
+        deep_l3_forces_wider_sl = False
+        if has_deep_structural_l3 and atr4h > 0:
+            if side == "LONG":
+                deep_l3_forces_wider_sl = float(sl_item["price"]) < clean_ref_sl - 0.75 * atr4h
+            else:
+                deep_l3_forces_wider_sl = float(sl_item["price"]) > clean_ref_sl + 0.75 * atr4h
         sl_quality_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.00)
         sl_fill_warning_ok = bool(sl_dist_atr is not None and 0.70 <= sl_dist_atr <= 2.20)
         sl_fill_strong_ok = bool(sl_dist_atr is not None and 2.20 < sl_dist_atr <= 2.75 and daily_strong)
@@ -1485,6 +1656,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             rejects.append("highest leg TP distance exceeds extended realistic ATR range")
         elif tp_dist_atr > 3.50:
             warnings_local.append("TP distance is >3.50 ATR; accepted only because 1D/4H structure supports the target.")
+        if has_deep_structural_l3 and deep_l3_forces_wider_sl:
+            rejects.append("deep L3 forces a materially wider SL / changes core invalidation; reject L3 and keep B as shallow/mid/main-value ladder")
         if lev.get("chosen") is None:
             rejects.append("no leverage option fits margin cap with liquidation safely beyond SL")
         valid = bool(valid and not rejects)
@@ -1517,6 +1690,9 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "first_entry_distance_atr4h": rn(first_entry_distance_atr, 3),
             "fill_probability_distance_ok": fill_probability_distance_ok,
             "sl_distance_atr_from_blended": rn(sl_dist_atr, 3),
+            "has_deep_structural_l3": has_deep_structural_l3,
+            "deep_l3_forces_wider_sl": deep_l3_forces_wider_sl,
+            "clean_core_invalidation_reference_sl": rn(clean_ref_sl),
             "sl_hierarchy_clear": sl_hierarchy_clear,
             "sl_hierarchy_uncleared_levels": sl_hierarchy_uncleared,
             "tp_distance_atr_from_blended": rn(tp_dist_atr, 3),
@@ -1640,6 +1816,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "atr_source": "4H ATR(14) only",
         },
         "impulse_analysis_4h": impulse,
+        "impulse_zone_comparison": impulse_zones,
         "value_zone": value_zone,
         "stop_loss_candidate": stop,
         "invalidation_logic": invalidation_source,
@@ -1684,7 +1861,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "atr4h_used": rn(atr4h),
             "atr4h_source": "Bitget calculated 4H ATR(14); explicit TradingView screenshot ATR not machine-readable in packet",
             "atr_mismatch_warning": None,
-            "scope": "Universal gate for resting DIP_LADDER / SELL_RALLY / SINGLE_LIMIT_PULLBACK candidates before spacing, scan, and Option A/B ranking.",
+            "scope": "Universal gate for resting DIP_LADDER / SELL_RALLY / SINGLE_LIMIT_PULLBACK candidates before spacing, scan, and A/B pullback ranking.",
         },
         "static_ticket_safe": static_ticket_safe,
         "static_ticket_reject_reasons": static_rejects,
@@ -1860,7 +2037,8 @@ def compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
         "first_entry_distance_atr4h", "fill_probability_distance_ok",
         "tp_distance_atr_from_blended", "max_tp_distance_atr_from_blended",
         "single_limit_pullback_valid", "valid_static_ticket", "valid_best_quality",
-        "valid_best_fill_probability", "option_compliance", "reject_reasons", "warning_reasons",
+        "valid_best_fill_probability", "has_deep_structural_l3", "deep_l3_forces_wider_sl",
+        "clean_core_invalidation_reference_sl", "option_compliance", "reject_reasons", "warning_reasons",
     ]
     out = {k: candidate.get(k) for k in keep if k in candidate}
     if isinstance(candidate.get("selected_leverage_check"), dict):
@@ -1893,18 +2071,27 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
     fill_candidates = [x for x in valid_candidates if "BEST_FILL_PROBABILITY" in (x.get("option_compliance") or [])]
 
     def quality_sort_key(x: Dict[str, Any]) -> tuple:
+        # A quality logic: try 1-2 cleanest PB levels first; use 3 legs only
+        # if all 3 are high-quality and not forced.  The final screenshot read
+        # may still accept a 3-leg quality ladder when structure clearly merits it.
         tp_atr = float(x.get("tp_distance_atr_from_blended") or 999)
         rr_all = float(x.get("rr_all_filled") or 0)
         lev = float((x.get("selected_leverage_check") or {}).get("leverage") or 999)
-        return (abs(tp_atr - 1.8), -rr_all, lev)
+        entries = x.get("entry_prices") if isinstance(x.get("entry_prices"), list) else []
+        leg_count_penalty = 0 if len(entries) <= 2 else 1
+        return (leg_count_penalty, abs(tp_atr - 1.8), -rr_all, lev)
 
     def fill_sort_key(x: Dict[str, Any]) -> tuple:
+        # B fill logic: maximize fill mainly by adding earlier valid shallow L1
+        # above/near A-quality zone.  Prefer shallow/mid/main-value ladders over
+        # deep L3 when deep L3 forces wider SL or changes core invalidation.
         entries = x.get("entry_prices") if isinstance(x.get("entry_prices"), list) else []
         first = float(entries[0]) if entries else 0.0
         fill_first = -first if side == "LONG" else first
         rr_all = float(x.get("rr_all_filled") or 0)
         tp_atr = float(x.get("tp_distance_atr_from_blended") or 999)
-        return (-len(entries), fill_first, abs(tp_atr - 2.8), -rr_all)
+        deep_penalty = 2 if x.get("deep_l3_forces_wider_sl") else (1 if x.get("has_deep_structural_l3") else 0)
+        return (deep_penalty, -len(entries), fill_first, abs(tp_atr - 2.8), -rr_all)
 
     def rr_for(entry: Any, sl: Any, tp: Any) -> Optional[float]:
         e = as_float(entry)
@@ -2013,24 +2200,24 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
 
     return {
         "packet_type": "compact_deep_analysis_decision_packet_v2",
-        "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files. The final trade design must be screenshot-first; candidate scans, static optimisation output, OHLCV-derived value zones, and old packet ladder levels are secondary validation only.",
+        "usage": "Feed this compact packet to the final LLM/report step. Full raw/audit data remains in analysis_summary.json, candidate_levels.json, and raw files. The final trade design must be screenshot-first; candidate scans, static optimisation output, OHLCV-derived value zones, and old packet ladder levels are fallback/secondary validation only.",
         "non_negotiable_rules": {
-            "primary_truth": "Screenshots / visible TradingView chart structure first; user key levels second; Bitget OHLCV/ticker/execution validate numbers and feasibility; TradingView OHLCV/export only for cross-check.",
-            "candidate_scan_priority": "Do NOT use precomputed candidate levels, static optimisation scan output, OHLCV-derived value zones, or old packet ladder levels as the main source of trade levels. Use them only as secondary validation if they confirm the 1D/4H/1H screenshots. If packet levels conflict with screenshots, screenshots win.",
-            "trade_style": "Static 4H pullback only: DIP_LADDER long, SELL_RALLY short, or AUTO/SINGLE_LIMIT_PULLBACK if exactly one valid level survives all checks.",
-            "risk_target": "Default target planned risk is 100 USDT unless overridden.",
-            "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional.",
-            "static_safety": "If all entries fill and price goes directly to SL, total loss must remain near planned risk.",
-            "forbidden_assumptions": ["no live execution", "no dynamic management", "no trailing", "no future cancellation assumption", "no SL movement or post-fill adjustment"],
+            "primary_truth": "Screenshots / visible TradingView chart structure first. User notes are secondary. Bitget OHLCV/export/ticker/execution are fallback/validation only when screenshot levels/data are unclear, and for ATR/current price/sizing/margin/leverage/liquidation/execution-feasibility checks.",
+            "candidate_scan_priority": "Do NOT use precomputed candidate levels, static optimisation scan output, OHLCV-derived value zones, or old packet ladder levels as the main source of trade levels. Use them only as fallback/secondary validation when screenshots are unclear or when they confirm 1D/4H/1H screenshots. If packet/export levels conflict with screenshots, screenshots win.",
+            "trade_style": "Evaluate A/B pullback families, C breakout/breakdown family, and D OC execution wrapper when useful. Valid styles: AUTO, SINGLE_LIMIT_PULLBACK, DIP_LADDER, SELL_RALLY, BREAKOUT, BREAKDOWN, WAIT. Do not force a trade.",
+            "risk_target": "Default max planned loss is 100 USDT. A/B/C standalone options are alternatives; do not sum their risks. D VIRTUAL_OCO selected path max loss is 100 USDT. D COMBO_100 all-filled worst-case loss must be <= 100 USDT.",
+            "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional. Max leverage is 20x.",
+            "static_safety": "If all planned entries for a standalone ladder or COMBO_100 fill and price goes directly to SL, total loss must remain within the planned-risk cap.",
+            "forbidden_assumptions": ["no live execution", "no discretionary dynamic management", "no trailing", "no unplanned future cancellation assumption", "no SL movement or post-fill adjustment"],
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
-            "rejection_audit": "Always justify rejected sides/options/candidates and broken rules with item, exact rule/gate, observed value, required value/threshold, why it blocks, and what would fix it. Prefer packet fields static_ticket_reject_reasons, warnings, best_candidate.reject_reasons, and rejected_candidate_examples_compact.",
-            "option_framework": "Always output both sections: Option A — BEST QUALITY: VALID/REJECTED and Option B — BEST FILL PROBABILITY: VALID/REJECTED. Never hide the rejected option; include rejected levels, exact failing reason, and key failed metric.",
-            "full_output_required": "Always print all required sections in order: Chart Context Read, Market State, Key Levels, Trade Quality, Option A, Option B, Orderability, Risk Sizing, Trade Plan Tickets, Rejection Audit when anything is rejected/conditional/wait, and Final Verdict. Do not collapse the answer into only chart context plus final verdict.",
-            "valid_conditional_ticket_required": "Every VALID option must include a complete Trade Plan Ticket table, including PLACEABLE_CONDITIONAL_ONLY options. Conditional means wait for the stated trigger/rejection before placing; it does not mean omit the ticket. Required columns: leg | order type | entry | notional $ | quantity | SL | loss at SL $ | TP/profit $ | R:R | trigger. If exact quantity cannot be calculated, provide an approximate ticket and mark values approximate.",
-            "option_ab_path_separation": "Option A and Option B must represent different trade paths, not just two versions of the same ladder. Option A uses the cleanest 4H parent-structure setup. Option B is the best higher-probability alternative path: shallow pullback/rally only if structurally better, otherwise BREAKOUT/BREAKDOWN continuation when price is near major resistance/support. In bearish setups near major support, test BREAKDOWN below support before defaulting to shallow sell-rally. In bullish setups near major resistance, test BREAKOUT above resistance before defaulting to shallow dip-ladder. Always state Option A path, Option B path, why Option B was chosen, why shallow ladder was chosen/rejected, and why breakout/breakdown was chosen/rejected.",
+            "rejection_audit": "Briefly justify rejected A/B/C/D families and broken rules with the exact reason/gate, observed value where available, required value/threshold where applicable, why it blocks, and what would fix it.",
+            "option_framework": "Use the attached A/B/C/D framework: A = BEST QUALITY PULLBACK, B = BEST FILL-PROBABILITY PULLBACK, C = BREAKOUT/BREAKDOWN, D = OC EXECUTION WRAPPER (VIRTUAL_OCO or COMBO_100 only if useful and valid). B fill maximizes mainly by adding an earlier valid shallow L1 above/near A-quality zone; prefer shallow/mid levels over deep L3 if deep L3 forces materially wider SL or changes core invalidation. Provide valid options only; briefly state why rejected families were rejected.",
+            "full_output_required": "Print all required sections in order from the master prompt: Chart Context Read, Market State, Detected Level Map, Key Levels, Trade Quality, Primary Trade Plan Options, OC Execution Wrapper, Orderability, Backup Plan, Risk Sizing, Trade Plan Tickets, and Final Verdict. Do not collapse the answer into only chart context plus final verdict or only ticket levels.",
+            "valid_conditional_ticket_required": "Every valid A/B/C ticket must include a complete Trade Plan Ticket table with columns: Leg | Entry | Type | Qty | Notional | SL | Loss | TP | Profit | RR | Trigger. If exact quantity cannot be calculated, provide an approximate ticket and mark values approximate.",
+            "family_relationships": "A, B, and C are alternatives unless D explicitly wraps them. Prefer D VIRTUAL_OCO only when valid pullback and breakout ideas are alternative entries into the same thesis. Use D COMBO_100 only when both can fill, share coherent invalidation, all-filled R:R remains good, and combined all-filled risk <= 100 USDT.",
             "chat_report_parity": "Never save/report a deep analysis as complete if the chat summary omitted mandatory ticket tables for valid options. Prefer printing valid tickets in chat; otherwise explicitly say: Ticket table omitted from chat, full ticket available in saved report.",
             "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
-            "resting_entry_distance_gate": "Universal hard gate for resting ladder candidates before combo selection: LONG buy limits must be at least 0.25 ATR4H below current price; SHORT sell limits at least 0.25 ATR4H above current price. In strict contexts (1H against/corrective, price near major S/R, or fill-probability use), require 0.50 ATR4H. Failing entries are NEAR_MARKET_REJECTED and cannot enter Option A/B tickets.",
+            "resting_entry_distance_gate": "Universal hard gate for resting ladder candidates before combo selection: LONG buy limits must be at least 0.25 ATR4H below current price; SHORT sell limits at least 0.25 ATR4H above current price. In strict contexts (1H against/corrective, price near major S/R, or fill-probability use), require 0.50 ATR4H. Failing entries are NEAR_MARKET_REJECTED and cannot enter A/B pullback tickets.",
             "structural_sl_hierarchy": "SL must be visible-structure invalidation first, not R:R optimisation. Before accepting a tight SL, check same-side 1H/4H/1D structure beyond it. If the thesis could still validly reject at the next level beyond the proposed SL, reject the tight SL, recalc R:R with the wider structural SL, and remove shallow legs that no longer pass.",
             "tp_realism_hierarchy": "Far 4H/1D targets beyond nearer major support/resistance are valid only when the nearer level is assigned to an earlier leg or the setup explicitly requires a break/retest. Do not use far targets to rescue weak shallow legs.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
@@ -2047,18 +2234,23 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
         "contract_rules_compact": {k: contract_rules.get(k) for k in ["price_place", "volume_place", "size_multiplier", "min_trade_num", "min_trade_usdt"] if k in contract_rules},
         "timeframes": {tf: compact_tf_summary(s) for tf, s in (analysis_summary.get("timeframes") or {}).items() if isinstance(s, dict)},
         "key_levels_nearest": {
-            "supports": compact_level_list(levels.get("supports"), 8),
-            "resistances": compact_level_list(levels.get("resistances"), 8),
+            "supports": compact_level_list(levels.get("supports"), 18),
+            "resistances": compact_level_list(levels.get("resistances"), 18),
         },
+        "detected_level_map": detected_level_map(levels, as_float((analysis_summary.get("ladder_price_reference") or {}).get("used"), 0.0) or 0.0, 24),
         "candidate_trade_design": {
             "source_priority_warning": "Candidate trade design, value_zone, orders, and static optimisation scan fields are generated from data and are secondary validation only. Final entries/SL/TP must come from visible 1D/4H/1H chart structure and may use these fields only when they confirm the screenshots.",
             "side": ladder.get("side"),
+            "requested_side": ladder.get("requested_side"),
+            "analysis_side_inference": ladder.get("analysis_side_inference"),
+            "auto_side_patch_note": ladder.get("auto_side_patch_note"),
             "style_hint": ladder.get("style_hint"),
             "decision_hint": ladder.get("decision_hint"),
             "market_order_allowed": ladder.get("market_order_allowed"),
             "current_price_reference": ladder.get("current_price_reference"),
             "atr4h_reference": ladder.get("atr4h_reference"),
             "impulse_analysis_4h": ladder.get("impulse_analysis_4h"),
+            "impulse_zone_comparison": ladder.get("impulse_zone_comparison"),
             "value_zone": ladder.get("value_zone"),
             "invalidation_logic": ladder.get("invalidation_logic"),
             "stop_loss_candidate": ladder.get("stop_loss_candidate"),
@@ -2101,10 +2293,12 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
                 "best_candidate": compact_candidate(best) if isinstance(best, dict) else {},
                 "best_quality_candidate": compact_candidate(best_quality_candidate) if isinstance(best_quality_candidate, dict) else {},
                 "best_fill_probability_candidate": compact_candidate(best_fill_probability_candidate) if isinstance(best_fill_probability_candidate, dict) else {},
-                "option_framework_required": {
-                    "option_a": "Option A — BEST QUALITY: VALID / REJECTED",
-                    "option_b": "Option B — BEST FILL PROBABILITY: VALID / REJECTED",
-                    "rule": "Always output both sections; rejected options must show levels, exact failing reason, and key failed metric.",
+                "trade_family_framework_required": {
+                    "A": "BEST QUALITY PULLBACK: provide only if valid; otherwise briefly reject",
+                    "B": "BEST FILL-PROBABILITY PULLBACK: provide only if valid; otherwise briefly reject",
+                    "C": "BREAKOUT / BREAKDOWN: provide only if the breakout gate passes; otherwise briefly reject",
+                    "D": "OC EXECUTION WRAPPER: VIRTUAL_OCO or COMBO_100 only if useful and valid",
+                    "rule": "Use screenshot structure first. A/B/C are alternatives unless D explicitly wraps them; never force weak C or D.",
                 },
                 "shallow_fill_probability_leg_audit_compact": shallow_fill_audit,
                 "valid_candidate_alternatives_compact": [compact_candidate(x) for x in compact_valid_candidates[:10]],
@@ -2163,21 +2357,21 @@ Use this packet with `{master_prompt}`.
 ## 2. Decision rules reminder
 
 - Screenshots / visible TradingView chart structure are primary truth for structure and levels.
-- User-provided key levels are second priority.
-- Bitget OHLCV/ticker/execution state validate numbers, current price, sizing, margin/leverage/liquidation, and feasibility.
-- TradingView OHLCV/export data is only for cross-checks when needed.
-- Focus window: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles; older data only for major HTF levels.
+- User notes are secondary only.
+- Bitget OHLCV/export/ticker/execution state is fallback/validation only when screenshot levels/data are unclear, and for ATR/current price/sizing/margin/leverage/liquidation/execution-feasibility checks.
+- TradingView OHLCV/export data must not override clearly visible screenshot structure.
+- Focus window: 4H main execution, 1D HTF bias, 1H tactical timing.
 - Screener context is candidate-selection context only, not proof.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
-- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT).
-- Final ticket must follow the static OC 4H ladder rules in `candidate_trade_design.oc_static_ladder_rules`.
-- Final report must always show both sections: `Option A — BEST QUALITY: VALID / REJECTED` and `Option B — BEST FILL PROBABILITY: VALID / REJECTED`. Never hide the rejected option; show rejected levels, exact failing reason, and key failed metric.
-- For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason.
-- Only propose `DIP_LADDER long`, `SELL_RALLY short`, or `AUTO / SINGLE_LIMIT_PULLBACK` static tickets with fixed entries, quantities, SLs, and TPs valid at order creation.
-- Do not assume future cancellation, stop movement, trailing, or post-fill management.
-- If all entries fill and price immediately goes to SL, total loss must remain near the planned risk.
-- If 100 USDT risk cannot fit structure/R:R/margin/freshness, give a strong warning or WAIT/NO_TRADE.
+- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT); max leverage is 20x.
+- Evaluate A/B pullback, C breakout/breakdown, and D OC wrapper exactly as the master prompt defines them. A/B/C are alternatives unless D explicitly wraps them.
+- If requested side is AUTO, use `candidate_trade_design.analysis_side_inference` only to preserve directional fib/value-zone maps; final judgment remains screenshot-first.
+- Always include a Detected Level Map before tickets, using the dense support/resistance inventory rather than only actionable levels.
+- Compare `candidate_trade_design.impulse_zone_comparison.selected` with `active_visual_alternative` when they differ materially; this applies to both LONG and SHORT flows.
+- For standalone A/B/C, max planned loss is 100 USDT and the user chooses one. For D VIRTUAL_OCO, selected path max planned loss is 100 USDT. For D COMBO_100, all-filled worst-case planned loss must be <= 100 USDT.
+- Do not assume discretionary future cancellation, stop movement, trailing, or post-fill management. VIRTUAL_OCO/OC_CONDITIONAL_BREAKOUT may use only explicit predefined OC rules.
+- If 100 USDT risk cannot fit structure/R:R/margin/freshness/liquidity, give a strong warning or WAIT/NO_TRADE.
 - Live execution is excluded; final JSON must keep `requires_user_confirmation: true`.
 
 ## 3. Processed analysis summary
@@ -2310,7 +2504,12 @@ def main() -> int:
     current = float(ticker_current) if ticker_current and ticker_diff_pct is not None and ticker_diff_pct > 0.15 else closed_current
     levels = collect_levels(summaries, current)
     rules = contract_rules(market_snapshot)
-    ladder = build_ladder(args.side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data, current_price_reference=current, symbol=symbol)
+    inferred_side = infer_analysis_side(args.side, summaries, levels, screener_data)
+    ladder_side = inferred_side.get("side") if inferred_side.get("side") in ("LONG", "SHORT") else args.side
+    ladder = build_ladder(ladder_side, args.family, summaries, levels, args.risk_usdt, max_margin_usdt, args.planned_leverage, rules, screener_data=screener_data, current_price_reference=current, symbol=symbol)
+    ladder["requested_side"] = args.side
+    ladder["analysis_side_inference"] = inferred_side
+    ladder["auto_side_patch_note"] = "When requested side is AUTO, builder infers LONG/SHORT for directional fib/value-zone mapping so levels are not lost. Final report must still use screenshot-first judgment."
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
     screener_summary = {
@@ -2336,6 +2535,7 @@ def main() -> int:
         "contract_rules": rules,
         "timeframes": summaries,
         "levels": levels,
+        "detected_level_map": detected_level_map(levels, current, 40),
         "candidate_trade_design": ladder,
         "ladder_price_reference": {
             "used": rn(current),

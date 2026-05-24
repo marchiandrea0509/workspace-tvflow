@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-23T16:08:54.301Z",
+  "updatedAt": "2026-05-24T15:11:51.737Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -9,13 +9,13 @@
       "endLine": 8,
       "source": "memory",
       "snippet": "# 2026-04-10 - On 2026-04-10 the active Pine screener runtime in `C:\\Users\\anmar\\.openclaw\\workspace\\tradingview` was switched to watchlist `BITGET_TRADFI` and indicator `OC Hybrid Edge Screener v7`. This was later reverted; the current canonical runtime target for the 4H screener is back on `OC Hybrid Edge Screener v6`. - Replaced the default deep-analysis prompt path with a Bitget-specific LLM prompt. Active default prompt is now `data_pipeline/prompts/single_market_deep_dive_prompt.md` (Bitget version), while the legacy generic prompt was preserved at `data_pipeline/prompts/single_market_deep_dive_prompt_legacy_generic.md`. - Added a clear Bitget-specific LLM runtime path via `data_pipel",
-      "recallCount": 9,
+      "recallCount": 10,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.8481431010006046,
+      "totalScore": 4.267248237395106,
       "maxScore": 0.6619517895219907,
       "firstRecalledAt": "2026-04-27T16:44:23.745Z",
-      "lastRecalledAt": "2026-05-11T06:14:52.859Z",
+      "lastRecalledAt": "2026-05-24T13:03:04.523Z",
       "queryHashes": [
         "ab67d239bc5e",
         "9c5fe0c314b1",
@@ -25,7 +25,8 @@
         "6c90ed120bcf",
         "c49bf331721f",
         "a94d27845c18",
-        "1b6a051de424"
+        "1b6a051de424",
+        "44891f7d6af0"
       ],
       "recallDays": [
         "2026-04-27",
@@ -35,7 +36,8 @@
         "2026-05-08",
         "2026-05-09",
         "2026-05-10",
-        "2026-05-11"
+        "2026-05-11",
+        "2026-05-24"
       ],
       "conceptTags": [
         "bitget-tradfi",
@@ -2621,13 +2623,13 @@
       "endLine": 13,
       "source": "memory",
       "snippet": "# 2026-05-11 ## AAPLUSDT deep analysis v2 - User requested deep analysis on `aapplusdt.p` in the Bitget Trades Discord thread; interpreted as `BITGET:AAPLUSDT.P` / `AAPLUSDT`. - Ran v2 OHLCV-first workflow with `-Side LONG -Family LC -Score 74.85618382262793 -RiskUsdt 100 -MaxMarginUsdt 1500 -PlannedLeverage 4 -CaptureTv`, using latest available AAPL strategy/screener CSV from `BITGET_TRADFI_subset_2026-05-10T21-07-33-946Z` and read-only Bitget execution state. - Packet saved to `reports/deep_analysis_packets_v2/20260511_082140_AAPLUSDT/`; final report saved to `reports/deep_analysis/2026-05-11_AAPLUSDT_v2.md`. - Freshness OK: ticker `292.72`, latest closed 4H close `292.94`, diff `0.0751%`",
-      "recallCount": 9,
+      "recallCount": 10,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 3.760859796404838,
-      "maxScore": 0.49353551566600795,
+      "totalScore": 4.281692790985107,
+      "maxScore": 0.5208329945802689,
       "firstRecalledAt": "2026-05-11T11:18:32.670Z",
-      "lastRecalledAt": "2026-05-13T05:38:38.270Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "18255ed079fd",
         "ddf2a7089f43",
@@ -2637,12 +2639,14 @@
         "0ea97c1634b1",
         "761944f2b6d2",
         "781b8b394bb0",
-        "22f4009e8ea0"
+        "22f4009e8ea0",
+        "e4d55e1d8333"
       ],
       "recallDays": [
         "2026-05-11",
         "2026-05-12",
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-24"
       ],
       "conceptTags": [
         "aapplusdt.p",
@@ -2806,24 +2810,26 @@
       "endLine": 203,
       "source": "memory",
       "snippet": "- Created focused git commit `3111947 Harden Bitget deep analysis screenshots` after the screenshot-delivery and deep-analysis hardening work. - Commit covered the durable workflow/code/doc changes and `.gitignore` rules to avoid committing generated bulky artifacts (`reports/`, `tmp/`, caches). Generated screenshots/reports remain workspace artifacts for Discord delivery, not durable repo source. - Final screenshot delivery preference: send **three separate full-resolution original images** (`1D`, `4H`, `1H`) in Discord; use a combined/contact sheet only as preview/fallback because combined sheets made Y-axis prices hard to read. ## MRVLUSDT old v1 deep analysis - Andrea asked to run the o",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.5291487962007522,
+      "totalScore": 1.9326620370149612,
       "maxScore": 0.4399775058031082,
       "firstRecalledAt": "2026-05-11T11:58:53.382Z",
-      "lastRecalledAt": "2026-05-18T06:42:22.136Z",
+      "lastRecalledAt": "2026-05-24T13:03:04.523Z",
       "queryHashes": [
         "b57f77eb78de",
         "9ead4691105c",
         "e585f33ab645",
-        "33251a281b2d"
+        "33251a281b2d",
+        "44891f7d6af0"
       ],
       "recallDays": [
         "2026-05-11",
         "2026-05-13",
         "2026-05-17",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-24"
       ],
       "conceptTags": [
         "screenshot-delivery",
@@ -3324,22 +3330,24 @@
       "endLine": 106,
       "source": "memory",
       "snippet": "- Postcheck: NVDAUSDT regular pending orders `3`, plan orders `0`; no NVDA position yet because all limits were resting/unfilled. Execution log `reports/live_execution/20260511_163753_NVDAUSDT_revised_6x_live_place.log`; manual summary `reports/live_execution/20260511_163753_NVDAUSDT_revised_6x_live_result_manual.json`. - TradingView Desktop MCP drawing succeeded on `BITGET:NVDAUSDT.P` 4H with 3 revised orders drawn (Entry/SL/TP). Trade journal refreshed with NVDA included; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-11T16-38-25-587Z.xls`. ## Deep-analysis v2 static OC 4H ladder rules im",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2452842384576797,
+      "totalScore": 1.61316799223423,
       "maxScore": 0.45108886659145353,
       "firstRecalledAt": "2026-05-12T06:10:07.744Z",
-      "lastRecalledAt": "2026-05-19T05:22:54.356Z",
+      "lastRecalledAt": "2026-05-24T14:59:44.424Z",
       "queryHashes": [
         "28ee9e86122b",
         "ec6d48491f3e",
-        "7885727aae19"
+        "7885727aae19",
+        "5a73cc07bec5"
       ],
       "recallDays": [
         "2026-05-12",
         "2026-05-17",
-        "2026-05-19"
+        "2026-05-19",
+        "2026-05-24"
       ],
       "conceptTags": [
         "resting/unfilled",
@@ -3709,23 +3717,25 @@
       "endLine": 31,
       "source": "memory",
       "snippet": "- Verified with `-CaptureBackend DesktopCdp -CaptureStrict`: packet `reports/deep_analysis_packets_v2_desktopfix_test/20260512_094516_AAPLUSDT/`; preferred sheet `reports/deep_analysis_packets_v2_desktopfix_test/20260512_094516_AAPLUSDT/raw/tv_exports/AAPLUSDT_1D_4H_contact_sheet_discord.png`. Vision verification confirmed both 1D and 4H show AAPLUSDT.P `Openclaw-structure` with EMA lines, S/R levels, channel lines, volume/ATR indicators, and no red exclamation marks or blocking popups. ## Deep-analysis bottleneck audit - User asked to identify what makes deep analysis long/expensive and whether heavy tasks are strictly required. - Measured current AAPL v2 wrapper: OHLCV-only packet builder",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.9830035551965828,
+      "totalScore": 2.5056664064109917,
       "maxScore": 0.7861497893512841,
       "firstRecalledAt": "2026-05-12T10:06:47.096Z",
-      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "7027bbdd85d8",
         "761944f2b6d2",
         "cb61c4238f5d",
-        "32f8b46e8b17"
+        "32f8b46e8b17",
+        "e4d55e1d8333"
       ],
       "recallDays": [
         "2026-05-12",
         "2026-05-17",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "aaplusdt.p",
@@ -3745,23 +3755,26 @@
       "endLine": 12,
       "source": "memory",
       "snippet": "# 2026-05-12 ## AAPLUSDT deep analysis v2 static OC refresh - User requested a fresh deep analysis on `AAPL` in the Bitget Trades Discord thread; interpreted as `AAPLUSDT` / `BITGET:AAPLUSDT.P`. - Ran `scripts/run_deep_analysis_packet_v2.ps1 -Symbol AAPLUSDT -Side LONG -Family LC -Score 74.85618382262793 -RiskUsdt 100 -MaxMarginUsdt 1500 -PlannedLeverage 4 -CaptureTv`. - TradingView Desktop MCP screener-layout export was reachable on port `9222`, but `scripts/export_tv_desktop_screener_chart_data_cdp.js` failed with `Download button not found after dialog open`, so no fresh `-ScreenerDataFile` was supplied; the run used the known screener context only as summary context. - Packet saved to `",
-      "recallCount": 5,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.1383386611938473,
-      "maxScore": 0.4807367831468582,
+      "totalScore": 3.0707045227289194,
+      "maxScore": 0.5149126529693603,
       "firstRecalledAt": "2026-05-12T15:07:25.698Z",
-      "lastRecalledAt": "2026-05-13T19:51:43.264Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "761944f2b6d2",
         "11a2bf828714",
         "b186f519ce57",
         "781b8b394bb0",
-        "ce94f1156950"
+        "ce94f1156950",
+        "f4496d51339d",
+        "e4d55e1d8333"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-24"
       ],
       "conceptTags": [
         "aaplusdt.p",
@@ -3877,21 +3890,24 @@
       "endLine": 61,
       "source": "memory",
       "snippet": "- Reran compact OHLCV-only workflow with known AAPL screener context `-Side LONG -Family LC -Score 74.85618382262793 -RiskUsdt 100 -MaxMarginUsdt 1500 -PlannedLeverage 4`. - Packet: `reports/deep_analysis_packets_v2/20260512_170844_AAPLUSDT/`; report: `reports/deep_analysis/2026-05-12_AAPLUSDT_compact_deep_analysis.md`. - Final verdict: `WAIT / NO MARKET BUY`; current ticker `294.70` is pressed into `294.88-294.99` resistance and `0.8659%` above latest closed 4H close `292.17`, so freshness warning. Static pullback ladder is safe only as conditional pullback: L1 `12.38 @ 291.74`, L2 `29.70 @ 290.53`, shared SL `288.51`, TP `294.97`, total risk `99.98`, reward `171.86`, blended R:R `1.72`, se",
-      "recallCount": 4,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.7254887372255323,
-      "maxScore": 0.4509037405252456,
+      "totalScore": 2.6783824905753133,
+      "maxScore": 0.5263452515006065,
       "firstRecalledAt": "2026-05-12T16:49:56.816Z",
-      "lastRecalledAt": "2026-05-12T20:58:36.577Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "781b8b394bb0",
         "ba14f1568dd7",
         "3c166bdb8900",
-        "7049834f2578"
+        "7049834f2578",
+        "f4496d51339d",
+        "e4d55e1d8333"
       ],
       "recallDays": [
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-24"
       ],
       "conceptTags": [
         "ohlcv-only",
@@ -3942,22 +3958,24 @@
       "endLine": 52,
       "source": "memory",
       "snippet": "- Updated `README_DEEP_ANALYSIS_V2.md` with comparison rule: run compact vs `V2.full` final LLM analyses in isolated contexts with only their own packet and the same master prompt/model; do not paste the first result into the second, because same-chat sequential runs can influence the second via conversation context. - Regression test passed: packet `reports/deep_analysis_packets_v2_v2full_test/20260512_120743_AAPLUSDT/`; compact `llm_input_packet.md` `16,485` bytes, `llm_input_packet_V2.full.md` and alias `llm_input_packet_full.md` both `62,424` bytes. ## AAPLUSDT compact deep analysis latest - User requested deep analysis on `AAAPLUSDT.P`; Bitget check showed `AAAPLUSDT` invalid and `AAP",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2388494282960891,
-      "maxScore": 0.45477330088615414,
+      "totalScore": 1.7519647479057312,
+      "maxScore": 0.513115319609642,
       "firstRecalledAt": "2026-05-12T16:49:56.816Z",
-      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "781b8b394bb0",
         "cb61c4238f5d",
-        "32f8b46e8b17"
+        "32f8b46e8b17",
+        "e4d55e1d8333"
       ],
       "recallDays": [
         "2026-05-12",
         "2026-05-17",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "readme-deep-analysis-v2.md",
@@ -4086,23 +4104,25 @@
       "endLine": 71,
       "source": "memory",
       "snippet": "- Result: `287.69` is valid structure (prior 1D/4H pivot high support) and does not break spacing (`290.53 -> 287.69` = `2.84`, about `1.76 ATR`). But it still fails final static ticket gates: 3-leg `291.74/290.53/287.69`, SL `285.62`, TP `294.97`, all-filled R:R `1.86` but L1-only R:R `~0.53`, L1+L2 R:R `~0.75`, and SL distance `2.031 ATR` just above preferred max; 2-leg `290.53/287.69` has all-filled R:R `2.47` but L1-only R:R `~0.90`. Far TP `297.36` improves R:R but fails realistic TP-distance gate (`~5.61 ATR`). Final ticket remains the previous safe 2-leg pullback ladder `291.74 / 290.53`, SL `288.51`, TP `294.97`, risk `99.98`, blended R:R `1.72`, margin `1224.05` at `10x`; verdict re",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.9701226323843002,
+      "totalScore": 2.362325283885002,
       "maxScore": 0.4589092850685119,
       "firstRecalledAt": "2026-05-12T17:02:32.791Z",
-      "lastRecalledAt": "2026-05-17T16:15:14.755Z",
+      "lastRecalledAt": "2026-05-24T14:59:44.424Z",
       "queryHashes": [
         "d893b70cd657",
         "6cb258bd9efe",
         "ec6d48491f3e",
         "ca6509b31619",
-        "f3bc4fe32b70"
+        "f3bc4fe32b70",
+        "5a73cc07bec5"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-17"
+        "2026-05-17",
+        "2026-05-24"
       ],
       "conceptTags": [
         "287.69",
@@ -4122,21 +4142,24 @@
       "endLine": 66,
       "source": "memory",
       "snippet": "- `build_ladder()` now tests an optional deep structural L3 outside the fib value zone when it is a strong HTF level and has not crossed impulse invalidation. - Entry combinations now include `relaxed_3_leg_deep_structural_L3` and `relaxed_2_leg_deep_structural` candidates. - `analysis_summary.static_optimisation_scan.top_candidates` now keeps all scan results for audit/debug. - Regression packet: `reports/deep_analysis_packets_v2_relaxed_l3_test/20260512_175719_AAPLUSDT/`; review report: `reports/deep_analysis/2026-05-12_AAPLUSDT_relaxed_L3_review.md`. - Result: `287.69` is valid structure (prior 1D/4H pivot high support) and does not break spacing (`290.53 -> 287.69` = `2.84`, about",
-      "recallCount": 3,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.1105106264352798,
-      "maxScore": 0.384524530172348,
+      "totalScore": 1.8801151692867277,
+      "maxScore": 0.38561467528343196,
       "firstRecalledAt": "2026-05-12T17:02:32.791Z",
-      "lastRecalledAt": "2026-05-13T04:43:04.565Z",
+      "lastRecalledAt": "2026-05-24T15:07:04.132Z",
       "queryHashes": [
         "d893b70cd657",
         "6cb258bd9efe",
-        "a412d05cebea"
+        "a412d05cebea",
+        "5a73cc07bec5",
+        "6033f3c27774"
       ],
       "recallDays": [
         "2026-05-12",
-        "2026-05-13"
+        "2026-05-13",
+        "2026-05-24"
       ],
       "conceptTags": [
         "build-ladder",
@@ -4289,18 +4312,20 @@
       "endLine": 99,
       "source": "memory",
       "snippet": "- Fill-probability exception now requires L1-only `>=0.90`, L1 risk share `<=0.30`, L1+L2/all-filled/SL/TP/margin/leverage checks to pass. - Compact `valid_candidate_alternatives_compact` now includes strict-quality candidates plus fill-probability-exception candidates. - Updated `README_DEEP_ANALYSIS_V2.md` preferred gates with Option A vs Option B R:R semantics. - Regression passed: Python compile OK and AAPL test packet `reports/deep_analysis_packets_v2_rr_exception_test/20260512_190454_AAPLUSDT/`; compact alternatives include `option_compliance` and `l1_risk_share`. Current AAPL still had no valid 0.90-0.99 fill-prob exception because candidates in that band failed another gate (`L1+",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.4522068828344345,
+      "totalScore": 0.834464630484581,
       "maxScore": 0.4522068828344345,
       "firstRecalledAt": "2026-05-12T17:25:26.958Z",
-      "lastRecalledAt": "2026-05-12T17:25:26.958Z",
+      "lastRecalledAt": "2026-05-24T15:07:04.132Z",
       "queryHashes": [
-        "3c166bdb8900"
+        "3c166bdb8900",
+        "6033f3c27774"
       ],
       "recallDays": [
-        "2026-05-12"
+        "2026-05-12",
+        "2026-05-24"
       ],
       "conceptTags": [
         "fill-probability",
@@ -4763,20 +4788,23 @@
       "endLine": 133,
       "source": "memory",
       "snippet": "- Current ticker `301.08`; latest closed 4H `297.26`; freshness diff `1.2851%`; 1D bullish/stretched RSI `79.76`, 4H bullish RSI `69.79`, 1H bullish/hot RSI `84.27`. - Current v2 value zone `293.01-293.98`, width only `0.48 ATR`; best generated candidate was single probe `293.93`, SL `291.78`, TP `298.07`, RR `1.93`, but invalid as OC ladder because fewer than 2 legs survived and L1+L2 scenario is null. - Existing AAPL live orders still present/resting from prior Option B: L1 `4.01 @ 291.74`, L2 `6.98 @ 290.53`, L3 `10.12 @ 289.47`, shared SL `285.52`, TP `297.36`, isolated 6x, baseVolume `0`, planCount `0`; no AAPL position observed. These are deep below current price; if they fill, it mean",
-      "recallCount": 2,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.9333046346902847,
+      "totalScore": 1.6883383125066755,
       "maxScore": 0.5047299891710281,
       "firstRecalledAt": "2026-05-13T19:42:04.720Z",
-      "lastRecalledAt": "2026-05-18T08:51:41.092Z",
+      "lastRecalledAt": "2026-05-24T14:35:14.927Z",
       "queryHashes": [
         "d6781310a3ba",
-        "601ee6b5d476"
+        "601ee6b5d476",
+        "f4496d51339d",
+        "dc378bae4dbc"
       ],
       "recallDays": [
         "2026-05-13",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-24"
       ],
       "conceptTags": [
         "301.08",
@@ -4960,22 +4988,24 @@
       "endLine": 147,
       "source": "memory",
       "snippet": "- Andrea changed the deep-analysis strategy back to screenshot-first: analyze visible TradingView screenshots/chart structure first, use user key levels second, use Bitget OHLCV/ticker/execution only to validate numbers/current price/sizing/margin/leverage/liquidation, and use TradingView OHLCV/export only for cross-checks. - Patched `prompts/master_trade_analysis_prompt_v2.md` with source priority, primary task, focus window (`4H` last 40 candles, `1H` last 80, `1D` last 80; older data only for major HTF levels), and explicit DO NOT rules: do not choose old pivots just because confirmed, ignore fresh breakout highs/lows, reject resting limit ladders only because price is hot, or require 2+",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.2273700475692748,
+      "totalScore": 1.653585660457611,
       "maxScore": 0.4346734374761581,
       "firstRecalledAt": "2026-05-14T04:57:39.530Z",
-      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-24T13:03:04.523Z",
       "queryHashes": [
         "cb9c4fdc8bcc",
         "470032467f5b",
-        "32f8b46e8b17"
+        "32f8b46e8b17",
+        "44891f7d6af0"
       ],
       "recallDays": [
         "2026-05-14",
         "2026-05-18",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "deep-analysis",
@@ -4995,22 +5025,25 @@
       "endLine": 143,
       "source": "memory",
       "snippet": "- Acceptance run passed for AAPL packet `reports/deep_analysis_packets_v2_patchtest/20260513_211125_AAPLUSDT/`: active mode used, impulse `290.53 -> 300.77`, value zone `296.86-294.44` (live high was `300.77`; with `301.17` it would map near `297.1-294.6`), decision `PLACEABLE_NOW`, market order `false`, static ticket safe `true`. - Accepted test ladder: L1 `295.65`, SL `290.75`, TP `300.77`, qty `8.16`, risk `39.98`, RR `1.04`; L2 `294.41`, SL `290.75`, TP `301.98`, qty `16.39`, risk `59.99`, RR `2.07`; selected leverage `6x`, estimated margin `1206.31`, all-filled RR `1.66`. - Updated `README_DEEP_ANALYSIS_V2.md`, `schemas/deep_analysis_packet_contract_v2.md`, and `prompts/master_trade_ana",
-      "recallCount": 3,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.222178590297699,
-      "maxScore": 0.4411731898784637,
+      "totalScore": 2.0938616544008255,
+      "maxScore": 0.5160936295986175,
       "firstRecalledAt": "2026-05-14T04:57:39.530Z",
-      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
       "queryHashes": [
         "cb9c4fdc8bcc",
         "1525b0f17928",
-        "32f8b46e8b17"
+        "32f8b46e8b17",
+        "dc378bae4dbc",
+        "e4d55e1d8333"
       ],
       "recallDays": [
         "2026-05-14",
         "2026-05-17",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "290.53",
@@ -5092,18 +5125,20 @@
       "endLine": 138,
       "source": "memory",
       "snippet": "- Added `ACTIVE_BREAKOUT_UNCONFIRMED_HIGH` / reversed short-side active breakdown logic: if live/current or latest 4H/1H extreme exceeds the latest confirmed 4H pivot by `>=0.75 ATR4H` in matching trend context, use active extreme plus the latest meaningful 4H/1H pullback/support-resistance base instead of waiting for a confirmed pivot extreme. - Added breakout-retest structural levels and active fib retracements as direct entry candidates; added explicit active-breakout Option A `50/61.8` and Option B `38.2/50/61.8` combinations. - Fixed fill-probability validity path (`valid_quality or valid_fill_probability`) and made final validity respect hard `reject_reasons`; exposed `BEST_QUALITY`, `",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3767078042030334,
+      "totalScore": 0.7383886456489562,
       "maxScore": 0.3767078042030334,
       "firstRecalledAt": "2026-05-14T04:57:39.530Z",
-      "lastRecalledAt": "2026-05-14T04:57:39.530Z",
+      "lastRecalledAt": "2026-05-24T14:35:14.927Z",
       "queryHashes": [
-        "cb9c4fdc8bcc"
+        "cb9c4fdc8bcc",
+        "dc378bae4dbc"
       ],
       "recallDays": [
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-24"
       ],
       "conceptTags": [
         "active-breakout-unconfirmed-high",
@@ -5255,23 +5290,25 @@
       "endLine": 162,
       "source": "memory",
       "snippet": "- Valid new static candidate: L1 `8.16 @ 295.65`, SL `290.75`, TP `300.77`, risk `39.98`, RR `1.04`; L2 `16.39 @ 294.41`, SL `290.75`, TP `301.98`, risk `59.99`, RR `2.07`; total risk `99.97`, reward `165.85`, all-filled RR `1.66`, selected leverage `6x`, estimated margin `1206.31`, estimated liquidation `247.45` safely below SL. - Critical execution-state note: existing older AAPL live 6x isolated ladder is still present and unfilled (`baseVolume=0`), regular orders `3`, plan `0`: L1 `4.01 @ 291.74`, L2 `6.98 @ 290.53`, L3 `10.12 @ 289.47`, shared SL `285.52`, TP `297.36`. No AAPL position observed; positions output showed NVDA long only. Do not add the new AAPL ladder on top without explic",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.8131116747856137,
+      "totalScore": 2.2270108342170714,
       "maxScore": 0.5100789099931716,
       "firstRecalledAt": "2026-05-14T08:15:24.930Z",
-      "lastRecalledAt": "2026-05-18T09:10:16.627Z",
+      "lastRecalledAt": "2026-05-24T14:18:15.795Z",
       "queryHashes": [
         "1b03d21270a3",
         "ca6509b31619",
         "601ee6b5d476",
-        "36506e2be942"
+        "36506e2be942",
+        "f4496d51339d"
       ],
       "recallDays": [
         "2026-05-14",
         "2026-05-17",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-24"
       ],
       "conceptTags": [
         "8.16",
@@ -5750,22 +5787,24 @@
       "endLine": 11,
       "source": "memory",
       "snippet": "# 2026-05-18 — tvflow durable memory ## MRVLUSDT live Option B placement - Andrea first requested MRVLUSDT.P analysis; screenshot-first analysis produced a pullback-long bias, then Andrea corrected Option B levels and explicitly confirmed: `CONFIRM ENABLE LIVE GATE AND PLACE MRVL OPTION B 4X ISOLATED`. - Fresh precheck before placement: MRVLUSDT regular orders `0`, plan orders `0`, no MRVL position observed. Ticker before placement was around last `177.14`, ask `177.21`, bid `177.09`, so entries `172.20` and `170.40` were passive below market. - Set MRVLUSDT margin mode isolated and long leverage `4x`. Used one-shot process env `BITGET_ALLOW_ORDER_PLACEMENT=true` and `BITGET_ALLOW_LIVE_TRA",
-      "recallCount": 3,
+      "recallCount": 4,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.283375397324562,
+      "totalScore": 1.7034273803234101,
       "maxScore": 0.46287332773208617,
       "firstRecalledAt": "2026-05-18T07:14:34.615Z",
-      "lastRecalledAt": "2026-05-22T16:59:18.302Z",
+      "lastRecalledAt": "2026-05-24T08:34:25.232Z",
       "queryHashes": [
         "fc23d4e19743",
         "a05ae017a0d6",
-        "1e96b4a778c7"
+        "1e96b4a778c7",
+        "df0a858017f1"
       ],
       "recallDays": [
         "2026-05-18",
         "2026-05-21",
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "mrvlusdt.p",
@@ -5785,18 +5824,20 @@
       "endLine": 20,
       "source": "memory",
       "snippet": "# 2026-05-17 — tvflow durable memory ## Deep-analysis workflow / prompt changes Andrea iteratively refined the Bitget deep-analysis workflow after repeated FUTUUSDT.P analyses. The active default behavior for future requests like “run a deep analysis on SYMBOLUSDT.P” is now stricter screenshot-first practical analysis: - Primary truth is the visible 1D / 4H / 1H TradingView screenshots. - OHLCV, current price, ATR4H, open orders/positions, margin/leverage, and packet-derived data are validation/sizing/safety only. - Precomputed candidate scans, static optimisation scans, OHLCV-derived value zones, and old packet ladder levels must **not** be the main source of trade levels and must not ov",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3711415886878967,
-      "maxScore": 0.3711415886878967,
+      "totalScore": 0.8343953907489776,
+      "maxScore": 0.4632538020610809,
       "firstRecalledAt": "2026-05-18T09:05:48.832Z",
-      "lastRecalledAt": "2026-05-18T09:05:48.832Z",
+      "lastRecalledAt": "2026-05-24T13:03:04.523Z",
       "queryHashes": [
-        "470032467f5b"
+        "470032467f5b",
+        "44891f7d6af0"
       ],
       "recallDays": [
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-24"
       ],
       "conceptTags": [
         "deep-analysis",
@@ -6650,18 +6691,20 @@
       "endLine": 22,
       "source": "memory",
       "snippet": "- Patched scripts/build_deep_analysis_packet_v2.py: added universal resting-entry distance gate before leg spacing, SL/TP, scan combo construction, static optimisation ranking, and Option A/B selection. Long buy limits require distance (current-entry)/ATR4H >= 0.25; short sell limits require (entry-current)/ATR4H >= 0.25; strict contexts require >=0.50 ATR4H (1H against/corrective, near major S/R, market chase disallowed, fill-probability use). Rejected candidates are stored in ear_market_rejected_entries with symbol/side/setup/entry/current/ATR/distance/threshold/strict reason/rejection reason. - Updated compact payload rules and exposed esting_entry_distance_policy, ear_market_rejected_",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.42902567386627194,
+      "totalScore": 0.7802307665348052,
       "maxScore": 0.42902567386627194,
       "firstRecalledAt": "2026-05-22T17:46:30.205Z",
-      "lastRecalledAt": "2026-05-22T17:46:30.205Z",
+      "lastRecalledAt": "2026-05-24T14:35:14.927Z",
       "queryHashes": [
-        "32f8b46e8b17"
+        "32f8b46e8b17",
+        "dc378bae4dbc"
       ],
       "recallDays": [
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "resting-entry",
@@ -6681,18 +6724,20 @@
       "endLine": 13,
       "source": "memory",
       "snippet": "# 2026-05-21 — tvflow durable memory ## APPUSDT live Option B 3x placement - Andrea requested live placement of `APPUSDT.P` Option B best-fill-probability long ladder and then explicitly confirmed: `CONFIRM APPUSDT LONG 3X ISOLATED LIVE`. - Fresh precheck before placement: APPUSDT regular orders `0`, plan orders `0`, no APP position observed. Ticker before confirmation was around last `484.69`; all buy-limit entries `482.50 / 477.20 / 473.90` were passive below market. - Set/confirmed isolated margin mode and long leverage `3x`. - APPUSDT size precision is `0.01`; rounded user quantities down from `1.101 / 2.011 / 2.837` to `1.10 / 2.01 / 2.83` to avoid exceeding planned risk. - Placed live",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.3855152696371078,
-      "maxScore": 0.3855152696371078,
+      "totalScore": 0.7933939933776855,
+      "maxScore": 0.40787872374057765,
       "firstRecalledAt": "2026-05-22T20:40:21.726Z",
-      "lastRecalledAt": "2026-05-22T20:40:21.726Z",
+      "lastRecalledAt": "2026-05-24T08:34:25.232Z",
       "queryHashes": [
-        "f150ed0b0db1"
+        "f150ed0b0db1",
+        "df0a858017f1"
       ],
       "recallDays": [
-        "2026-05-22"
+        "2026-05-22",
+        "2026-05-24"
       ],
       "conceptTags": [
         "appusdt.p",
@@ -6778,20 +6823,22 @@
       "endLine": 41,
       "source": "memory",
       "snippet": "- Drew the 3-order long ladder on TradingView Desktop MCP `BITGET:AAPLUSDT.P` 4H. Journal refreshed NoSend; latest workbook `reports/trade_journal/bitget_futures_trade_report_latest.xls`, snapshot `reports/trade_journal/bitget_futures_trade_report_2026-05-18T09-15-26-548Z.xls`; openOrders `8`, positions `1`. Execution summary saved at `reports/live_execution/20260518_aapl_optionb_10x_live/summary.json`. ## Bitget trade report refresh / performance counts - Refreshed Bitget trade journal NoSend on 2026-05-18 16:49 Berlin via `scripts/run_bitget_journal_update.ps1 -NoSend -Symbols GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT,FUTUUSDT,MRVLUSDT`. - Latest artifacts: workbook `reports/t",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7937526255846024,
+      "totalScore": 1.187447217106819,
       "maxScore": 0.4033640384674072,
       "firstRecalledAt": "2026-05-22T21:13:18.500Z",
-      "lastRecalledAt": "2026-05-23T04:43:48.407Z",
+      "lastRecalledAt": "2026-05-24T13:03:04.523Z",
       "queryHashes": [
         "8aa07472a6f0",
-        "6ee7c2bdc91a"
+        "6ee7c2bdc91a",
+        "44891f7d6af0"
       ],
       "recallDays": [
         "2026-05-22",
-        "2026-05-23"
+        "2026-05-23",
+        "2026-05-24"
       ],
       "conceptTags": [
         "3-order",
@@ -6968,19 +7015,21 @@
       "endLine": 24,
       "source": "memory",
       "snippet": "- Wired `place-order.js`, `place-trigger-order.js`, and `execute-signal.js` so live open orders run the gate before Bitget placement. RED blocks; YELLOW requires explicit `--liquidityGateOverride YELLOW`; ladder-looking clientOids ending `_L1/_B1/_S1` etc. require full-ladder `--gateMaxQty`, `--gatePositionNotional`, and `--gatePlannedRisk`. - Gate metrics: spread, 24h volume vs `500x` notional, dead 1m candles, p10 1m quote-volume stress, simulated orderbook stop-exit slippage, and depth-to-SL corridor escalation. - After successful live placement, placement scripts now spawn a detached post-fill monitor by default unless `--liquidityMonitor false`; the watcher reruns the gate on actual ope",
-      "recallCount": 2,
+      "recallCount": 3,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 0.7210249096155166,
-      "maxScore": 0.3610795885324478,
+      "totalScore": 1.2033239990472793,
+      "maxScore": 0.48229908943176264,
       "firstRecalledAt": "2026-05-23T08:39:26.315Z",
-      "lastRecalledAt": "2026-05-23T11:00:01.499Z",
+      "lastRecalledAt": "2026-05-24T08:34:25.232Z",
       "queryHashes": [
         "1d86fa8177fa",
-        "01f17779b8ba"
+        "01f17779b8ba",
+        "df0a858017f1"
       ],
       "recallDays": [
-        "2026-05-23"
+        "2026-05-23",
+        "2026-05-24"
       ],
       "conceptTags": [
         "place-order.js",
@@ -7085,6 +7134,317 @@
         "no-slippage",
         "stop-exit",
         "entry/total"
+      ]
+    },
+    "memory:memory/2026-05-23.md:23:29": {
+      "key": "memory:memory/2026-05-23.md:23:29",
+      "path": "memory/2026-05-23.md",
+      "startLine": 23,
+      "endLine": 29,
+      "source": "memory",
+      "snippet": "- Warm-up logic detects a recent inactive-to-active transition using 1m quote-volume candles; if Bitget never shows a clean boundary, it can use a recent 30-candle RWA override, but that fallback is YELLOW at best and still requires explicit confirmation before live placement. - Gate report now includes active-candle/window count, active median 1m quote volume, position/median ratio, and effective mode. Normal non-RWA symbols keep normal 60/120m p10 logic. - Validation: `node --check bitget-futures-harness/lib/liquidityGate.js` passed. CLUSDT swing-short gate check after patch returned YELLOW, not live-placed: spread/24h/orderbook stop slippage/depth GREEN; normal p10 still BLOCK; RWA warmup",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4217601329088211,
+      "maxScore": 0.4217601329088211,
+      "firstRecalledAt": "2026-05-24T08:34:25.232Z",
+      "lastRecalledAt": "2026-05-24T08:34:25.232Z",
+      "queryHashes": [
+        "df0a858017f1"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "warm-up",
+        "inactive-to-active",
+        "quote-volume",
+        "30-candle",
+        "active-candle/window",
+        "position/median",
+        "non-rwa",
+        "60/120m"
+      ]
+    },
+    "memory:memory/2026-05-23.md:28:31": {
+      "key": "memory:memory/2026-05-23.md:28:31",
+      "path": "memory/2026-05-23.md",
+      "startLine": 28,
+      "endLine": 31,
+      "source": "memory",
+      "snippet": "- Andrea asked to simulate a JDUSDT.P live long ladder: L1/L2/L3 `30.30/30.20/30.10`, SL `29.80`, TP1/TP2/TP3 `31.30/31.70/32.00`. Initial real-style 100 USDT risk ticket was corrected after Andrea pointed out missing liquidity/slippage analysis. - JD gate finding: spread was OK around `30.48/30.49`, but 100 USDT risk implied ~250 JD / ~7.55k USDT notional, too large versus thin JD liquidity and with estimated stop-market extra loss around `~10.25 USDT`; verdict should be NO-GO unless downsized. - Durable live-order fallback rule agreed with Andrea: when a live Bitget order request fails liquidity/slippage gate, immediately provide two downsized size proposals rather than only rejecting: (1)",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.40795776844024656,
+      "maxScore": 0.40795776844024656,
+      "firstRecalledAt": "2026-05-24T08:34:25.232Z",
+      "lastRecalledAt": "2026-05-24T08:34:25.232Z",
+      "queryHashes": [
+        "df0a858017f1"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "jdusdt.p",
+        "l1/l2/l3",
+        "30.30/30.20/30.10",
+        "29.80",
+        "tp1/tp2/tp3",
+        "31.30/31.70/32.00",
+        "real-style",
+        "liquidity/slippage"
+      ]
+    },
+    "memory:memory/2026-05-23.md:32:39": {
+      "key": "memory:memory/2026-05-23.md:32:39",
+      "path": "memory/2026-05-23.md",
+      "startLine": 32,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "- JD example results from the discussion: original-risk 5 USDT slippage cap yielded about `58.32 JD` per entry / `174.96 JD` total / planned risk `~69.98 USDT`; self-referenced 5% new-risk cap yielded about `47.88 JD` per entry / `143.64 JD` total / planned no-slippage risk `~57.456 USDT`, estimated extra slippage exactly `~5%` of that planned risk. ## Trading alert watchdog DM test status - Andrea asked to set up/test a watchdog for trading alerts that sends Discord DMs. Created disabled template config at `watchdog/trading_alert_watchdog.json` with target intended for Andrea (`1322306175865323552`) and example disabled price-level rule. - DM delivery investigation: OpenClaw/Discord cron/d",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3900473117828369,
+      "maxScore": 0.3900473117828369,
+      "firstRecalledAt": "2026-05-24T13:31:50.139Z",
+      "lastRecalledAt": "2026-05-24T13:31:50.139Z",
+      "queryHashes": [
+        "81a52bf2fbd8"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "original-risk",
+        "58.32",
+        "174.96",
+        "69.98",
+        "self-referenced",
+        "new-risk",
+        "47.88",
+        "143.64"
+      ]
+    },
+    "memory:memory/2026-05-23.md:30:35": {
+      "key": "memory:memory/2026-05-23.md:30:35",
+      "path": "memory/2026-05-23.md",
+      "startLine": 30,
+      "endLine": 35,
+      "source": "memory",
+      "snippet": "- Durable live-order fallback rule agreed with Andrea: when a live Bitget order request fails liquidity/slippage gate, immediately provide two downsized size proposals rather than only rejecting: (1) cap extra stop-market slippage cost to `slippage_pct × original/base planned risk` (default currently 5% of 100 USDT = 5 USDT), and (2) cap extra stop-market slippage cost to `slippage_pct × new planned no-slippage risk`. Keep `slippage_pct` parameterized. - For each fallback proposal, solve size from the live stop-exit orderbook depth, round down to symbol precision, and show qty per entry/total qty, planned no-slippage risk, estimated extra slippage, total risk after slippage, notional/margin,",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.38915760517120357,
+      "maxScore": 0.38915760517120357,
+      "firstRecalledAt": "2026-05-24T13:31:50.139Z",
+      "lastRecalledAt": "2026-05-24T13:31:50.139Z",
+      "queryHashes": [
+        "81a52bf2fbd8"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "live-order",
+        "liquidity/slippage",
+        "stop-market",
+        "slippage-pct",
+        "original/base",
+        "no-slippage",
+        "stop-exit",
+        "entry/total"
+      ]
+    },
+    "memory:memory/2026-05-24.md:13:19": {
+      "key": "memory:memory/2026-05-24.md:13:19",
+      "path": "memory/2026-05-24.md",
+      "startLine": 13,
+      "endLine": 19,
+      "source": "memory",
+      "snippet": "- Validation: `node --check scripts/virtual_oco_watchdog.js`, disabled JSON dry-run, and PowerShell status wrapper passed. ## AAPLUSDT deep analysis - Ran screenshot-first packet `reports/deep_analysis_packets_v2/20260524_160622_AAPLUSDT/`; final report `reports/deep_analysis/2026-05-24_AAPLUSDT_deep_analysis.md`. - Verdict bullish but no market buy near resistance. A best-quality long: 27.32 @303.46, SL299.80, TP312.68, risk ~99.99, margin ~1381.75 @6x, R:R ~2.52. B fill-prob long: 26.24 @306.71, SL302.90, TP312.68, risk ~99.97, margin ~1341.35 @6x, R:R ~1.57. C conditional breakout: 4H close >312.68, entry ~312.85 max 313.54, SL310.60, TP316.80, qty44.44, risk ~99.99, margin ~1390.31",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4241597831249237,
+      "maxScore": 0.4241597831249237,
+      "firstRecalledAt": "2026-05-24T14:18:15.795Z",
+      "lastRecalledAt": "2026-05-24T14:18:15.795Z",
+      "queryHashes": [
+        "f4496d51339d"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "scripts/virtual-oco-watchdog.js",
+        "dry-run",
+        "screenshot-first",
+        "best-quality",
+        "27.32",
+        "303.46",
+        "sl299.80",
+        "tp312.68"
+      ]
+    },
+    "memory:memory/2026-05-24.md:13:23": {
+      "key": "memory:memory/2026-05-24.md:13:23",
+      "path": "memory/2026-05-24.md",
+      "startLine": 13,
+      "endLine": 23,
+      "source": "memory",
+      "snippet": "- Validation: `node --check scripts/virtual_oco_watchdog.js`, disabled JSON dry-run, and PowerShell status wrapper passed. ## AAPLUSDT deep analysis - Ran screenshot-first packet `reports/deep_analysis_packets_v2/20260524_160622_AAPLUSDT/`; final report `reports/deep_analysis/2026-05-24_AAPLUSDT_deep_analysis.md`. - Verdict bullish but no market buy near resistance. A best-quality long: 27.32 @303.46, SL299.80, TP312.68, risk ~99.99, margin ~1381.75 @6x, R:R ~2.52. B fill-prob long: 26.24 @306.71, SL302.90, TP312.68, risk ~99.97, margin ~1341.35 @6x, R:R ~1.57. C conditional breakout: 4H close >312.68, entry ~312.85 max 313.54, SL310.60, TP316.80, qty44.44, risk ~99.99, margin ~1390.31",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8743497848510742,
+      "maxScore": 0.5170462340116501,
+      "firstRecalledAt": "2026-05-24T14:35:14.927Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
+      "queryHashes": [
+        "dc378bae4dbc",
+        "e4d55e1d8333"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "scripts/virtual-oco-watchdog.js",
+        "dry-run",
+        "screenshot-first",
+        "best-quality",
+        "27.32",
+        "303.46",
+        "sl299.80",
+        "tp312.68"
+      ]
+    },
+    "memory:memory/2026-05-11.md:106:108": {
+      "key": "memory:memory/2026-05-11.md:106:108",
+      "path": "memory/2026-05-11.md",
+      "startLine": 106,
+      "endLine": 108,
+      "source": "memory",
+      "snippet": "- Patched `scripts/build_deep_analysis_packet_v2.py`: `build_ladder` now constructs only static `DIP_LADDER` long / `SELL_RALLY` short tickets from latest valid 4H impulse fib value zone (`38.2/50/61.8`) plus structural confluence. It enforces static-only fixed entries/qty/SL/TP, no trailing/dynamic management/future cancellation assumptions, 2-3 legs max, risk-split sizing by risk (`25/35/40` or `40/60`), common structural SL with ATR buffer, min spacing `0.25 ATR`, ideal spacing warnings, L3 distance from SL, margin cap, blended/static R:R, and explicit `static_ticket_safe` / `static_ticket_reject_reasons` fields. - Updated `prompts/master_trade_analysis_prompt_v2.md` required output to fi",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3878430515527725,
+      "maxScore": 0.3878430515527725,
+      "firstRecalledAt": "2026-05-24T14:59:44.424Z",
+      "lastRecalledAt": "2026-05-24T14:59:44.424Z",
+      "queryHashes": [
+        "5a73cc07bec5"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "build-ladder",
+        "dip-ladder",
+        "sell-rally",
+        "38.2/50/61.8",
+        "static-only",
+        "entries/qty/sl/tp",
+        "trailing/dynamic",
+        "management/future"
+      ]
+    },
+    "memory:memory/2026-05-24.md:1:10": {
+      "key": "memory:memory/2026-05-24.md:1:10",
+      "path": "memory/2026-05-24.md",
+      "startLine": 1,
+      "endLine": 10,
+      "source": "memory",
+      "snippet": "# 2026-05-24 - tvflow durable memory ## Deep-analysis prompt replacement - Replaced active final LLM prompt `prompts/master_trade_analysis_prompt_v2.md` with Andrea's attached screenshot-based Bitget quant swing analyst prompt. Backup: `prompts/master_trade_analysis_prompt_v2.pre_attached_quant_prompt_20260524_150419.md`. - New final-analysis framework evaluates A/B/C/D: A best-quality pullback, B best-fill-probability pullback, C breakout/breakdown with its own gate, D OC execution wrapper (`VIRTUAL_OCO` or `COMBO_100`) only when useful and valid. A/B/C are alternatives unless D explicitly wraps them. - Source priority: screenshots are truth; user notes secondary; Bitget OHLCV/export/",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.36968957781791684,
+      "maxScore": 0.36968957781791684,
+      "firstRecalledAt": "2026-05-24T14:59:44.424Z",
+      "lastRecalledAt": "2026-05-24T14:59:44.424Z",
+      "queryHashes": [
+        "5a73cc07bec5"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "backup",
+        "deep-analysis",
+        "screenshot-based",
+        "final-analysis",
+        "a/b/c/d",
+        "best-quality",
+        "best-fill-probability",
+        "breakout/breakdown"
+      ]
+    },
+    "memory:memory/2026-05-12.md:99:105": {
+      "key": "memory:memory/2026-05-12.md:99:105",
+      "path": "memory/2026-05-12.md",
+      "startLine": 99,
+      "endLine": 105,
+      "source": "memory",
+      "snippet": "- Updated `prompts/master_trade_analysis_prompt_v2.md`: Option B now explicitly allows shallow L1-only R:R `0.90-0.99` if all other gates pass; L1+L2 `1.15-1.20` is soft-warning, not auto-reject; all-filled R:R `>=1.5` remains hard; L1 risk share normally `<=25%`; SL distance warning zones `1.80-2.20 ATR`, >`2.20` requires strong HTF, >`2.50` normally reject unless exceptional 1D; TP >`3.50 ATR` needs clear 1D/4H support; rejection language must say failures are due total ladder/ATR/TP/margin/structure, not merely L1 R:R <1.0. - Updated `scripts/build_deep_analysis_packet_v2.py`: fill-probability exception now requires L1 R:R `>=0.90`, L1 share `<=0.25`, L1+L2 `>=1.15`, all-filled `>=1.5`, r",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.35100509226322174,
+      "maxScore": 0.35100509226322174,
+      "firstRecalledAt": "2026-05-24T15:07:04.132Z",
+      "lastRecalledAt": "2026-05-24T15:07:04.132Z",
+      "queryHashes": [
+        "6033f3c27774"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "l1-only",
+        "0.90-0.99",
+        "1.15-1.20",
+        "soft-warning",
+        "auto-reject",
+        "all-filled",
+        "1.5",
+        "1.80-2.20"
+      ]
+    },
+    "memory:memory/2026-05-13.md:146:153": {
+      "key": "memory:memory/2026-05-13.md:146:153",
+      "path": "memory/2026-05-13.md",
+      "startLine": 146,
+      "endLine": 153,
+      "source": "memory",
+      "snippet": "- Patched `README_DEEP_ANALYSIS_V2.md` and `schemas/deep_analysis_packet_contract_v2.md` from OHLCV-first to screenshot-first policy. - Patched `scripts/build_deep_analysis_packet_v2.py` compact/full packet rules so generated packets carry screenshot-first priority, focus window, DO NOT rules, and screenshot-delivery guidance; compact payload now includes `preferred_media_files` and `discord_media_lines` under `evidence_files`. - Patched `scripts/run_deep_analysis_packet_v2.ps1` so screenshots are enabled by default; use `-NoCaptureTv` only for explicit OHLCV-only/debug runs. Syntax checks passed; Python compile passed; no-capture AAPL packet smoke test succeeded at `reports/deep_analysis_pa",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4976493656635284,
+      "maxScore": 0.4976493656635284,
+      "firstRecalledAt": "2026-05-24T15:11:51.737Z",
+      "lastRecalledAt": "2026-05-24T15:11:51.737Z",
+      "queryHashes": [
+        "e4d55e1d8333"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "readme-deep-analysis-v2.md",
+        "ohlcv-first",
+        "screenshot-first",
+        "compact/full",
+        "screenshot-delivery",
+        "preferred-media-files",
+        "discord-media-lines",
+        "evidence-files"
       ]
     }
   }

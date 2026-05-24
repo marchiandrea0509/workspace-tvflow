@@ -92,6 +92,19 @@ The harness refuses live order placement unless **both** are true:
 
 That prevents accidental live execution if demo/live keys are mixed up.
 
+Live open orders also run the liquidity gate before placement. `GREEN` proceeds;
+`YELLOW` requires `--liquidityGateOverride YELLOW`; `RED` is normally blocked.
+If the user explicitly accepts a RED liquidity/slippage risk, the placement
+scripts require both of these flags on that specific send command:
+
+```powershell
+--liquidityGateOverride RED --liquidityGateOverrideReason "specific user-approved reason"
+```
+
+For ladder-looking order client IDs ending in `_L1`, `_B1`, `_S1`, etc., still
+provide the full-ladder gate inputs so the gate evaluates worst-case stop size:
+`--gateMaxQty`, `--gatePositionNotional`, and `--gatePlannedRisk`.
+
 ## Core commands
 
 ### Account

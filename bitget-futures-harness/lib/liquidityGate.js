@@ -551,11 +551,24 @@ async function assertLiquidityGateForLiveOpenOrder(args, payload, cfg) {
   console.log(JSON.stringify({ liquidityGate: gate }, null, 2));
 
   if (gate.result === 'RED') {
-    throw new Error('Live open order blocked by RED liquidity gate.');
+    const override = String(args.liquidityGateOverride || '').toUpperCase();
+    const overrideReason = String(args.liquidityGateOverrideReason || '').trim();
+    if (override !== 'RED') {
+      throw new Error('Live open order blocked by RED liquidity gate. Re-run only after explicit user confirmation with --liquidityGateOverride RED and --liquidityGateOverrideReason "<reason>".');
+    }
+    if (overrideReason.length < 12) {
+      throw new Error('Live RED liquidity gate override requires --liquidityGateOverrideReason with a specific reason/risk acknowledgement.');
+    }
+    gate.override = {
+      level: 'RED',
+      acceptedAt: new Date().toISOString(),
+      reason: overrideReason,
+    };
+    console.warn(`WARNING: RED liquidity gate override accepted: ${overrideReason}`);
   }
   if (gate.result === 'YELLOW') {
     const override = String(args.liquidityGateOverride || '').toUpperCase();
-    if (override !== 'YELLOW' && override !== 'TRUE') {
+    if (override !== 'YELLOW' && override !== 'TRUE' && override !== 'RED') {
       throw new Error('Live open order blocked by YELLOW liquidity gate. Re-run only after explicit user confirmation with --liquidityGateOverride YELLOW.');
     }
   }

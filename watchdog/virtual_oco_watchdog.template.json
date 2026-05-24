@@ -1,0 +1,94 @@
+{
+  "enabled": false,
+  "ocoGroupId": "VOCO_SYMBOL_YYYYMMDD_PLAN",
+  "symbol": "AAPLUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 2,
+  "expiryUtc": "2026-05-25T20:00:00Z",
+  "preferredFamily": "A",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "dm:1322306175865323552"
+  },
+  "globalInvalidation": {
+    "note": "Example: invalidate a long thesis if price trades below the prepared structural invalidation.",
+    "priceCrosses": 175.3,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "A",
+    "bias": "LONG",
+    "style": "DIP_LADDER",
+    "orderTypeProposal": "LIMIT ladder after alert/final human review",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 181.2, "max": 184.8 },
+    "entries": [
+      { "level": "L1", "entry": 184.8, "quantity": 4.21, "notional": 778.01, "sl": 175.3, "tp": 198.2, "plannedRisk": 40, "rr": 1.41 },
+      { "level": "L2", "entry": 181.2, "quantity": 10.16, "notional": 1841.0, "sl": 175.3, "tp": 203.0, "plannedRisk": 60, "rr": 3.69 }
+    ],
+    "ticket": {
+      "entry": "L1 184.80 / L2 181.20",
+      "sl": 175.3,
+      "tp": "L1 198.20 / L2 203.00",
+      "quantity": "4.21 + 10.16",
+      "notional": 2619,
+      "plannedRisk": 99.94,
+      "margin": 654.75,
+      "leverage": 4,
+      "rr": 2.78,
+      "minRr": 1.5,
+      "invalidation": "4H close below 175.30 / structural long failure",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": [
+      {
+        "description": "4H closes back above L1 after zone touch, if required by the prepared ticket",
+        "field": "checkClosed.close",
+        "op": ">=",
+        "value": 184.8
+      }
+    ]
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "OC_CONDITIONAL_BREAKOUT alert only; user places later if accepted",
+    "trigger": 193.5,
+    "confirmationRule": "closed_above_trigger",
+    "maxStalenessDistance": 0.5,
+    "maxStalenessUnit": "ATR",
+    "ticket": {
+      "entry": "4H close above 193.50, max chase 0.5 ATR4H",
+      "sl": 186.4,
+      "tp": 204.8,
+      "quantity": 14.08,
+      "notional": 2725,
+      "plannedRisk": 99.97,
+      "margin": 681.25,
+      "leverage": 4,
+      "rr": 1.59,
+      "minRr": 1.2,
+      "invalidation": "Close back inside prior range / below breakout shelf",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "confirmations": [],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "closed candle stayed above breakout trigger",
+        "field": "checkClosed.close",
+        "op": ">=",
+        "value": 193.5
+      }
+    ]
+  }
+}
