@@ -28,6 +28,72 @@ Deep analysis / user request / GPT comparison
 3. **State safety is not overrideable.** Overrides may apply to calibrated risk gates, not to wrong-symbol/wrong-position/oversize/ambiguous-state problems.
 4. **Every live write must eventually produce an audit record.** The audit record should make it easy to understand what was requested, what checks passed/failed, what was sent to Bitget, and what postcheck found.
 5. **Human confirmation remains required for live execution.** The service can standardize checks but does not remove Andrea's explicit execution boundary.
+6. **Every action needs an idempotency key.** Retries, timeouts, duplicated cron/scheduler runs, or duplicate assistant turns must not create duplicate orders.
+
+## Idempotency model
+
+Every execution plan should include:
+
+```json
+{
+  "idempotency": {
+    "cycleId": "20260525_4h_1600Z",
+    "strategyId": "clusdt_optionB",
+    "symbol": "CLUSDT",
+    "intentType": "set_tp_trailing_split"
+  }
+}
+```
+
+Canonical key:
+
+```text
+cycle_id + strategy_id + symbol + intent_type
+```
+
+Future live behavior:
+
+- same key + same payload + already succeeded -> return `already_done`, do not send a duplicate write
+- same key + different payload -> `HARD_BLOCK`; require a new `cycleId` or explicit future supersede workflow
+- same key + previous failed before Bitget write -> safe retry candidate
+- same key + previous write sent but postcheck unknown -> `HARD_BLOCK` until manual reconciliation
+- missing key in automated/scheduled live flow -> `HARD_BLOCK`
+
+Phase 1 behavior:
+
+- missing key is a `YELLOW` warning only, because Phase 1 is dry-run/read-only
+- complete key is stored in the audit record with a payload hash
+- dry-run checks existing audit records in the selected audit directory and flags same-key duplicates/conflicts
+
+Idempotency keys should also be used as the root for future `clientOid` prefixes where exchange length limits allow it.
+
+## Exchange adapter stance
+
+The service is **Bitget-first, adapter-ready**. Do not implement Bybit/Hyperliquid adapters until there is a real use case.
+
+Design seam for later:
+
+```text
+executionService
+  -> exchangeAdapter interface
+      -> bitgetAdapter
+      -> future bybitAdapter
+      -> future hyperliquidAdapter
+```
+
+Potential normalized methods:
+
+- `getPositions()`
+- `getOpenOrders()`
+- `getContractSpec()`
+- `normalizeSizePrice()`
+- `placeOrder()`
+- `cancelOrder()`
+- `setLeverage()`
+- `setTpSl()`
+- `setTrailingTp()`
+
+Do not hide dangerous exchange differences behind a fake generic abstraction. Hedge/one-way mode, TP/SL semantics, reduce-only behavior, trailing-stop rules, precision, liquidation/margin model, and client order ID constraints must remain explicit in each adapter.
 
 ## Live-write action scope
 
@@ -92,6 +158,7 @@ Deliverables:
 - npm alias `execution-dry-run`
 - audit records under `reports/live_execution/audit/`
 - shared override taxonomy: `GREEN`, `YELLOW`, `RED`, `HARD_BLOCK`
+- idempotency key parsing and dry-run ledger conflict checks
 - design doc and memory/project-state updates
 
 Capabilities:
@@ -100,6 +167,8 @@ Capabilities:
 - validate basic required fields
 - classify hard blocks vs warnings
 - optionally read live Bitget state with `--readLive`
+- warn if idempotency key is missing; store key/payload hash when present
+- check prior audit records for same idempotency key and detect same-payload duplicates vs different-payload conflicts
 - write a dry-run audit log
 - never send POST/write requests
 

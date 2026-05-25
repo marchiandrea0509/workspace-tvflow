@@ -68,6 +68,18 @@ function listFromResponse(response) {
   return [];
 }
 
+function stableForHash(value) {
+  if (Array.isArray(value)) return value.map(stableForHash);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value).sort().map((key) => [key, stableForHash(value[key])]));
+  }
+  return value;
+}
+
+function sha256Short(value) {
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 16);
+}
+
 function addIssue(target, severity, code, message, details = undefined) {
   target.push({ severity, code, message, ...(details === undefined ? {} : { details }) });
 }
@@ -91,6 +103,30 @@ function inferProductType(plan, defaults) {
 
 function inferMarginCoin(plan, defaults) {
   return plan.marginCoin || plan.order?.marginCoin || plan.payload?.marginCoin || plan.signal?.marginCoin || defaults.marginCoin;
+}
+
+function buildIdempotency(plan, { action = undefined, symbol = undefined } = {}) {
+  const raw = plan.idempotency || {};
+  const cycleId = raw.cycleId || plan.cycleId;
+  const strategyId = raw.strategyId || plan.strategyId;
+  const resolvedSymbol = raw.symbol || symbol || inferSymbol(plan);
+  const intentType = raw.intentType || plan.intentType || action || plan.action || plan.type;
+  const components = {
+    cycleId: cycleId || null,
+    strategyId: strategyId || null,
+    symbol: resolvedSymbol || null,
+    intentType: intentType || null,
+  };
+  const missing = Object.entries(components).filter(([, value]) => !value).map(([key]) => key);
+  const key = missing.length ? null : `${components.cycleId}:${components.strategyId}:${components.symbol}:${components.intentType}`;
+  const payloadHash = sha256Short(JSON.stringify(stableForHash(plan)));
+  return {
+    key,
+    components,
+    missing,
+    payloadHash,
+    requiredForFutureLive: true,
+  };
 }
 
 function validateBasicPlan(plan, { allowUnknownActions = false } = {}) {
@@ -163,11 +199,19 @@ function validateBasicPlan(plan, { allowUnknownActions = false } = {}) {
     addIssue(hardBlocks, GATE_STATUS.HARD_BLOCK, 'risk_gate_hard_block', 'Plan declares HARD_BLOCK risk gate; this cannot be overridden.');
   }
 
+  const idempotency = buildIdempotency(plan, { action, symbol });
+  if (idempotency.missing.length) {
+    addIssue(warnings, GATE_STATUS.YELLOW, 'missing_idempotency_key', 'Future live-capable execution plans must include idempotency: cycleId + strategyId + symbol + intentType.', { missing: idempotency.missing });
+  } else {
+    addIssue(info, GATE_STATUS.GREEN, 'idempotency_key_present', 'Idempotency key present for dry-run audit.', { key: idempotency.key, payloadHash: idempotency.payloadHash });
+  }
+
   return {
     action,
     symbol,
     productType: inferProductType(plan, defaults),
     marginCoin: inferMarginCoin(plan, defaults),
+    idempotency,
     hardBlocks,
     warnings,
     info,
@@ -178,6 +222,58 @@ function validateBasicPlan(plan, { allowUnknownActions = false } = {}) {
       phase1DryRunOnly: true,
     },
   };
+}
+
+function scanIdempotencyLedger({ auditDir = defaultAuditDir(), idempotencyKey, payloadHash } = {}) {
+  const resolvedDir = path.resolve(auditDir || defaultAuditDir());
+  const out = {
+    auditDir: resolvedDir,
+    checked: false,
+    matches: [],
+    skipped: 0,
+    errors: [],
+  };
+  if (!idempotencyKey) return out;
+  out.checked = true;
+  if (!fs.existsSync(resolvedDir)) return out;
+  for (const name of fs.readdirSync(resolvedDir)) {
+    if (!name.endsWith('.json')) continue;
+    const filePath = path.join(resolvedDir, name);
+    try {
+      const record = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (record?.idempotency?.key !== idempotencyKey) continue;
+      out.matches.push({
+        auditId: record.auditId,
+        createdAt: record.createdAt,
+        result: record.result,
+        auditPath: filePath,
+        payloadHash: record.idempotency?.payloadHash || null,
+        samePayload: Boolean(payloadHash && record.idempotency?.payloadHash === payloadHash),
+      });
+    } catch {
+      // Audit directories should contain execution-service JSON, but callers may
+      // point at a broader temp directory during dry-run tests. Skip unrelated or
+      // malformed JSON rather than making idempotency output noisy.
+      out.skipped += 1;
+    }
+  }
+  return out;
+}
+
+function applyIdempotencyLedgerValidation(validation, ledger) {
+  if (!ledger?.matches?.length) return validation;
+  const differentPayload = ledger.matches.filter((m) => !m.samePayload);
+  const samePayload = ledger.matches.filter((m) => m.samePayload);
+  if (differentPayload.length) {
+    addIssue(validation.hardBlocks, GATE_STATUS.HARD_BLOCK, 'idempotency_key_conflict', 'Idempotency key already exists with a different payload; future live execution must use a new cycleId or explicit supersede flow.', { matches: differentPayload });
+  }
+  if (samePayload.length) {
+    addIssue(validation.info, GATE_STATUS.GREEN, 'idempotency_duplicate_same_payload', 'Same idempotency key and same payload already exist; future live execution should return already-done instead of sending duplicate writes.', { matches: samePayload });
+  }
+  validation.summary.hardBlockCount = validation.hardBlocks.length;
+  validation.summary.warningCount = validation.warnings.length;
+  validation.summary.infoCount = validation.info.length;
+  return validation;
 }
 
 async function collectReadOnlyState({ client = undefined, symbol, productType, marginCoin, includePlans = true } = {}) {
@@ -242,7 +338,7 @@ async function collectReadOnlyState({ client = undefined, symbol, productType, m
   return state;
 }
 
-function buildAuditRecord({ plan, validation, readOnlyState = null, requestSource = null, notes = '' } = {}) {
+function buildAuditRecord({ plan, validation, readOnlyState = null, requestSource = null, idempotencyLedger = null, notes = '' } = {}) {
   const now = new Date();
   const cfg = getDefaultTradingConfig();
   const auditId = `${utcStamp(now)}_${sanitizeName(validation?.symbol || inferSymbol(plan))}_${sanitizeName(validation?.action || plan?.action)}_${crypto.randomUUID().slice(0, 8)}`;
@@ -264,6 +360,8 @@ function buildAuditRecord({ plan, validation, readOnlyState = null, requestSourc
     productType: validation?.productType || null,
     marginCoin: validation?.marginCoin || null,
     overridePolicy: OVERRIDE_POLICY,
+    idempotency: validation?.idempotency || buildIdempotency(plan, { action: validation?.action, symbol: validation?.symbol }),
+    idempotencyLedger,
     validation,
     readOnlyState,
     plannedBitgetWrites: [],
@@ -294,7 +392,10 @@ module.exports = {
   OVERRIDE_POLICY,
   LIVE_WRITE_ACTIONS,
   classifyAction,
+  buildIdempotency,
   validateBasicPlan,
+  scanIdempotencyLedger,
+  applyIdempotencyLedgerValidation,
   collectReadOnlyState,
   buildAuditRecord,
   writeAuditRecord,

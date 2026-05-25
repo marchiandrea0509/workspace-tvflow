@@ -3,9 +3,12 @@ const path = require('path');
 const { parseArgs } = require('../lib/cli');
 const {
   validateBasicPlan,
+  scanIdempotencyLedger,
+  applyIdempotencyLedgerValidation,
   collectReadOnlyState,
   buildAuditRecord,
   writeAuditRecord,
+  defaultAuditDir,
 } = require('../lib/executionService');
 
 function readJson(filePath) {
@@ -23,6 +26,15 @@ function readJson(filePath) {
 
   const { absolute: planPath, value: plan } = readJson(args.plan);
   const validation = validateBasicPlan(plan, { allowUnknownActions: Boolean(args.allowUnknownActions) });
+  const auditDirForLedger = args.output
+    ? path.dirname(path.resolve(args.output))
+    : path.resolve(args.outputDir || defaultAuditDir());
+  const idempotencyLedger = scanIdempotencyLedger({
+    auditDir: auditDirForLedger,
+    idempotencyKey: validation.idempotency?.key,
+    payloadHash: validation.idempotency?.payloadHash,
+  });
+  applyIdempotencyLedgerValidation(validation, idempotencyLedger);
 
   let readOnlyState = null;
   if (args.readLive) {
@@ -39,6 +51,7 @@ function readJson(filePath) {
     validation,
     readOnlyState,
     requestSource: { planPath },
+    idempotencyLedger,
     notes: args.notes || '',
   });
   const auditPath = writeAuditRecord(audit, {
@@ -52,6 +65,8 @@ function readJson(filePath) {
     auditId: audit.auditId,
     auditPath,
     summary: validation.summary,
+    idempotency: validation.idempotency,
+    idempotencyLedger,
     hardBlocks: validation.hardBlocks,
     warnings: validation.warnings,
     info: validation.info,
