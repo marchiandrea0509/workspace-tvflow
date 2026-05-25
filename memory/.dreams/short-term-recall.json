@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-24T15:11:51.737Z",
+  "updatedAt": "2026-05-24T21:56:58.645Z",
   "entries": {
     "memory:memory/2026-04-10.md:1:8": {
       "key": "memory:memory/2026-04-10.md:1:8",
@@ -1467,13 +1467,13 @@
       "endLine": 17,
       "source": "memory",
       "snippet": "- L1: buy/open long `2.00 @ 279.00`, TP `287.50`, SL `270.30`, orderId `1435664008835919873`, clientOid `tvflow_aapl_20260505_ladder_L1` - L2: buy/open long `6.00 @ 277.10`, TP `292.30`, SL `270.30`, orderId `1435664027584458753`, clientOid `tvflow_aapl_20260505_ladder_L2` - L3: buy/open long `9.00 @ 274.20`, TP `293.30`, SL `270.30`, orderId `1435664049562611713`, clientOid `tvflow_aapl_20260505_ladder_L3` - Verification immediately after placement: 3 AAPLUSDT regular pending orders, all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 4`, `baseVolume: 0`; no AAPLUSDT position listed yet because limits were unfilled/resting. - Drew the live AAPL l",
-      "recallCount": 18,
+      "recallCount": 19,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 7.900499269366263,
+      "totalScore": 8.357343712449072,
       "maxScore": 0.5091856151819228,
       "firstRecalledAt": "2026-05-06T05:08:51.338Z",
-      "lastRecalledAt": "2026-05-14T08:15:24.930Z",
+      "lastRecalledAt": "2026-05-24T21:56:58.645Z",
       "queryHashes": [
         "cd6bbf71900e",
         "8f3261d9e2df",
@@ -1492,7 +1492,8 @@
         "d30f948edc27",
         "575943a9d158",
         "d6781310a3ba",
-        "1b03d21270a3"
+        "1b03d21270a3",
+        "40a8e64abf30"
       ],
       "recallDays": [
         "2026-05-06",
@@ -1501,7 +1502,8 @@
         "2026-05-11",
         "2026-05-12",
         "2026-05-13",
-        "2026-05-14"
+        "2026-05-14",
+        "2026-05-24"
       ],
       "conceptTags": [
         "buy/open",
@@ -4345,23 +4347,25 @@
       "endLine": 110,
       "source": "memory",
       "snippet": "- Regression effect: AAPL balanced 3-leg `291.74/290.53/289.24`, SL `285.55`, TP `297.36`, L1 R:R `0.91`, L1+L2 `1.18`, all-filled `1.59`, L1 share `0.25`, is now classified `BEST_FILL_PROBABILITY` + `VALID_FOR_BEST_FILL_PROBABILITY_ONLY` with warnings (soft L1+L2 zone, SL >2.50 ATR accepted by strong HTF, TP >3.50 ATR accepted by 1D/4H support). Relaxed deep `291.74/290.53/287.69` still fails TP distance (`4.671 ATR`) despite good all-filled R:R. ## AAPLUSDT final R:R rule run - User asked to rerun AAPL after final BEST FILL PROBABILITY exception patch. - Ran fresh compact OHLCV workflow: `scripts/run_deep_analysis_packet_v2.ps1 -Symbol AAPLUSDT -Side LONG -Family LC -Score 74.85618382262",
-      "recallCount": 4,
+      "recallCount": 5,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1.896315765380859,
+      "totalScore": 2.349950376152992,
       "maxScore": 0.5148968189954758,
       "firstRecalledAt": "2026-05-12T20:58:36.577Z",
-      "lastRecalledAt": "2026-05-18T09:10:16.627Z",
+      "lastRecalledAt": "2026-05-24T21:56:58.645Z",
       "queryHashes": [
         "7049834f2578",
         "ce94f1156950",
         "601ee6b5d476",
-        "36506e2be942"
+        "36506e2be942",
+        "40a8e64abf30"
       ],
       "recallDays": [
         "2026-05-12",
         "2026-05-13",
-        "2026-05-18"
+        "2026-05-18",
+        "2026-05-24"
       ],
       "conceptTags": [
         "3-leg",
@@ -4476,26 +4480,28 @@
       "endLine": 134,
       "source": "memory",
       "snippet": "- L1: buy/open long `4.01 @ 291.74`, TP `297.36`, SL `285.52`, orderId `1438204754273136644`, clientOid `tvflow_aapl_20260512_optB_L1` - L2: buy/open long `6.98 @ 290.53`, TP `297.36`, SL `285.52`, orderId `1438204756928131073`, clientOid `tvflow_aapl_20260512_optB_L2` - L3: buy/open long `10.12 @ 289.47`, TP `297.36`, SL `285.52`, orderId `1438204759788646401`, clientOid `tvflow_aapl_20260512_optB_L3` - Verification after placement: 3 AAPLUSDT regular pending orders all `status: live`, `tradeSide: open`, `posSide: long`, `marginMode: isolated`, `leverage: 6`, `baseVolume: 0`; planCount `0`; no AAPLUSDT position yet. Verification saved to `reports/deep_analysis/2026-05-12_AAPLUSDT_opti",
-      "recallCount": 6,
+      "recallCount": 7,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.8028754517436028,
+      "totalScore": 3.266823820769787,
       "maxScore": 0.5366120710968971,
       "firstRecalledAt": "2026-05-13T05:38:38.270Z",
-      "lastRecalledAt": "2026-05-21T16:54:22.776Z",
+      "lastRecalledAt": "2026-05-24T21:56:58.645Z",
       "queryHashes": [
         "22f4009e8ea0",
         "575943a9d158",
         "d6781310a3ba",
         "1b03d21270a3",
         "36506e2be942",
-        "d0061d60cb02"
+        "d0061d60cb02",
+        "40a8e64abf30"
       ],
       "recallDays": [
         "2026-05-13",
         "2026-05-14",
         "2026-05-18",
-        "2026-05-21"
+        "2026-05-21",
+        "2026-05-24"
       ],
       "conceptTags": [
         "buy/open",
@@ -5290,19 +5296,20 @@
       "endLine": 162,
       "source": "memory",
       "snippet": "- Valid new static candidate: L1 `8.16 @ 295.65`, SL `290.75`, TP `300.77`, risk `39.98`, RR `1.04`; L2 `16.39 @ 294.41`, SL `290.75`, TP `301.98`, risk `59.99`, RR `2.07`; total risk `99.97`, reward `165.85`, all-filled RR `1.66`, selected leverage `6x`, estimated margin `1206.31`, estimated liquidation `247.45` safely below SL. - Critical execution-state note: existing older AAPL live 6x isolated ladder is still present and unfilled (`baseVolume=0`), regular orders `3`, plan `0`: L1 `4.01 @ 291.74`, L2 `6.98 @ 290.53`, L3 `10.12 @ 289.47`, shared SL `285.52`, TP `297.36`. No AAPL position observed; positions output showed NVDA long only. Do not add the new AAPL ladder on top without explic",
-      "recallCount": 5,
+      "recallCount": 6,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 2.2270108342170714,
+      "totalScore": 2.6770730376243588,
       "maxScore": 0.5100789099931716,
       "firstRecalledAt": "2026-05-14T08:15:24.930Z",
-      "lastRecalledAt": "2026-05-24T14:18:15.795Z",
+      "lastRecalledAt": "2026-05-24T21:56:58.645Z",
       "queryHashes": [
         "1b03d21270a3",
         "ca6509b31619",
         "601ee6b5d476",
         "36506e2be942",
-        "f4496d51339d"
+        "f4496d51339d",
+        "40a8e64abf30"
       ],
       "recallDays": [
         "2026-05-14",
@@ -7445,6 +7452,37 @@
         "preferred-media-files",
         "discord-media-lines",
         "evidence-files"
+      ]
+    },
+    "memory:memory/2026-05-18.md:31:37": {
+      "key": "memory:memory/2026-05-18.md:31:37",
+      "path": "memory/2026-05-18.md",
+      "startLine": 31,
+      "endLine": 37,
+      "source": "memory",
+      "snippet": "- L1 orderId `1440196897959211009`, clientOid `tvflow_aapl_20260518_optb10x_L1`, buy/open `5.48 @ 297.36`, SL `292.80`, TP `301.72`. - L2 orderId `1440196928879620099`, clientOid `tvflow_aapl_20260518_optb10x_L2`, buy/open `10.94 @ 296.00`, SL `292.80`, TP `303.46`. - L3 orderId `1440196967689515009`, clientOid `tvflow_aapl_20260518_optb10x_L3`, buy/open `20.73 @ 294.73`, SL `292.80`, TP `305.80`. - Postcheck: AAPLUSDT regular orders `3`, plan orders `0`, all orders `status=live`, `baseVolume=0`, isolated `10x`, no AAPL position observed. Rounded risk `~100.01 USDT`, reward `~334.98`, notional `~10977.52`, estimated margin @10x `~1097.75`. - Drew the 3-order long ladder on TradingView",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.46314534246921535,
+      "maxScore": 0.46314534246921535,
+      "firstRecalledAt": "2026-05-24T21:56:58.645Z",
+      "lastRecalledAt": "2026-05-24T21:56:58.645Z",
+      "queryHashes": [
+        "40a8e64abf30"
+      ],
+      "recallDays": [
+        "2026-05-24"
+      ],
+      "conceptTags": [
+        "tvflow-aapl-20260518-optb10x-l1",
+        "buy/open",
+        "5.48",
+        "297.36",
+        "292.80",
+        "301.72",
+        "tvflow-aapl-20260518-optb10x-l2",
+        "10.94"
       ]
     }
   }

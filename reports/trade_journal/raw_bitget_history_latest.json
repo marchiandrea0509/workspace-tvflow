@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-24T08:46:45.463Z",
+  "generatedAt": "2026-05-24T21:58:00.069Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-24T08:46:12.719Z",
+  "until": "2026-05-24T21:57:25.827Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779612372719"
+        "untilTime": "1779659845827"
       },
-      "count": 72,
+      "count": 75,
       "windows": [
         {
           "ok": true,
@@ -199,13 +199,106 @@
         },
         {
           "ok": true,
-          "count": 72,
+          "count": 75,
           "startTime": "1772236800000",
-          "endTime": "1779612372719",
+          "endTime": "1779659845827",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "CLUSDT",
+          "size": "14.81",
+          "orderId": "1442364204768718849",
+          "clientOid": "tvflow_cl_20260524_optB4x_S3",
+          "baseVolume": "14.81",
+          "fee": "-0.2816862",
+          "price": "95.1",
+          "priceAvg": "95.1",
+          "status": "filled",
+          "side": "sell",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "quoteVolume": "1408.431",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "83.05",
+          "presetStopLossPrice": "97.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779612344925",
+          "uTime": "1779632104613"
+        },
+        {
+          "symbol": "CLUSDT",
+          "size": "10",
+          "orderId": "1442364167233892353",
+          "clientOid": "tvflow_cl_20260524_optB4x_S2",
+          "baseVolume": "10",
+          "fee": "-0.1886",
+          "price": "94.3",
+          "priceAvg": "94.3",
+          "status": "filled",
+          "side": "sell",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "quoteVolume": "943",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "88.7",
+          "presetStopLossPrice": "97.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779612335978",
+          "uTime": "1779632014155"
+        },
+        {
+          "symbol": "CLUSDT",
+          "size": "5.68",
+          "orderId": "1442363466399248385",
+          "clientOid": "tvflow_cl_20260524_optB4x_S1",
+          "baseVolume": "5.68",
+          "fee": "-0.1061024",
+          "price": "93.4",
+          "priceAvg": "93.4",
+          "status": "filled",
+          "side": "sell",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "quoteVolume": "530.512",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "88.98",
+          "presetStopLossPrice": "97.8",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1779612168886",
+          "uTime": "1779631987473"
+        },
         {
           "symbol": "APPUSDT",
           "size": "2.83",
@@ -2447,9 +2540,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779612372719"
+        "untilTime": "1779659845827"
       },
-      "count": 295,
+      "count": 298,
       "windows": [
         {
           "ok": true,
@@ -2628,13 +2721,82 @@
         },
         {
           "ok": true,
-          "count": 295,
+          "count": 298,
           "startTime": "1772236800000",
-          "endTime": "1779612372719",
-          "pages": 3
+          "endTime": "1779659845827",
+          "pages": 4
         }
       ],
       "data": [
+        {
+          "tradeId": "1442447082876821507",
+          "symbol": "CLUSDT",
+          "orderId": "1442364204768718849",
+          "price": "95.1",
+          "baseVolume": "14.81",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.2816862"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "1408.431",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779632104605"
+        },
+        {
+          "tradeId": "1442446703430721605",
+          "symbol": "CLUSDT",
+          "orderId": "1442364167233892353",
+          "price": "94.3",
+          "baseVolume": "10",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.1886"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "943",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779632014138"
+        },
+        {
+          "tradeId": "1442446591467970597",
+          "symbol": "CLUSDT",
+          "orderId": "1442363466399248385",
+          "price": "93.4",
+          "baseVolume": "5.68",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.1061024"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "530.512",
+          "profit": "0",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "tradeScope": "maker",
+          "cTime": "1779631987444"
+        },
         {
           "tradeId": "1441402961273798657",
           "symbol": "APPUSDT",
@@ -9429,7 +9591,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1779612372719",
+        "untilTime": "1779659845827",
         "planType": "normal_plan"
       },
       "count": 18,
@@ -9613,7 +9775,7 @@
           "ok": true,
           "count": 18,
           "startTime": "1772236800000",
-          "endTime": "1779612372719",
+          "endTime": "1779659845827",
           "pages": 1
         }
       ],
