@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/tvflow/schemas/deep_analysis_feedback.schema.json",
+  "title": "tvflow Deep Analysis Feedback Record",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "feedbackId",
+    "createdAt",
+    "symbol",
+    "status",
+    "sourceArtifacts",
+    "tickets",
+    "comparison",
+    "issueTags",
+    "scorecard",
+    "journalOutcome",
+    "improvementActions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "deep_analysis_feedback_v0" },
+    "feedbackId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "symbol": { "type": "string", "minLength": 1 },
+    "side": { "type": ["string", "null"], "enum": ["LONG", "SHORT", "AUTO", null] },
+    "family": { "type": ["string", "null"] },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "waiting_for_gpt", "waiting_for_journal_outcome", "ready_for_patch", "patched", "archived_no_action"]
+    },
+    "sourceArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tvflowReport": { "type": ["string", "null"] },
+        "packetDir": { "type": ["string", "null"] },
+        "gptSource": { "type": ["string", "null"] },
+        "liveExecutionSummary": { "type": ["string", "null"] },
+        "journalSnapshot": { "type": ["string", "null"] },
+        "screenshots": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "tickets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tvflowProposed": { "$ref": "#/$defs/ticketSet" },
+        "gptProposed": { "$ref": "#/$defs/ticketSet" },
+        "userPreferred": { "$ref": "#/$defs/ticketSet" },
+        "actuallyPlaced": { "$ref": "#/$defs/ticketSet" }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preferredSource", "summary", "whatGptDidBetter", "whatTvflowDidBetter", "actionableLesson"],
+      "properties": {
+        "preferredSource": { "type": ["string", "null"], "enum": ["tvflow", "gpt", "hybrid", "user_manual", "none", null] },
+        "summary": { "type": "string" },
+        "whatGptDidBetter": { "type": "array", "items": { "type": "string" } },
+        "whatTvflowDidBetter": { "type": "array", "items": { "type": "string" } },
+        "actionableLesson": { "type": "string" },
+        "shouldPatchPrompt": { "type": "boolean" },
+        "shouldPatchTool": { "type": "boolean" },
+        "shouldPatchDocsMemory": { "type": "boolean" }
+      }
+    },
+    "issueTags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "missed_support_resistance",
+          "wrong_impulse_selection",
+          "level_map_incomplete",
+          "ignored_1h_refinement",
+          "bad_entry_quality",
+          "bad_ladder_spacing",
+          "sl_too_tight",
+          "sl_too_wide",
+          "tp_unrealistic",
+          "weak_rr_accepted",
+          "valid_trade_overfiltered",
+          "orderability_misjudged",
+          "liquidity_or_slippage_issue",
+          "margin_or_leverage_issue",
+          "prompt_format_issue",
+          "tool_packet_issue",
+          "execution_followup_issue",
+          "journal_outcome_learning"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "scorecard": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/scoreItem" },
+      "properties": {
+        "levelMapQuality": { "$ref": "#/$defs/scoreItem" },
+        "biasRead": { "$ref": "#/$defs/scoreItem" },
+        "entryQuality": { "$ref": "#/$defs/scoreItem" },
+        "ladderConstruction": { "$ref": "#/$defs/scoreItem" },
+        "slStructure": { "$ref": "#/$defs/scoreItem" },
+        "tpRealism": { "$ref": "#/$defs/scoreItem" },
+        "riskReward": { "$ref": "#/$defs/scoreItem" },
+        "orderability": { "$ref": "#/$defs/scoreItem" },
+        "finalVerdictUsefulness": { "$ref": "#/$defs/scoreItem" }
+      }
+    },
+    "journalOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary", "lessonsForAnalysis"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not_linked", "not_placed", "pending", "open", "closed", "partial", "cancelled"] },
+        "journalSnapshot": { "type": ["string", "null"] },
+        "linkedOrderIds": { "type": "array", "items": { "type": "string" } },
+        "fillResult": { "type": ["string", "null"] },
+        "realizedPnlUsdt": { "type": ["number", "null"] },
+        "plannedRiskUsdt": { "type": ["number", "null"] },
+        "plannedRewardUsdt": { "type": ["number", "null"] },
+        "maxFavorableExcursionUsdt": { "type": ["number", "null"] },
+        "maxAdverseExcursionUsdt": { "type": ["number", "null"] },
+        "slReview": { "type": "string" },
+        "tpReview": { "type": "string" },
+        "entryReview": { "type": "string" },
+        "summary": { "type": "string" },
+        "lessonsForAnalysis": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "improvementActions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "actions"],
+      "properties": {
+        "status": { "type": "string", "enum": ["none", "queued", "done"] },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "description", "status"],
+            "properties": {
+              "type": { "type": "string", "enum": ["prompt_patch", "tool_patch", "docs_patch", "memory_patch", "journal_patch", "regression_case"] },
+              "description": { "type": "string" },
+              "status": { "type": "string", "enum": ["todo", "done", "rejected"] },
+              "artifact": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "ticketSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "verdict": { "type": ["string", "null"] },
+        "summary": { "type": "string" },
+        "legs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "label": { "type": ["string", "null"] },
+              "entry": { "type": ["number", "string", "null"] },
+              "type": { "type": ["string", "null"] },
+              "qty": { "type": ["number", "string", "null"] },
+              "sl": { "type": ["number", "string", "null"] },
+              "tp": { "type": ["number", "string", "null"] },
+              "rr": { "type": ["number", "string", "null"] },
+              "trigger": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "rawText": { "type": "string" }
+      }
+    },
+    "scoreItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "note"],
+      "properties": {
+        "score": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

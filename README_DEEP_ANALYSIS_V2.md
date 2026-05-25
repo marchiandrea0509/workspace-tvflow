@@ -28,8 +28,32 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - `scripts/run_deep_analysis_packet_v2.ps1` — normal wrapper; can optionally run Playwright chart captures.
 - `prompts/master_trade_analysis_prompt_v2.md` — prompt for final LLM analysis.
 - `schemas/deep_analysis_packet_contract_v2.md` — output contract.
+- `README_DEEP_ANALYSIS_FEEDBACK.md` — v0 continuous-improvement loop for GPT/user/journal feedback.
+- `scripts/create_deep_analysis_feedback.py` — helper to create structured feedback records.
+- `schemas/deep_analysis_feedback.schema.json` — feedback record schema.
 
 Old deep-analysis files remain available for comparison/reference during transition.
+
+## Continuous improvement / feedback loop
+
+When Andrea provides GPT's ticket, edits tvflow's ticket, or points out a better analysis, create a feedback record instead of relying only on chat memory:
+
+```powershell
+python scripts\create_deep_analysis_feedback.py `
+  --symbol AAPLUSDT `
+  --side LONG `
+  --family LC `
+  --tvflow-report reports\deep_analysis\2026-05-24_AAPLUSDT_deep_analysis.md `
+  --packet-dir reports\deep_analysis_packets_v2\20260524_171320_AAPLUSDT `
+  --preferred-source gpt `
+  --issue-tag wrong_impulse_selection `
+  --summary "GPT produced the better active-swing level map." `
+  --lesson "Compare confirmed vs active impulse maps before selecting tickets."
+```
+
+Records are saved under `reports/deep_analysis_feedback/` and can later be updated with journal outcome evidence. This does **not** replace live-order confirmation. It is a learning/audit layer only.
+
+Journal linkage is optional in v0: if a trade is placed, link the live execution summary and latest journal snapshot, then later fill `journalOutcome` with whether entry/SL/TP/ladder/liquidity behaved as expected. Repeated or safety-critical lessons should trigger a prompt/tool/docs/memory patch.
 
 ## Normal run, screenshot-first
 

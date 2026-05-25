@@ -83,6 +83,42 @@ powershell -ExecutionPolicy Bypass -File ..\scripts\run_bitget_journal_update.ps
 
 Use `-NoSend` if you only want to rebuild local artifacts without posting to the Bitget trades thread.
 
+## Robustness / anti-regression workflow
+
+After any meaningful live-order tooling change, do not rely on chat memory only.
+Harden the workflow in this order:
+
+1. Encode the fix in the tool or script where possible.
+2. Dry-run or syntax-check the tool before live use.
+3. Use live placement gates only for the exact send command; do not persistently loosen `.env.local` unless explicitly intended.
+4. Postcheck Bitget state with `list-open-orders.js` / `positions.js` after live changes.
+5. Update project memory/docs with the lesson:
+   - `PROJECT_STATE.md` for the latest operational state and known quirks
+   - this README or another relevant README for reusable command/checklist behavior
+   - `memory/YYYY-MM-DD.md` for durable decisions and safety boundaries
+
+For each durable note, include: what changed, why, the discovered quirk/mistake,
+what future runs must do differently, and the validation/postcheck evidence.
+
+### TP trailing split / Bitget plan-order quirk
+
+Use the split tool when an existing position has fixed TP rows that must be
+converted into fixed TP + trailing TP rows:
+
+```powershell
+node scripts/set-tp-trailing-split.js --config path\to\split.json          # dry-run
+node scripts/set-tp-trailing-split.js --config path\to\split.json --send   # live, gated
+```
+
+Important Bitget API behavior discovered live on CLUSDT:
+
+- Existing TP/SL rows are listed with `orders-plan-pending planType=profit_loss`.
+- Targeted cancellation of fixed TP rows must use `cancel-plan-order` with
+  `planType: "profit_plan"` and `orderIdList`.
+- Do **not** cancel these rows with only a top-level `orderId`; Bitget can ignore
+  the intended TP row and affect other plan types unexpectedly.
+- Always verify both `profit_loss` and `track_plan` after the change.
+
 ## Live-trading safety
 
 The harness refuses live order placement unless **both** are true:
