@@ -119,6 +119,30 @@ Important Bitget API behavior discovered live on CLUSDT:
   the intended TP row and affect other plan types unexpectedly.
 - Always verify both `profit_loss` and `track_plan` after the change.
 
+## Execution service project
+
+The long-term execution-service plan is documented in:
+
+`README_EXECUTION_SERVICE.md`
+
+Phase 1 is intentionally dry-run/read-only. It introduces a shared audit format,
+basic plan validation, override taxonomy, and optional live-state reads without
+changing any existing live scripts.
+
+Example dry-run audit:
+
+```powershell
+node scripts/execution-service-dry-run.js --plan path\to\execution-plan.json
+```
+
+Optional read-only account/order snapshot:
+
+```powershell
+node scripts/execution-service-dry-run.js --plan path\to\execution-plan.json --readLive
+```
+
+Audit JSON files are written to `reports/live_execution/audit/`.
+
 ## Live-trading safety
 
 The harness refuses live order placement unless **both** are true:

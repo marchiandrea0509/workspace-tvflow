@@ -17,6 +17,7 @@
     "place-order": "node scripts/place-order.js",
     "place-trigger-order": "node scripts/place-trigger-order.js",
     "set-tp-trailing-split": "node scripts/set-tp-trailing-split.js",
+    "execution-dry-run": "node scripts/execution-service-dry-run.js",
     "cancel-order": "node scripts/cancel-order.js",
     "cancel-by-prefix": "node scripts/cancel-by-prefix.js",
     "execute-signal": "node scripts/execute-signal.js",
