@@ -13,7 +13,7 @@
   "maxMarginUsdt": 1500,
   "maxLeverage": 20,
   "discord": {
-    "target": "dm:1322306175865323552"
+    "target": "user:1322306175865323552"
   },
   "globalInvalidation": {
     "note": "Example: invalidate a long thesis if price trades below the prepared structural invalidation.",
