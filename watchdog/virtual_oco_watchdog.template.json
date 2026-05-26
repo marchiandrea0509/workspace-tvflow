@@ -6,6 +6,7 @@
   "mainTf": "4H",
   "checkTf": "4H",
   "checkDelayMinutes": 2,
+  "feedbackOnEveryCheck": false,
   "expiryUtc": "2026-05-25T20:00:00Z",
   "preferredFamily": "A",
   "maxPlannedRiskUsdt": 100,

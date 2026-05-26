@@ -54,6 +54,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_virtual_oco_watc
 
 The script prints `NO_REPLY` when nothing should be surfaced.
 
+If you want visible feedback on every scheduled check, set `feedbackOnEveryCheck: true` in the config, or pass `-Feedback` to the wrapper. The feedback remains alert-only: it prints current price, checked candle, and the first blocking gate for each family, and it never places/cancels orders.
+
 ## Scheduling
 
 Run 1-3 minutes after the closed candle for the selected check TF.

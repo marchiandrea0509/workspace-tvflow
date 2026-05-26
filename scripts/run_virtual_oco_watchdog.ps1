@@ -5,6 +5,7 @@ param(
   [switch]$Send,
   [switch]$Json,
   [switch]$Force,
+  [switch]$Feedback,
   [switch]$NoStateUpdate
 )
 
@@ -17,6 +18,7 @@ if ($State -ne '') { $argsList += @('--state', $State) }
 if ($Send) { $argsList += @('--send', 'true') }
 if ($Json) { $argsList += '--json' }
 if ($Force) { $argsList += @('--force', 'true') }
+if ($Feedback) { $argsList += @('--feedback', 'true') }
 if ($NoStateUpdate) { $argsList += @('--updateState', 'false') }
 
 Push-Location $Repo

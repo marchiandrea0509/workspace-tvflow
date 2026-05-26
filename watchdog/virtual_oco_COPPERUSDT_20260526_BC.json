@@ -1,0 +1,104 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_COPPERUSDT_20260526_BC",
+  "symbol": "COPPERUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 5,
+  "feedbackOnEveryCheck": true,
+  "expiryUtc": "2026-05-31T20:00:00Z",
+  "preferredFamily": "B",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "dm:1322306175865323552"
+  },
+  "globalInvalidation": {
+    "note": "Invalidate the long thesis if price trades below the prepared structural invalidation.",
+    "priceCrosses": 6.238,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "B",
+    "bias": "LONG",
+    "style": "DIP_LADDER",
+    "orderTypeProposal": "ALERT_ONLY: user manually places B pullback ladder after alert/final review; OpenClaw does not place orders",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 6.300, "max": 6.365 },
+    "entries": [
+      { "level": "L1", "entry": 6.365, "quantity": 196.85, "notional": 1253, "sl": 6.238, "tp": 6.490, "plannedRisk": 25, "rr": 0.98 },
+      { "level": "L2", "entry": 6.330, "quantity": 380.43, "notional": 2408, "sl": 6.238, "tp": 6.503, "plannedRisk": 35, "rr": 1.88 },
+      { "level": "L3", "entry": 6.300, "quantity": 645.16, "notional": 4065, "sl": 6.238, "tp": 6.729, "plannedRisk": 40, "rr": 6.92 }
+    ],
+    "ticket": {
+      "bias": "LONG",
+      "style": "DIP_LADDER",
+      "orderTypeProposal": "ALERT_ONLY manual limit ladder",
+      "entry": "L1 6.365 / L2 6.330 / L3 6.300",
+      "sl": 6.238,
+      "tp": "L1 6.490 / L2 6.503 / L3 6.729",
+      "quantity": "196.85 + 380.43 + 645.16",
+      "notional": 7726,
+      "plannedRisk": 100,
+      "margin": 773,
+      "leverage": 10,
+      "rr": 3.67,
+      "minRr": 1.5,
+      "invalidation": "4H loss of 6.238, or strong rejection below 6.300 with no recovery",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "stalenessReference": 6.365,
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakout; user manually places only if still inside max entry 6.520-6.530",
+    "trigger": 6.503,
+    "confirmationRule": "closed_above_trigger",
+    "maxStalenessDistance": 0.55,
+    "maxStalenessUnit": "ATR",
+    "ticket": {
+      "bias": "LONG",
+      "style": "BREAKOUT",
+      "orderTypeProposal": "ALERT_ONLY stop-limit/conditional breakout after 4H close",
+      "entry": "4H close > 6.503, max entry 6.520-6.530",
+      "trigger": 6.503,
+      "sl": 6.382,
+      "tp": 6.729,
+      "quantity": 724.64,
+      "notional": 4725,
+      "plannedRisk": 100,
+      "margin": 473,
+      "leverage": 10,
+      "rr": 1.51,
+      "minRr": 1.2,
+      "invalidation": "Close back inside prior range / below breakout shelf",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle above 6.503",
+        "field": "checkClosed.close",
+        "op": ">",
+        "value": 6.503
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "closed candle stayed above breakout trigger",
+        "field": "checkClosed.close",
+        "op": ">",
+        "value": 6.503
+      }
+    ]
+  }
+}

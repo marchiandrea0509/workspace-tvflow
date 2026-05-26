@@ -303,6 +303,27 @@ No valid trigger occurred.
 Action:
 Refresh the analysis before considering a new ticket.`;
 }
+function firstFailedGate(result) {
+  const gates = result?.gates || [];
+  return gates.find(g => !g.ok) || gates[0] || null;
+}
+function formatCheckFeedback(config, ctx, results, note = '') {
+  const lines = results.map(r => {
+    const gate = firstFailedGate(r);
+    const status = r.triggered ? 'READY' : 'waiting';
+    return `- ${familyLabel(r.family)}: ${status}${gate ? ` — ${gate.name}: ${gate.value || (gate.ok ? 'PASS' : 'FAIL')}` : ''}`;
+  });
+  const checkClose = ctx?.checkClosed?.ts ? new Date(ctx.checkClosed.ts).toISOString() : 'n/a';
+  return `VIRTUAL OCO CHECK — no trigger
+
+OCO group: ${config.ocoGroupId}
+Symbol: ${config.symbol}
+Check TF: ${ctx?.checkTf || config.checkTf || config.mainTf || 'n/a'} candle ${checkClose}
+Current price: ${fmt(ctx?.currentPrice)}
+${note ? `Note: ${note}\n` : ''}${lines.join('\n')}
+
+Status: still armed. No live order was placed.`;
+}
 function sendDiscord(message, config) {
   const dm = config.discord || {};
   const target = dm.target || dm.dmTarget || process.env.OPENCLAW_VOCO_DISCORD_TARGET;
@@ -397,8 +418,13 @@ async function evaluate(config, args = {}) {
     return { status: 'INVALIDATED', message, invalidations, statePath };
   }
 
+  const feedbackEveryCheck = config.feedbackOnEveryCheck === true || config.printFeedbackEveryCheck === true || args.feedback === 'true';
   if (state.lastCheckedCandleStartMs === ctx.checkClosed.ts && args.force !== 'true') {
-    return { status: 'NO_REPLY', reason: 'this closed check candle was already evaluated', statePath };
+    const priorResults = state.lastResults || [];
+    const message = feedbackEveryCheck
+      ? formatCheckFeedback(config, ctx, priorResults.map(r => ({ family: { family: r.family }, triggered: r.triggered, gates: r.gates || [] })), 'this closed check candle was already evaluated')
+      : 'NO_REPLY';
+    return { status: feedbackEveryCheck ? 'CHECKED_ALREADY' : 'NO_REPLY', message, reason: 'this closed check candle was already evaluated', statePath };
   }
 
   const families = [];
@@ -423,7 +449,8 @@ async function evaluate(config, args = {}) {
   if (!choice) {
     state.status = 'ARMED'; state.lastStatus = 'NO_TRIGGER';
     if (updateState) saveJson(statePath, state);
-    return { status: 'NO_TRIGGER', message: 'NO_REPLY', statePath, results };
+    const message = feedbackEveryCheck ? formatCheckFeedback(config, ctx, results) : 'NO_REPLY';
+    return { status: feedbackEveryCheck ? 'CHECKED' : 'NO_TRIGGER', message, statePath, results };
   }
 
   const selected = choice.selected;
@@ -450,7 +477,7 @@ async function evaluate(config, args = {}) {
     result.sentDiscord = true;
   }
   if (args.json) console.log(JSON.stringify(result, null, 2));
-  else if (['ALERTED', 'INVALIDATED', 'EXPIRED'].includes(result.status)) console.log(result.message);
+  else if (['ALERTED', 'INVALIDATED', 'EXPIRED', 'CHECKED', 'CHECKED_ALREADY'].includes(result.status)) console.log(result.message);
   else console.log('NO_REPLY');
 })().catch((err) => {
   console.error(err.stack || err.message || String(err));
