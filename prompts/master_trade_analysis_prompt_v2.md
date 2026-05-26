@@ -91,6 +91,13 @@ A/B PB
 
 DIP_LADDER long needs valid 4H bullish impulse: important HL/swing low -> recent swing high, ideally >=1.2 ATR4H, with 4H bullish/bull-neutral. Fresh BO retests valid: prior pivot high->support, BO shelf, 1H retest, 4H R->S. Value zone: 38.2/50/61.8 retrace, prior R->S, 4H shelf, visible 20/50 EMA, round numbers secondary. Legs: L1 shallow near 38.2/first support/retest/20 EMA; L2 near 50/strong shelf; L3 near 61.8/50 EMA/last valid HL. L3 outside fib only with strong HTF, no trend failure/CHoCH, valid SL, RR/margin/leverage pass. Risk split: 3 legs=25/35/40%; 2 legs=40/60% risk, not qty.
 
+Impulse anchor priority:
+- Default A/B pullback anchor is the broad visible 4H swing: last important 4H HL/swing low -> most recent 4H swing high. Do not default to the latest small/local push when price is at/near major 4H/1D resistance or support.
+- Major-resistance rule for longs: if current price is within about 1.0 ATR4H below a major 4H/1D resistance, previous-week/range high, or liquidity high, A/B must test the broader/deeper 4H swing anchor. Local levels may not define A. B may add at most one shallow local support leg only if it is clear support, not inside resistance, and L1 RR is about 0.9+.
+- Major-support rule for shorts is the reverse: near major support, A/B sell-rally anchors must use the broader/deeper 4H swing; B may add at most one shallow local resistance leg if structurally clear and RR is about 0.9+.
+- Local breakout impulse exception: a local BO/BD impulse may define A/B only if all are true: 4H closed clearly beyond the major trigger; price held the broken level by 1H/4H retest/shelf; the pullback entry is on the safe side of the broken level rather than inside old resistance/support; entry->TP room is >=1.2 ATR4H; SL is structural/noise-safe; and local anchoring does not make both A and B shallow near current price.
+- If broad and local maps both fit, A uses the broad/deeper value. B may add one shallow local leg, while the rest remains tied to broad/deeper value. Never allow A and B to both be built only from a local impulse while current price is at/near major R/S.
+
 A quality logic: try 1-2 cleanest PB levels first; use 3 legs only if all 3 are high-quality and not forced. If only one strong level survives, classify SINGLE_LIMIT_PULLBACK.
 
 B fill logic: maximize fill probability mainly by adding an earlier valid shallow L1 above/near the A-quality zone. Attempt up to 3 legs, but prefer extra shallow/mid levels over a deep L3 if the deep leg forces a materially wider SL or changes the core invalidation. A deep L3 is allowed only if it remains within the same thesis and does not require moving SL beyond the clean structural invalidation unless that deeper invalidation is clearly visible and still coherent. If L3 forces a new, much deeper SL only to keep 3 legs, reject L3 and keep B as shallow/mid/main-value ladder.
@@ -460,6 +467,12 @@ Include only if valid:
 If D is not recommended, state why.
 
 8) Orderability
+
+Separate chart validity from live/exchange orderability:
+- First classify A/B/C as chart-valid, conditional, or rejected using screenshot structure, R:R, SL, TP, risk, margin, and leverage.
+- Then classify live orderability using exchange state, liquidity/slippage gates, existing orders/positions, and user confirmation boundary.
+- A liquidity RED or missing live confirmation blocks live placement, but it must not erase a structurally valid watch ticket. In that case, print the chart-valid ticket as WATCH_ONLY / NOT_LIVE_PLACEABLE and state the exact live blocker.
+- If a ticket is chart-valid but live-blocked, final verdict should distinguish: `GOOD MARKET + BAD/UNORDERABLE LIVE EXECUTION` instead of collapsing everything to `NO_TRADE`.
 
 For each valid standalone option A/B/C choose:
 - PLACEABLE_NOW
