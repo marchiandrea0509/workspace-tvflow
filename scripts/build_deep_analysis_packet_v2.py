@@ -6,7 +6,7 @@ Design decisions:
 - User-selected screener symbol is context, not proof.
 - No hard screener score threshold.
 - Target planned risk remains 100 USDT by default.
-- 1500 cap means max margin at the planned leverage, not max total notional.
+- 1500 cap means max margin after recalculating leverage up to 20x, not max total notional.
 - Live execution is excluded; this script never places/cancels/modifies orders.
 - Ladder entries must be plausible for the expected pullback, not simply deep supports.
 - --screener-data-file accepts TradingView Screener/strategy-test CSV or JSON exports.
@@ -1455,7 +1455,9 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 liq_safe = bool(liq is not None and liq > sl_price + 0.25 * atr4h)
                 liq_gap_atr = ((liq - sl_price) / atr4h) if liq is not None else None
             ok = margin <= max_margin + 1e-9 and liq_safe
-            # Above 10x is allowed only when liquidation is still safely beyond SL.
+            # Above the initial/planned leverage is allowed when needed to fit the margin target,
+            # but only when liquidation is still safely beyond SL. Margin > cap at planned/current
+            # leverage is not a chart-quality reject by itself.
             if lev > 10.0 and not liq_safe:
                 ok = False
             checks.append({"leverage": rn(lev, 2), "estimated_margin_usdt": rn(margin, 2), "estimated_liquidation": rn(liq), "liquidation_vs_sl_gap_atr": rn(liq_gap_atr, 3), "liquidation_beyond_sl": liq_safe, "passes": ok})
@@ -1659,7 +1661,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         if has_deep_structural_l3 and deep_l3_forces_wider_sl:
             rejects.append("deep L3 forces a materially wider SL / changes core invalidation; reject L3 and keep B as shallow/mid/main-value ladder")
         if lev.get("chosen") is None:
-            rejects.append("no leverage option fits margin cap with liquidation safely beyond SL")
+            rejects.append("no leverage option up to 20x fits margin cap with liquidation safely beyond SL")
         valid = bool(valid and not rejects)
         valid_quality = bool(valid_quality and valid)
         valid_fill_probability = bool(valid_fill_probability and valid)
@@ -1770,7 +1772,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
     if total_risk < risk_usdt * 0.85 and target_orders:
         warnings.append("Actual risk after contract rounding is materially below target; do not silently add unsafe size to force exactly 100 USDT.")
     if not target_risk_feasible_under_margin_cap:
-        static_rejects.append("Full static ticket breaches max margin cap at selected leverage.")
+        static_rejects.append("Full static ticket breaches max margin cap even after leverage recalculation up to 20x, or liquidation safety failed.")
     if not (best or {}).get("valid_static_ticket"):
         static_rejects.append("Static optimisation scan found no candidate meeting R:R, ATR-distance, margin, and liquidation safety rules.")
     if near_major_resistance and side == "LONG":
@@ -2206,7 +2208,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "candidate_scan_priority": "Do NOT use precomputed candidate levels, static optimisation scan output, OHLCV-derived value zones, or old packet ladder levels as the main source of trade levels. Use them only as fallback/secondary validation when screenshots are unclear or when they confirm 1D/4H/1H screenshots. If packet/export levels conflict with screenshots, screenshots win.",
             "trade_style": "Evaluate A/B pullback families, C breakout/breakdown family, and D OC execution wrapper when useful. Valid styles: AUTO, SINGLE_LIMIT_PULLBACK, DIP_LADDER, SELL_RALLY, BREAKOUT, BREAKDOWN, WAIT. Do not force a trade.",
             "risk_target": "Default max planned loss is 100 USDT. A/B/C standalone options are alternatives; do not sum their risks. D VIRTUAL_OCO selected path max loss is 100 USDT. D COMBO_100 all-filled worst-case loss must be <= 100 USDT.",
-            "margin_cap": "1500 USDT max margin at selected/planned leverage, not max total notional. Max leverage is 20x.",
+            "margin_cap": "1500 USDT max margin after recalculating leverage up to 20x, not max total notional. Do not reject an otherwise valid ticket only because it exceeds the margin cap at initial/current/planned leverage; report the lowest leverage that fits while keeping liquidation safely beyond SL. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.",
             "static_safety": "If all planned entries for a standalone ladder or COMBO_100 fill and price goes directly to SL, total loss must remain within the planned-risk cap.",
             "forbidden_assumptions": ["no live execution", "no discretionary dynamic management", "no trailing", "no unplanned future cancellation assumption", "no SL movement or post-fill adjustment"],
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
@@ -2221,7 +2223,9 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "structural_sl_hierarchy": "SL must be visible-structure invalidation first, not R:R optimisation. Before accepting a tight SL, check same-side 1H/4H/1D structure beyond it. If the thesis could still validly reject at the next level beyond the proposed SL, reject the tight SL, recalc R:R with the wider structural SL, and remove shallow legs that no longer pass.",
             "tp_realism_hierarchy": "Far 4H/1D targets beyond nearer major support/resistance are valid only when the nearer level is assigned to an earlier leg or the setup explicitly requires a break/retest. Do not use far targets to rescue weak shallow legs.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
-            "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
+            "impulse_audit_required": "Final reports must print PB impulse used (selected swing and 38.2/50/61.8 levels) and compare any materially different local/broad alternative before choosing A/B levels. Wrong impulse selection is a known regression.",
+            "level_density_required": "Detected Level Map must be dense enough to audit: include nearest-to-farthest 1H/4H/1D supports/resistances, intermediate shelves, fresh highs/lows, and HTF levels before narrowing to tickets.",
+            "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "reject tickets solely because margin exceeds cap at initial/current/planned leverage when <=20x can fit", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
             "screenshot_delivery": "Analyze 1D, 4H, and 1H screenshots when available, but Discord screenshot delivery should happen only after the analysis text is released: send exactly one image per follow-up message, full-resolution original files, and only 4H then 1D. Do not inline screenshots in the analysis message. If a required analysis screenshot is missing, unclear, or not used, say so explicitly.",
         },
         "manifest": {k: manifest.get(k) for k in [
@@ -2364,14 +2368,14 @@ Use this packet with `{master_prompt}`.
 - Screener context is candidate-selection context only, not proof.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
-- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin at planned leverage {manifest['planned_leverage']}x (effective notional cap {manifest['max_effective_notional_usdt']} USDT); max leverage is 20x.
+- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin target. If margin exceeds this at initial/planned/current leverage, recalculate up to 20x and report the lowest leverage that fits with liquidation safely beyond SL. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.
 - Evaluate A/B pullback, C breakout/breakdown, and D OC wrapper exactly as the master prompt defines them. A/B/C are alternatives unless D explicitly wraps them.
 - If requested side is AUTO, use `candidate_trade_design.analysis_side_inference` only to preserve directional fib/value-zone maps; final judgment remains screenshot-first.
-- Always include a Detected Level Map before tickets, using the dense support/resistance inventory rather than only actionable levels.
-- Compare `candidate_trade_design.impulse_zone_comparison.selected` with `active_visual_alternative` when they differ materially; this applies to both LONG and SHORT flows.
+- Always include a Detected Level Map before tickets, using the dense support/resistance inventory rather than only actionable levels; include intermediate 1H/4H/1D shelves/fresh highs/lows so the map is auditable against GPT-style analysis.
+- Compare `candidate_trade_design.impulse_zone_comparison.selected` with `active_visual_alternative` when they differ materially; this applies to both LONG and SHORT flows. Print `PB impulse used` with selected swing and approximate 38.2/50/61.8 levels before A/B tickets.
 - For standalone A/B/C, max planned loss is 100 USDT and the user chooses one. For D VIRTUAL_OCO, selected path max planned loss is 100 USDT. For D COMBO_100, all-filled worst-case planned loss must be <= 100 USDT.
 - Do not assume discretionary future cancellation, stop movement, trailing, or post-fill management. VIRTUAL_OCO/OC_CONDITIONAL_BREAKOUT may use only explicit predefined OC rules.
-- If 100 USDT risk cannot fit structure/R:R/margin/freshness/liquidity, give a strong warning or WAIT/NO_TRADE.
+- If 100 USDT risk cannot fit structure/R:R/freshness/liquidity or cannot fit margin at <=20x with safe liquidation, give a strong warning or WAIT/NO_TRADE.
 - Live execution is excluded; final JSON must keep `requires_user_confirmation: true`.
 
 ## 3. Processed analysis summary
@@ -2412,7 +2416,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--screener-version", default=DEFAULT_SCREENER_VERSION)
     p.add_argument("--risk-usdt", type=float, default=100.0)
     p.add_argument("--max-margin-usdt", type=float, default=1500.0, help="Maximum margin budget in USDT, not total notional.")
-    p.add_argument("--planned-leverage", type=float, default=4.0, help="Planned leverage used to estimate effective notional cap from margin cap.")
+    p.add_argument("--planned-leverage", type=float, default=4.0, help="Initial/planned leverage; tickets may be recalculated up to 20x to fit the margin target when liquidation remains safe.")
     p.add_argument("--max-notional-usdt", type=float, default=None, help="Deprecated compatibility flag; if supplied, converted to margin using --planned-leverage.")
     p.add_argument("--bars-1d", type=int, default=400)
     p.add_argument("--bars-4h", type=int, default=500)
@@ -2435,7 +2439,7 @@ def main() -> int:
     if args.max_notional_usdt is not None:
         # Backward compatibility with older wrappers.  The durable policy is now
         # margin-cap semantics, so convert a legacy notional cap to equivalent
-        # margin at the planned leverage rather than keeping the old meaning.
+        # margin at the initial/planned leverage rather than keeping the old meaning.
         max_margin_usdt = args.max_notional_usdt / args.planned_leverage if args.planned_leverage else args.max_margin_usdt
     max_effective_notional = max_margin_usdt * args.planned_leverage
     out_dir = ensure_dir(Path(args.out_root) / f"{local_stamp()}_{symbol}")
@@ -2454,7 +2458,7 @@ def main() -> int:
         "max_margin_usdt": max_margin_usdt,
         "planned_leverage": args.planned_leverage,
         "max_effective_notional_usdt": max_effective_notional,
-        "cap_semantics": "max margin at planned leverage, not max total notional",
+        "cap_semantics": "max margin target after leverage recalculation up to 20x, not max total notional; margin at initial/current/planned leverage is not a standalone chart reject",
         "legacy_max_notional_usdt_input": args.max_notional_usdt,
         "created_at_local": datetime.now().replace(microsecond=0).isoformat(),
         "created_at_utc": utc_now_iso(),

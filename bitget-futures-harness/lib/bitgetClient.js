@@ -28,6 +28,34 @@ class BitgetClient {
     this.passphrase = getRequiredEnv('BITGET_API_PASSPHRASE');
     this.locale = getEnv('BITGET_LOCALE', 'en-US');
     this.papTrading = getBoolEnv('BITGET_PAPTRADING', false);
+    this.timeOffsetMs = null;
+    this.timeOffsetFetchedAtMs = 0;
+  }
+
+  async getTimestampMs() {
+    const now = Date.now();
+    const cacheTtlMs = Number(getEnv('BITGET_SERVER_TIME_CACHE_MS', '300000')) || 300000;
+    const useServerTime = getBoolEnv('BITGET_USE_SERVER_TIME', true);
+    if (!useServerTime) return now;
+    if (this.timeOffsetMs !== null && now - this.timeOffsetFetchedAtMs < cacheTtlMs) {
+      return now + this.timeOffsetMs;
+    }
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v2/public/time`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'locale': this.locale },
+      });
+      const parsed = await response.json();
+      const serverTime = Number(parsed?.data?.serverTime ?? parsed?.requestTime);
+      if (Number.isFinite(serverTime)) {
+        this.timeOffsetMs = serverTime - Date.now();
+        this.timeOffsetFetchedAtMs = Date.now();
+        return Date.now() + this.timeOffsetMs;
+      }
+    } catch {
+      // Fall back to local time; Bitget will reject if the host clock is too far off.
+    }
+    return Date.now();
   }
 
   async request(method, path, { query = undefined, body = undefined, auth = true } = {}) {
@@ -46,7 +74,7 @@ class BitgetClient {
     }
 
     if (auth) {
-      const timestamp = Date.now().toString();
+      const timestamp = String(await this.getTimestampMs());
       const prehash = `${timestamp}${String(method).toUpperCase()}${requestPath}${bodyString}`;
       headers['ACCESS-KEY'] = this.apiKey;
       headers['ACCESS-SIGN'] = sign(prehash, this.apiSecret);

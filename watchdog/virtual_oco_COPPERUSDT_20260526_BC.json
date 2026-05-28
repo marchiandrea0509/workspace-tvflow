@@ -7,6 +7,13 @@
   "checkTf": "4H",
   "checkDelayMinutes": 5,
   "feedbackOnEveryCheck": true,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "897c8c2b-7c20-4e7a-a650-4adc9b69e7b3",
+    "cancelCronAfterTerminal": true,
+    "note": "Disable the scheduled watchdog after ALERTED/EXPIRED/INVALIDATED is committed."
+  },
   "expiryUtc": "2026-05-31T20:00:00Z",
   "preferredFamily": "B",
   "maxPlannedRiskUsdt": 100,

@@ -85,18 +85,33 @@ function atr(candles, closed, period = 14) {
   for (let i = idx - period + 1; i <= idx; i += 1) trs.push(trueRange(sorted[i], sorted[i - 1]));
   return avg(trs);
 }
+function resolveRiskCapUsd(cfg = {}) {
+  const riskCap = num(cfg.risk_cap_usd ?? cfg.riskCapUsd ?? cfg.maxPlannedRiskUsdt, NaN);
+  return Number.isFinite(riskCap) ? riskCap : 100;
+}
+function familyPlannedRisk(family = {}) {
+  const direct = num(family.ticket?.plannedRisk ?? family.plannedRisk, NaN);
+  if (Number.isFinite(direct)) return direct;
+  const legs = family.entries || family.ticket?.entries || [];
+  const legRisks = legs.map(leg => num(leg.plannedRisk ?? leg.risk, NaN));
+  if (legRisks.length && legRisks.every(Number.isFinite)) return legRisks.reduce((a, b) => a + b, 0);
+  return NaN;
+}
 function ticketRiskChecks(ticket = {}, cfg = {}) {
-  const maxRisk = num(cfg.maxPlannedRiskUsdt, 100);
+  const source = ticket.ticket || ticket;
+  const riskCapUsd = resolveRiskCapUsd(cfg);
   const maxMargin = num(cfg.maxMarginUsdt, 1500);
   const maxLeverage = num(cfg.maxLeverage, 20);
-  const minRr = num(ticket.minRr ?? cfg.minRr, NaN);
+  const minRr = num(source.minRr ?? cfg.minRr, NaN);
   const checks = [];
-  checks.push({ name: 'risk <= max', ok: !Number.isFinite(num(ticket.plannedRisk, NaN)) || num(ticket.plannedRisk) <= maxRisk + 1e-9, value: `${fmt(ticket.plannedRisk, 2)} <= ${fmt(maxRisk, 2)}` });
-  checks.push({ name: 'margin <= max', ok: !Number.isFinite(num(ticket.margin, NaN)) || num(ticket.margin) <= maxMargin + 1e-9, value: `${fmt(ticket.margin, 2)} <= ${fmt(maxMargin, 2)}` });
-  checks.push({ name: 'leverage <= max', ok: !Number.isFinite(num(ticket.leverage, NaN)) || num(ticket.leverage) <= maxLeverage + 1e-9, value: `${fmt(ticket.leverage, 2)} <= ${fmt(maxLeverage, 2)}` });
-  checks.push({ name: 'RR >= minimum', ok: !Number.isFinite(minRr) || num(ticket.rr, -Infinity) >= minRr - 1e-9, value: `${fmt(ticket.rr, 2)} >= ${fmt(minRr, 2)}` });
-  if (ticket.structuralValid === false) checks.push({ name: 'SL structural validity', ok: false, value: 'ticket.structuralValid=false' });
-  if (ticket.tpOpenSpaceValid === false) checks.push({ name: 'TP open space', ok: false, value: 'ticket.tpOpenSpaceValid=false' });
+  const plannedRisk = familyPlannedRisk(ticket);
+  checks.push({ name: 'risk verification', ok: Number.isFinite(plannedRisk), value: Number.isFinite(plannedRisk) ? `planned risk ${fmt(plannedRisk, 2)}` : 'risk verification failed — refresh/resize required' });
+  checks.push({ name: 'risk <= risk_cap_usd', ok: Number.isFinite(plannedRisk) && plannedRisk <= riskCapUsd + 1e-9, value: `${fmt(plannedRisk, 2)} <= ${fmt(riskCapUsd, 2)}` });
+  checks.push({ name: 'margin <= max', ok: !Number.isFinite(num(source.margin, NaN)) || num(source.margin) <= maxMargin + 1e-9, value: `${fmt(source.margin, 2)} <= ${fmt(maxMargin, 2)}` });
+  checks.push({ name: 'leverage <= max', ok: !Number.isFinite(num(source.leverage, NaN)) || num(source.leverage) <= maxLeverage + 1e-9, value: `${fmt(source.leverage, 2)} <= ${fmt(maxLeverage, 2)}` });
+  checks.push({ name: 'RR >= minimum', ok: !Number.isFinite(minRr) || num(source.rr, -Infinity) >= minRr - 1e-9, value: `${fmt(source.rr, 2)} >= ${fmt(minRr, 2)}` });
+  if (source.structuralValid === false) checks.push({ name: 'SL structural validity', ok: false, value: 'ticket.structuralValid=false' });
+  if (source.tpOpenSpaceValid === false) checks.push({ name: 'TP open space', ok: false, value: 'ticket.tpOpenSpaceValid=false' });
   return checks;
 }
 function familyLetter(family = {}) { return upper(family.family || family.name || family.id || '?'); }
@@ -242,7 +257,7 @@ function chooseTriggered(results, config) {
 }
 function ticketField(family, key) { return family.ticket?.[key] ?? family[key] ?? null; }
 function showField(v) { return v === null || v === undefined || v === '' ? 'n/a' : v; }
-function formatTicket(family, selected, config, ctx, blockedFamily) {
+function formatTicket(family, selected, config, ctx, blockedFamily, extraLines = []) {
   const checkTime = selected ? new Date(ctx.checkClosed.ts).toISOString() : 'n/a';
   const status = selected?.triggered ? 'PASSED' : 'FAILED';
   const gateSummary = selected?.gates || [];
@@ -250,6 +265,8 @@ function formatTicket(family, selected, config, ctx, blockedFamily) {
 
 OCO group: ${config.ocoGroupId}
 Symbol: ${config.symbol}
+${metadataBlock(config, ctx, selected, blockedFamily)}
+
 Triggered family: ${familyLabel(family)}
 Blocked family: ${blockedFamily || 'none'}
 Trigger reason: ${selected?.triggerReason || 'n/a'}
@@ -278,26 +295,31 @@ Ticket:
 Gate summary:
 ${gateSummary.map(g => `- ${g.name}: ${g.ok ? 'PASS' : 'FAIL'} (${g.value || ''})`).join('\n')}
 - Final gate result: ${status}
+${extraLines.length ? `\nMode/risk notes:\n${extraLines.map(line => `- ${line}`).join('\n')}` : ''}
 
 Action:
-Review this ticket. If accepted, place it using the normal live-order tool. This watchdog did not place any live order.`;
+Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
 }
 function formatInvalidated(config, ctx, reason, failedGate) {
   return `VIRTUAL OCO INVALIDATED
 
 OCO group: ${config.ocoGroupId}
 Symbol: ${config.symbol}
+${metadataBlock(config, ctx)}
+
 Reason: ${reason}
 Current price: ${fmt(ctx?.currentPrice)}
 Failed gate: ${failedGate || reason}
 Action:
 Do not place the prepared ticket. Refresh the chart analysis if still interested.`;
 }
-function formatExpired(config) {
+function formatExpired(config, ctx = {}) {
   return `VIRTUAL OCO EXPIRED
 
 OCO group: ${config.ocoGroupId}
 Symbol: ${config.symbol}
+${metadataBlock(config, ctx)}
+
 Expiry time: ${config.expiryUtc || config.watchdogExpiry}
 No valid trigger occurred.
 Action:
@@ -333,6 +355,318 @@ function sendDiscord(message, config) {
   if (res.error) throw res.error;
   if (res.status !== 0) throw new Error(`openclaw message send failed (${res.status}): ${res.stderr || res.stdout}`);
   return { status: res.status, stdout: res.stdout || '' };
+}
+
+function maybeCancelCronAfterTerminal(result, config, args = {}) {
+  if (!['ALERTED', 'INVALIDATED', 'EXPIRED'].includes(result?.status)) return null;
+  if (args.updateState === 'false') return null;
+  const scheduler = config.scheduler || config.cron || {};
+  const shouldCancel = scheduler.cancelCronAfterTerminal === true || scheduler.disableCronAfterTerminal === true;
+  const cronId = scheduler.cronId || scheduler.jobId || scheduler.id;
+  if (!shouldCancel) return null;
+  if (!cronId) {
+    return { attempted: false, ok: false, reason: 'scheduler.cancelCronAfterTerminal=true but scheduler.cronId is missing' };
+  }
+  const res = spawnSync('openclaw', ['cron', 'disable', String(cronId)], {
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: 30000,
+    maxBuffer: 1024 * 1024,
+  });
+  return {
+    attempted: true,
+    ok: res.status === 0,
+    cronId: String(cronId),
+    action: 'openclaw cron disable',
+    status: res.status,
+    error: res.error ? (res.error.message || String(res.error)) : undefined,
+    stderr: res.stderr ? res.stderr.slice(0, 2000) : undefined,
+  };
+}
+function listFromResponse(response) {
+  const data = response?.data;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.entrustedList)) return data.entrustedList;
+  if (Array.isArray(data?.orderList)) return data.orderList;
+  return [];
+}
+function normalizedSymbol(config) {
+  return upper(String(config.symbol || '').replace('BITGET:', '').replace('.P', ''));
+}
+function textOfOrder(order = {}) {
+  return [order.clientOid, order.clientOrderId, order.orderId, order.symbol, order.side, order.tradeSide, order.posSide, order.orderType, order.planType]
+    .filter(v => v !== undefined && v !== null)
+    .join(' ')
+    .toLowerCase();
+}
+function pullbackEntryPrices(config = {}) {
+  const families = [];
+  if (config.pullbackFamily) families.push(config.pullbackFamily);
+  if (Array.isArray(config.pullbackFamilies)) families.push(...config.pullbackFamilies);
+  const prices = [];
+  for (const family of families) {
+    for (const leg of (family.entries || family.ticket?.entries || [])) {
+      const p = num(leg.entry ?? leg.price ?? leg.level, NaN);
+      if (Number.isFinite(p)) prices.push(p);
+    }
+    const zone = defaultEntryZone(family);
+    if (zone) prices.push(zone.min, zone.max);
+  }
+  return prices;
+}
+function priceLooksLikePullback(order = {}, config = {}) {
+  const orderPrice = num(order.price || order.triggerPrice || order.executePrice, NaN);
+  if (!Number.isFinite(orderPrice)) return false;
+  const prices = pullbackEntryPrices(config);
+  const tolerance = num(config.liveState?.priceTolerance ?? 0.002, 0.002);
+  return prices.some(p => Number.isFinite(p) && Math.abs(orderPrice - p) <= Math.max(tolerance, Math.abs(p) * tolerance));
+}
+function matchesAnyNeedle(text, needles = []) {
+  return needles.some(n => n && text.includes(String(n).toLowerCase()));
+}
+function classifyLiveOrders(config = {}, regularOrders = [], planOrders = []) {
+  const liveCfg = config.liveState || {};
+  const ladderNeedles = liveCfg.ladderClientOidIncludes || liveCfg.ladderOrderTextIncludes || ['ladder', '_l1', '_l2', '_l3', '_a', '_b', 'opta', 'optb'];
+  const c100Needles = liveCfg.c100ClientOidIncludes || liveCfg.c100OrderTextIncludes || ['c100'];
+  const ladderOrders = [];
+  const c100Orders = [];
+  for (const order of [...regularOrders, ...planOrders]) {
+    const text = textOfOrder(order);
+    if (matchesAnyNeedle(text, c100Needles)) c100Orders.push(order);
+    if (matchesAnyNeedle(text, ladderNeedles) || priceLooksLikePullback(order, config)) ladderOrders.push(order);
+  }
+  return { ladderOrders, c100Orders };
+}
+function positionSize(position = {}) {
+  return Math.abs(num(position.total ?? position.available ?? position.size ?? position.holdVol ?? position.positionSize, 0));
+}
+async function collectLiveState(config = {}, ctx = {}) {
+  const symbol = normalizedSymbol(config);
+  const productType = config.productType || config.marketType || getDefaultTradingConfig().productType;
+  const marginCoin = config.marginCoin || getDefaultTradingConfig().marginCoin;
+  const liveState = {
+    available: true,
+    errors: [],
+    ladder_status: 'unknown',
+    c100_status: 'unknown',
+    positions: [],
+    regularOrders: [],
+    planOrders: [],
+    ladderOrders: [],
+    c100Orders: [],
+    positionSize: 0,
+  };
+  if (config.liveState?.enabled === false || config.liveState?.readExchange === false) {
+    liveState.available = false;
+    liveState.errors.push({ scope: 'liveState', message: 'live state read disabled in config' });
+    return liveState;
+  }
+  let client;
+  try {
+    client = new BitgetClient();
+  } catch (err) {
+    liveState.available = false;
+    liveState.errors.push({ scope: 'bitgetClient', message: err.message || String(err) });
+    return liveState;
+  }
+  try {
+    const positions = await client.get('/api/v2/mix/position/all-position', { productType, marginCoin });
+    liveState.positions = listFromResponse(positions).filter(p => !symbol || p.symbol === symbol).filter(p => positionSize(p) > 0);
+  } catch (err) {
+    liveState.errors.push({ scope: 'positions', message: err.message || String(err) });
+  }
+  try {
+    const regular = await client.get('/api/v2/mix/order/orders-pending', { symbol, productType });
+    liveState.regularOrders = listFromResponse(regular);
+  } catch (err) {
+    liveState.errors.push({ scope: 'regularOrders', message: err.message || String(err) });
+  }
+  for (const planType of ['profit_loss', 'track_plan']) {
+    try {
+      const plans = await client.get('/api/v2/mix/order/orders-plan-pending', { symbol, productType, planType });
+      liveState.planOrders.push(...listFromResponse(plans).map(p => ({ ...p, planType: p.planType || planType })));
+    } catch (err) {
+      liveState.errors.push({ scope: `planOrders:${planType}`, message: err.message || String(err) });
+    }
+  }
+  const classified = classifyLiveOrders(config, liveState.regularOrders, liveState.planOrders);
+  liveState.ladderOrders = classified.ladderOrders;
+  liveState.c100Orders = classified.c100Orders;
+  liveState.positionSize = liveState.positions.reduce((sum, p) => sum + positionSize(p), 0);
+  const hasPosition = liveState.positionSize > 0;
+  if (liveState.errors.length) liveState.ladder_status = 'ladder status unknown';
+  else if (liveState.ladderOrders.length && hasPosition) liveState.ladder_status = 'ladder partially filled';
+  else if (liveState.ladderOrders.length) liveState.ladder_status = 'ladder open/unfilled';
+  else if (hasPosition && config.liveState?.positionImpliesFilledLadder !== false) liveState.ladder_status = 'ladder fully filled';
+  else liveState.ladder_status = 'no live ladder found';
+  const explicitC100 = config.c100Active === true || config.c100PlanActive === true || config.c100?.active === true;
+  if (liveState.errors.length && !explicitC100 && !liveState.c100Orders.length) liveState.c100_status = 'C100 status unknown';
+  else if (explicitC100 || liveState.c100Orders.length) liveState.c100_status = 'C100 plan/order active';
+  else liveState.c100_status = 'no C100 plan/order active';
+  return liveState;
+}
+function resolveExecutionMode(config = {}, liveState = {}) {
+  const explicit = upper(config.execution_mode || config.executionMode || '');
+  const allowed = new Set(['PURE_VOCO', 'HYBRID_VOCO', 'HYBRID_C100']);
+  if (explicit) {
+    return allowed.has(explicit)
+      ? { execution_mode: explicit, execution_mode_source: 'user_specified', reason: 'execution_mode supplied in config' }
+      : { execution_mode: 'UNKNOWN', execution_mode_source: 'unknown', reason: `unsupported execution_mode: ${explicit}` };
+  }
+  const ladder = liveState.ladder_status || 'ladder status unknown';
+  const c100 = liveState.c100_status || 'C100 status unknown';
+  if (/unknown/i.test(ladder) || /unknown/i.test(c100)) return { execution_mode: 'UNKNOWN', execution_mode_source: 'unknown', reason: `${ladder}; ${c100}` };
+  if (/active/i.test(c100)) return { execution_mode: 'HYBRID_C100', execution_mode_source: 'inferred_c100_active', reason: c100 };
+  if (/no live ladder/i.test(ladder)) return { execution_mode: 'PURE_VOCO', execution_mode_source: 'inferred_no_live_ladder', reason: ladder };
+  return { execution_mode: 'HYBRID_VOCO', execution_mode_source: 'inferred_live_ladder', reason: ladder };
+}
+function riskModeForExecution(executionMode) {
+  return executionMode === 'HYBRID_C100' ? 'combined total risk for HYBRID_C100' : 'alternative risk for PURE_VOCO/HYBRID_VOCO';
+}
+function metadataBlock(config = {}, ctx = {}, selected = null, blockedFamily = 'none') {
+  const mode = ctx.executionModeInfo || {};
+  const live = ctx.liveState || {};
+  return `execution_mode: ${mode.execution_mode || 'UNKNOWN'}
+execution_mode_source: ${mode.execution_mode_source || 'unknown'}
+execution_mode_reason: ${mode.reason || 'n/a'}
+risk_cap_usd: ${fmt(ctx.riskCapUsd ?? resolveRiskCapUsd(config), 2)}
+ladder_status: ${live.ladder_status || 'unknown'}
+c100_status: ${live.c100_status || 'unknown'}
+triggered_family: ${selected ? familyLabel(selected.family) : 'none'}
+blocked_or_coexisting_family: ${blockedFamily || 'none'}
+risk_mode: ${riskModeForExecution(mode.execution_mode)}`;
+}
+function formatModeUnclear(config, ctx) {
+  return `VIRTUAL OCO ALERT — MANUAL REVIEW REQUIRED
+
+OCO group: ${config.ocoGroupId}
+Symbol: ${config.symbol}
+${metadataBlock(config, ctx)}
+
+Execution mode unclear. VOCO requires clear mode inference: PURE_VOCO, HYBRID_VOCO, or HYBRID_C100. Manual review required.
+Do not place the prepared ticket until mode and risk are verified.
+
+Live-state errors:
+${(ctx.liveState?.errors || []).map(e => `- ${e.scope}: ${e.message}`).join('\n') || '- none'}
+
+Action:
+Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
+}
+function formatManualReview(config, ctx, selected, blockedFamily, title, details = []) {
+  return `VIRTUAL OCO ALERT — MANUAL REVIEW REQUIRED
+
+OCO group: ${config.ocoGroupId}
+Symbol: ${config.symbol}
+${metadataBlock(config, ctx, selected, blockedFamily)}
+
+${title}
+${details.length ? `\n${details.map(d => `- ${d}`).join('\n')}` : ''}
+
+Action:
+Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
+}
+function isBreakoutResult(result) {
+  const letter = familyLetter(result?.family);
+  const style = upper(result?.family?.style);
+  return result?.kind === 'breakout' || letter === 'C' || style === 'BREAKOUT' || style === 'BREAKDOWN';
+}
+function c100RiskSummary(config = {}, ctx = {}, selected = null) {
+  const riskCapUsd = ctx.riskCapUsd ?? resolveRiskCapUsd(config);
+  const c100 = config.c100 || {};
+  const pullbacks = [];
+  if (config.pullbackFamily) pullbacks.push(config.pullbackFamily);
+  if (Array.isArray(config.pullbackFamilies)) pullbacks.push(...config.pullbackFamilies);
+  const preparedLadderRisk = num(c100.plannedLadderRiskUsd ?? c100.ladderRiskUsd, NaN);
+  const ladderRisk = Number.isFinite(preparedLadderRisk)
+    ? preparedLadderRisk
+    : pullbacks.map(familyPlannedRisk).reduce((sum, v) => Number.isFinite(sum) && Number.isFinite(v) ? sum + v : NaN, 0);
+  const proposedCRisk = num(c100.proposedCRiskUsd ?? c100.cRiskUsd, Number.isFinite(familyPlannedRisk(selected?.family)) ? familyPlannedRisk(selected.family) : NaN);
+  const live = ctx.liveState || {};
+  const filledRisk = num(c100.currentFilledLadderRiskUsd ?? config.liveState?.currentFilledLadderRiskUsd, NaN);
+  const remainingRisk = num(c100.remainingLadderRiskUsd ?? config.liveState?.remainingLadderRiskUsd, NaN);
+  let totalRisk = NaN;
+  if (/partially/i.test(live.ladder_status || '')) {
+    totalRisk = Number.isFinite(filledRisk) && Number.isFinite(remainingRisk) && Number.isFinite(proposedCRisk)
+      ? filledRisk + remainingRisk + proposedCRisk
+      : NaN;
+  } else {
+    totalRisk = Number.isFinite(ladderRisk) && Number.isFinite(proposedCRisk) ? ladderRisk + proposedCRisk : NaN;
+  }
+  const blendedRr = num(c100.blendedRr ?? c100.combinedRr, NaN);
+  const minBlendedRr = num(c100.minBlendedRr ?? config.minBlendedRr, NaN);
+  const combinedMargin = num(c100.combinedMarginUsd ?? c100.marginUsd, NaN);
+  const combinedLeverage = num(c100.maxLeverage ?? c100.leverage, NaN);
+  const checks = [
+    { name: 'risk cap', ok: Number.isFinite(totalRisk) && totalRisk <= riskCapUsd + 1e-9, value: `${fmt(totalRisk, 2)} <= ${fmt(riskCapUsd, 2)}` },
+    { name: 'shared invalidation valid', ok: c100.sharedInvalidationValid !== false, value: String(c100.sharedInvalidationValid !== false) },
+    { name: 'blended RR acceptable', ok: !Number.isFinite(minBlendedRr) || (Number.isFinite(blendedRr) && blendedRr >= minBlendedRr - 1e-9), value: Number.isFinite(minBlendedRr) ? `${fmt(blendedRr, 2)} >= ${fmt(minBlendedRr, 2)}` : 'not specified' },
+    { name: 'margin pass', ok: !Number.isFinite(combinedMargin) || combinedMargin <= num(config.maxMarginUsdt, 1500) + 1e-9, value: Number.isFinite(combinedMargin) ? `${fmt(combinedMargin, 2)} <= ${fmt(num(config.maxMarginUsdt, 1500), 2)}` : 'not specified' },
+    { name: 'leverage pass', ok: !Number.isFinite(combinedLeverage) || combinedLeverage <= num(config.maxLeverage, 20) + 1e-9, value: Number.isFinite(combinedLeverage) ? `${fmt(combinedLeverage, 2)} <= ${fmt(num(config.maxLeverage, 20), 2)}` : 'not specified' },
+    { name: 'liquidation-distance sanity pass', ok: c100.liquidationPass !== false && c100.liquidationDistanceSane !== false, value: String(c100.liquidationPass !== false && c100.liquidationDistanceSane !== false) },
+  ];
+  return { riskCapUsd, ladderRisk, proposedCRisk, filledRisk, remainingRisk, totalRisk, checks, ok: checks.every(c => c.ok) };
+}
+function c100Lines(summary) {
+  return [
+    'C100 check:',
+    `risk cap: ${fmt(summary.riskCapUsd, 2)}`,
+    `planned ladder risk: ${fmt(summary.ladderRisk, 2)}`,
+    `proposed C risk: ${fmt(summary.proposedCRisk, 2)}`,
+    `total all-filled risk: ${fmt(summary.totalRisk, 2)}`,
+    `combined risk <= risk cap: ${summary.checks.find(c => c.name === 'risk cap')?.ok ? 'YES' : 'NO'}`,
+    `shared invalidation valid: ${summary.checks.find(c => c.name === 'shared invalidation valid')?.ok ? 'YES' : 'NO'}`,
+    `blended RR acceptable: ${summary.checks.find(c => c.name === 'blended RR acceptable')?.ok ? 'YES' : 'NO'}`,
+    `margin/leverage/liquidation pass: ${summary.checks.filter(c => ['margin pass', 'leverage pass', 'liquidation-distance sanity pass'].includes(c.name)).every(c => c.ok) ? 'YES' : 'NO'}`,
+  ];
+}
+function modeDecision(config, ctx, selected, blockedFamily) {
+  const mode = ctx.executionModeInfo?.execution_mode || 'UNKNOWN';
+  const live = ctx.liveState || {};
+  const ladderStatus = live.ladder_status || 'unknown';
+  const selectedIsC = isBreakoutResult(selected);
+  if (mode === 'UNKNOWN') {
+    return { message: formatModeUnclear(config, ctx), status: 'ALERTED' };
+  }
+  if (mode === 'PURE_VOCO' && !/no live ladder/i.test(ladderStatus)) {
+    return {
+      message: formatManualReview(config, ctx, selected, blockedFamily, 'Live ladder detected although mode is PURE_VOCO. Mode should be HYBRID_VOCO unless this is a mistake. Manual review required.'),
+      status: 'ALERTED',
+    };
+  }
+  if (mode === 'HYBRID_VOCO' && selectedIsC) {
+    if (/partially/i.test(ladderStatus)) {
+      return {
+        message: formatManualReview(config, ctx, selected, blockedFamily, 'HYBRID_VOCO: C triggered but ladder is partially filled. Manual review required.', [
+          `filled ladder risk: ${fmt(config.liveState?.currentFilledLadderRiskUsd, 2)}`,
+          `remaining live ladder risk: ${fmt(config.liveState?.remainingLadderRiskUsd, 2)}`,
+          `proposed C risk: ${fmt(familyPlannedRisk(selected.family), 2)}`,
+          'C may exceed intended risk unless resized or ladder exposure is handled.',
+        ]),
+        status: 'ALERTED',
+      };
+    }
+    if (/fully/i.test(ladderStatus)) {
+      return {
+        message: formatManualReview(config, ctx, selected, blockedFamily, 'C trigger occurred, but ladder position is already active. Treat C as add-on/position-review only, not standalone VOCO entry.'),
+        status: 'ALERTED',
+      };
+    }
+    if (/open\/unfilled/i.test(ladderStatus)) {
+      return { extraLines: ['HYBRID_VOCO: C triggered while ladder orders may still be live. A/B and C are alternatives. Cancel/block ladder before accepting C.', 'Action warning: ladder must be cancelled/blocked before accepting C, unless user deliberately converts plan to C100 after new analysis.'] };
+    }
+  }
+  if (mode === 'HYBRID_C100' && selectedIsC) {
+    const c100Active = /active/i.test(live.c100_status || '') || config.c100Approved === true || config.c100?.approved === true;
+    const summary = c100RiskSummary(config, ctx, selected);
+    if (!c100Active) {
+      return { message: formatManualReview(config, ctx, selected, blockedFamily, 'C100 risk cannot be verified — refresh required.', ['HYBRID_C100 requires original analysis approval (`c100Approved: true`) or active C100 plan/order.']), status: 'ALERTED' };
+    }
+    if (!summary.ok) {
+      return { message: formatManualReview(config, ctx, selected, blockedFamily, 'C100 risk check failed — refresh/resize required.', c100Lines(summary)), status: 'ALERTED' };
+    }
+    return { extraLines: ['HYBRID_C100: ladder may remain live because combined all-filled risk is being checked as one plan.', ...c100Lines(summary)] };
+  }
+  return { extraLines: [] };
 }
 async function fetchContext(config) {
   const cfg = getDefaultTradingConfig();
@@ -399,10 +733,13 @@ async function evaluate(config, args = {}) {
   }
 
   const ctx = await fetchContext(config);
+  ctx.riskCapUsd = resolveRiskCapUsd(config);
+  ctx.liveState = await collectLiveState(config, ctx);
+  ctx.executionModeInfo = resolveExecutionMode(config, ctx.liveState);
   const expiry = Date.parse(config.expiryUtc || config.watchdogExpiry || '');
   if (Number.isFinite(expiry) && ctx.nowMs >= expiry) {
     state.status = 'EXPIRED'; state.expiredAt = ctx.nowIso;
-    const message = formatExpired(config);
+    const message = formatExpired(config, ctx);
     state.lastMessage = message;
     if (updateState) saveJson(statePath, state);
     return { status: 'EXPIRED', message, statePath };
@@ -416,6 +753,19 @@ async function evaluate(config, args = {}) {
     state.lastMessage = message;
     if (updateState) saveJson(statePath, state);
     return { status: 'INVALIDATED', message, invalidations, statePath };
+  }
+
+  if (ctx.executionModeInfo.execution_mode === 'UNKNOWN') {
+    const message = formatModeUnclear(config, ctx);
+    state.status = 'ALERTED';
+    state.alertedAt = ctx.nowIso;
+    state.triggeredFamily = 'none';
+    state.blockedFamily = 'manual review required';
+    state.lastMessage = message;
+    state.executionModeInfo = ctx.executionModeInfo;
+    state.liveState = ctx.liveState;
+    if (updateState) saveJson(statePath, state);
+    return { status: 'ALERTED', message, statePath, executionModeInfo: ctx.executionModeInfo, liveState: ctx.liveState };
   }
 
   const feedbackEveryCheck = config.feedbackOnEveryCheck === true || config.printFeedbackEveryCheck === true || args.feedback === 'true';
@@ -454,8 +804,12 @@ async function evaluate(config, args = {}) {
   }
 
   const selected = choice.selected;
-  const blocked = families.filter(f => f !== selected.family).map(familyLabel).join(', ') || 'none';
-  const message = formatTicket(selected.family, selected, config, ctx, blocked);
+  const selectedIsC = isBreakoutResult(selected);
+  const blocked = ctx.executionModeInfo.execution_mode === 'HYBRID_C100' && selectedIsC
+    ? 'A/B ladder may coexist under HYBRID_C100 if checks pass'
+    : (families.filter(f => f !== selected.family).map(familyLabel).join(', ') || 'none');
+  const decision = modeDecision(config, ctx, selected, blocked);
+  const message = decision.message || formatTicket(selected.family, selected, config, ctx, blocked, decision.extraLines || []);
   state.status = 'ALERTED';
   state.alertedAt = ctx.nowIso;
   state.triggeredFamily = familyLabel(selected.family);
@@ -463,6 +817,8 @@ async function evaluate(config, args = {}) {
   state.bothPassed = choice.alsoPassed.map(r => familyLabel(r.family));
   state.selectionReason = choice.reason || null;
   state.lastMessage = message;
+  state.executionModeInfo = ctx.executionModeInfo;
+  state.liveState = ctx.liveState;
   if (updateState) saveJson(statePath, state);
   return { status: 'ALERTED', message, statePath, selected: familyLabel(selected.family), blocked, bothPassed: state.bothPassed, results };
 }
@@ -476,6 +832,8 @@ async function evaluate(config, args = {}) {
     sendDiscord(result.message, config);
     result.sentDiscord = true;
   }
+  const cronCancellation = maybeCancelCronAfterTerminal(result, config, args);
+  if (cronCancellation) result.cronCancellation = cronCancellation;
   if (args.json) console.log(JSON.stringify(result, null, 2));
   else if (['ALERTED', 'INVALIDATED', 'EXPIRED', 'CHECKED', 'CHECKED_ALREADY'].includes(result.status)) console.log(result.message);
   else console.log('NO_REPLY');

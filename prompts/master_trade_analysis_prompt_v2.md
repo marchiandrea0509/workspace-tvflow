@@ -15,7 +15,7 @@ Fixed constraints:
 - Venue: Bitget CEX, perps unless shown otherwise.
 - Main TF: 4H. Support TFs: 1D = HTF bias, 1H = tactical timing.
 - Risk budget: $100 max planned risk.
-- Max margin: $1500.
+- Max margin target: $1500, but this is a margin/leverage sizing target, not a chart-quality reject by itself.
 - Max leverage: 20x.
 - Infer symbol from screenshot; if unclear say not clearly visible.
 - Sources: screenshots = truth; user notes = secondary only.
@@ -45,7 +45,9 @@ Core rules:
 - Do not force a trade.
 - If not tradeable, say WAIT clearly.
 - Size from stop distance, not conviction.
-- Never exceed $100 planned risk, $1500 margin, or 20x leverage.
+- Never exceed $100 planned risk or 20x leverage.
+- Do not reject an otherwise valid ticket only because its margin exceeds $1500 at the initial/current/planned leverage. Recalculate the required leverage up to 20x and report the lowest leverage that fits the $1500 margin target while keeping liquidation safely beyond SL. Reject for margin only if the ticket still cannot fit under $1500 at <=20x, or if the required leverage makes liquidation safety unacceptable.
+- For existing live orders, do not call the ladder invalid only because the current exchange leverage creates >$1500 all-filled margin. First judge whether the live ladder is structurally valid and risk-capped. If margin is the only issue, state the required leverage that would fit the margin cap and say any leverage change requires separate explicit user instruction.
 - SL must be structural, not only chosen for better R:R.
 - TP must be realistic, not invented to make R:R look good.
 - One TP per order.
@@ -93,6 +95,7 @@ DIP_LADDER long needs valid 4H bullish impulse: important HL/swing low -> recent
 
 Impulse anchor priority:
 - Default A/B pullback anchor is the broad visible 4H swing: last important 4H HL/swing low -> most recent 4H swing high. Do not default to the latest small/local push when price is at/near major 4H/1D resistance or support.
+- Always print an explicit `PB impulse used` line for A/B with low -> high (or high -> low for shorts), the reason it was selected, and the approximate 38.2/50/61.8 levels. Also print the nearest meaningful local impulse alternative when it materially differs, and explain why it was accepted/rejected. This comparison is mandatory because wrong impulse selection is a recurring failure mode.
 - Major-resistance rule for longs: if current price is within about 1.0 ATR4H below a major 4H/1D resistance, previous-week/range high, or liquidity high, A/B must test the broader/deeper 4H swing anchor. Local levels may not define A. B may add at most one shallow local support leg only if it is clear support, not inside resistance, and L1 RR is about 0.9+.
 - Major-support rule for shorts is the reverse: near major support, A/B sell-rally anchors must use the broader/deeper 4H swing; B may add at most one shallow local resistance leg if structurally clear and RR is about 0.9+.
 - Local breakout impulse exception: a local BO/BD impulse may define A/B only if all are true: 4H closed clearly beyond the major trigger; price held the broken level by 1H/4H retest/shelf; the pullback entry is on the safe side of the broken level rather than inside old resistance/support; entry->TP room is >=1.2 ATR4H; SL is structural/noise-safe; and local anchoring does not make both A and B shallow near current price.
@@ -101,6 +104,8 @@ Impulse anchor priority:
 A quality logic: try 1-2 cleanest PB levels first; use 3 legs only if all 3 are high-quality and not forced. If only one strong level survives, classify SINGLE_LIMIT_PULLBACK.
 
 B fill logic: maximize fill probability mainly by adding an earlier valid shallow L1 above/near the A-quality zone. Attempt up to 3 legs, but prefer extra shallow/mid levels over a deep L3 if the deep leg forces a materially wider SL or changes the core invalidation. A deep L3 is allowed only if it remains within the same thesis and does not require moving SL beyond the clean structural invalidation unless that deeper invalidation is clearly visible and still coherent. If L3 forces a new, much deeper SL only to keep 3 legs, reject L3 and keep B as shallow/mid/main-value ladder.
+
+Level-density rule: before narrowing to A/B/C tickets, list enough visible levels to make the map auditable. Do not compress to only final ticket levels. Include nearest-to-farthest support/resistance from 1H/4H/1D, at least 6-10 meaningful levels when visible, including prior breakout shelves, pivot highs/lows, major HTF levels, and fresh highs/lows. Then explain which levels became entries, stops, or TPs and which were rejected/secondary.
 
 SELL_RALLY short = reverse using LH->LL impulse/retrace into resistance; B also attempts max valid 3-leg sell-rally first, then removes invalid/forced legs.
 
@@ -469,7 +474,7 @@ If D is not recommended, state why.
 8) Orderability
 
 Separate chart validity from live/exchange orderability:
-- First classify A/B/C as chart-valid, conditional, or rejected using screenshot structure, R:R, SL, TP, risk, margin, and leverage.
+- First classify A/B/C as chart-valid, conditional, or rejected using screenshot structure, R:R, SL, TP, risk, and leverage-adjusted margin feasibility. Margin must be tested after recalculating leverage up to 20x; margin at initial/current leverage alone is not a reject.
 - Then classify live orderability using exchange state, liquidity/slippage gates, existing orders/positions, and user confirmation boundary.
 - A liquidity RED or missing live confirmation blocks live placement, but it must not erase a structurally valid watch ticket. In that case, print the chart-valid ticket as WATCH_ONLY / NOT_LIVE_PLACEABLE and state the exact live blocker.
 - If a ticket is chart-valid but live-blocked, final verdict should distinguish: `GOOD MARKET + BAD/UNORDERABLE LIVE EXECUTION` instead of collapsing everything to `NO_TRADE`.

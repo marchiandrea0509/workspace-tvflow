@@ -7,6 +7,32 @@
   "checkTf": "4H",
   "checkDelayMinutes": 2,
   "feedbackOnEveryCheck": false,
+  "execution_mode": "",
+  "risk_cap_usd": 100,
+  "c100Approved": false,
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": ["ladder", "_L1", "_L2", "_L3", "_A", "_B", "optA", "optB"],
+    "c100ClientOidIncludes": ["C100"],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "c100": {
+    "approved": false,
+    "plannedLadderRiskUsd": null,
+    "proposedCRiskUsd": null,
+    "combinedMarginUsd": null,
+    "maxLeverage": null,
+    "blendedRr": null,
+    "minBlendedRr": null,
+    "sharedInvalidationValid": true,
+    "liquidationPass": true
+  },
+  "scheduler": {
+    "cronId": "",
+    "cancelCronAfterTerminal": true,
+    "note": "For scheduled watchdogs, set cronId to the OpenClaw cron job id. After ALERTED/EXPIRED/INVALIDATED is committed, the tool disables that cron so it does not keep waking."
+  },
   "expiryUtc": "2026-05-25T20:00:00Z",
   "preferredFamily": "A",
   "maxPlannedRiskUsdt": 100,

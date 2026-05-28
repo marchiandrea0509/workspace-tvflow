@@ -100,6 +100,19 @@ Harden the workflow in this order:
 For each durable note, include: what changed, why, the discovered quirk/mistake,
 what future runs must do differently, and the validation/postcheck evidence.
 
+### Bitget timestamp drift guard
+
+Authenticated requests sign with a server-adjusted timestamp by default. `lib/bitgetClient.js` fetches `/api/v2/public/time`, caches the offset, and applies it to `ACCESS-TIMESTAMP`. This avoids `40008 Request timestamp expired` when the Windows host clock drifts outside Bitget's acceptance window.
+
+Optional env controls:
+
+```text
+BITGET_USE_SERVER_TIME=true
+BITGET_SERVER_TIME_CACHE_MS=300000
+```
+
+If authenticated calls suddenly fail with timestamp errors, first verify public server time vs local time before changing order logic.
+
 ### TP trailing split / Bitget plan-order quirk
 
 Use the split tool when an existing position has fixed TP rows that must be

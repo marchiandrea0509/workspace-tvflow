@@ -1,0 +1,88 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_AAPLUSDT_20260528_C",
+  "symbol": "AAPLUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 5,
+  "feedbackOnEveryCheck": true,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "d1528f70-ed8d-46c3-8a26-ec065855b36b",
+    "cancelCronAfterTerminal": true,
+    "note": "Disable the scheduled watchdog after ALERTED/EXPIRED/INVALIDATED is committed."
+  },
+  "expiryUtc": "2026-05-31T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": [
+      "1442464011277463553",
+      "1442464252072456204",
+      "1442464561272352769",
+      "1442464011290046464",
+      "1442464252072456270",
+      "1442464561284935680"
+    ],
+    "c100ClientOidIncludes": ["C100", "aapl_c100"],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "No pre-breakout global invalidation supplied; ticket SL 311.55 applies only if C is accepted/placed after alert.",
+    "conditions": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakout; after 4H close above 313.64, manually place/confirm conditional limit long only if price is not above the 314.50 no-chase cap",
+    "trigger": 313.64,
+    "confirmationRule": "closed_above_trigger",
+    "ticket": {
+      "bias": "LONG",
+      "style": "BREAKOUT",
+      "orderTypeProposal": "ALERT_ONLY Case C conditional limit long after 4H close confirmation",
+      "entry": 314.2,
+      "trigger": 313.64,
+      "preferredCleanClose": 314.0,
+      "maxAcceptableEntry": 314.5,
+      "atr4hReference": 1.73,
+      "sl": 311.55,
+      "tp": 318.0,
+      "quantity": 37.74,
+      "notional": 11859,
+      "plannedRisk": 100,
+      "plannedProfit": 143.41,
+      "rr": 1.43,
+      "minRr": 1.2,
+      "invalidation": "No-chase: reject if price is already above about 314.50-315.00 before order can be placed; after entry, SL 311.55",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle above 313.64",
+        "field": "checkClosed.close",
+        "op": ">",
+        "value": 313.64
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "current price remains at/below max acceptable entry/chase 314.50",
+        "field": "currentPrice",
+        "op": "<=",
+        "value": 314.5
+      }
+    ]
+  }
+}
