@@ -7,6 +7,9 @@
   "checkTf": "4H",
   "checkDelayMinutes": 5,
   "feedbackOnEveryCheck": true,
+  "breakoutMinCloseBufferAtr": 0.1,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4,
   "execution_mode": "HYBRID_VOCO",
   "risk_cap_usd": 100,
   "scheduler": {
@@ -47,6 +50,9 @@
     "orderTypeProposal": "ALERT_ONLY confirmed breakout; after 4H close above 313.64, manually place/confirm conditional limit long only if price is not above the 314.50 no-chase cap",
     "trigger": 313.64,
     "confirmationRule": "closed_above_trigger",
+    "minCloseBufferAtr": 0.1,
+    "minClosePositionLong": 0.6,
+    "maxClosePositionShort": 0.4,
     "ticket": {
       "bias": "LONG",
       "style": "BREAKOUT",

@@ -228,12 +228,39 @@ function checkBreakoutFamily(family, ctx, config) {
     else crossed = closed.close >= trigger;
     reason = `${rule}: trigger ${fmt(trigger)}, prevClose ${fmt(prev?.close)}, close ${fmt(closed.close)}, high ${fmt(closed.high)}, low ${fmt(closed.low)}`;
   }
+
+  // Scriptable breakout-candle quality gate:
+  // 1) close must clear the trigger by a minimum ATR buffer;
+  // 2) close must be in the correct part of the candle range to avoid weak/rejection candles.
+  const minCloseBufferAtr = num(family.minCloseBufferAtr ?? config.breakoutMinCloseBufferAtr, 0.10);
+  const minClosePositionLong = num(family.minClosePositionLong ?? config.breakoutMinClosePositionLong, 0.60);
+  const maxClosePositionShort = num(family.maxClosePositionShort ?? config.breakoutMaxClosePositionShort, 0.40);
+  const atr4h = ctx.atr4h;
+  const closeBuffer = direction === 'SHORT' ? trigger - closed.close : closed.close - trigger;
+  const requiredBuffer = minCloseBufferAtr * atr4h;
+  const range = closed.high - closed.low;
+  const closePosition = range > 0 ? (closed.close - closed.low) / range : NaN;
+  const bufferOk = !Number.isFinite(minCloseBufferAtr) || minCloseBufferAtr <= 0
+    ? true
+    : Number.isFinite(closeBuffer) && Number.isFinite(requiredBuffer) && closeBuffer >= requiredBuffer - 1e-9;
+  let closePositionOk = true;
+  let closePositionValue = `closePosition ${fmt(closePosition, 3)} (disabled/auto)`;
+  if (direction === 'SHORT') {
+    closePositionOk = Number.isFinite(closePosition) && closePosition <= maxClosePositionShort + 1e-9;
+    closePositionValue = `${fmt(closePosition, 3)} <= ${fmt(maxClosePositionShort, 3)} (short close in lower candle range)`;
+  } else if (direction === 'LONG') {
+    closePositionOk = Number.isFinite(closePosition) && closePosition >= minClosePositionLong - 1e-9;
+    closePositionValue = `${fmt(closePosition, 3)} >= ${fmt(minClosePositionLong, 3)} (long close in upper candle range)`;
+  }
+
   const confirmations = checkConfirmations(family, ctx);
   const ticketChecks = ticketRiskChecks(family.ticket || family, config);
   const chase = checkStaleness(family, ctx, { min: trigger, max: trigger });
   const rejection = family.rejectIfImmediateRangeRejection === false ? [] : checkGenericConditions(family.noImmediateRejectionConditions || [], ctx);
   const gates = [
     { name: 'breakout/breakdown trigger crossed', ok: crossed, value: reason },
+    { name: 'breakout close buffer', ok: bufferOk, value: `${fmt(closeBuffer)} >= ${fmt(requiredBuffer)} (${fmt(minCloseBufferAtr, 2)} ATR4H)` },
+    { name: 'breakout candle close position', ok: closePositionOk, value: closePositionValue },
     ...confirmations.map(c => ({ name: `confirmation: ${c.name}`, ok: c.ok, value: c.value })),
     ...chase.map(c => ({ ...c, name: 'max chase' })),
     ...rejection.map(c => ({ name: `no immediate rejection: ${c.name}`, ok: c.ok, value: c.value })),

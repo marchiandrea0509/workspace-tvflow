@@ -116,6 +116,12 @@
         "op": ">=",
         "value": 193.5
       }
-    ]
-  }
+    ],
+    "minCloseBufferAtr": 0.1,
+    "minClosePositionLong": 0.6,
+    "maxClosePositionShort": 0.4
+  },
+  "breakoutMinCloseBufferAtr": 0.1,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4
 }

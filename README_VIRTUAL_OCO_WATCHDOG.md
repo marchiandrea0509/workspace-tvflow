@@ -195,3 +195,35 @@ VIRTUAL OCO ALERT — TRADE PROPOSAL READY
 ```
 
 The action line always says the watchdog did not place any live order. Andrea must place separately using the normal live-order flow if accepted.
+
+## Breakout candle quality gate
+
+For breakout/breakdown family C, the watchdog now applies two objective candle-quality checks in addition to the existing closed-candle trigger and max-chase checks.
+
+Defaults:
+
+- `minCloseBufferAtr`: `0.10`
+- `minClosePositionLong`: `0.60`
+- `maxClosePositionShort`: `0.40`
+
+Definitions:
+
+```text
+closePosition = (close - low) / (high - low)
+```
+
+LONG breakout passes the candle-quality gate only if:
+
+```text
+close - trigger >= minCloseBufferAtr * ATR4H
+closePosition >= minClosePositionLong
+```
+
+SHORT breakdown passes the candle-quality gate only if:
+
+```text
+trigger - close >= minCloseBufferAtr * ATR4H
+closePosition <= maxClosePositionShort
+```
+
+This prevents marginal closes just beyond the trigger and weak/rejection candles from producing a VOCO C alert.
