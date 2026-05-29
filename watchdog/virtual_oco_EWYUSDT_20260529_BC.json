@@ -1,0 +1,100 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_EWYUSDT_20260529_BC",
+  "symbol": "EWYUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 8,
+  "feedbackOnEveryCheck": true,
+  "breakoutMinCloseBufferAtr": 0.1,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "60167d7f-829c-46e4-815e-b69ce42cbe59",
+    "cancelCronAfterTerminal": true,
+    "note": "Disable after ALERTED/EXPIRED/INVALIDATED. Revised B ladder is live at 2x; C is virtual/alert-only. Scheduled at close+8m, staggered 3 minutes after AAPL close+5m to avoid parallel watchdog load. If C triggers, cancel/block B through normal live-order workflow before accepting C."
+  },
+  "expiryUtc": "2026-06-03T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": [
+      "oc-ewy-b-2x-20260529-L1",
+      "oc-ewy-b-2x-20260529-L2",
+      "oc-ewy-b-2x-20260529-L3",
+      "1444270122024464385",
+      "1444270168824508418",
+      "1444270249703272449"
+    ],
+    "c100ClientOidIncludes": [
+      "C100",
+      "ewy_c100"
+    ],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Pre-C invalidation from GPT: thesis invalid if 4H breaks below fresh HL 188.7; after breakout, C ticket SL is 202.75.",
+    "priceCrosses": 188.7,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakout; after a closed 4H candle above 207.20, manually confirm/place C only if price is not above the 209.60 no-chase cap and B ladder exposure is cancelled/blocked first.",
+    "trigger": 207.2,
+    "confirmationRule": "closed_above_trigger",
+    "minCloseBufferAtr": 0.1,
+    "minClosePositionLong": 0.6,
+    "maxClosePositionShort": 0.4,
+    "ticket": {
+      "bias": "LONG",
+      "style": "BREAKOUT",
+      "orderTypeProposal": "ALERT_ONLY Case C conditional breakout long after 4H close confirmation",
+      "entry": 208.0,
+      "trigger": 207.2,
+      "maxAcceptableEntry": 209.6,
+      "atr4hReference": 4.8,
+      "sl": 202.75,
+      "tp": 217.8,
+      "quantity": 19.04,
+      "notional": 3960.32,
+      "plannedRisk": 99.96,
+      "plannedProfit": 186.59,
+      "rr": 1.87,
+      "minRr": 1.2,
+      "invalidation": "No-chase: reject if price is already above about 209.60 before order can be placed; after entry, SL 202.75. Because revised B ladder is live, cancel/block B through normal live-order workflow before accepting C.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 1320.11,
+      "leverage": 3
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle above 207.20",
+        "field": "checkClosed.close",
+        "op": ">",
+        "value": 207.2
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "current price remains at/below max acceptable entry/chase 209.60",
+        "field": "currentPrice",
+        "op": "<=",
+        "value": 209.6
+      }
+    ]
+  }
+}

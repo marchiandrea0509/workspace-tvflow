@@ -89,7 +89,9 @@ Risk rules:
 
 ## Scheduling
 
-Run 1-3 minutes after the closed candle for the selected check TF.
+Run a few minutes after the closed candle for the selected check TF.
+
+When multiple virtual OCO watchdogs are active on the same timeframe, stagger them in deterministic 3-minute slots to avoid parallel agent/API/Discord load. For 4H jobs use UTC close+5m for the first active watchdog, then close+8m, +11m, +14m, etc. Match each config's `checkDelayMinutes` to its cron minute so `latestClosed` logic remains explicit.
 
 ### Robust Discord routing pattern
 
@@ -107,7 +109,7 @@ Recommended scheduled job behavior:
 
 This avoids the failure mode where cron runner delivery resolves `dm:<id>` but returns `not-delivered`, while preserving DM-first mobile alerts.
 
-For a normal 4H watchdog, schedule around minute `2` after 00:00/04:00/08:00/12:00/16:00/20:00 UTC.
+For a normal 4H watchdog, schedule around minute `5` after 00:00/04:00/08:00/12:00/16:00/20:00 UTC; if another 4H watchdog already uses that slot, use the next 3-minute slot (`8`, then `11`, etc.).
 
 For a ticket that explicitly requires 1H tactical confirmation, set `checkTf: "1H"` and schedule hourly 1-3 minutes after the hour.
 

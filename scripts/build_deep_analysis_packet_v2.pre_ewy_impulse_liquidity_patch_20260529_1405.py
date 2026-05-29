@@ -984,12 +984,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             impulse.get("impulse_high_source") or impulse.get("impulse_high_time_utc"),
         )
         active = None
-        # Use the full structural inventory for broad swing alternatives.  A prior
-        # bug limited this to the nearest ~40 support/resistance levels, which hid
-        # broad parent anchors such as EWY 166.98 -> 207.22 and pushed the final
-        # analysis toward a too-local impulse.  Compact display may still truncate,
-        # but impulse selection/audit must see the full level set.
-        structural = structural_side
+        structural = structural_side[:40]
         if side == "LONG":
             active_high = max(
                 current,
@@ -1006,26 +1001,13 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 major = any(token in src for token in ("1D", "4H pivot low", "4H prior pivot high", "4H ema", "1H pivot low"))
                 range_atr = (active_high - p) / atr4h if atr4h else 0.0
                 if major and 1.2 <= range_atr <= 12.0:
-                    # Prefer broad parent anchors: daily/HTF pivot lows first, then 4H
-                    # pivot lows, then prior-high retest shelves, then EMAs. Do not use
-                    # `or 9` here: priority 0 is meaningful.
-                    if "1D pivot low" in src:
-                        priority = 0
-                    elif "4H pivot low" in src:
-                        priority = 1
-                    elif "1D prior pivot high" in src or "4H prior pivot high" in src:
-                        priority = 2
-                    elif "4H" in src:
-                        priority = 3
-                    else:
-                        priority = 4
+                    priority = 0 if ("1D pivot low" in src or "4H pivot low" in src) else (1 if "4H" in src else 2)
                     candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
             if candidates:
-                # Prefer a broad but still plausible active swing base.  Targeting
-                # roughly 8 ATR catches parent swings like EWY 166.98 -> 207.22;
-                # using 10 ATR tended to select stale/deeper lows, while nearest-only
-                # selection selected local/EMA bases.
-                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") if x.get("_priority") is not None else 9), abs(float(x.get("_range_atr") or 0.0) - 8.0), -parse_time_ms(x.get("time_utc"))))
+                # Prefer a broad but still plausible active swing base.  This catches
+                # GPT-style maps such as a prior 4H/1D major swing low -> live high,
+                # instead of always choosing the latest tiny pivot or the deepest old low.
+                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") or 9), abs(float(x.get("_range_atr") or 0.0) - 10.0), -parse_time_ms(x.get("time_utc"))))
                 base = candidates[0]
                 active = fib_map_for(float(base["price"]), active_high, "active_fresh_high_swing", "ACTIVE_VISUAL_HIGH", base.get("source"), "current/latest 4H/1H high")
                 active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
@@ -1045,27 +1027,17 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                 major = any(token in src for token in ("1D", "4H pivot high", "4H prior pivot low", "4H ema", "1H pivot high"))
                 range_atr = (p - active_low) / atr4h if atr4h else 0.0
                 if major and 1.2 <= range_atr <= 12.0:
-                    if "1D pivot high" in src:
-                        priority = 0
-                    elif "4H pivot high" in src:
-                        priority = 1
-                    elif "1D prior pivot low" in src or "4H prior pivot low" in src:
-                        priority = 2
-                    elif "4H" in src:
-                        priority = 3
-                    else:
-                        priority = 4
+                    priority = 0 if ("1D pivot high" in src or "4H pivot high" in src) else (1 if "4H" in src else 2)
                     candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
             if candidates:
-                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") if x.get("_priority") is not None else 9), abs(float(x.get("_range_atr") or 0.0) - 8.0), -parse_time_ms(x.get("time_utc"))))
+                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") or 9), abs(float(x.get("_range_atr") or 0.0) - 10.0), -parse_time_ms(x.get("time_utc"))))
                 base = candidates[0]
                 active = fib_map_for(active_low, float(base["price"]), "active_fresh_low_swing", "ACTIVE_VISUAL_LOW", "current/latest 4H/1H low", base.get("source"))
                 active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
         return {
-            "purpose": "Final report must compare confirmed-pivot, broad visible parent-swing, and active/fresh-extreme impulse zones when they differ materially; use screenshot structure to decide which is more relevant. Do not treat selected_builder_impulse as authoritative when screenshots show a broader parent swing near major R/S.",
+            "purpose": "Final report must compare confirmed-pivot and active/fresh-extreme impulse zones when they differ materially; use screenshot structure to decide which is more relevant.",
             "selected": confirmed,
             "active_visual_alternative": active,
-            "selection_warning": "If current price is at/near major 4H/1D R/S, A/B should normally use the broad visible 4H parent swing unless the local breakout impulse exception fully passes.",
         }
 
     impulse_zones = impulse_zone_comparison()
@@ -2400,8 +2372,7 @@ Use this packet with `{master_prompt}`.
 - Evaluate A/B pullback, C breakout/breakdown, and D OC wrapper exactly as the master prompt defines them. A/B/C are alternatives unless D explicitly wraps them.
 - If requested side is AUTO, use `candidate_trade_design.analysis_side_inference` only to preserve directional fib/value-zone maps; final judgment remains screenshot-first.
 - Always include a Detected Level Map before tickets, using the dense support/resistance inventory rather than only actionable levels; include intermediate 1H/4H/1D shelves/fresh highs/lows so the map is auditable against GPT-style analysis.
-- Compare `candidate_trade_design.impulse_zone_comparison.selected` with `active_visual_alternative` when they differ materially; this applies to both LONG and SHORT flows. Near major 4H/1D resistance/support, do not accept the generated local selected impulse as authoritative if screenshots expose a broader parent 4H swing. Print `PB impulse used` with selected swing and approximate 23.6/38.2/50/61.8 levels before A/B tickets.
-- When live/liquidity gate data is available, include an explicit traffic-light orderability table with `Gate | Observed | Limit / required | Status | Note` covering spread, 24h volume, dead candles, p10/volume stress, stop-exit slippage, depth-to-SL, existing orders/position, and confirmation boundary. Do not summarize liquidity as just OK/blocked.
+- Compare `candidate_trade_design.impulse_zone_comparison.selected` with `active_visual_alternative` when they differ materially; this applies to both LONG and SHORT flows. Print `PB impulse used` with selected swing and approximate 38.2/50/61.8 levels before A/B tickets.
 - For standalone A/B/C, max planned loss is 100 USDT and the user chooses one. For D VIRTUAL_OCO, selected path max planned loss is 100 USDT. For D COMBO_100, all-filled worst-case planned loss must be <= 100 USDT.
 - Do not assume discretionary future cancellation, stop movement, trailing, or post-fill management. VIRTUAL_OCO/OC_CONDITIONAL_BREAKOUT may use only explicit predefined OC rules.
 - If 100 USDT risk cannot fit structure/R:R/freshness/liquidity or cannot fit margin at <=20x with safe liquidation, give a strong warning or WAIT/NO_TRADE.
