@@ -1,0 +1,135 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_CLUSDT_20260530_BC",
+  "symbol": "CLUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 11,
+  "feedbackOnEveryCheck": true,
+  "breakoutMinCloseBufferAtr": 0.075,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "3f9fffd2-9a6a-4acc-99ef-c2314404b3f2",
+    "cancelCronAfterTerminal": true,
+    "note": "B sell-rally ladder is live at 5x; C breakdown is virtual/alert-only. Scheduled at 4H close+11m, staggered after AAPL/EWY. If C triggers, cancel/block B through normal live-order workflow before accepting C; do not let B and C execute together."
+  },
+  "expiryUtc": "2026-06-04T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": [
+      "oc-clus-b-voco-5x-20260530-S1",
+      "oc-clus-b-voco-5x-20260530-S2",
+      "oc-clus-b-voco-5x-20260530-S3",
+      "1444615927931498497",
+      "1444615936785674241",
+      "1444615943257485313"
+    ],
+    "c100ClientOidIncludes": [
+      "C100",
+      "clus_c100"
+    ],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Immediate bearish thesis invalidates if price trades/reclaims above the B pullback SL / 92.60 lower-high buffer area.",
+    "priceCrosses": 93.1,
+    "direction": "ABOVE",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "B",
+    "bias": "SHORT",
+    "style": "SELL_RALLY",
+    "orderTypeProposal": "LIVE Bitget limit ladder already placed at 5x isolated with preset TP/SL; C remains virtual/alert-only.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 90.0, "max": 91.55 },
+    "entries": [
+      { "level": "S1", "entry": 90.0, "quantity": 8.06, "notional": 725.4, "sl": 93.1, "tp": 86.47, "plannedRisk": 24.986, "plannedProfit": 28.4518, "rr": 1.14, "orderId": "1444615927931498497", "clientOid": "oc-clus-b-voco-5x-20260530-S1" },
+      { "level": "S2", "entry": 90.8, "quantity": 15.22, "notional": 1381.976, "sl": 93.1, "tp": 83.4, "plannedRisk": 35.006, "plannedProfit": 112.628, "rr": 3.22, "orderId": "1444615936785674241", "clientOid": "oc-clus-b-voco-5x-20260530-S2" },
+      { "level": "S3", "entry": 91.55, "quantity": 25.81, "notional": 2362.9055, "sl": 93.1, "tp": 83.05, "plannedRisk": 40.0055, "plannedProfit": 219.385, "rr": 5.48, "orderId": "1444615943257485313", "clientOid": "oc-clus-b-voco-5x-20260530-S3" }
+    ],
+    "ticket": {
+      "bias": "SHORT",
+      "style": "SELL_RALLY",
+      "entry": "S1 90.00 / S2 90.80 / S3 91.55",
+      "sl": 93.1,
+      "tp": "S1 86.47 / S2 83.40 / S3 83.05",
+      "quantity": "8.06 + 15.22 + 25.81",
+      "notional": 4470.2815,
+      "plannedRisk": 99.9975,
+      "plannedProfit": 360.4648,
+      "margin": 894.0563,
+      "leverage": 5,
+      "rr": 3.6047,
+      "minRr": 1.5,
+      "invalidation": "SL 93.10; 4H acceptance above 92.60 / SL zone invalidates the immediate bearish sell-rally thesis.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "SHORT",
+    "style": "BREAKDOWN",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakdown; after a closed 4H candle below 86.47/86.35, manually confirm/place C only if price is not below the 86.10 no-chase floor and B ladder exposure is cancelled/blocked first.",
+    "trigger": 86.47,
+    "confirmationRule": "closed_below_trigger",
+    "minCloseBufferAtr": 0.075,
+    "maxClosePositionShort": 0.4,
+    "maxStalenessDistance": 0.37,
+    "maxStalenessUnit": "PRICE",
+    "ticket": {
+      "bias": "SHORT",
+      "style": "BREAKDOWN",
+      "orderTypeProposal": "ALERT_ONLY Case C conditional breakdown short after 4H close confirmation",
+      "entry": 86.2,
+      "trigger": 86.47,
+      "minAcceptableEntry": 86.1,
+      "atr4hReference": 1.57,
+      "sl": 88.35,
+      "tp": 83.4,
+      "quantity": 44.44,
+      "notional": 3830.728,
+      "plannedRisk": 95.546,
+      "plannedProfit": 124.432,
+      "rr": 1.30,
+      "minRr": 1.2,
+      "invalidation": "No-chase: reject if price is already below 86.10 before order can be placed; after entry, SL 88.35. Because B ladder is live, cancel/block B through normal live-order workflow before accepting C.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 957.682,
+      "leverage": 4
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle at or below 86.35",
+        "field": "checkClosed.close",
+        "op": "<=",
+        "value": 86.35
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "current price remains at/above no-chase floor 86.10",
+        "field": "currentPrice",
+        "op": ">=",
+        "value": 86.1
+      }
+    ]
+  }
+}

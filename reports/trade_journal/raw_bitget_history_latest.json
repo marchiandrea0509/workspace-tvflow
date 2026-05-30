@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-29T15:01:02.197Z",
+  "generatedAt": "2026-05-30T13:57:00.047Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-29T15:00:27.758Z",
+  "until": "2026-05-30T13:56:25.374Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780066827758"
+        "untilTime": "1780149385374"
       },
-      "count": 87,
+      "count": 88,
       "windows": [
         {
           "ok": true,
@@ -206,13 +206,44 @@
         },
         {
           "ok": true,
-          "count": 3,
+          "count": 4,
           "startTime": "1780012800000",
-          "endTime": "1780066827758",
+          "endTime": "1780149385374",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "symbol": "CLUSDT",
+          "size": "5.93",
+          "orderId": "1444597690133016578",
+          "clientOid": "1444597690133016579",
+          "baseVolume": "5.93",
+          "fee": "-0.31355485",
+          "price": "",
+          "priceAvg": "88.127",
+          "status": "filled",
+          "side": "sell",
+          "force": "gtc",
+          "totalProfits": "37.91766461",
+          "posSide": "short",
+          "marginCoin": "USDT",
+          "quoteVolume": "522.5914",
+          "leverage": "4",
+          "marginMode": "isolated",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "orderType": "market",
+          "orderSource": "market",
+          "presetStopSurplusPrice": "",
+          "presetStopLossPrice": "",
+          "posAvg": "94.52",
+          "reduceOnly": "YES",
+          "liqPrice": "",
+          "cTime": "1780144849331",
+          "uTime": "1780144849381"
+        },
         {
           "symbol": "EWYUSDT",
           "size": "8.33",
@@ -2919,9 +2950,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780066827758"
+        "untilTime": "1780149385374"
       },
-      "count": 346,
+      "count": 349,
       "windows": [
         {
           "ok": true,
@@ -3107,13 +3138,82 @@
         },
         {
           "ok": true,
-          "count": 0,
+          "count": 3,
           "startTime": "1780012800000",
-          "endTime": "1780066827758",
+          "endTime": "1780149385374",
           "pages": 1
         }
       ],
       "data": [
+        {
+          "tradeId": "1444597690153033732",
+          "symbol": "CLUSDT",
+          "orderId": "1444597690133016578",
+          "price": "88.128",
+          "baseVolume": "2.82",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.14911257"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "248.5209",
+          "profit": "18.02804819",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1780144849336"
+        },
+        {
+          "tradeId": "1444597690153033730",
+          "symbol": "CLUSDT",
+          "orderId": "1444597690133016578",
+          "price": "88.128",
+          "baseVolume": "0.57",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.03013977"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "50.2329",
+          "profit": "3.64396718",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1780144849336"
+        },
+        {
+          "tradeId": "1444597690153033728",
+          "symbol": "CLUSDT",
+          "orderId": "1444597690133016578",
+          "price": "88.125",
+          "baseVolume": "2.54",
+          "feeDetail": [
+            {
+              "deduction": "no",
+              "feeCoin": "USDT",
+              "totalDeductionFee": null,
+              "totalFee": "-0.1343025"
+            }
+          ],
+          "side": "sell",
+          "quoteVolume": "223.8375",
+          "profit": "16.24564922",
+          "enterPointSource": "android",
+          "tradeSide": "close",
+          "posMode": "hedge_mode",
+          "tradeScope": "taker",
+          "cTime": "1780144849336"
+        },
         {
           "tradeId": "1443888387871989760",
           "symbol": "CLUSDT",
@@ -11081,7 +11181,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780066827758",
+        "untilTime": "1780149385374",
         "planType": "normal_plan"
       },
       "count": 18,
@@ -11272,7 +11372,7 @@
           "ok": true,
           "count": 0,
           "startTime": "1780012800000",
-          "endTime": "1780066827758",
+          "endTime": "1780149385374",
           "pages": 1
         }
       ],

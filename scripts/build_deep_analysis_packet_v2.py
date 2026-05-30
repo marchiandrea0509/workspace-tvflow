@@ -984,6 +984,58 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             impulse.get("impulse_high_source") or impulse.get("impulse_high_time_utc"),
         )
         active = None
+        active_candidates_considered: List[Dict[str, Any]] = []
+
+        def parent_candidate_priority(src: str) -> int:
+            """Rank parent-swing anchors for the GPT-style impulse audit.
+
+            A recurring failure mode was selecting a stale/over-broad 1D pivot
+            simply because it was tagged higher priority, while the visible 4H
+            parent swing that actually drives the current pullback sits closer
+            in time and around 3-7 ATR.  Screenshots still decide the final
+            anchor, but the packet should surface the likely 4H parent first.
+            """
+            s = str(src or "")
+            if "4H pivot" in s:
+                return 0
+            if "4H prior pivot" in s:
+                return 1
+            if "1H pivot" in s:
+                return 2
+            if "1D prior pivot" in s:
+                return 3
+            if "1D pivot" in s:
+                return 4
+            if "4H ema" in s:
+                return 5
+            return 6
+
+        def sort_parent_candidates(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+            def key(x: Dict[str, Any]) -> Tuple[int, int, float, int]:
+                r = float(x.get("_range_atr") or 0.0)
+                # Prefer recent visible parent swings in the 3-7 ATR zone.
+                # Wider 8-12 ATR anchors remain available as HTF alternatives,
+                # but should not automatically become the active A/B pullback map.
+                range_bucket = 0 if 3.0 <= r <= 7.0 else (1 if 1.2 <= r < 3.0 else 2)
+                return (
+                    range_bucket,
+                    parent_candidate_priority(str(x.get("source") or "")),
+                    abs(r - 5.0),
+                    -parse_time_ms(x.get("time_utc")),
+                )
+            return sorted(candidates, key=key)
+
+        def compact_parent_candidates(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+            out: List[Dict[str, Any]] = []
+            for x in candidates[:8]:
+                out.append({
+                    "price": rn(float(x.get("price"))),
+                    "source": x.get("source"),
+                    "time_utc": x.get("time_utc"),
+                    "range_atr4h": rn(float(x.get("_range_atr") or 0.0), 3),
+                    "selection_priority": parent_candidate_priority(str(x.get("source") or "")),
+                })
+            return out
         # Use the full structural inventory for broad swing alternatives.  A prior
         # bug limited this to the nearest ~40 support/resistance levels, which hid
         # broad parent anchors such as EWY 166.98 -> 207.22 and pushed the final
@@ -1021,11 +1073,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                         priority = 4
                     candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
             if candidates:
-                # Prefer a broad but still plausible active swing base.  Targeting
-                # roughly 8 ATR catches parent swings like EWY 166.98 -> 207.22;
-                # using 10 ATR tended to select stale/deeper lows, while nearest-only
-                # selection selected local/EMA bases.
-                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") if x.get("_priority") is not None else 9), abs(float(x.get("_range_atr") or 0.0) - 8.0), -parse_time_ms(x.get("time_utc"))))
+                candidates = sort_parent_candidates(candidates)
+                active_candidates_considered = compact_parent_candidates(candidates)
                 base = candidates[0]
                 active = fib_map_for(float(base["price"]), active_high, "active_fresh_high_swing", "ACTIVE_VISUAL_HIGH", base.get("source"), "current/latest 4H/1H high")
                 active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
@@ -1057,7 +1106,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
                         priority = 4
                     candidates.append({**item, "_range_atr": range_atr, "_priority": priority})
             if candidates:
-                candidates = sorted(candidates, key=lambda x: (int(x.get("_priority") if x.get("_priority") is not None else 9), abs(float(x.get("_range_atr") or 0.0) - 8.0), -parse_time_ms(x.get("time_utc"))))
+                candidates = sort_parent_candidates(candidates)
+                active_candidates_considered = compact_parent_candidates(candidates)
                 base = candidates[0]
                 active = fib_map_for(active_low, float(base["price"]), "active_fresh_low_swing", "ACTIVE_VISUAL_LOW", "current/latest 4H/1H low", base.get("source"))
                 active["candidate_base_range_atr4h"] = rn(float(base.get("_range_atr") or 0.0), 3)
@@ -1065,7 +1115,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
             "purpose": "Final report must compare confirmed-pivot, broad visible parent-swing, and active/fresh-extreme impulse zones when they differ materially; use screenshot structure to decide which is more relevant. Do not treat selected_builder_impulse as authoritative when screenshots show a broader parent swing near major R/S.",
             "selected": confirmed,
             "active_visual_alternative": active,
-            "selection_warning": "If current price is at/near major 4H/1D R/S, A/B should normally use the broad visible 4H parent swing unless the local breakout impulse exception fully passes.",
+            "active_parent_candidates_considered": active_candidates_considered,
+            "selection_warning": "If current price is at/near major 4H/1D R/S, A/B should normally use the recent broad visible 4H parent swing, not the smallest local impulse and not a stale over-broad 1D pivot, unless screenshots justify that alternative.",
         }
 
     impulse_zones = impulse_zone_comparison()
@@ -2248,10 +2299,11 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "chat_report_parity": "Never save/report a deep analysis as complete if the chat summary omitted mandatory ticket tables for valid options. Prefer printing valid tickets in chat; otherwise explicitly say: Ticket table omitted from chat, full ticket available in saved report.",
             "shallow_fill_probability_leg_audit": "For every rejected shallow fill-probability leg, report candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason. Use shallow_fill_probability_leg_audit_compact when present.",
             "resting_entry_distance_gate": "Universal hard gate for resting ladder candidates before combo selection: LONG buy limits must be at least 0.25 ATR4H below current price; SHORT sell limits at least 0.25 ATR4H above current price. In strict contexts (1H against/corrective, price near major S/R, or fill-probability use), require 0.50 ATR4H. Failing entries are NEAR_MARKET_REJECTED and cannot enter A/B pullback tickets.",
-            "structural_sl_hierarchy": "SL must be visible-structure invalidation first, not R:R optimisation. Before accepting a tight SL, check same-side 1H/4H/1D structure beyond it. If the thesis could still validly reject at the next level beyond the proposed SL, reject the tight SL, recalc R:R with the wider structural SL, and remove shallow legs that no longer pass.",
+            "structural_sl_hierarchy": "SL must be visible-structure invalidation first, not R:R optimisation. Before accepting a tight SL, check same-side 1H/4H/1D structure beyond it. If the thesis could still validly reject at the next level beyond the proposed SL, reject the tight SL, recalc R:R with the wider structural SL, and remove shallow legs that no longer pass. Do not automatically widen to stale/older HTF levels when the visible current lower-high/higher-low already invalidates the 4H thesis; screenshots decide.",
             "tp_realism_hierarchy": "Far 4H/1D targets beyond nearer major support/resistance are valid only when the nearer level is assigned to an earlier leg or the setup explicitly requires a break/retest. Do not use far targets to rescue weak shallow legs.",
             "focus_window": "Analyze screenshots first: 4H last 40 candles, 1H last 80 candles, 1D last 80 candles. Older data only for major HTF levels.",
-            "impulse_audit_required": "Final reports must print PB impulse used (selected swing and 38.2/50/61.8 levels) and compare any materially different local/broad alternative before choosing A/B levels. Wrong impulse selection is a known regression.",
+            "impulse_audit_required": "Final reports must print PB impulse used (selected swing and 38.2/50/61.8 levels) and compare any materially different local/broad/stale alternative before choosing A/B levels. Prefer the recent visible 4H parent swing around 3-7 ATR when price is near major S/R; do not jump to stale over-broad 1D pivots just because they are available. Wrong impulse selection is a known regression.",
+            "format_parity_required": "The chat answer itself, not only the saved report, must include the 5-day swing-plan structure: header/classification, Context and State TF table, Key Levels table, Pullback Impulse Used table, A/B/C/D sections with ticket tables for valid options, Orderability traffic-light table, and Final verdict bullets. Do not compress away impulse, gate table, or valid B/C tickets.",
             "level_density_required": "Detected Level Map must be dense enough to audit: include nearest-to-farthest 1H/4H/1D supports/resistances, intermediate shelves, fresh highs/lows, and HTF levels before narrowing to tickets.",
             "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "reject tickets solely because margin exceeds cap at initial/current/planned leverage when <=20x can fit", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
             "screenshot_delivery": "Analyze 1D, 4H, and 1H screenshots when available, but Discord screenshot delivery should happen only after the analysis text is released: send exactly one image per follow-up message, full-resolution original files, and only 4H then 1D. Do not inline screenshots in the analysis message. If a required analysis screenshot is missing, unclear, or not used, say so explicitly.",
