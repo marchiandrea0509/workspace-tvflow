@@ -97,6 +97,8 @@ When multiple virtual OCO watchdogs are active on the same timeframe, stagger th
 
 For Andrea's mobile alerts, actual `VIRTUAL OCO ALERT` triggers must arrive by DM. The proven route is **direct in-agent Discord message-tool send** to `user:1322306175865323552`, not cron runner `announce` delivery to `dm:<id>`.
 
+Hard anti-regression check: a scheduled VOCO job is misconfigured for critical alerts if its top-level cron delivery is `announce` to a room/user and the payload does not explicitly perform direct message-tool routing. A room-delivered alert is not evidence that DM worked; confirm run history contains `messageToolSentTo user:1322306175865323552` for DM tests/triggers.
+
 Recommended scheduled job behavior:
 
 1. Set cron delivery mode to `none` / no runner fallback delivery.

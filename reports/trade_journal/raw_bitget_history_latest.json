@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-30T13:57:00.047Z",
+  "generatedAt": "2026-05-31T12:16:36.909Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-05-30T13:56:25.374Z",
+  "until": "2026-05-31T12:16:04.109Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,9 +18,9 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780149385374"
+        "untilTime": "1780229764109"
       },
-      "count": 88,
+      "count": 91,
       "windows": [
         {
           "ok": true,
@@ -206,9 +206,9 @@
         },
         {
           "ok": true,
-          "count": 4,
+          "count": 7,
           "startTime": "1780012800000",
-          "endTime": "1780149385374",
+          "endTime": "1780229764109",
           "pages": 1
         }
       ],
@@ -243,6 +243,99 @@
           "liqPrice": "",
           "cTime": "1780144849331",
           "uTime": "1780144849381"
+        },
+        {
+          "symbol": "EWYUSDT",
+          "size": "8.33",
+          "orderId": "1444270249703272449",
+          "clientOid": "oc-ewy-b-2x-20260529-L3",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "191.2",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "2",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "213.8",
+          "presetStopLossPrice": "186.4",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1780066781450",
+          "uTime": "1780211240881"
+        },
+        {
+          "symbol": "EWYUSDT",
+          "size": "3.43",
+          "orderId": "1444270168824508418",
+          "clientOid": "oc-ewy-b-2x-20260529-L2",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "196.6",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "2",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "211.8",
+          "presetStopLossPrice": "186.4",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1780066762167",
+          "uTime": "1780211241362"
+        },
+        {
+          "symbol": "EWYUSDT",
+          "size": "1.81",
+          "orderId": "1444270122024464385",
+          "clientOid": "oc-ewy-b-2x-20260529-L1",
+          "baseVolume": "0",
+          "fee": "0",
+          "price": "200.2",
+          "priceAvg": "",
+          "status": "canceled",
+          "side": "buy",
+          "force": "gtc",
+          "totalProfits": "0",
+          "posSide": "long",
+          "marginCoin": "USDT",
+          "quoteVolume": "0",
+          "leverage": "2",
+          "marginMode": "isolated",
+          "enterPointSource": "api",
+          "tradeSide": "open",
+          "posMode": "hedge_mode",
+          "orderType": "limit",
+          "orderSource": "normal",
+          "presetStopSurplusPrice": "217.8",
+          "presetStopLossPrice": "186.4",
+          "posAvg": "",
+          "reduceOnly": "NO",
+          "liqPrice": "",
+          "cTime": "1780066751009",
+          "uTime": "1780211241614"
         },
         {
           "symbol": "EWYUSDT",
@@ -2950,7 +3043,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780149385374"
+        "untilTime": "1780229764109"
       },
       "count": 349,
       "windows": [
@@ -3140,7 +3233,7 @@
           "ok": true,
           "count": 3,
           "startTime": "1780012800000",
-          "endTime": "1780149385374",
+          "endTime": "1780229764109",
           "pages": 1
         }
       ],
@@ -11181,7 +11274,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1780149385374",
+        "untilTime": "1780229764109",
         "planType": "normal_plan"
       },
       "count": 18,
@@ -11372,7 +11465,7 @@
           "ok": true,
           "count": 0,
           "startTime": "1780012800000",
-          "endTime": "1780149385374",
+          "endTime": "1780229764109",
           "pages": 1
         }
       ],
