@@ -1,0 +1,129 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_BTCUSDT_20260602_BC",
+  "symbol": "BTCUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 9,
+  "feedbackOnEveryCheck": true,
+  "breakoutMinCloseBufferAtr": 0.075,
+  "breakoutMaxClosePositionShort": 0.4,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "f5f978aa-e4fc-46e3-8be7-e0ae7fcec0a1",
+    "cancelCronAfterTerminal": true,
+    "note": "BTC B sell-rally ladder is intended to be live at 4x isolated; C2 breakdown is virtual/alert-only. If C2 triggers, cancel/block B through normal live-order workflow before accepting C2; do not let B and C2 execute together."
+  },
+  "expiryUtc": "2026-06-05T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": [
+      "oc-btc-b-hvoco-4x-20260602-S1",
+      "oc-btc-b-hvoco-4x-20260602-S2"
+    ],
+    "c100ClientOidIncludes": [
+      "C100",
+      "btc_c100"
+    ],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Bearish sell-rally/breakdown thesis invalidates if BTC trades/reclaims above the B structural SL zone 74,500.",
+    "priceCrosses": 74500,
+    "direction": "ABOVE",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "B",
+    "bias": "SHORT",
+    "style": "SELL_RALLY",
+    "orderTypeProposal": "LIVE Bitget limit ladder intended at 4x isolated with preset TP/SL; C2 remains virtual/alert-only.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 71400, "max": 72400 },
+    "entries": [
+      { "level": "S1", "entry": 71400, "quantity": 0.0129, "notional": 921.06, "sl": 74500, "tp": 68000, "plannedRisk": 39.99, "plannedProfit": 43.86, "rr": 1.10, "clientOid": "oc-btc-b-hvoco-4x-20260602-S1" },
+      { "level": "S2", "entry": 72400, "quantity": 0.0285, "notional": 2063.40, "sl": 74500, "tp": 68000, "plannedRisk": 59.85, "plannedProfit": 125.40, "rr": 2.10, "clientOid": "oc-btc-b-hvoco-4x-20260602-S2" }
+    ],
+    "ticket": {
+      "bias": "SHORT",
+      "style": "SELL_RALLY",
+      "entry": "S1 71400 / S2 72400",
+      "sl": 74500,
+      "tp": "68000 both legs",
+      "quantity": "0.0129 + 0.0285",
+      "notional": 2984.46,
+      "plannedRisk": 99.84,
+      "plannedProfit": 169.26,
+      "margin": 746.12,
+      "leverage": 4,
+      "rr": 1.70,
+      "minRr": 1.2,
+      "invalidation": "SL 74,500; 4H acceptance above the 72.4k/72.85k retest and especially 74.5k invalidates immediate bearish sell-rally thesis.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.25,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C2",
+    "bias": "SHORT",
+    "style": "BREAKDOWN",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakdown; after a clean closed 4H candle below 68,000, manually confirm/place C2 only if price is not below the 67,800 no-chase floor and B ladder exposure is cancelled/blocked first.",
+    "trigger": 68000,
+    "confirmationRule": "closed_below_trigger",
+    "minCloseBufferAtr": 0.075,
+    "maxClosePositionShort": 0.4,
+    "maxStalenessDistance": 200,
+    "maxStalenessUnit": "PRICE",
+    "ticket": {
+      "bias": "SHORT",
+      "style": "BREAKDOWN",
+      "orderTypeProposal": "ALERT_ONLY Case C2 conditional breakdown short after 4H close confirmation",
+      "entry": 67800,
+      "trigger": 68000,
+      "minAcceptableEntry": 67800,
+      "atr4hReference": 762.207143,
+      "sl": 69500,
+      "tp": 64900,
+      "quantity": 0.0588,
+      "notional": 3986.64,
+      "plannedRisk": 99.96,
+      "plannedProfit": 170.52,
+      "rr": 1.71,
+      "minRr": 1.2,
+      "invalidation": "No-chase: reject if price is already below about 67,800 before order can be placed; after entry, SL 69,500. Because B ladder is live, cancel/block B through normal live-order workflow before accepting C2.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 996.66,
+      "leverage": 4
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle at or below 68,000",
+        "field": "checkClosed.close",
+        "op": "<=",
+        "value": 68000
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "current price remains at/above no-chase floor 67,800",
+        "field": "currentPrice",
+        "op": ">=",
+        "value": 67800
+      }
+    ]
+  }
+}

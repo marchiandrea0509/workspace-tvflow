@@ -22,6 +22,7 @@ ARM-approved anti-regression rule:
 - Before replying, run a finalization checklist against those sections. If any section would be compressed away, stop and write the missing section instead of sending a summary.
 - A user/GPT comparison ticket must be audited explicitly as an A/B/C/D candidate before rejection. Do not hide it behind a generic WAIT/NO_TRADE verdict.
 - When a visible chart high/low differs from the packet's closed-candle selected impulse, compare both. For A/B pullbacks near major S/R, prefer the broad visible 4H parent swing when it explains the support ladder better; do not let the packet's smaller closed impulse silently overfilter a valid fill-probability ladder.
+- Mechanical gate: a saved deep-analysis report must pass `python scripts\validate_deep_analysis_report.py --report <report.md>` before it is treated as complete or sent as the Discord answer. If the validator fails, fix the missing sections first. The validator's regression baseline is ARM good / TSM bad / TSM corrected.
 
 Fixed constraints:
 - Venue: Bitget CEX, perps unless shown otherwise.

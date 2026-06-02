@@ -98,6 +98,14 @@ Output completeness rule: every deep-analysis chat/report must print the full re
 
 ARM-approved layout anti-regression: Andrea explicitly preferred the corrected ARMUSDT 2026-06-01 deep-analysis format. Treat it as the canonical finalization checklist, not as optional style. A complete report/chat must include Header/classification, Context and state, Detected/Structure level map, Pullback impulse used with local/broad alternatives, explicit A, B, C1/C2, D/VOCO sections, Orderability/liquidity traffic-light table, Risk sizing summary, and Final verdict. If a GPT/user attachment contains a coherent ticket, audit it as a candidate before rejecting it. If the visible chart high/low differs from the packet's closed-candle impulse, compare both before selecting or rejecting A/B levels.
 
+Mechanical validation gate: before calling a deep-analysis report complete or sending the Discord answer, run:
+
+```powershell
+python scripts\validate_deep_analysis_report.py --report reports\deep_analysis\<REPORT>.md
+```
+
+The validator intentionally uses the ARMUSDT 2026-06-01 report as the accepted structural reference. If it fails, do **not** send the report/chat answer; fix the missing section(s) first. Known regression proof: `reports/deep_analysis/2026-06-01_ARMUSDT_deep_analysis.md` passes, `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis.md` fails, and `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis_corrected.md` passes.
+
 Ticket rule: every **VALID** A/B/C ticket must include a full Trade Plan Ticket table, including `PLACEABLE_CONDITIONAL_ONLY` options. Conditional means wait for the stated trigger/rejection before placing; it does **not** mean omit the ticket. The ticket table must use exactly: `Leg | Entry | Type | Qty | Notional | SL | Loss | TP | Profit | RR | Trigger`, with a clear trigger such as `Only after 1H rejection from 137.35`. If exact quantity cannot be calculated, provide an approximate ticket using current symbol price and entry/SL distance and mark values approximate. If an option is `REJECTED` or `NOT_PLACEABLE_YET`, do not print a ticket for that option; explain the rejection and what would fix it.
 
 Trade-family construction rule: evaluate A/B pullback first, then independently test C breakout/breakdown using the breakout gate. Only add D when already-valid families benefit from OC control. Prefer `VIRTUAL_OCO` when pullback and breakout are alternative entries into the same thesis; use `COMBO_100` only when both may fill, share coherent invalidation, all-filled R:R remains good, combined risk is <=100 USDT, and the margin target can be met at <=20x with liquidation safely beyond SL.
