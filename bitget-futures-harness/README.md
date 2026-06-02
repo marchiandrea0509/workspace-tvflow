@@ -178,6 +178,21 @@ For ladder-looking order client IDs ending in `_L1`, `_B1`, `_S1`, etc., still
 provide the full-ladder gate inputs so the gate evaluates worst-case stop size:
 `--gateMaxQty`, `--gatePositionNotional`, and `--gatePlannedRisk`.
 
+### RWA/tokenized-stock liquidity gate notes
+
+Bitget `isRwa=YES` tokenized-stock futures often contain tiny/dust 1m prints
+inside otherwise active sessions. Raw 120m p10 quote volume is therefore kept as
+a diagnostic, but the live gate uses the RWA active-session profile when enough
+active candles are available. That profile checks active candles/window,
+inactive percentage, active-session median/P25 1m quote volume, and
+position-notional/active-median ratio. A mature active-session window no longer
+falls back to raw p10 automatically.
+
+Reports should not double-count raw p10 and RWA active-session as two separate
+hard blockers. Use the effective `volumeStress.effectiveMode`: raw p10 for
+normal symbols / insufficient RWA profile, or `rwa_active_session_profile` for
+RWA symbols with enough active-session data.
+
 ## Core commands
 
 ### Account

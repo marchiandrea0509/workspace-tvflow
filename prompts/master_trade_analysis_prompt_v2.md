@@ -15,6 +15,13 @@ Format parity rule:
 - The Discord/chat answer is the deliverable, not just the saved markdown report. Do not reply with a compressed summary when a deep analysis was requested.
 - Use the compact 5-day swing-plan style unless Andrea explicitly asks for a shorter summary: header with current price / ATR4H / classification / bias; Context and State TF table; Key Levels table; Pullback Impulse Used section with fib table; A/B/C/D setup sections; Orderability traffic-light table; Final verdict bullets.
 - Never omit the Pullback Impulse Used section, valid A/B/C ticket tables, or the traffic-light orderability table from chat if they exist in the report/packet.
+- In the traffic-light orderability table, use the liquidity gate's effective volume-stress mode. For Bitget `isRwa=YES` tokenized-stock/RWA futures, do not double-count raw `p10 1m quote stress` plus `RWA active-session` as two independent hard gates. If the RWA active-session profile is applied, show active candles/window, active median/P25 quote volume, and position/median ratio as the volume-stress row. If the RWA profile is diagnostic/non-applicable, mention it only as a note, not as a separate required-pass blocker.
+
+ARM-approved anti-regression rule:
+- The 2026-06-01 ARMUSDT corrected report is the accepted layout standard. Future deep-analysis outputs must preserve that exact section family: Header / classification, Context and state, Detected/Structure level map, Pullback impulse used with alternatives, explicit A, B, C1/C2, D/VOCO sections, Orderability / liquidity traffic-light table, Risk sizing summary, Final verdict.
+- Before replying, run a finalization checklist against those sections. If any section would be compressed away, stop and write the missing section instead of sending a summary.
+- A user/GPT comparison ticket must be audited explicitly as an A/B/C/D candidate before rejection. Do not hide it behind a generic WAIT/NO_TRADE verdict.
+- When a visible chart high/low differs from the packet's closed-candle selected impulse, compare both. For A/B pullbacks near major S/R, prefer the broad visible 4H parent swing when it explains the support ladder better; do not let the packet's smaller closed impulse silently overfilter a valid fill-probability ladder.
 
 Fixed constraints:
 - Venue: Bitget CEX, perps unless shown otherwise.

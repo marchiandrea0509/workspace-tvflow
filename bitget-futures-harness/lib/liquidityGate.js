@@ -112,7 +112,7 @@ function computeRwaActiveSessionWarmup({ candles120, positionNotional }) {
   const activeP25QuoteVolume = percentile(activeVolumes, 25);
   const activeAvgQuoteVolume = activeVolumes.length ? activeVolumes.reduce((a, b) => a + b, 0) / activeVolumes.length : 0;
   const ratioPct = activeMedianQuoteVolume > 0 ? (positionNotional / activeMedianQuoteVolume) * 100 : Number.POSITIVE_INFINITY;
-  const sampleStatus = activeRows.length >= minActiveCandles && window.length <= maxWarmupCandles ? STATUS.GREEN : STATUS.BLOCK;
+  const sampleStatus = activeRows.length >= minActiveCandles ? STATUS.GREEN : STATUS.BLOCK;
   const activityStatus = sampleStatus === STATUS.GREEN ? metricStatus(inactivePct, 10, 25) : STATUS.BLOCK;
   let volumeStatus = sampleStatus === STATUS.GREEN ? metricStatus(ratioPct, 20, 35) : STATUS.BLOCK;
   // If Bitget RWA futures are continuously quoted and never show a clean
@@ -121,14 +121,20 @@ function computeRwaActiveSessionWarmup({ candles120, positionNotional }) {
   // still forcing explicit confirmation for live placement.
   if (fallbackRecentOnly && volumeStatus === STATUS.GREEN) volumeStatus = STATUS.WARN;
 
+  const matureWindow = !fallbackRecentOnly && window.length > maxWarmupCandles;
+  const reason = activeRows.length < minActiveCandles
+    ? 'not enough active-session candles yet'
+    : (fallbackRecentOnly
+      ? 'no inactive-to-active boundary; recent RWA liquidity override is confirmation-gated'
+      : (matureWindow
+        ? 'mature active-session window; use RWA active-session profile instead of raw p10'
+        : 'recent inactive-to-active transition detected'));
+
   return {
-    applicable: activeRows.length >= minActiveCandles && window.length <= maxWarmupCandles,
-    reason: activeRows.length < minActiveCandles
-      ? 'not enough active-session candles yet'
-      : (window.length > maxWarmupCandles
-        ? 'warmup window already mature; use normal p10'
-        : (fallbackRecentOnly ? 'no inactive-to-active boundary; recent RWA liquidity override is confirmation-gated' : 'recent inactive-to-active transition detected')),
+    applicable: activeRows.length >= minActiveCandles,
+    reason,
     fallbackRecentOnly,
+    matureWindow,
     minActiveQuoteVolume,
     inactiveStreakNeeded,
     minActiveCandles,
@@ -233,9 +239,9 @@ function computeReducedSizeProposal({ metrics, inputs, simulation, depth }) {
   }
 
   if (metrics.volumeStress.status === STATUS.BLOCK || metrics.volumeStress.status === STATUS.WARN) {
-    if (metrics.volumeStress.effectiveMode === 'rwa_active_session_warmup') {
+    if (metrics.volumeStress.effectiveMode === 'rwa_active_session_profile') {
       const w = metrics.rwaActiveSessionWarmup || {};
-      if (w.fallbackRecentOnly && w.status === STATUS.WARN) {
+      if (w.fallbackRecentOnly) {
         blockers.push('RWA recent-liquidity override is confirmation-gated, not size-fixable to GREEN');
       } else {
         const maxNotional = Number(w.activeMedianQuoteVolume || 0) * 0.20;
@@ -337,12 +343,14 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
   const useRwaWarmup = isRwa
     && rwaActiveSessionWarmup.applicable
     && (normalDeadStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.WARN);
-  const effectiveDeadStatus = useRwaWarmup && rwaActiveSessionWarmup.activityStatus !== STATUS.BLOCK
+  const effectiveDeadStatus = useRwaWarmup
     ? rwaActiveSessionWarmup.activityStatus
     : normalDeadStatus;
-  const effectiveVolumeStressStatus = useRwaWarmup && rwaActiveSessionWarmup.volumeStatus !== STATUS.BLOCK
+  const effectiveVolumeStressStatus = useRwaWarmup
     ? rwaActiveSessionWarmup.volumeStatus
     : normalVolumeStressStatus;
+  const deadEffectiveMode = useRwaWarmup ? 'rwa_active_session_profile' : 'normal_60m';
+  const volumeStressEffectiveMode = useRwaWarmup ? 'rwa_active_session_profile' : 'normal_p10_120m';
 
   const orderbook = orderbookRaw.data || { bids: [], asks: [] };
   const simulation = simulateStopExit({ orderbook, positionSide, maxQty, slPrice, plannedRiskUsdt });
@@ -370,7 +378,7 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
       sampleSize: vols60.length,
       normalStatus: normalDeadStatus,
       status: effectiveDeadStatus,
-      effectiveMode: effectiveDeadStatus !== normalDeadStatus ? 'rwa_active_session_warmup' : 'normal_60m',
+      effectiveMode: deadEffectiveMode,
     },
     volumeStress: {
       p10QuoteVolume,
@@ -379,7 +387,7 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
       ratioPct: volumeStressPct,
       normalStatus: normalVolumeStressStatus,
       status: effectiveVolumeStressStatus,
-      effectiveMode: effectiveVolumeStressStatus !== normalVolumeStressStatus ? 'rwa_active_session_warmup' : 'normal_p10_120m',
+      effectiveMode: volumeStressEffectiveMode,
     },
     rwaActiveSessionWarmup,
     simSlippage: {
@@ -447,10 +455,11 @@ function formatGateReport(gate) {
   lines.push(`Spread ${fmtNum(m.spread.valuePct, 4)}% ${m.spread.status}`);
   lines.push(`24h volume ${fmtNum(m.volume24h.quoteVolume, 2)} / req ${fmtNum(m.volume24h.requiredQuoteVolume, 2)} ${m.volume24h.status}`);
   lines.push(`Dead candles ${fmtNum(m.deadCandles.pct, 2)}% (${m.deadCandles.count}/${m.deadCandles.sampleSize}) ${m.deadCandles.status}`);
-  lines.push(`Vol stress ${fmtNum(m.volumeStress.ratioPct, 2)}% of p10 1m quote vol ${m.volumeStress.status}`);
-  if (m.rwaActiveSessionWarmup?.applicable && (m.deadCandles.effectiveMode === 'rwa_active_session_warmup' || m.volumeStress.effectiveMode === 'rwa_active_session_warmup')) {
+  if (m.rwaActiveSessionWarmup?.applicable && (m.deadCandles.effectiveMode === 'rwa_active_session_profile' || m.volumeStress.effectiveMode === 'rwa_active_session_profile')) {
     const w = m.rwaActiveSessionWarmup;
-    lines.push(`RWA warmup ${w.activeCandles}/${w.windowCandles} active candles, median 1m ${fmtNum(w.activeMedianQuoteVolume, 2)} USDT, ratio ${fmtNum(w.ratioPct, 2)}% ${w.status}`);
+    lines.push(`Vol stress RWA active session ${w.activeCandles}/${w.windowCandles} active candles, median 1m ${fmtNum(w.activeMedianQuoteVolume, 2)} USDT, ratio ${fmtNum(w.ratioPct, 2)}% ${m.volumeStress.status}`);
+  } else {
+    lines.push(`Vol stress ${fmtNum(m.volumeStress.ratioPct, 2)}% of p10 1m quote vol ${m.volumeStress.status}`);
   }
   lines.push(`Sim slippage ${fmtNum(m.simSlippage.extraLossUsdt, 2)} USDT / ${fmtNum(m.simSlippage.extraLossPct, 2)}% ${m.simSlippage.status}`);
   lines.push(`Depth to SL ${fmtNum(m.depthToSl.notional, 2)} / req ${fmtNum(m.depthToSl.requiredNotional, 2)} ${m.depthToSl.status}`);
