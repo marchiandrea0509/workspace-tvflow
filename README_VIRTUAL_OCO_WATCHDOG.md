@@ -80,12 +80,25 @@ Mode inference when `execution_mode` is blank:
 - C100 order/plan active or explicitly marked active → `HYBRID_C100`
 - unclear live state → no trade proposal; DM manual-review warning
 
+Every alert/manual-review message reports:
+
+- `Execution mode`: `PURE_VOCO`, `HYBRID_VOCO`, `HYBRID_C100`, or `UNKNOWN`
+- `Execution mode source`: `user_specified`, `inferred_no_live_ladder`, `inferred_live_ladder`, `inferred_c100_active`, or `unknown`
+- `Risk cap USD`
+- `Ladder status`: `NONE`, `OPEN_UNFILLED`, `PARTIALLY_FILLED`, `FULLY_FILLED`, or `UNKNOWN`
+- `C100 status`: `INACTIVE`, `ACTIVE`, or `UNKNOWN`
+- `Risk mode`: alternative risk for `PURE_VOCO`/`HYBRID_VOCO`, combined risk for `HYBRID_C100`
+
+Read-only live-state inference checks regular orders, positions, and configured plan types. The default plan-type list is `normal_plan`, `profit_loss`, and `track_plan` so conditional C100 plans and TP/SL/trailing rows are all visible to the classifier.
+
 Risk rules:
 
 - `risk_cap_usd` is the planned-risk cap. If missing, it defaults to `100`.
 - All VOCO/HYBRID/C100 risk checks compare against `risk_cap_usd`; no hardcoded `$100` gate is used.
 - If risk cannot be calculated or verified, the tool does not approve the trigger and sends a refresh/manual-review alert instead of a trade proposal.
 - For `HYBRID_C100`, configure the `c100` block (`approved`, planned ladder risk, proposed C risk, combined margin/leverage/R:R/liquidation checks) or ensure a C100 plan/order is detectable in live state.
+
+For `HYBRID_C100` C alerts, the message includes a `C100 compliance` block with risk cap, combined risk, combined-risk pass/fail, shared-invalidation pass/fail, blended-R:R pass/fail, and margin/leverage/liquidation pass/fail.
 
 ## Scheduling
 

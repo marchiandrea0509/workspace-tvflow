@@ -12,6 +12,7 @@
   "c100Approved": false,
   "liveState": {
     "enabled": true,
+    "planTypes": ["normal_plan", "profit_loss", "track_plan"],
     "ladderClientOidIncludes": ["ladder", "_L1", "_L2", "_L3", "_A", "_B", "optA", "optB"],
     "c100ClientOidIncludes": ["C100"],
     "positionImpliesFilledLadder": true,

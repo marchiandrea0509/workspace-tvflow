@@ -86,6 +86,9 @@ OC_CONDITIONAL_BREAKOUT
 STOP_LIMIT_BREAKOUT
 VIRTUAL_OCO
 COMBO_100
+PURE_VOCO
+HYBRID_VOCO
+HYBRID_C100
 
 ATR rule:
 ATR4H = ATR(14) on 4H.
@@ -244,11 +247,19 @@ D is not a separate chart setup.
 D is an execution wrapper used only if A/B and/or C are already valid.
 
 Allowed D modes:
-1) VIRTUAL_OCO
-2) COMBO_100
+1) VIRTUAL_OCO / PURE_VOCO
+2) HYBRID_VOCO
+3) COMBO_100 / HYBRID_C100
 
 Do not create D just because both order types exist.
 D is valid only when the chart logic supports it.
+
+VOCO watchdog boundary:
+- The reusable VOCO watchdog is alert-only. It may monitor prepared trade paths and send Discord proposals, but it must never place, cancel, or modify live orders.
+- Actual order handling remains in the normal live-order workflow after separate explicit user confirmation.
+- Do not change existing breakout/breakdown trigger conditions, candle-quality rules, timeframe logic, expiry logic, or ticket calculations when selecting a VOCO mode.
+- Use `risk_cap_usd`; default is `100` if the user did not specify another risk. Never hardcode `$100` inside VOCO/C100 checks when the user supplied a different cap.
+- If risk cannot be verified, do not approve the proposal; state `Risk verification failed — refresh or resize required.`
 
 ----------------------------------
 D1 — VIRTUAL_OCO
@@ -259,8 +270,14 @@ Meaning:
 - OC monitors both paths.
 - The first valid trigger/fill wins.
 - The other family is cancelled or blocked.
-- Planned risk remains $100 for the selected path.
+- Planned risk remains within `risk_cap_usd` for the selected path.
 - A/B/C risks are not summed because they are alternatives under OCO control.
+
+VOCO watchdog mode selection:
+- `PURE_VOCO`: no live A/B ladder exists; A/B and C are virtual alternatives. First valid path triggers a Discord proposal and blocks the other path.
+- `HYBRID_VOCO`: A/B pullback ladder may already be live/resting, while C remains virtual. A/B and C are alternatives, not additive. If C triggers while the ladder is still live, warn that the ladder must be cancelled/blocked through normal live-order workflow before accepting C. The watchdog must not cancel the ladder.
+- If the user asks for VOCO without specifying the mode, infer from live state: no live ladder -> `PURE_VOCO`; live A/B ladder and no C100 -> `HYBRID_VOCO`; active C100 plan/order -> `HYBRID_C100`; unclear/conflicting state -> `UNKNOWN` and manual review.
+- Every VOCO proposal must report execution mode, execution mode source, risk cap, ladder status, C100 status, triggered family, blocked/coexisting family, and risk mode.
 
 VIRTUAL_OCO is preferred when:
 - both pullback and breakout are independently valid.
@@ -292,9 +309,18 @@ D2 — COMBO_100
 Meaning:
 - Pullback and breakout may both fill.
 - They are complementary parts of one position-building idea.
-- Total worst-case loss if all planned orders fill and price goes straight to SL must be <= $100.
+- Total worst-case loss if all planned orders fill and price goes straight to SL must be <= `risk_cap_usd`.
 - This is not true OCO because both sides may execute.
-- Use name COMBO_100, not OCO, when multiple orders may fill.
+- Use COMBO_100 / HYBRID_C100 when multiple components may coexist.
+
+HYBRID_C100 watchdog mode:
+- A/B ladder may already be live; C remains virtual until trigger.
+- A/B and C are complementary scale-in components, not alternatives.
+- Both may coexist only when C100 was explicitly approved or already active.
+- Before a C proposal, verify combined all-filled risk <= `risk_cap_usd`, one shared structural invalidation, acceptable blended R:R, margin/leverage/liquidation checks when available, and that the existing C trigger/open-space rules still pass.
+- If ladder is fully filled, C may be proposed only if the original C100 plan explicitly allows it and combined risk remains within cap; otherwise state `Ladder fully filled. C requires add-on review.`
+- If combined risk cannot be calculated, do not approve C; state `C100 risk cannot be verified — refresh required.`
+- HYBRID_C100 C alerts must include a `C100 compliance` block: risk cap, combined risk, combined risk <= cap YES/NO, shared invalidation valid YES/NO, blended RR acceptable YES/NO, margin/leverage/liquidation pass YES/NO.
 
 COMBO_100 is allowed only when:
 - same directional thesis.
@@ -461,29 +487,39 @@ Do not provide poor/forced/invalid options.
 
 Only provide D if useful.
 
-D1) VIRTUAL_OCO
+D1) VIRTUAL_OCO / PURE_VOCO / HYBRID_VOCO
 Include only if valid:
 - Families included:
 - OCO group ID:
+- Watchdog execution mode:
+- Execution mode source / live-state assumption:
+- Risk cap USD:
+- Ladder status assumption:
+- C100 status assumption:
 - First valid path wins:
 - What OC monitors:
-- What OC places:
-- What OC cancels/blocks:
+- What OC places: alert proposal only; no live order placement by watchdog
+- What OC cancels/blocks: blocks proposal/state only; watchdog never cancels exchange orders
 - Max planned risk:
-- Accidental double-fill risk:
-- Why VIRTUAL_OCO is better than standalone:
+- Accidental double-fill / live-ladder conflict risk:
+- HYBRID_VOCO warning if C triggers while ladder remains live:
+- Why this mode is better than standalone:
 
-D2) COMBO_100
+D2) COMBO_100 / HYBRID_C100
 Include only if valid:
 - Components included:
+- Watchdog execution mode:
+- Risk cap USD:
 - Risk split:
 - Shared invalidation:
 - Total all-filled worst-case risk:
+- Combined risk <= cap YES/NO:
 - Blended entry if all filled:
 - All-filled R:R:
 - Margin:
 - Leverage:
-- Why COMBO_100 is better than VIRTUAL_OCO:
+- C100 compliance summary:
+- Why HYBRID_C100 is better than VIRTUAL_OCO:
 - Why both fills still make sense:
 
 If D is not recommended, state why.

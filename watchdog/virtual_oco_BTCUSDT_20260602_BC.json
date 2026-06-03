@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "ocoGroupId": "VOCO_BTCUSDT_20260602_BC",
   "symbol": "BTCUSDT",
   "productType": "USDT-FUTURES",

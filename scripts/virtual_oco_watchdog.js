@@ -105,7 +105,7 @@ function ticketRiskChecks(ticket = {}, cfg = {}) {
   const minRr = num(source.minRr ?? cfg.minRr, NaN);
   const checks = [];
   const plannedRisk = familyPlannedRisk(ticket);
-  checks.push({ name: 'risk verification', ok: Number.isFinite(plannedRisk), value: Number.isFinite(plannedRisk) ? `planned risk ${fmt(plannedRisk, 2)}` : 'risk verification failed — refresh/resize required' });
+  checks.push({ name: 'risk verification', ok: Number.isFinite(plannedRisk), value: Number.isFinite(plannedRisk) ? `planned risk ${fmt(plannedRisk, 2)}` : 'Risk verification failed — refresh or resize required.' });
   checks.push({ name: 'risk <= risk_cap_usd', ok: Number.isFinite(plannedRisk) && plannedRisk <= riskCapUsd + 1e-9, value: `${fmt(plannedRisk, 2)} <= ${fmt(riskCapUsd, 2)}` });
   checks.push({ name: 'margin <= max', ok: !Number.isFinite(num(source.margin, NaN)) || num(source.margin) <= maxMargin + 1e-9, value: `${fmt(source.margin, 2)} <= ${fmt(maxMargin, 2)}` });
   checks.push({ name: 'leverage <= max', ok: !Number.isFinite(num(source.leverage, NaN)) || num(source.leverage) <= maxLeverage + 1e-9, value: `${fmt(source.leverage, 2)} <= ${fmt(maxLeverage, 2)}` });
@@ -325,7 +325,7 @@ ${gateSummary.map(g => `- ${g.name}: ${g.ok ? 'PASS' : 'FAIL'} (${g.value || ''}
 ${extraLines.length ? `\nMode/risk notes:\n${extraLines.map(line => `- ${line}`).join('\n')}` : ''}
 
 Action:
-Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
+Review this proposal. If accepted, handle order through normal live-order workflow. Watchdog did not place, cancel, or modify live orders.`;
 }
 function formatInvalidated(config, ctx, reason, failedGate) {
   return `VIRTUAL OCO INVALIDATED
@@ -474,8 +474,10 @@ async function collectLiveState(config = {}, ctx = {}) {
   const liveState = {
     available: true,
     errors: [],
-    ladder_status: 'unknown',
-    c100_status: 'unknown',
+    ladder_status: 'UNKNOWN',
+    ladder_status_detail: 'unknown',
+    c100_status: 'UNKNOWN',
+    c100_status_detail: 'unknown',
     positions: [],
     regularOrders: [],
     planOrders: [],
@@ -508,7 +510,8 @@ async function collectLiveState(config = {}, ctx = {}) {
   } catch (err) {
     liveState.errors.push({ scope: 'regularOrders', message: err.message || String(err) });
   }
-  for (const planType of ['profit_loss', 'track_plan']) {
+  const planTypes = config.liveState?.planTypes || ['normal_plan', 'profit_loss', 'track_plan'];
+  for (const planType of planTypes) {
     try {
       const plans = await client.get('/api/v2/mix/order/orders-plan-pending', { symbol, productType, planType });
       liveState.planOrders.push(...listFromResponse(plans).map(p => ({ ...p, planType: p.planType || planType })));
@@ -521,15 +524,33 @@ async function collectLiveState(config = {}, ctx = {}) {
   liveState.c100Orders = classified.c100Orders;
   liveState.positionSize = liveState.positions.reduce((sum, p) => sum + positionSize(p), 0);
   const hasPosition = liveState.positionSize > 0;
-  if (liveState.errors.length) liveState.ladder_status = 'ladder status unknown';
-  else if (liveState.ladderOrders.length && hasPosition) liveState.ladder_status = 'ladder partially filled';
-  else if (liveState.ladderOrders.length) liveState.ladder_status = 'ladder open/unfilled';
-  else if (hasPosition && config.liveState?.positionImpliesFilledLadder !== false) liveState.ladder_status = 'ladder fully filled';
-  else liveState.ladder_status = 'no live ladder found';
+  if (liveState.errors.length) {
+    liveState.ladder_status = 'UNKNOWN';
+    liveState.ladder_status_detail = 'ladder status unknown';
+  } else if (liveState.ladderOrders.length && hasPosition) {
+    liveState.ladder_status = 'PARTIALLY_FILLED';
+    liveState.ladder_status_detail = 'ladder partially filled';
+  } else if (liveState.ladderOrders.length) {
+    liveState.ladder_status = 'OPEN_UNFILLED';
+    liveState.ladder_status_detail = 'ladder open/unfilled';
+  } else if (hasPosition && config.liveState?.positionImpliesFilledLadder !== false) {
+    liveState.ladder_status = 'FULLY_FILLED';
+    liveState.ladder_status_detail = 'ladder fully filled';
+  } else {
+    liveState.ladder_status = 'NONE';
+    liveState.ladder_status_detail = 'no live ladder found';
+  }
   const explicitC100 = config.c100Active === true || config.c100PlanActive === true || config.c100?.active === true;
-  if (liveState.errors.length && !explicitC100 && !liveState.c100Orders.length) liveState.c100_status = 'C100 status unknown';
-  else if (explicitC100 || liveState.c100Orders.length) liveState.c100_status = 'C100 plan/order active';
-  else liveState.c100_status = 'no C100 plan/order active';
+  if (liveState.errors.length && !explicitC100 && !liveState.c100Orders.length) {
+    liveState.c100_status = 'UNKNOWN';
+    liveState.c100_status_detail = 'C100 status unknown';
+  } else if (explicitC100 || liveState.c100Orders.length) {
+    liveState.c100_status = 'ACTIVE';
+    liveState.c100_status_detail = 'C100 plan/order active';
+  } else {
+    liveState.c100_status = 'INACTIVE';
+    liveState.c100_status_detail = 'no C100 plan/order active';
+  }
   return liveState;
 }
 function resolveExecutionMode(config = {}, liveState = {}) {
@@ -540,12 +561,13 @@ function resolveExecutionMode(config = {}, liveState = {}) {
       ? { execution_mode: explicit, execution_mode_source: 'user_specified', reason: 'execution_mode supplied in config' }
       : { execution_mode: 'UNKNOWN', execution_mode_source: 'unknown', reason: `unsupported execution_mode: ${explicit}` };
   }
-  const ladder = liveState.ladder_status || 'ladder status unknown';
-  const c100 = liveState.c100_status || 'C100 status unknown';
-  if (/unknown/i.test(ladder) || /unknown/i.test(c100)) return { execution_mode: 'UNKNOWN', execution_mode_source: 'unknown', reason: `${ladder}; ${c100}` };
-  if (/active/i.test(c100)) return { execution_mode: 'HYBRID_C100', execution_mode_source: 'inferred_c100_active', reason: c100 };
-  if (/no live ladder/i.test(ladder)) return { execution_mode: 'PURE_VOCO', execution_mode_source: 'inferred_no_live_ladder', reason: ladder };
-  return { execution_mode: 'HYBRID_VOCO', execution_mode_source: 'inferred_live_ladder', reason: ladder };
+  const ladder = upper(liveState.ladder_status || 'UNKNOWN');
+  const c100 = upper(liveState.c100_status || 'UNKNOWN');
+  const reason = `${liveState.ladder_status_detail || ladder}; ${liveState.c100_status_detail || c100}`;
+  if (ladder === 'UNKNOWN' || c100 === 'UNKNOWN') return { execution_mode: 'UNKNOWN', execution_mode_source: 'unknown', reason };
+  if (c100 === 'ACTIVE') return { execution_mode: 'HYBRID_C100', execution_mode_source: 'inferred_c100_active', reason };
+  if (ladder === 'NONE') return { execution_mode: 'PURE_VOCO', execution_mode_source: 'inferred_no_live_ladder', reason };
+  return { execution_mode: 'HYBRID_VOCO', execution_mode_source: 'inferred_live_ladder', reason };
 }
 function riskModeForExecution(executionMode) {
   return executionMode === 'HYBRID_C100' ? 'combined total risk for HYBRID_C100' : 'alternative risk for PURE_VOCO/HYBRID_VOCO';
@@ -553,15 +575,15 @@ function riskModeForExecution(executionMode) {
 function metadataBlock(config = {}, ctx = {}, selected = null, blockedFamily = 'none') {
   const mode = ctx.executionModeInfo || {};
   const live = ctx.liveState || {};
-  return `execution_mode: ${mode.execution_mode || 'UNKNOWN'}
-execution_mode_source: ${mode.execution_mode_source || 'unknown'}
-execution_mode_reason: ${mode.reason || 'n/a'}
-risk_cap_usd: ${fmt(ctx.riskCapUsd ?? resolveRiskCapUsd(config), 2)}
-ladder_status: ${live.ladder_status || 'unknown'}
-c100_status: ${live.c100_status || 'unknown'}
-triggered_family: ${selected ? familyLabel(selected.family) : 'none'}
-blocked_or_coexisting_family: ${blockedFamily || 'none'}
-risk_mode: ${riskModeForExecution(mode.execution_mode)}`;
+  return `Execution mode: ${mode.execution_mode || 'UNKNOWN'}
+Execution mode source: ${mode.execution_mode_source || 'unknown'}
+Execution mode reason: ${mode.reason || 'n/a'}
+Risk cap USD: ${fmt(ctx.riskCapUsd ?? resolveRiskCapUsd(config), 2)}
+Ladder status: ${live.ladder_status || 'UNKNOWN'}${live.ladder_status_detail ? ` (${live.ladder_status_detail})` : ''}
+C100 status: ${live.c100_status || 'UNKNOWN'}${live.c100_status_detail ? ` (${live.c100_status_detail})` : ''}
+Triggered family: ${selected ? familyLabel(selected.family) : 'none'}
+Blocked or coexisting family: ${blockedFamily || 'none'}
+Risk mode: ${riskModeForExecution(mode.execution_mode)}`;
 }
 function formatModeUnclear(config, ctx) {
   return `VIRTUAL OCO ALERT — MANUAL REVIEW REQUIRED
@@ -577,7 +599,7 @@ Live-state errors:
 ${(ctx.liveState?.errors || []).map(e => `- ${e.scope}: ${e.message}`).join('\n') || '- none'}
 
 Action:
-Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
+Review this proposal. If accepted, handle order through normal live-order workflow. Watchdog did not place, cancel, or modify live orders.`;
 }
 function formatManualReview(config, ctx, selected, blockedFamily, title, details = []) {
   return `VIRTUAL OCO ALERT — MANUAL REVIEW REQUIRED
@@ -590,7 +612,7 @@ ${title}
 ${details.length ? `\n${details.map(d => `- ${d}`).join('\n')}` : ''}
 
 Action:
-Review this proposal. If accepted, handle the order through the normal live-order tool/workflow. This watchdog did not place or cancel any live order.`;
+Review this proposal. If accepted, handle order through normal live-order workflow. Watchdog did not place, cancel, or modify live orders.`;
 }
 function isBreakoutResult(result) {
   const letter = familyLetter(result?.family);
@@ -612,7 +634,7 @@ function c100RiskSummary(config = {}, ctx = {}, selected = null) {
   const filledRisk = num(c100.currentFilledLadderRiskUsd ?? config.liveState?.currentFilledLadderRiskUsd, NaN);
   const remainingRisk = num(c100.remainingLadderRiskUsd ?? config.liveState?.remainingLadderRiskUsd, NaN);
   let totalRisk = NaN;
-  if (/partially/i.test(live.ladder_status || '')) {
+  if (upper(live.ladder_status || '') === 'PARTIALLY_FILLED') {
     totalRisk = Number.isFinite(filledRisk) && Number.isFinite(remainingRisk) && Number.isFinite(proposedCRisk)
       ? filledRisk + remainingRisk + proposedCRisk
       : NaN;
@@ -635,11 +657,11 @@ function c100RiskSummary(config = {}, ctx = {}, selected = null) {
 }
 function c100Lines(summary) {
   return [
-    'C100 check:',
+    'C100 compliance:',
     `risk cap: ${fmt(summary.riskCapUsd, 2)}`,
     `planned ladder risk: ${fmt(summary.ladderRisk, 2)}`,
     `proposed C risk: ${fmt(summary.proposedCRisk, 2)}`,
-    `total all-filled risk: ${fmt(summary.totalRisk, 2)}`,
+    `combined risk: ${fmt(summary.totalRisk, 2)}`,
     `combined risk <= risk cap: ${summary.checks.find(c => c.name === 'risk cap')?.ok ? 'YES' : 'NO'}`,
     `shared invalidation valid: ${summary.checks.find(c => c.name === 'shared invalidation valid')?.ok ? 'YES' : 'NO'}`,
     `blended RR acceptable: ${summary.checks.find(c => c.name === 'blended RR acceptable')?.ok ? 'YES' : 'NO'}`,
@@ -654,14 +676,14 @@ function modeDecision(config, ctx, selected, blockedFamily) {
   if (mode === 'UNKNOWN') {
     return { message: formatModeUnclear(config, ctx), status: 'ALERTED' };
   }
-  if (mode === 'PURE_VOCO' && !/no live ladder/i.test(ladderStatus)) {
+  if (mode === 'PURE_VOCO' && upper(ladderStatus) !== 'NONE') {
     return {
       message: formatManualReview(config, ctx, selected, blockedFamily, 'Live ladder detected although mode is PURE_VOCO. Mode should be HYBRID_VOCO unless this is a mistake. Manual review required.'),
       status: 'ALERTED',
     };
   }
   if (mode === 'HYBRID_VOCO' && selectedIsC) {
-    if (/partially/i.test(ladderStatus)) {
+    if (upper(ladderStatus) === 'PARTIALLY_FILLED') {
       return {
         message: formatManualReview(config, ctx, selected, blockedFamily, 'HYBRID_VOCO: C triggered but ladder is partially filled. Manual review required.', [
           `filled ladder risk: ${fmt(config.liveState?.currentFilledLadderRiskUsd, 2)}`,
@@ -672,18 +694,18 @@ function modeDecision(config, ctx, selected, blockedFamily) {
         status: 'ALERTED',
       };
     }
-    if (/fully/i.test(ladderStatus)) {
+    if (upper(ladderStatus) === 'FULLY_FILLED') {
       return {
         message: formatManualReview(config, ctx, selected, blockedFamily, 'C trigger occurred, but ladder position is already active. Treat C as add-on/position-review only, not standalone VOCO entry.'),
         status: 'ALERTED',
       };
     }
-    if (/open\/unfilled/i.test(ladderStatus)) {
+    if (upper(ladderStatus) === 'OPEN_UNFILLED') {
       return { extraLines: ['HYBRID_VOCO: C triggered while ladder orders may still be live. A/B and C are alternatives. Cancel/block ladder before accepting C.', 'Action warning: ladder must be cancelled/blocked before accepting C, unless user deliberately converts plan to C100 after new analysis.'] };
     }
   }
   if (mode === 'HYBRID_C100' && selectedIsC) {
-    const c100Active = /active/i.test(live.c100_status || '') || config.c100Approved === true || config.c100?.approved === true;
+    const c100Active = upper(live.c100_status || '') === 'ACTIVE' || config.c100Approved === true || config.c100?.approved === true;
     const summary = c100RiskSummary(config, ctx, selected);
     if (!c100Active) {
       return { message: formatManualReview(config, ctx, selected, blockedFamily, 'C100 risk cannot be verified — refresh required.', ['HYBRID_C100 requires original analysis approval (`c100Approved: true`) or active C100 plan/order.']), status: 'ALERTED' };
