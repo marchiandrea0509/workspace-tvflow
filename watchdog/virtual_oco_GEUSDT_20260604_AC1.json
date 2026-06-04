@@ -1,0 +1,133 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_GEUSDT_20260604_AC1",
+  "symbol": "GEUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 8,
+  "feedbackOnEveryCheck": true,
+  "execution_mode": "PURE_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "1ec52fa7-a13e-40d7-ae9a-400fbbf358c9",
+    "cancelCronAfterTerminal": true,
+    "note": "Alert-only VOCO A+C1 for GEUSDT from 2026-06-04 deep analysis. No live order placement. A pullback and C1 breakout are virtual alternatives; if one triggers, user must separately authorize any live Bitget action. GE liquidity gate was RED at creation, so any alert requires fresh gate/manual review before live order. Scheduled at 4H close+8m UTC."
+  },
+  "expiryUtc": "2026-06-09T20:00:00Z",
+  "preferredFamily": "A",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "planTypes": ["normal_plan", "profit_loss", "track_plan"],
+    "ladderClientOidIncludes": ["GEUSDT", "ge", "voco", "_A", "_C1", "optA", "C1"],
+    "c100ClientOidIncludes": ["C100", "ge_c100"],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Long thesis tactical invalidation: price trades at/below the 312.50 swing low / A stop. Broader invalidation is 306.9-303.0, but A/C1 alert idea should stop at tactical failure.",
+    "priceCrosses": 312.5,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "A",
+    "bias": "LONG",
+    "style": "DIP_LADDER",
+    "orderTypeProposal": "ALERT_ONLY pullback long; user places later if accepted after fresh liquidity gate/manual confirmation.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 316.7, "max": 317.5 },
+    "entries": [
+      {
+        "level": "L1",
+        "entry": 317.5,
+        "quantity": 20.0,
+        "notional": 6350.0,
+        "sl": 312.5,
+        "tp": 327.1,
+        "plannedRisk": 100.0,
+        "plannedProfit": 192.0,
+        "rr": 1.92
+      }
+    ],
+    "ticket": {
+      "bias": "LONG",
+      "style": "DIP_LADDER",
+      "entry": "L1 317.50",
+      "sl": 312.5,
+      "tp": "327.10",
+      "quantity": "20.00",
+      "notional": 6350.0,
+      "plannedRisk": 100.0,
+      "plannedProfit": 192.0,
+      "margin": 1270.0,
+      "leverage": 5,
+      "rr": 1.92,
+      "minRr": 1.5,
+      "invalidation": "Tactical invalidation / SL 312.50. Fresh liquidity gate required before any live placement because GE was RED at arming.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C1",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "ALERT_ONLY confirmed breakout/retest candidate; user places later only after fresh liquidity gate/manual confirmation.",
+    "trigger": 327.1,
+    "confirmationRule": "closed_above_trigger",
+    "minCloseBufferAtr": 0.075,
+    "minClosePositionLong": 0.6,
+    "maxClosePositionShort": 0.4,
+    "maxStalenessDistance": 0.5,
+    "maxStalenessUnit": "ATR",
+    "ticket": {
+      "bias": "LONG",
+      "style": "BREAKOUT",
+      "orderTypeProposal": "ALERT_ONLY C1 breakout long after confirmed 4H close above 327.10; not a live order.",
+      "entry": 327.2,
+      "trigger": 327.1,
+      "maxAcceptableEntry": "trigger + 0.5 ATR4H chase cap",
+      "sl": 323.3,
+      "tp": 333.0,
+      "quantity": 25.64,
+      "notional": 8389.41,
+      "plannedRisk": 99.996,
+      "plannedProfit": 148.71,
+      "rr": 1.49,
+      "minRr": 1.2,
+      "invalidation": "Reject/no-chase if price is far above trigger (>0.5 ATR4H) or immediately rejects back below 326-327. Fresh liquidity gate required before any live order because GE was RED at arming.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 1398.24,
+      "leverage": 6
+    },
+    "confirmations": [],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "closed 4H candle remains above 327.10 trigger",
+        "field": "checkClosed.close",
+        "op": ">=",
+        "value": 327.1
+      },
+      {
+        "description": "closed 4H candle low does not immediately lose 326.00 breakout shelf",
+        "field": "checkClosed.low",
+        "op": ">=",
+        "value": 326.0
+      }
+    ]
+  },
+  "breakoutMinCloseBufferAtr": 0.075,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4
+}
