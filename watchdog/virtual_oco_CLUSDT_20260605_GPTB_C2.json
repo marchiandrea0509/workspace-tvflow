@@ -1,0 +1,132 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_CLUSDT_20260605_GPTB_C2",
+  "symbol": "CLUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 14,
+  "feedbackOnEveryCheck": true,
+  "breakoutMinCloseBufferAtr": 0.075,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4,
+  "execution_mode": "HYBRID_VOCO",
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "5c19e7c6-9ff7-4049-934a-dc27bddc6d8b",
+    "cancelCronAfterTerminal": true,
+    "note": "GPT Option B sell-rally ladder is live at 20x isolated; C2 breakdown is virtual/alert-only. Scheduled at 4H close+14m UTC. If C2 triggers, alert Andrea first; do not auto-place C2. B live/resting exposure must be cancelled/blocked through the normal live-order workflow before any C2 live execution."
+  },
+  "expiryUtc": "2026-06-10T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1499631210283008002"
+  },
+  "liveState": {
+    "enabled": true,
+    "ladderClientOidIncludes": [
+      "oc-clus-gptb-voco-20x-20260605-S1",
+      "oc-clus-gptb-voco-20x-20260605-S2",
+      "1446848850726383619",
+      "1446848869470728193"
+    ],
+    "c100ClientOidIncludes": [
+      "C100",
+      "clus_c100"
+    ],
+    "positionImpliesFilledLadder": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Bearish hybrid thesis invalidates if price trades through the shared GPT-B stop/invalidation zone.",
+    "priceCrosses": 95.35,
+    "direction": "ABOVE",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "B",
+    "bias": "SHORT",
+    "style": "SELL_RALLY",
+    "orderTypeProposal": "LIVE Bitget GPT Option B limit ladder already placed at 20x isolated with preset TP/SL; C2 remains virtual/alert-only.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 92.15, "max": 92.95 },
+    "entries": [
+      { "level": "S1", "entry": 92.15, "quantity": 12.5, "notional": 1151.875, "sl": 95.35, "tp": 88.98, "plannedRisk": 40.0, "plannedProfit": 39.625, "rr": 0.99, "orderId": "1446848850726383619", "clientOid": "oc-clus-gptb-voco-20x-20260605-S1" },
+      { "level": "S2", "entry": 92.95, "quantity": 25.0, "notional": 2323.75, "sl": 95.35, "tp": 87.92, "plannedRisk": 60.0, "plannedProfit": 125.75, "rr": 2.10, "orderId": "1446848869470728193", "clientOid": "oc-clus-gptb-voco-20x-20260605-S2" }
+    ],
+    "ticket": {
+      "bias": "SHORT",
+      "style": "SELL_RALLY",
+      "entry": "S1 92.15 / S2 92.95",
+      "sl": 95.35,
+      "tp": "S1 88.98 / S2 87.92",
+      "quantity": "12.50 + 25.00",
+      "notional": 3475.625,
+      "plannedRisk": 100.0,
+      "plannedProfit": 165.375,
+      "margin": 173.78125,
+      "leverage": 20,
+      "rr": 1.65,
+      "minRr": 1.2,
+      "invalidation": "Shared SL 95.35; sustained acceptance above 94.73/95.35 invalidates the short sell-rally thesis.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "SHORT",
+    "style": "BREAKDOWN",
+    "orderTypeProposal": "ALERT_ONLY C2 breakdown; after a closed 4H candle below 86.47/86.35, manually confirm/place C2 only if price is not below the 86.10 no-chase floor and B ladder exposure is cancelled/blocked first.",
+    "trigger": 86.47,
+    "confirmationRule": "closed_below_trigger",
+    "minCloseBufferAtr": 0.075,
+    "maxClosePositionShort": 0.4,
+    "maxStalenessDistance": 0.37,
+    "maxStalenessUnit": "PRICE",
+    "ticket": {
+      "bias": "SHORT",
+      "style": "BREAKDOWN",
+      "orderTypeProposal": "ALERT_ONLY C2 conditional breakdown short after 4H close confirmation",
+      "entry": 86.2,
+      "trigger": 86.47,
+      "minAcceptableEntry": 86.1,
+      "atr4hReference": 1.542,
+      "sl": 88.35,
+      "tp": 83.4,
+      "quantity": 44.44,
+      "notional": 3830.728,
+      "plannedRisk": 95.546,
+      "plannedProfit": 124.432,
+      "rr": 1.3,
+      "minRr": 1.2,
+      "invalidation": "No-chase: reject if price is already below 86.10 before order can be placed; after entry, SL 88.35. Because GPT-B ladder is live/resting, cancel/block B through normal live-order workflow before accepting C2.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 957.682,
+      "leverage": 4
+    },
+    "confirmations": [
+      {
+        "description": "closed 4H candle at or below 86.35",
+        "field": "checkClosed.close",
+        "op": "<=",
+        "value": 86.35
+      }
+    ],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "current price remains at/above no-chase floor 86.10",
+        "field": "currentPrice",
+        "op": ">=",
+        "value": 86.1
+      }
+    ]
+  }
+}

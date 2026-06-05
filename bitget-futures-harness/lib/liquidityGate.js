@@ -223,76 +223,355 @@ function depthToSlCorridor({ orderbook, positionSide, slPrice, currentBid, curre
   return { qty, notional };
 }
 
-function computeReducedSizeProposal({ metrics, inputs, simulation, depth }) {
-  const limits = [];
-  const blockers = [];
-  const maxQty = inputs.maxQty;
-  const positionNotional = inputs.positionNotional;
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  if (metrics.spread.status === STATUS.BLOCK) blockers.push('spread is not size-fixable');
-  if (metrics.deadCandles.status === STATUS.BLOCK) blockers.push('dead-candle/liquidity continuity is not size-fixable');
-
-  if (metrics.volume24h.status === STATUS.BLOCK || metrics.volume24h.status === STATUS.WARN) {
-    const maxNotional = metrics.volume24h.quoteVolume / 500;
-    if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: '24h volume >= 500x notional', scale: maxNotional / positionNotional });
-    else blockers.push('24h volume is zero/unavailable');
-  }
-
-  if (metrics.volumeStress.status === STATUS.BLOCK || metrics.volumeStress.status === STATUS.WARN) {
-    if (metrics.volumeStress.effectiveMode === 'rwa_active_session_profile') {
-      const w = metrics.rwaActiveSessionWarmup || {};
-      if (w.fallbackRecentOnly) {
-        blockers.push('RWA recent-liquidity override is confirmation-gated, not size-fixable to GREEN');
-      } else {
-        const maxNotional = Number(w.activeMedianQuoteVolume || 0) * 0.20;
-        if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'position notional < 20% of active-session median 1m quote volume', scale: maxNotional / positionNotional });
-        else blockers.push('active-session median 1m quote volume is zero/unavailable');
-      }
-    } else {
-      const maxNotional = metrics.volumeStress.p10QuoteVolume * 0.10;
-      if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'position notional < 10% of p10 1m quote volume', scale: maxNotional / positionNotional });
-      else blockers.push('p10 1m quote volume is zero/unavailable');
-    }
-  }
-
-  if ((metrics.simSlippage.status === STATUS.BLOCK || metrics.simSlippage.status === STATUS.WARN) && simulation.consumedLevels?.length) {
-    const targetExtraLoss = inputs.plannedRiskUsdt * 0.20;
-    let lo = 0;
-    let hi = maxQty;
-    for (let i = 0; i < 40; i += 1) {
-      const mid = (lo + hi) / 2;
-      const sim = simulateStopExit({
-        orderbook: metrics._orderbook,
-        positionSide: inputs.positionSide,
-        maxQty: mid,
-        slPrice: inputs.slPrice,
-        plannedRiskUsdt: inputs.plannedRiskUsdt,
-      });
-      if (sim.complete && sim.extraLossUsdt < targetExtraLoss) lo = mid;
-      else hi = mid;
-    }
-    limits.push({ reason: 'simulated stop slippage < 20% planned risk', scale: lo / maxQty });
-  }
-
-  if (metrics.depthToSl.low) {
-    const maxNotional = depth.notional / 3;
-    if (Number.isFinite(maxNotional) && maxNotional > 0) limits.push({ reason: 'depth-to-SL corridor >= 3x notional', scale: maxNotional / positionNotional });
-    else blockers.push('depth-to-SL corridor has no visible book depth');
-  }
-
-  if (blockers.length) {
-    return { available: false, blockers, limits };
-  }
-
-  const scale = Math.min(1, ...limits.map((x) => x.scale).filter(Number.isFinite));
-  if (!(scale > 0) || !Number.isFinite(scale)) return { available: false, blockers: ['no positive compliant size found'], limits };
+function cloneOrderbookWithDepthHaircut(orderbook, haircut = 0.5) {
+  const scale = Number(haircut);
+  const apply = (levels) => (levels || []).map(([price, qty]) => [price, String(Number(qty) * scale)]);
   return {
-    available: scale < 1,
-    scale,
-    maxQty: maxQty * scale,
-    maxPositionNotional: positionNotional * scale,
-    limits,
+    bids: apply(orderbook?.bids),
+    asks: apply(orderbook?.asks),
   };
+}
+
+function orderbookFromResponse(raw) {
+  return raw?.data || { bids: [], asks: [] };
+}
+
+async function collectExecutionSnapshots({ client, symbol, productType, firstTickerRaw, firstOrderbookRaw, sampleCount, sampleIntervalMs }) {
+  const count = Math.max(1, Math.min(10, Number(sampleCount || 3)));
+  const interval = Math.max(0, Math.min(5000, Number(sampleIntervalMs ?? 1000)));
+  const samples = [{
+    ts: new Date().toISOString(),
+    tickerRaw: firstTickerRaw,
+    orderbookRaw: firstOrderbookRaw,
+    ticker: asTickerRow(firstTickerRaw),
+    orderbook: orderbookFromResponse(firstOrderbookRaw),
+  }];
+  for (let i = 1; i < count; i += 1) {
+    if (interval > 0) await sleep(interval);
+    try {
+      const [tickerRaw, orderbookRaw] = await Promise.all([
+        client.get('/api/v2/mix/market/ticker', { symbol, productType }),
+        client.get('/api/v2/mix/market/orderbook', { symbol, productType, limit: '50' }),
+      ]);
+      samples.push({
+        ts: new Date().toISOString(),
+        tickerRaw,
+        orderbookRaw,
+        ticker: asTickerRow(tickerRaw),
+        orderbook: orderbookFromResponse(orderbookRaw),
+      });
+    } catch (err) {
+      samples.push({ ts: new Date().toISOString(), error: err.message || String(err) });
+      break;
+    }
+  }
+  return samples;
+}
+
+function spreadPctFromTicker(ticker) {
+  const bid = Number(ticker?.bidPr);
+  const ask = Number(ticker?.askPr);
+  const mid = (bid + ask) / 2;
+  return {
+    bid,
+    ask,
+    mid,
+    spreadPct: mid > 0 ? ((ask - bid) / mid) * 100 : Number.POSITIVE_INFINITY,
+  };
+}
+
+function computeSpreadStability(samples) {
+  const rows = samples.map((sample) => spreadPctFromTicker(sample.ticker)).filter((row) => Number.isFinite(row.spreadPct));
+  const current = rows[0] || { bid: NaN, ask: NaN, mid: NaN, spreadPct: Number.POSITIVE_INFINITY };
+  const spreads = rows.map((row) => row.spreadPct);
+  const worstSpreadPct = spreads.length ? Math.max(...spreads) : Number.POSITIVE_INFINITY;
+  const medianSpreadPct = percentile(spreads, 50);
+  return {
+    valuePct: worstSpreadPct,
+    currentSpreadPct: current.spreadPct,
+    medianSpreadPct,
+    worstSpreadPct,
+    bid: current.bid,
+    ask: current.ask,
+    mid: current.mid,
+    sampleSize: rows.length,
+    status: metricStatus(worstSpreadPct, 0.05, 0.15),
+    decisionMetric: 'worst_observed_spread_pct',
+  };
+}
+
+function quoteVolumes(rows) {
+  return (rows || []).map((row) => Number(row.quoteVolume || 0)).filter(Number.isFinite);
+}
+
+function medianNonZero(values) {
+  return percentile(values.filter((value) => Number.isFinite(value) && value > 0), 50);
+}
+
+function computeDeadCandles(candles60) {
+  const vols = quoteVolumes(candles60);
+  const medianNonZeroQuoteVolume = medianNonZero(vols);
+  const deadThreshold = medianNonZeroQuoteVolume > 0 ? medianNonZeroQuoteVolume * 0.01 : 0;
+  const deadCount = vols.filter((v) => v === 0 || (medianNonZeroQuoteVolume > 0 && v < deadThreshold)).length;
+  const zeroCount = vols.filter((v) => v === 0).length;
+  const pct = vols.length ? (deadCount / vols.length) * 100 : 100;
+  const zeroPct = vols.length ? (zeroCount / vols.length) * 100 : 100;
+  return {
+    count: deadCount,
+    pct,
+    zeroCount,
+    zeroPct,
+    medianNonZeroQuoteVolume,
+    deadThresholdQuoteVolume: deadThreshold,
+    sampleSize: vols.length,
+    status: metricStatus(pct, 10, 15),
+    effectiveMode: 'median_nonzero_60m',
+  };
+}
+
+function computeVolumeStress({ candles120, positionNotional, isRwa }) {
+  const vols = quoteVolumes(candles120);
+  const medianNonZeroQuoteVolume = medianNonZero(vols);
+  const deadThreshold = medianNonZeroQuoteVolume > 0 ? medianNonZeroQuoteVolume * 0.01 : 0;
+  const nonDead = vols.filter((v) => v > 0 && (medianNonZeroQuoteVolume <= 0 || v >= deadThreshold));
+  const p10QuoteVolume = percentile(nonDead, 10);
+  const ratioPct = p10QuoteVolume > 0 ? (positionNotional / p10QuoteVolume) * 100 : Number.POSITIVE_INFINITY;
+  const greenPct = isRwa ? 25 : 10;
+  const yellowPct = isRwa ? 50 : 20;
+  return {
+    p10QuoteVolume,
+    p10NonDeadQuoteVolume: p10QuoteVolume,
+    medianNonZeroQuoteVolume,
+    deadThresholdQuoteVolume: deadThreshold,
+    nonDeadSampleSize: nonDead.length,
+    sampleSize: vols.length,
+    positionNotional,
+    ratioPct,
+    greenThresholdPct: greenPct,
+    yellowThresholdPct: yellowPct,
+    status: metricStatus(ratioPct, greenPct, yellowPct),
+    effectiveMode: isRwa ? 'rwa_p10_non_dead_120m' : 'standard_p10_non_dead_120m',
+  };
+}
+
+function computeVolume24h({ quoteVolume, positionNotional }) {
+  const ratioToNotional = positionNotional > 0 ? quoteVolume / positionNotional : 0;
+  let status = STATUS.BLOCK;
+  if (ratioToNotional >= 500) status = STATUS.GREEN;
+  else if (ratioToNotional >= 250) status = STATUS.WARN;
+  return {
+    quoteVolume,
+    requiredQuoteVolume: 500 * positionNotional,
+    yellowRequiredQuoteVolume: 250 * positionNotional,
+    ratioToNotional,
+    status,
+  };
+}
+
+function computeNearMarketDepth({ orderbook, positionSide, currentBid, currentAsk, positionNotional }) {
+  const side = String(positionSide).toLowerCase();
+  const levels = side === 'long' ? orderbook.bids : orderbook.asks;
+  const ref = side === 'long' ? currentBid : currentAsk;
+  function depthWithin(pct) {
+    let qty = 0;
+    let notional = 0;
+    for (const [priceRaw, qtyRaw] of levels || []) {
+      const price = Number(priceRaw);
+      const levelQty = Number(qtyRaw);
+      if (!Number.isFinite(price) || !Number.isFinite(levelQty) || levelQty <= 0 || !(ref > 0)) continue;
+      const include = side === 'long'
+        ? price <= ref && price >= ref * (1 - pct)
+        : price >= ref && price <= ref * (1 + pct);
+      if (include) {
+        qty += levelQty;
+        notional += levelQty * price;
+      }
+    }
+    return { qty, notional, ratioToPosition: positionNotional > 0 ? notional / positionNotional : 0 };
+  }
+  const within025 = depthWithin(0.0025);
+  const within050 = depthWithin(0.005);
+  const status025 = within025.ratioToPosition >= 3 ? STATUS.GREEN : (within025.ratioToPosition >= 1.5 ? STATUS.WARN : STATUS.BLOCK);
+  const status050 = within050.ratioToPosition >= 5 ? STATUS.GREEN : (within050.ratioToPosition >= 2.5 ? STATUS.WARN : STATUS.BLOCK);
+  return {
+    sideEvaluated: side === 'long' ? 'bids' : 'asks',
+    referencePrice: ref,
+    within025,
+    within050,
+    status025,
+    status050,
+    status: worseStatus(status025, status050),
+  };
+}
+
+function computeStopExitSlippageSamples({ samples, positionSide, maxQty, slPrice, plannedRiskUsdt }) {
+  const baseline = simulateStopExit({ orderbook: samples[0]?.orderbook || {}, positionSide, maxQty, slPrice, plannedRiskUsdt });
+  const normalSims = samples.filter((s) => s.orderbook).map((sample) => simulateStopExit({
+    orderbook: sample.orderbook,
+    positionSide,
+    maxQty,
+    slPrice,
+    plannedRiskUsdt,
+  }));
+  const stressedSims = samples.filter((s) => s.orderbook).map((sample) => simulateStopExit({
+    orderbook: cloneOrderbookWithDepthHaircut(sample.orderbook, 0.5),
+    positionSide,
+    maxQty,
+    slPrice,
+    plannedRiskUsdt,
+  }));
+  const worstNormal = normalSims.reduce((worst, sim) => (
+    !sim.complete || sim.extraLossPct > (worst?.extraLossPct ?? -1) ? sim : worst
+  ), normalSims[0] || baseline);
+  const worstStressed = stressedSims.reduce((worst, sim) => (
+    !sim.complete || sim.extraLossPct > (worst?.extraLossPct ?? -1) ? sim : worst
+  ), stressedSims[0] || baseline);
+  return {
+    simulatedExitAvg: worstStressed.avgPrice,
+    worstPrice: worstStressed.worstPrice,
+    consumedQty: worstStressed.consumedQty,
+    remainingQty: worstStressed.remainingQty,
+    complete: worstStressed.complete,
+    extraLossUsdt: worstStressed.extraLossUsdt,
+    extraLossPct: worstStressed.extraLossPct,
+    baselineCurrentBook: baseline,
+    worstObservedCurrentBook: worstNormal,
+    stressedHalfDepth: worstStressed,
+    sampleSize: normalSims.length,
+    depthHaircutPct: 50,
+    decisionMetric: 'stressed_half_visible_depth_extra_loss_pct',
+    status: worstStressed.complete ? metricStatus(worstStressed.extraLossPct, 20, 35) : STATUS.BLOCK,
+  };
+}
+
+function deriveOverallLiquidityResult({ metrics, isRwa }) {
+  const primary = [metrics.simSlippage.status, metrics.nearMarketDepth.status, metrics.spread.status];
+  const supporting = [metrics.volumeStress.status, metrics.deadCandles.status, metrics.volume24h.status];
+  if (primary.includes(STATUS.BLOCK)) return 'RED';
+  const primaryWarn = primary.includes(STATUS.WARN);
+  const supportingRedCount = supporting.filter((s) => s === STATUS.BLOCK).length;
+  const supportingWarn = supporting.includes(STATUS.WARN);
+  if (!isRwa) {
+    if (supportingRedCount > 0) return 'RED';
+    return (primaryWarn || supportingWarn) ? 'YELLOW' : 'GREEN';
+  }
+  if (supportingRedCount >= 2) return 'RED';
+  if (supportingRedCount === 1 && primaryWarn) return 'RED';
+  if (supportingRedCount === 1) return 'YELLOW';
+  return (primaryWarn || supportingWarn) ? 'YELLOW' : 'GREEN';
+}
+
+function recomputeStatusAtScale({ metrics, inputs, orderbook, scale }) {
+  const maxQty = inputs.maxQty * scale;
+  const positionNotional = inputs.positionNotional * scale;
+  const plannedRiskUsdt = inputs.plannedRiskUsdt * scale;
+  const sim = simulateStopExit({
+    orderbook: cloneOrderbookWithDepthHaircut(orderbook, 0.5),
+    positionSide: inputs.positionSide,
+    maxQty,
+    slPrice: inputs.slPrice,
+    plannedRiskUsdt,
+  });
+  const simStatus = sim.complete ? metricStatus(sim.extraLossPct, 20, 35) : STATUS.BLOCK;
+  const near = computeNearMarketDepth({
+    orderbook,
+    positionSide: inputs.positionSide,
+    currentBid: metrics.spread.bid,
+    currentAsk: metrics.spread.ask,
+    positionNotional,
+  });
+  const volumeStressRatioPct = metrics.volumeStress.p10QuoteVolume > 0 ? (positionNotional / metrics.volumeStress.p10QuoteVolume) * 100 : Number.POSITIVE_INFINITY;
+  const volumeStressStatus = metricStatus(volumeStressRatioPct, metrics.volumeStress.greenThresholdPct, metrics.volumeStress.yellowThresholdPct);
+  const volume24hStatus = computeVolume24h({ quoteVolume: metrics.volume24h.quoteVolume, positionNotional }).status;
+  const scaledMetrics = {
+    spread: metrics.spread,
+    simSlippage: { ...metrics.simSlippage, ...sim, extraLossPct: sim.extraLossPct, status: simStatus },
+    nearMarketDepth: near,
+    volumeStress: { ...metrics.volumeStress, positionNotional, ratioPct: volumeStressRatioPct, status: volumeStressStatus },
+    deadCandles: metrics.deadCandles,
+    volume24h: { ...metrics.volume24h, status: volume24hStatus },
+  };
+  return {
+    maxQty,
+    positionNotional,
+    plannedRiskUsdt,
+    estimatedExtraSlippageUsdt: sim.extraLossUsdt,
+    estimatedTotalLossUsdt: plannedRiskUsdt + (Number.isFinite(sim.extraLossUsdt) ? sim.extraLossUsdt : Number.POSITIVE_INFINITY),
+    sim,
+    spreadStatus: metrics.spread.status,
+    nearMarketDepthStatus: near.status,
+    p10Status: volumeStressStatus,
+    deadCandlesStatus: metrics.deadCandles.status,
+    volume24hStatus,
+    result: deriveOverallLiquidityResult({ metrics: scaledMetrics, isRwa: inputs.isRwa }),
+  };
+}
+
+function findScaleForSlippageBudget({ metrics, inputs, orderbook, budgetFn }) {
+  let lo = 0;
+  let hi = 1;
+  let best = null;
+  for (let i = 0; i < 44; i += 1) {
+    const mid = (lo + hi) / 2;
+    const evalMid = recomputeStatusAtScale({ metrics, inputs, orderbook, scale: mid });
+    const budget = budgetFn(evalMid);
+    const pass = evalMid.sim.complete && Number.isFinite(evalMid.estimatedExtraSlippageUsdt) && evalMid.estimatedExtraSlippageUsdt <= budget;
+    if (pass) {
+      lo = mid;
+      best = evalMid;
+    } else {
+      hi = mid;
+    }
+  }
+  return best;
+}
+
+function computeDownsizedFallbackProposals({ metrics, inputs, orderbook, slippagePct = 0.05 }) {
+  const originalBaseRisk = Number(inputs.basePlannedRiskUsdt || inputs.plannedRiskUsdt || 100);
+  const proposalA = findScaleForSlippageBudget({
+    metrics,
+    inputs,
+    orderbook,
+    budgetFn: () => slippagePct * originalBaseRisk,
+  });
+  const proposalB = findScaleForSlippageBudget({
+    metrics,
+    inputs,
+    orderbook,
+    budgetFn: (evalMid) => slippagePct * evalMid.plannedRiskUsdt,
+  });
+  function formatProposal(label, proposal, budgetDescription) {
+    if (!proposal || !(proposal.maxQty > 0)) {
+      return { label, available: false, budgetDescription, verdict: 'NO_TRADE', reason: 'No positive size satisfies the stop-exit slippage budget.' };
+    }
+    const meaningful = proposal.plannedRiskUsdt >= Math.min(25, inputs.plannedRiskUsdt * 0.5);
+    return {
+      label,
+      available: true,
+      budgetDescription,
+      revisedSize: proposal.maxQty,
+      revisedNotional: proposal.positionNotional,
+      revisedMargin: inputs.plannedLeverage ? proposal.positionNotional / inputs.plannedLeverage : null,
+      plannedNoSlippageRisk: proposal.plannedRiskUsdt,
+      estimatedExtraSlippage: proposal.estimatedExtraSlippageUsdt,
+      estimatedTotalLoss: proposal.estimatedTotalLossUsdt,
+      p10Status: proposal.p10Status,
+      nearMarketDepthStatus: proposal.nearMarketDepthStatus,
+      spreadStatus: proposal.spreadStatus,
+      finalResult: proposal.result,
+      meaningful,
+      verdict: meaningful && proposal.result !== 'RED' ? 'PLACEABLE_ONLY_WITH_CONFIRMATION' : 'NO_TRADE',
+      reason: meaningful ? '' : 'Downsized risk is too small to be meaningful.',
+    };
+  }
+  return [
+    formatProposal('A_fixed_extra_slippage_budget', proposalA, `${fmtNum(slippagePct * 100, 2)}% x original/base planned risk`),
+    formatProposal('B_proportional_extra_slippage_budget', proposalB, `${fmtNum(slippagePct * 100, 2)}% x new planned no-slippage risk`),
+  ];
 }
 
 async function runLiquidityGate(input, { client = undefined } = {}) {
@@ -319,116 +598,85 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
 
   const contract = asContractRow(contractsRaw, symbol);
   const isRwa = String(contract.isRwa || '').toUpperCase() === 'YES';
-
+  const candles60 = candleRows(candles60Raw);
+  const candles120 = candleRows(candles120Raw);
   const ticker = asTickerRow(tickerRaw);
-  const bid = n(ticker.bidPr, 'ticker.bidPr');
-  const ask = n(ticker.askPr, 'ticker.askPr');
-  const mid = (bid + ask) / 2;
-  const spreadPct = mid > 0 ? ((ask - bid) / mid) * 100 : Number.POSITIVE_INFINITY;
   const quoteVolume = Number(ticker.quoteVolume ?? ticker.usdtVolume ?? 0);
 
-  const candles60 = candleRows(candles60Raw);
-  const vols60 = candles60.map((row) => row.quoteVolume || row.baseVolume || 0).filter(Number.isFinite);
-  const avgVolume60 = vols60.length ? vols60.reduce((a, b) => a + b, 0) / vols60.length : 0;
-  const deadCount = vols60.filter((v) => v === 0 || v < avgVolume60 * 0.01).length;
-  const deadPct = vols60.length ? (deadCount / vols60.length) * 100 : 100;
+  const executionSamples = await collectExecutionSnapshots({
+    client: c,
+    symbol,
+    productType,
+    firstTickerRaw: tickerRaw,
+    firstOrderbookRaw: orderbookRaw,
+    sampleCount: input.sampleCount || input.orderbookSampleCount || input.liquiditySampleCount,
+    sampleIntervalMs: input.sampleIntervalMs || input.orderbookSampleIntervalMs || input.liquiditySampleIntervalMs,
+  });
+  const currentSpread = spreadPctFromTicker(executionSamples[0]?.ticker || ticker);
+  const bid = n(currentSpread.bid, 'ticker.bidPr');
+  const ask = n(currentSpread.ask, 'ticker.askPr');
+  const orderbook = executionSamples[0]?.orderbook || orderbookFromResponse(orderbookRaw);
 
-  const candles120 = candleRows(candles120Raw);
-  const p10QuoteVolume = percentile(candles120.map((row) => row.quoteVolume), 10);
-  const p10BaseVolume = percentile(candles120.map((row) => row.baseVolume), 10);
-  const volumeStressPct = p10QuoteVolume > 0 ? (positionNotional / p10QuoteVolume) * 100 : Number.POSITIVE_INFINITY;
-  const normalDeadStatus = metricStatus(deadPct, 10, 15);
-  const normalVolumeStressStatus = metricStatus(volumeStressPct, 10, 20);
+  const spread = computeSpreadStability(executionSamples);
+  const deadCandles = computeDeadCandles(candles60);
+  const volumeStress = computeVolumeStress({ candles120, positionNotional, isRwa });
+  const volume24h = computeVolume24h({ quoteVolume, positionNotional });
   const rwaActiveSessionWarmup = isRwa ? computeRwaActiveSessionWarmup({ candles120, positionNotional }) : { applicable: false, reason: 'symbol is not marked isRwa=YES' };
-  const useRwaWarmup = isRwa
-    && rwaActiveSessionWarmup.applicable
-    && (normalDeadStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.BLOCK || normalVolumeStressStatus === STATUS.WARN);
-  const effectiveDeadStatus = useRwaWarmup
-    ? rwaActiveSessionWarmup.activityStatus
-    : normalDeadStatus;
-  const effectiveVolumeStressStatus = useRwaWarmup
-    ? rwaActiveSessionWarmup.volumeStatus
-    : normalVolumeStressStatus;
-  const deadEffectiveMode = useRwaWarmup ? 'rwa_active_session_profile' : 'normal_60m';
-  const volumeStressEffectiveMode = useRwaWarmup ? 'rwa_active_session_profile' : 'normal_p10_120m';
-
-  const orderbook = orderbookRaw.data || { bids: [], asks: [] };
-  const simulation = simulateStopExit({ orderbook, positionSide, maxQty, slPrice, plannedRiskUsdt });
+  const simSlippage = computeStopExitSlippageSamples({
+    samples: executionSamples,
+    positionSide,
+    maxQty,
+    slPrice,
+    plannedRiskUsdt,
+  });
+  const nearMarketDepth = computeNearMarketDepth({
+    orderbook,
+    positionSide,
+    currentBid: bid,
+    currentAsk: ask,
+    positionNotional,
+  });
   const depth = depthToSlCorridor({ orderbook, positionSide, slPrice, currentBid: bid, currentAsk: ask });
-  const depthLow = depth.notional < 3 * positionNotional;
 
   const metrics = {
-    spread: {
-      valuePct: spreadPct,
-      bid,
-      ask,
-      mid,
-      status: metricStatus(spreadPct, 0.05, 0.15),
-    },
-    volume24h: {
-      quoteVolume,
-      requiredQuoteVolume: 500 * positionNotional,
-      ratioToNotional: positionNotional > 0 ? quoteVolume / positionNotional : 0,
-      status: quoteVolume >= 500 * positionNotional ? STATUS.GREEN : STATUS.BLOCK,
-    },
-    deadCandles: {
-      count: deadCount,
-      pct: deadPct,
-      avgVolume60,
-      sampleSize: vols60.length,
-      normalStatus: normalDeadStatus,
-      status: effectiveDeadStatus,
-      effectiveMode: deadEffectiveMode,
-    },
-    volumeStress: {
-      p10QuoteVolume,
-      p10BaseVolume,
-      positionNotional,
-      ratioPct: volumeStressPct,
-      normalStatus: normalVolumeStressStatus,
-      status: effectiveVolumeStressStatus,
-      effectiveMode: volumeStressEffectiveMode,
-    },
-    rwaActiveSessionWarmup,
-    simSlippage: {
-      simulatedExitAvg: simulation.avgPrice,
-      worstPrice: simulation.worstPrice,
-      consumedQty: simulation.consumedQty,
-      remainingQty: simulation.remainingQty,
-      complete: simulation.complete,
-      extraLossUsdt: simulation.extraLossUsdt,
-      extraLossPct: simulation.extraLossPct,
-      status: simulation.complete ? metricStatus(simulation.extraLossPct, 20, 35) : STATUS.BLOCK,
-    },
+    simSlippage,
+    nearMarketDepth,
+    spread,
+    volumeStress,
+    deadCandles,
+    volume24h,
     depthToSl: {
       notional: depth.notional,
       qty: depth.qty,
       requiredNotional: 3 * positionNotional,
-      low: depthLow,
-      status: depthLow ? 'LOW' : 'OK',
+      low: depth.notional < 3 * positionNotional,
+      status: 'INFO_ONLY',
+      decisionRole: 'informational_only',
     },
-    _orderbook: orderbook,
+    rwaActiveSessionWarmup,
   };
 
-  if (depthLow && metrics.simSlippage.status === STATUS.WARN) {
-    metrics.simSlippage.status = STATUS.BLOCK;
-    metrics.simSlippage.escalatedByDepthToSl = true;
-    metrics.depthToSl.status = 'ESCALATED';
-  } else if (depthLow) {
-    metrics.depthToSl.status = 'LOW';
-  }
-
-  const metricStatuses = [
-    metrics.spread.status,
-    metrics.volume24h.status,
-    metrics.deadCandles.status,
-    metrics.volumeStress.status,
-    metrics.simSlippage.status,
-  ];
-  const result = metricStatuses.includes(STATUS.BLOCK) ? 'RED' : (metricStatuses.includes(STATUS.WARN) ? 'YELLOW' : 'GREEN');
-  const inputs = { symbol, productType, positionSide, maxQty, slPrice, entryPrice, positionNotional, plannedRiskUsdt, isRwa };
-  const reducedSizeProposal = computeReducedSizeProposal({ metrics, inputs, simulation, depth });
-  delete metrics._orderbook;
+  const result = deriveOverallLiquidityResult({ metrics, isRwa });
+  const inputs = {
+    symbol,
+    productType,
+    positionSide,
+    maxQty,
+    slPrice,
+    entryPrice,
+    positionNotional,
+    plannedRiskUsdt,
+    plannedLeverage: maybeN(input.plannedLeverage),
+    basePlannedRiskUsdt: maybeN(input.basePlannedRiskUsdt) || maybeN(input.baseRiskUsdt) || 100,
+    isRwa,
+  };
+  const downsizedFallbackProposals = computeDownsizedFallbackProposals({
+    metrics,
+    inputs,
+    orderbook,
+    slippagePct: maybeN(input.slippagePct) || 0.05,
+  });
+  const reducedSizeProposal = downsizedFallbackProposals.find((p) => p.available && p.finalResult === 'GREEN') || downsizedFallbackProposals.find((p) => p.available) || { available: false, blockers: ['No downsized fallback satisfies the configured slippage budget.'] };
 
   return {
     generatedAt: new Date().toISOString(),
@@ -436,9 +684,16 @@ async function runLiquidityGate(input, { client = undefined } = {}) {
     papTrading: cfg.papTrading,
     inputs,
     result,
+    decisionLogic: {
+      primaryExecutionGates: ['simSlippage', 'nearMarketDepth', 'spread'],
+      supportingLiquidityGates: ['volumeStress', 'deadCandles', 'volume24h'],
+      rwaSupportingRule: 'one RED supporting gate alone => YELLOW; two RED supporting gates or RED support + YELLOW primary => RED',
+      depthToSlCorridorRole: 'informational_only',
+    },
     metrics,
     reducedSizeProposal,
-    raw: input.includeRaw ? { ticker: tickerRaw, candles60: candles60Raw, candles120: candles120Raw, orderbook: orderbookRaw } : undefined,
+    downsizedFallbackProposals,
+    raw: input.includeRaw ? { ticker: tickerRaw, candles60: candles60Raw, candles120: candles120Raw, orderbook: orderbookRaw, executionSamples } : undefined,
   };
 }
 
@@ -447,38 +702,95 @@ function fmtNum(value, digits = 4) {
   return Number(value).toFixed(digits).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
 }
 
+function light(status) {
+  if (status === STATUS.GREEN || status === 'GREEN' || status === 'OK') return '🟢 GREEN';
+  if (status === STATUS.WARN || status === 'YELLOW' || status === 'WARN') return '🟡 YELLOW';
+  if (status === STATUS.BLOCK || status === 'RED' || status === 'BLOCK' || status === 'LOW') return '🔴 RED';
+  if (status === 'INFO_ONLY') return '⚪ INFO';
+  return '⚪ NOT RUN';
+}
+
+function row(lines, gate, observed, limit, status, risk, note) {
+  lines.push(`${gate} | ${observed} | ${limit} | ${light(status)} | ${risk} | ${note}`);
+}
+
 function formatGateReport(gate) {
   const m = gate.metrics;
   const lines = [];
   lines.push(`LIQUIDITY GATE — ${gate.inputs.symbol}`);
-  lines.push('─────────────────────────────');
-  lines.push(`Spread ${fmtNum(m.spread.valuePct, 4)}% ${m.spread.status}`);
-  lines.push(`24h volume ${fmtNum(m.volume24h.quoteVolume, 2)} / req ${fmtNum(m.volume24h.requiredQuoteVolume, 2)} ${m.volume24h.status}`);
-  lines.push(`Dead candles ${fmtNum(m.deadCandles.pct, 2)}% (${m.deadCandles.count}/${m.deadCandles.sampleSize}) ${m.deadCandles.status}`);
-  if (m.rwaActiveSessionWarmup?.applicable && (m.deadCandles.effectiveMode === 'rwa_active_session_profile' || m.volumeStress.effectiveMode === 'rwa_active_session_profile')) {
-    const w = m.rwaActiveSessionWarmup;
-    lines.push(`Vol stress RWA active session ${w.activeCandles}/${w.windowCandles} active candles, median 1m ${fmtNum(w.activeMedianQuoteVolume, 2)} USDT, ratio ${fmtNum(w.ratioPct, 2)}% ${m.volumeStress.status}`);
-  } else {
-    lines.push(`Vol stress ${fmtNum(m.volumeStress.ratioPct, 2)}% of p10 1m quote vol ${m.volumeStress.status}`);
+  lines.push('A. Liquidity and executable orderability');
+  lines.push('Gate | Observed | Limit / required | Status | Risk if failed | Note');
+  row(lines,
+    '1. Stop-exit simulated slippage',
+    `baseline ${fmtNum(m.simSlippage.baselineCurrentBook?.extraLossUsdt, 2)} USDT (${fmtNum(m.simSlippage.baselineCurrentBook?.extraLossPct, 2)}% risk); worst ${fmtNum(m.simSlippage.worstObservedCurrentBook?.extraLossUsdt, 2)} USDT; 50%-depth ${fmtNum(m.simSlippage.extraLossUsdt, 2)} USDT (${fmtNum(m.simSlippage.extraLossPct, 2)}% risk)`,
+    '<20% GREEN; <=35% YELLOW; >35% or unfilled RED',
+    m.simSlippage.status,
+    'A stop-market order may fill materially beyond planned SL, increasing real loss above the intended risk budget.',
+    `decision uses 50%-visible-depth haircut; samples=${m.simSlippage.sampleSize}`);
+  row(lines,
+    '2. Near-market executable depth',
+    `0.25% ${fmtNum(m.nearMarketDepth.within025?.notional, 2)} USDT (${fmtNum(m.nearMarketDepth.within025?.ratioToPosition, 2)}x); 0.50% ${fmtNum(m.nearMarketDepth.within050?.notional, 2)} USDT (${fmtNum(m.nearMarketDepth.within050?.ratioToPosition, 2)}x)`,
+    '0.25%: >=3x GREEN / >=1.5x YELLOW; 0.50%: >=5x GREEN / >=2.5x YELLOW',
+    m.nearMarketDepth.status,
+    'The visible book may not contain enough bids/asks to absorb exit size without crossing several price levels.',
+    `evaluated ${m.nearMarketDepth.sideEvaluated}`);
+  row(lines,
+    '3. Spread stability',
+    `current ${fmtNum(m.spread.currentSpreadPct, 4)}%; median ${fmtNum(m.spread.medianSpreadPct, 4)}%; worst ${fmtNum(m.spread.worstSpreadPct, 4)}%`,
+    '<0.05% GREEN; <=0.15% YELLOW; >0.15% RED',
+    m.spread.status,
+    'A wide or unstable spread creates immediate execution loss and often indicates fragile book depth.',
+    `decision uses worst observed spread; samples=${m.spread.sampleSize}`);
+  row(lines,
+    '4. p10 / weak-minute volume stress',
+    `${fmtNum(m.volumeStress.ratioPct, 2)}% of p10 non-dead 1m quote vol ${fmtNum(m.volumeStress.p10QuoteVolume, 2)} USDT`,
+    gate.inputs.isRwa ? '<25% GREEN; <=50% YELLOW; >50% RED (RWA adapted)' : '<10% GREEN; <=20% YELLOW; >20% RED',
+    m.volumeStress.status,
+    'Position may be too large versus quiet-minute turnover, making execution unreliable when liquidity falls.',
+    `${m.volumeStress.effectiveMode}; non-dead sample=${m.volumeStress.nonDeadSampleSize}/${m.volumeStress.sampleSize}`);
+  row(lines,
+    '5. Dead 1m candles',
+    `${fmtNum(m.deadCandles.pct, 2)}% dead (${m.deadCandles.count}/${m.deadCandles.sampleSize}); zero ${fmtNum(m.deadCandles.zeroPct, 2)}% (${m.deadCandles.zeroCount}/${m.deadCandles.sampleSize})`,
+    '<10% GREEN; <=15% YELLOW; >15% RED',
+    m.deadCandles.status,
+    'Frequent very-low-volume candles indicate intermittent trading and higher risk liquidity disappears when stop triggers.',
+    `median non-zero quote vol ${fmtNum(m.deadCandles.medianNonZeroQuoteVolume, 2)} USDT`);
+  row(lines,
+    '6. 24h quote-volume ratio',
+    `${fmtNum(m.volume24h.quoteVolume, 2)} USDT (${fmtNum(m.volume24h.ratioToNotional, 2)}x notional)`,
+    '>=500x GREEN; >=250x YELLOW; <250x RED',
+    m.volume24h.status,
+    'Low daily turnover suggests weak participation; coarse supporting filter only.',
+    'supporting liquidity gate');
+  row(lines,
+    '7. Visible depth-to-SL corridor',
+    `${fmtNum(m.depthToSl.notional, 2)} USDT visible to SL`,
+    'informational only; no hard pass/fail',
+    m.depthToSl.status,
+    'Visible orders between current price and SL can be cancelled before execution, so corridor depth may overstate real protection.',
+    'not used for overall gate decision');
+  lines.push('');
+  lines.push(`B. Overall liquidity decision: ${gate.result}`);
+  lines.push(`Primary gates: stop-exit=${light(m.simSlippage.status)}, near-market-depth=${light(m.nearMarketDepth.status)}, spread=${light(m.spread.status)}`);
+  lines.push(`Supporting gates: p10=${light(m.volumeStress.status)}, dead-candles=${light(m.deadCandles.status)}, 24h-volume=${light(m.volume24h.status)}`);
+  if (gate.inputs.isRwa) lines.push('RWA rule: one RED supporting metric alone becomes YELLOW/confirmation-gated; two RED supporting metrics or RED support + YELLOW/RED primary becomes RED.');
+  lines.push('');
+  lines.push('D. Downsized fallback proposals');
+  for (const proposal of gate.downsizedFallbackProposals || []) {
+    if (!proposal.available) {
+      lines.push(`${proposal.label}: ${proposal.verdict} — ${proposal.reason}`);
+    } else {
+      lines.push(`${proposal.label}: size ${fmtNum(proposal.revisedSize, 6)}, notional ${fmtNum(proposal.revisedNotional, 2)}, planned risk ${fmtNum(proposal.plannedNoSlippageRisk, 2)}, extra slip ${fmtNum(proposal.estimatedExtraSlippage, 2)}, total loss ${fmtNum(proposal.estimatedTotalLoss, 2)}, p10 ${proposal.p10Status}, depth ${proposal.nearMarketDepthStatus}, spread ${proposal.spreadStatus}, verdict ${proposal.verdict}`);
+    }
   }
-  lines.push(`Sim slippage ${fmtNum(m.simSlippage.extraLossUsdt, 2)} USDT / ${fmtNum(m.simSlippage.extraLossPct, 2)}% ${m.simSlippage.status}`);
-  lines.push(`Depth to SL ${fmtNum(m.depthToSl.notional, 2)} / req ${fmtNum(m.depthToSl.requiredNotional, 2)} ${m.depthToSl.status}`);
   lines.push('─────────────────────────────');
   lines.push(`RESULT: ${gate.result}`);
   if (gate.result === 'GREEN') {
-    lines.push('Proceed automatically.');
+    lines.push('Live placement technically allowed only after the normal explicit order request/confirmation boundary.');
   } else if (gate.result === 'YELLOW') {
     lines.push('Explicit confirmation required before live placement.');
-    if (gate.reducedSizeProposal?.available) {
-      lines.push(`Suggested GREEN size: maxQty ${fmtNum(gate.reducedSizeProposal.maxQty, 6)}, notional ${fmtNum(gate.reducedSizeProposal.maxPositionNotional, 2)} USDT.`);
-    }
   } else {
-    lines.push('Do not place.');
-    if (gate.reducedSizeProposal?.available) {
-      lines.push(`Compliant GREEN size proposal: maxQty ${fmtNum(gate.reducedSizeProposal.maxQty, 6)}, notional ${fmtNum(gate.reducedSizeProposal.maxPositionNotional, 2)} USDT.`);
-    } else if (gate.reducedSizeProposal?.blockers?.length) {
-      lines.push(`No size-only compliant version: ${gate.reducedSizeProposal.blockers.join('; ')}.`);
-    }
+    lines.push('Do not place unless Andrea explicitly gives a RED-liquidity override with risk acknowledgement.');
   }
   return lines.join('\n');
 }
@@ -554,6 +866,11 @@ async function assertLiquidityGateForLiveOpenOrder(args, payload, cfg) {
     entryPrice,
     slPrice,
     plannedRiskUsdt,
+    sampleCount: args.sampleCount || args.orderbookSampleCount || args.liquiditySampleCount,
+    sampleIntervalMs: args.sampleIntervalMs || args.orderbookSampleIntervalMs || args.liquiditySampleIntervalMs,
+    slippagePct: args.slippagePct,
+    basePlannedRiskUsdt: args.basePlannedRiskUsdt || args.baseRiskUsdt,
+    plannedLeverage: args.plannedLeverage || args.leverage,
   });
 
   console.log(formatGateReport(gate));
@@ -563,7 +880,11 @@ async function assertLiquidityGateForLiveOpenOrder(args, payload, cfg) {
     const override = String(args.liquidityGateOverride || '').toUpperCase();
     const overrideReason = String(args.liquidityGateOverrideReason || '').trim();
     if (override !== 'RED') {
-      throw new Error('Live open order blocked by RED liquidity gate. Re-run only after explicit user confirmation with --liquidityGateOverride RED and --liquidityGateOverrideReason "<reason>".');
+      const failedPrimary = [];
+      if (gate.metrics.simSlippage.status === STATUS.BLOCK) failedPrimary.push(`haircutted stop-exit slippage ${fmtNum(gate.metrics.simSlippage.extraLossPct, 2)}% of planned risk; estimated total loss ${fmtNum(gate.inputs.plannedRiskUsdt + gate.metrics.simSlippage.extraLossUsdt, 2)} USDT`);
+      if (gate.metrics.nearMarketDepth.status === STATUS.BLOCK) failedPrimary.push('near-market executable depth RED');
+      if (gate.metrics.spread.status === STATUS.BLOCK) failedPrimary.push(`spread stability RED: worst ${fmtNum(gate.metrics.spread.worstSpreadPct, 4)}%`);
+      throw new Error(`Live open order blocked by RED liquidity gate (${failedPrimary.join('; ') || 'supporting liquidity gate RED'}). Re-run only after explicit user confirmation with --liquidityGateOverride RED and --liquidityGateOverrideReason "<reason/risk acknowledgement>".`);
     }
     if (overrideReason.length < 12) {
       throw new Error('Live RED liquidity gate override requires --liquidityGateOverrideReason with a specific reason/risk acknowledgement.');

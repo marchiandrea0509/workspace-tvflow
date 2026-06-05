@@ -165,8 +165,10 @@ The harness refuses live order placement unless **both** are true:
 
 That prevents accidental live execution if demo/live keys are mixed up.
 
-Live open orders also run the liquidity gate before placement. `GREEN` proceeds;
-`YELLOW` requires `--liquidityGateOverride YELLOW`; `RED` is normally blocked.
+Live open orders also run the liquidity gate before placement. `GREEN` is
+technically placeable only after the normal explicit order request/confirmation;
+`YELLOW` requires `--liquidityGateOverride YELLOW`; `RED` is blocked unless
+Andrea explicitly gives a RED-liquidity override and acknowledges the named risk.
 If the user explicitly accepts a RED liquidity/slippage risk, the placement
 scripts require both of these flags on that specific send command:
 
@@ -178,20 +180,38 @@ For ladder-looking order client IDs ending in `_L1`, `_B1`, `_S1`, etc., still
 provide the full-ladder gate inputs so the gate evaluates worst-case stop size:
 `--gateMaxQty`, `--gatePositionNotional`, and `--gatePlannedRisk`.
 
+Current liquidity-gate decision hierarchy:
+
+1. Primary execution gates:
+   - haircutted stop-exit simulated slippage using 50% visible depth
+   - near-market executable depth within 0.25% / 0.50% of current price
+   - spread stability using the worst observed spread across samples
+2. Supporting liquidity gates:
+   - p10 / weak-minute volume stress from non-dead 120x1m quote-volume candles
+   - dead 1m candles from median non-zero quote volume, not average
+   - 24h quote-volume ratio
+3. Visible depth-to-SL corridor is informational only and is not a hard gate.
+
+If a live-order request fails liquidity/slippage gates, report two downsized
+fallbacks rather than only rejecting:
+
+- Proposal A: cap extra stop-market slippage to `slippage_pct x original/base planned risk`.
+- Proposal B: cap extra stop-market slippage to `slippage_pct x new planned no-slippage risk`.
+
+Default `slippage_pct` is `5%`. If the resulting size is too small to be
+meaningful or still fails required gates, return `NO_TRADE`.
+
 ### RWA/tokenized-stock liquidity gate notes
 
-Bitget `isRwa=YES` tokenized-stock futures often contain tiny/dust 1m prints
-inside otherwise active sessions. Raw 120m p10 quote volume is therefore kept as
-a diagnostic, but the live gate uses the RWA active-session profile when enough
-active candles are available. That profile checks active candles/window,
-inactive percentage, active-session median/P25 1m quote volume, and
-position-notional/active-median ratio. A mature active-session window no longer
-falls back to raw p10 automatically.
+Bitget `isRwa=YES` tokenized-stock futures use adapted supporting-gate
+thresholds for p10 / weak-minute volume stress: GREEN when position notional is
+below 25% of p10 non-dead 1m quote volume, YELLOW up to 50%, RED above 50% or
+unavailable/zero.
 
-Reports should not double-count raw p10 and RWA active-session as two separate
-hard blockers. Use the effective `volumeStress.effectiveMode`: raw p10 for
-normal symbols / insufficient RWA profile, or `rwa_active_session_profile` for
-RWA symbols with enough active-session data.
+RWA escalation rule: one RED supporting metric alone is confirmation-gated
+YELLOW / `PLACEABLE_ONLY_WITH_CONFIRMATION`; two RED supporting metrics are
+overall RED; one RED supporting metric combined with a YELLOW/RED primary gate
+is overall RED. Primary execution gates remain strict for all symbols.
 
 ## Core commands
 

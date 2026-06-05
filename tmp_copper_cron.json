@@ -1,0 +1,42 @@
+﻿{
+  "id": "897c8c2b-7c20-4e7a-a650-4adc9b69e7b3",
+  "agentId": "tvflow",
+  "sessionKey": "agent:tvflow:discord:channel:1499631210283008002",
+  "name": "COPPERUSDT.P Virtual OCO Watchdog 4H",
+  "description": "Reusable virtual_oco_watchdog.js for COPPERUSDT B/C alert-only VOCO. Checks only closed 4H candles after close+5m; never places orders.",
+  "enabled": false,
+  "createdAtMs": 1779790626842,
+  "schedule": {
+    "kind": "cron",
+    "expr": "5 0,4,8,12,16,20 * * *",
+    "tz": "UTC"
+  },
+  "sessionTarget": "isolated",
+  "wakeMode": "now",
+  "payload": {
+    "kind": "agentTurn",
+    "message": "Run the reusable COPPERUSDT.P virtual OCO watchdog. Hard safety: do NOT place, cancel, or modify any exchange order. This is alert-only.\n\nWorkdir: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\nPrimary read-only command:\npowershell -NoProfile -ExecutionPolicy Bypass -File scripts\\run_virtual_oco_watchdog.ps1 -Config watchdog\\virtual_oco_COPPERUSDT_20260526_BC.json -Json -Feedback -NoStateUpdate\n\nRouting requirement:\n- Use the Discord message tool directly. Do NOT rely on cron/runner announce delivery for DM alerts.\n- Routine VIRTUAL OCO CHECK / no-trigger status: send to Discord `channel:1499631210283008002`.\n- Actual VIRTUAL OCO ALERT trade trigger: send to Discord DM target `user:1322306175865323552` first. This is the proven 2026-05-23 direct-message-tool route. Andrea's mobile alerts depend on DM.\n- If the DM message tool reports failure, retry once to `dm:1322306175865323552`. If both attempts fail, send urgent fallback to `channel:1499631210283008002` with `<@1322306175865323552>` and the alert text, then report the DM failure. Never silently lose a trigger.\n- VIRTUAL OCO INVALIDATED / EXPIRED: send to `channel:1499631210283008002` unless the text contains VIRTUAL OCO ALERT.\n\nState commit rule:\n- The primary command uses -NoStateUpdate so a trigger is not marked alerted before notification is attempted.\n- After the appropriate message-tool notification attempt is complete, run this commit command once to persist watchdog state:\npowershell -NoProfile -ExecutionPolicy Bypass -File scripts\\run_virtual_oco_watchdog.ps1 -Config watchdog\\virtual_oco_COPPERUSDT_20260526_BC.json -Json -Feedback\n- If the notification could not be attempted at all, do NOT run the commit command; leave state armed so the next run retries.\n\nInterpretation:\n- Parse the JSON stdout from the primary command.\n- If status/message is exactly NO_REPLY, final reply exactly NO_REPLY.\n- If message starts with VIRTUAL OCO CHECK, send that message to the room, commit state, then final reply exactly NO_REPLY.\n- If message starts with VIRTUAL OCO ALERT, send that exact message by DM as above, commit state after the notification attempt, then final reply exactly NO_REPLY.\n- If command errors or state is unclear, send a concise room alert saying the COPPERUSDT.P virtual OCO watchdog check failed and no order was placed, including the blocker, then final reply exactly NO_REPLY.\n\nThis job checks only the latest fully CLOSED 4H candle after close+5m and never triggers from intrabar wicks.",
+    "timeoutSeconds": 180,
+    "lightContext": true
+  },
+  "delivery": {
+    "mode": "none",
+    "channel": "discord",
+    "to": "channel:1499631210283008002",
+    "bestEffort": true,
+    "failureDestination": {
+      "channel": "discord",
+      "to": "channel:1499631210283008002",
+      "mode": "announce"
+    }
+  },
+  "state": {
+    "lastRunAtMs": 1779941100051,
+    "lastRunStatus": "ok",
+    "lastStatus": "ok",
+    "lastDurationMs": 67583,
+    "lastDeliveryStatus": "not-requested",
+    "consecutiveErrors": 0
+  },
+  "updatedAtMs": 1779947874439
+}

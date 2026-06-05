@@ -37,6 +37,7 @@ Outcome-first v1:
 - Schema: `schemas/trade_outcome_feedback.schema.json`
 - Helper: `scripts/create_trade_outcome_feedback.py`
 - Detailed procedure: `docs/OUTCOME_FEEDBACK_LOOP.md`
+- Manual audit prompt: `prompts/manual_outcome_feedback_audit.md`
 
 Shared records folder:
 - `reports/deep_analysis_feedback/*.json`
@@ -111,7 +112,52 @@ For each prompt rule used, mark:
 
 Examples: no-chase, passive support retest, support-sweep SL exception, liquidity RED override, margin cap handling, broad-vs-active impulse selection.
 
-### 5. Weekly digest
+### 5. Outcome attribution is separate from PnL
+
+A loss does not automatically mean the setup, thesis, or prompt rule was wrong. Markets are stochastic and can be affected by news/headlines or other unaccounted factors.
+
+Each audit should classify whether the result was mainly:
+
+- correct setup but random/adverse market path
+- correct setup but external catalyst/news shock
+- correct setup but execution/fill/SL/TP handling issue
+- analysis improvement possible
+- bad analysis
+- mixed/unclear
+
+Only clear `analysis_improvement_possible` or `bad_analysis` evidence should normally push prompt/tool patching.
+
+### 6. Deep-analysis workflow review
+
+Each meaningful audit should also ask whether the upstream deep-analysis workflow can improve:
+
+- Was the current data mix optimal?
+- Would another source help: TradingView export, Bitget OHLCV, screenshots, orderbook/liquidity, news/calendar, funding/OI, screener diagnostics?
+- Could the same task be done with fewer exports, screenshots, or model calls?
+- Should the AI prompt, packet builder, schema, or routing change?
+
+### 7. Manual trigger
+
+Andrea can request an immediate read-only audit in the dedicated thread without waiting for the weekly cron.
+
+Use:
+
+```text
+AUDIT OUTCOME SYMBOL
+```
+
+Optional fields:
+
+```text
+orderId=...
+record=reports/deep_analysis_feedback/...
+from=YYYY-MM-DD to=YYYY-MM-DD
+compare=tvflow,gpt,andrea,no-trade
+```
+
+Manual audits follow `prompts/manual_outcome_feedback_audit.md`, remain read-only, and defer final judgment if Bitget execution or OHLCV/export evidence is missing.
+
+### 8. Weekly digest
 
 Run low-frequency weekly digest in the dedicated Discord thread, max 5 cases:
 

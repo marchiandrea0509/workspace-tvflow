@@ -27,6 +27,11 @@ const { runLiquidityGate, formatGateReport } = require('../lib/liquidityGate');
     entryPrice,
     slPrice,
     plannedRiskUsdt,
+    sampleCount: args.sampleCount || args.orderbookSampleCount || args.liquiditySampleCount,
+    sampleIntervalMs: args.sampleIntervalMs || args.orderbookSampleIntervalMs || args.liquiditySampleIntervalMs,
+    slippagePct: args.slippagePct,
+    basePlannedRiskUsdt: args.basePlannedRiskUsdt || args.baseRiskUsdt,
+    plannedLeverage: args.plannedLeverage || args.leverage,
     includeRaw: Boolean(args.includeRaw),
   });
 

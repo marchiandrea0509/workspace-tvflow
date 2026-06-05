@@ -26,7 +26,7 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - Structural SL rule refinement: do not force SL beyond every older same-side resistance/support if the current visible lower-high/higher-low already invalidates the 4H thesis. The final screenshot read may accept that nearer structural invalidation; the packet's SL-hierarchy warnings are audit aids, not vetoes.
 - Level-density rule: reports must include an auditable `Detected Level Map` before tickets, with enough visible 1H/4H/1D levels nearest-to-farthest. Do not show only the few final order levels; include intermediate supports/resistances, prior breakout shelves, fresh highs/lows, and HTF levels so the ticket choice can be compared with GPT-style analysis. Important parent-swing anchors must still be surfaced even if they are farther than the compact nearest-level list.
 - Keep chart validity separate from live Bitget orderability. A liquidity RED or missing live confirmation blocks placement, but it should not erase a structurally valid watch ticket; label it `WATCH_ONLY / NOT_LIVE_PLACEABLE` and state the live blocker.
-- Liquidity/orderability must be explicit in both the saved report and Discord/chat answer: when gate data exists, print a square markdown traffic-light table with exactly `Gate | Observed value | Limit / required | Light | Note` for spread, 24h quote volume, dead 1m candles, p10/volume stress or RWA active-session stress, stop-exit simulated slippage, depth-to-SL, existing orders/position, margin/leverage if relevant, and confirmation boundary. Use numeric observed values and numeric limits/required values plus 🟢/🟡/🔴/⚪ lights. Do not write only `Orderability: OK` or `RED` without values/limits. If a gate was not run, print `⚪ not run` rather than omitting the table.
+- Liquidity/orderability must be explicit in both the saved report and Discord/chat answer. Split reporting into `A. Liquidity and executable orderability`, `B. Operational safety`, and `C. Risk and feasibility`. Do not mix existing-order/position checks with liquidity metrics. Section A must use columns `Gate | Observed | Limit / required | Status | Risk if failed | Note` and this exact priority: stop-exit simulated slippage, near-market executable depth, spread stability, p10/weak-minute volume stress, dead 1m candles, 24h quote-volume ratio, visible depth-to-SL corridor as informational only. Section B must use `Check | Observed | Status | Risk if failed | Required action` for same-symbol orders/position/TP-SL/margin/position mode/confirmation boundary. Section C must use `Metric | Observed | Limit / target | Status | Note` for planned risk, extra slippage, total loss at SL, notional, margin, leverage, R:R, structural validity, and freshness. If a metric was not run, print `⚪ NOT RUN`; do not write only `Orderability: OK` or `RED` without values/limits.
 - Every rejected shallow fill-probability leg must be shown with candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason.
 - Delegate simple deterministic support tasks to cheap mini/nano subagents using Codex OAuth/local zero-cost routes, not paid API keys. Keep `tvflow` responsible for coordination, final trade judgment, and any user-confirmation boundary.
 
@@ -100,11 +100,19 @@ Validator limitation / chat-parity rule: `validate_deep_analysis_report.py` only
 
 ARM-approved layout anti-regression: Andrea explicitly preferred the corrected ARMUSDT 2026-06-01 deep-analysis format. Treat it as the canonical finalization checklist, not as optional style. A complete report/chat must include Header/classification, Context and state, Detected/Structure level map, Pullback impulse used with local/broad alternatives, explicit A, B, C1/C2, D/VOCO sections, Orderability/liquidity traffic-light table, Risk sizing summary, and Final verdict. If a GPT/user attachment contains a coherent ticket, audit it as a candidate before rejecting it. If the visible chart high/low differs from the packet's closed-candle impulse, compare both before selecting or rejecting A/B levels.
 
-Mechanical validation gate: before calling a deep-analysis report complete or sending the Discord answer, run:
+Mechanical validation gate: before calling a deep-analysis report complete, run:
 
 ```powershell
 python scripts\validate_deep_analysis_report.py --report reports\deep_analysis\<REPORT>.md
 ```
+
+Then render and validate the actual Discord/chat answer from that report:
+
+```powershell
+python scripts\render_deep_analysis_chat_reply.py --report reports\deep_analysis\<REPORT>.md --out reports\deep_analysis\<REPORT>.discord_reply.md
+```
+
+Send the rendered chat reply, not a hand-written compressed summary. This is mandatory because the saved-report validator alone does not prevent a poor Discord reply. If the rendered reply is too long for one surface message, split it by section/chunk, but do not replace it with a short verdict summary unless Andrea explicitly requested a short summary.
 
 The validator intentionally uses the ARMUSDT 2026-06-01 report as the accepted structural reference. If it fails, do **not** send the report/chat answer; fix the missing section(s) first. Known regression proof: `reports/deep_analysis/2026-06-01_ARMUSDT_deep_analysis.md` passes, `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis.md` fails, and `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis_corrected.md` passes.
 

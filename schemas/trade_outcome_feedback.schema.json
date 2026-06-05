@@ -15,6 +15,7 @@
     "outcomeEvidence",
     "counterfactualReplay",
     "ruleOutcomeAudit",
+    "workflowReview",
     "finalLearning"
   ],
   "additionalProperties": false,
@@ -68,6 +69,7 @@
         "pretrade_frozen",
         "waiting_for_fill",
         "waiting_for_close_or_expiry",
+        "manual_audit_requested",
         "ready_for_outcome_audit",
         "audited",
         "patched",
@@ -404,6 +406,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "outcomeAttribution",
         "outcomeCategory",
         "summary",
         "patchDecision",
@@ -415,6 +418,12 @@
           "enum": [
             "deferred_missing_export_evidence",
             "evidence_incomplete",
+            "mixed_or_unclear",
+            "bad_analysis",
+            "analysis_improvement_possible",
+            "correct_setup_execution_issue",
+            "correct_setup_external_catalyst_loss",
+            "correct_setup_random_loss",
             "validated_thesis",
             "good_thesis_bad_execution",
             "bad_thesis",
@@ -450,11 +459,93 @@
           "items": {
             "type": "string"
           }
+        },
+        "outcomeAttribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primaryCause",
+            "setupQuality",
+            "improvementRoom",
+            "externalCatalystChecked",
+            "note"
+          ],
+          "properties": {
+            "primaryCause": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "analysis_weakness",
+                "execution_weakness",
+                "stochastic_adverse_path",
+                "external_catalyst_or_news",
+                "liquidity_or_slippage",
+                "mixed",
+                "unclear"
+              ]
+            },
+            "setupQuality": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "good",
+                "acceptable",
+                "weak",
+                "bad",
+                "unclear"
+              ]
+            },
+            "improvementRoom": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "none",
+                "minor",
+                "meaningful",
+                "safety_critical",
+                "unclear"
+              ]
+            },
+            "externalCatalystChecked": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },
     "notes": {
       "type": "string"
+    },
+    "workflowReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataSourceQuality",
+        "methodQuality",
+        "efficiency",
+        "promptToolImprovement",
+        "summary"
+      ],
+      "properties": {
+        "dataSourceQuality": {
+          "$ref": "#/$defs/reviewItem"
+        },
+        "methodQuality": {
+          "$ref": "#/$defs/reviewItem"
+        },
+        "efficiency": {
+          "$ref": "#/$defs/reviewItem"
+        },
+        "promptToolImprovement": {
+          "$ref": "#/$defs/reviewItem"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
     }
   },
   "$defs": {
@@ -478,6 +569,31 @@
           }
         },
         "rawText": {
+          "type": "string"
+        }
+      }
+    },
+    "reviewItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "note",
+        "recommendedChange"
+      ],
+      "properties": {
+        "score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "note": {
+          "type": "string"
+        },
+        "recommendedChange": {
           "type": "string"
         }
       }

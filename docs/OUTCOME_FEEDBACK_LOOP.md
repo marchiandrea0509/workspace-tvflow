@@ -16,6 +16,14 @@ The frozen pre-trade thesis is judged later against Bitget and TradingView evide
 
 GPT is an audit benchmark, not the judge. The judge is the real market path plus Bitget execution/outcome data.
 
+Important: a bad trade result does **not** automatically mean the thesis or prompt rule was wrong. Markets are stochastic, and trades can fail because of news, macro shocks, liquidity events, spread/fee effects, or simple variance. The audit must separate:
+
+- setup/thesis quality
+- execution quality
+- stochastic/adverse market path
+- external catalyst / unaccounted factor
+- process or prompt weakness that could realistically be improved
+
 ## Verification source policy
 
 Use a consistent source hierarchy for every outcome audit:
@@ -80,7 +88,49 @@ When the order/watch ends, answer these fixed questions:
 6. Did liquidity/slippage warnings matter in practice?
 7. Which prompt rules helped, hurt, or were irrelevant?
 8. Was tvflow, GPT, Andrea/manual, hybrid, or no-trade closest to the best practical decision?
-9. What should change: nothing, memory note, prompt patch, tool/schema patch, execution safety patch, or regression case?
+9. Was the outcome primarily caused by analysis weakness, execution weakness, stochastic behavior, external catalyst/news, liquidity/slippage, or mixed causes?
+10. If the trade lost money, was the setup still correct enough that no rule should be patched?
+11. What should change: nothing, memory note, prompt patch, tool/schema patch, execution safety patch, or regression case?
+
+## Outcome attribution
+
+Each audit must explicitly distinguish result quality from decision quality.
+
+Use these attribution labels when useful:
+
+- `correct_setup_random_loss`: setup/thesis was reasonable, but market variance hit the stop or failed to follow through.
+- `correct_setup_external_catalyst_loss`: setup was reasonable, but news/macro/headline/catalyst invalidated it after entry.
+- `correct_setup_execution_issue`: thesis was good, but order placement, fill quality, sizing, SL/TP mechanics, or expiry handling hurt the result.
+- `analysis_improvement_possible`: there was realistic room to improve levels, thesis, source usage, prompt logic, or decision rules.
+- `bad_analysis`: the original thesis/rules were materially wrong.
+- `mixed_or_unclear`: multiple causes or insufficient evidence.
+
+Only `analysis_improvement_possible` or `bad_analysis` should normally create prompt/tool patch pressure. A losing trade categorized as `correct_setup_random_loss` should usually produce no patch.
+
+## Deep-analysis workflow review
+
+Each non-trivial audit should also review whether the upstream deep-analysis workflow can improve:
+
+1. **Data-source quality**
+   - Was OHLCV enough, or would TradingView export, screenshots, orderbook, news/calendar, funding/OI, or screener diagnostics have materially improved the decision?
+   - Was any source stale, redundant, noisy, or misleading?
+
+2. **Method quality**
+   - Was impulse selection optimal?
+   - Were levels/SL/TP derived from the right timeframe and evidence?
+   - Did the analysis overfit static scans or ignore visible structure?
+   - Did it distinguish no-chase from passive limit setups correctly?
+
+3. **Efficiency**
+   - Could the same outcome-quality be achieved with fewer screenshots, fewer exports, smaller packets, or cheaper model routing?
+   - Are deterministic metrics doing enough before AI interpretation?
+
+4. **Prompt/tool improvement**
+   - Should the master prompt change?
+   - Should the packet builder/exporter/schema change?
+   - Should the audit just add a regression case or memory note instead of changing prompts?
+
+This section prevents the feedback loop from only judging single trades; it also improves the analysis system itself.
 
 ## Deterministic metrics first
 
@@ -117,6 +167,10 @@ Use one primary category:
 
 - `evidence_incomplete`
 - `deferred_missing_export_evidence`
+- `correct_setup_random_loss`
+- `correct_setup_external_catalyst_loss`
+- `correct_setup_execution_issue`
+- `analysis_improvement_possible`
 - `validated_thesis`
 - `good_thesis_bad_execution`
 - `bad_thesis`
@@ -128,6 +182,35 @@ Use one primary category:
 - `valid_trade_overfiltered`
 - `no_trade_was_best`
 - `no_lesson_noise`
+
+## Manual trigger
+
+Andrea can request an immediate read-only audit in the dedicated thread without waiting for the weekly cron.
+
+Preferred manual trigger format:
+
+```text
+AUDIT OUTCOME SYMBOL
+optional: orderId=...
+optional: record=reports/deep_analysis_feedback/...
+optional: from=YYYY-MM-DD to=YYYY-MM-DD
+optional: compare=tvflow,gpt,andrea,no-trade
+```
+
+Examples:
+
+```text
+AUDIT OUTCOME TQQQUSDT
+AUDIT OUTCOME BTCUSDT orderId=1446430135388106753
+AUDIT OUTCOME ASMLUSDT compare=tvflow,gpt,andrea,no-trade
+```
+
+Manual trigger rules:
+
+- read-only only; never place/cancel/modify orders
+- use the same verification hierarchy as the weekly digest
+- if Bitget execution or OHLCV/export evidence is missing, return the missing evidence and defer the final judgment
+- do not wait for the weekly cron if Andrea explicitly asks for a closed-trade outcome audit
 
 ## Patch threshold
 

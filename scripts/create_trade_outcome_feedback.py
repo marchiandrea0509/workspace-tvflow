@@ -18,6 +18,7 @@ STATUS_CHOICES = [
     "pretrade_frozen",
     "waiting_for_fill",
     "waiting_for_close_or_expiry",
+    "manual_audit_requested",
     "ready_for_outcome_audit",
     "audited",
     "patched",
@@ -42,6 +43,10 @@ def maybe_float(value: str | None) -> float | None:
     if value in (None, ""):
         return None
     return float(value)
+
+
+def review_item() -> dict[str, Any]:
+    return {"score": None, "note": "", "recommendedChange": ""}
 
 
 def main() -> int:
@@ -162,7 +167,21 @@ def main() -> int:
             {"rule": rule, "effect": "unknown", "evidence": ""}
             for rule in args.prompt_rule
         ],
+        "workflowReview": {
+            "dataSourceQuality": review_item(),
+            "methodQuality": review_item(),
+            "efficiency": review_item(),
+            "promptToolImprovement": review_item(),
+            "summary": "",
+        },
         "finalLearning": {
+            "outcomeAttribution": {
+                "primaryCause": "pending",
+                "setupQuality": "pending",
+                "improvementRoom": "pending",
+                "externalCatalystChecked": False,
+                "note": "",
+            },
             "outcomeCategory": "pending",
             "summary": "",
             "patchDecision": "pending",

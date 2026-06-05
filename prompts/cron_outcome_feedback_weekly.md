@@ -19,6 +19,7 @@ Primary docs:
 - `docs/OUTCOME_FEEDBACK_LOOP.md`
 - `README_DEEP_ANALYSIS_FEEDBACK.md`
 - Schema: `schemas/trade_outcome_feedback.schema.json`
+- Manual trigger prompt: `prompts/manual_outcome_feedback_audit.md`
 
 Weekly procedure:
 
@@ -37,10 +38,17 @@ Weekly procedure:
    - Was TP realistic?
    - Did ladder spacing help?
    - Did liquidity warning matter?
+   - Was the outcome caused by analysis weakness, execution weakness, stochastic behavior, external catalyst/news, liquidity/slippage, or mixed causes?
+   - If the trade lost money, was the setup still correct enough that no prompt/tool patch is justified?
    - Which prompt rule helped/hurt?
    - Which candidate won counterfactual replay: tvflow, GPT, Andrea/manual, hybrid, or no-trade?
-7. Patch nothing automatically unless the evidence is safety-critical and the patch is small/obvious. Otherwise queue actions.
-8. Post a concise digest to thread id `1512319160607314051`.
+7. Review deep-analysis workflow improvement:
+   - Was the data-source mix optimal?
+   - Would TradingView export, Bitget OHLCV, screenshots, orderbook/liquidity, news/calendar, funding/OI, or screener diagnostics have improved the decision?
+   - Could the same task be done with fewer exports/screenshots/model usage?
+   - Should the AI prompt, packet builder, schema, or tool routing change?
+8. Patch nothing automatically unless the evidence is safety-critical and the patch is small/obvious. Otherwise queue actions.
+9. Post a concise digest to thread id `1512319160607314051`.
 
 Digest format:
 
@@ -52,8 +60,10 @@ Deferred: N
 
 1) SYMBOL — outcome_category
 - Outcome: ...
+- Attribution: analysis weakness / execution weakness / stochastic / external catalyst / liquidity / mixed / unclear
 - Counterfactual winner: tvflow / GPT / Andrea / hybrid / no-trade / unclear
 - Rule audit: helped [...], hurt [...]
+- Workflow review: data/source/prompt/tool efficiency lesson, if any
 - Lesson: ...
 - Action: none / memory / prompt patch queued / tool patch queued
 

@@ -74,18 +74,35 @@ Explain rejection/trigger conditions.
 | COMBO_100 |  |  |
 
 ## Orderability / liquidity traffic-light table
-State which gate/ticket size was used.
+State which gate/ticket size was used. Keep chart validity separate from live orderability.
 
-| Gate | Value observed | Pass / limit | Light | Note |
+### A. Liquidity and executable orderability
+| Gate | Observed | Limit / required | Status | Risk if failed | Note |
+|---|---:|---:|---|---|---|
+| Stop-exit simulated slippage |  |  | 🟢/🟡/🔴/⚪ |  | baseline / worst / 50%-depth stressed |
+| Near-market executable depth |  |  | 🟢/🟡/🔴/⚪ |  | 0.25% and 0.50% opposite-side depth |
+| Spread stability |  |  | 🟢/🟡/🔴/⚪ |  | current / median / worst |
+| p10 / weak-minute volume stress |  |  | 🟢/🟡/🔴/⚪ |  | non-dead 120x1m; RWA thresholds if applicable |
+| Dead 1m candles |  |  | 🟢/🟡/🔴/⚪ |  | median non-zero quote volume rule |
+| 24h quote-volume ratio |  |  | 🟢/🟡/🔴/⚪ |  | supporting filter |
+| Visible depth-to-SL corridor |  | informational only | ⚪ |  | not hard pass/fail |
+
+### B. Operational safety
+| Check | Observed | Status | Risk if failed | Required action |
+|---|---:|---|---|---|
+| Existing same-symbol orders / position / TP-SL |  | 🟢/🟡/🔴/⚪ |  |  |
+| Available margin |  | 🟢/🟡/🔴/⚪ |  |  |
+| Position mode |  | 🟢/🟡/🔴/⚪ |  |  |
+| Confirmation boundary |  | 🟢/🟡/🔴/⚪ |  |  |
+
+### C. Risk and feasibility
+| Metric | Observed | Limit / target | Status | Note |
 |---|---:|---:|---|---|
-| Existing orders/position |  |  | 🟢/🟡/🔴/⚪ |  |
-| Spread |  |  | 🟢/🟡/🔴/⚪ |  |
-| 24h quote volume |  |  | 🟢/🟡/🔴/⚪ |  |
-| Dead 1m candles |  |  | 🟢/🟡/🔴/⚪ |  |
-| Volume stress / RWA active-session effective mode |  |  | 🟢/🟡/🔴/⚪ |  |
-| Stop-exit sim |  |  | 🟢/🟡/🔴/⚪ |  |
-| Depth to SL |  |  | 🟢/🟡/🔴/⚪ |  |
-| User live confirmation |  |  | 🟢/🟡/🔴/⚪ |  |
+| Planned no-slippage risk |  | ~100 USDT | 🟢/🟡/🔴/⚪ |  |
+| Estimated extra slippage loss |  |  | 🟢/🟡/🔴/⚪ |  |
+| Estimated total loss at SL |  |  | 🟢/🟡/🔴/⚪ |  |
+| Notional / margin / leverage |  | <=1500 margin, <=20x | 🟢/🟡/🔴/⚪ |  |
+| Reward-to-risk / structure / freshness |  |  | 🟢/🟡/🔴/⚪ |  |
 
 ## Risk sizing summary
 | Plan | Status | Risk | Reward | RR | Notional | Margin |
