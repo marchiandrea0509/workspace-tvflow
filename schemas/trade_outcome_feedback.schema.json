@@ -1,0 +1,486 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/tvflow/schemas/trade_outcome_feedback.schema.json",
+  "title": "tvflow Trade Outcome Feedback Record",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "feedbackId",
+    "createdAt",
+    "symbol",
+    "status",
+    "preTradeThesis",
+    "sourceArtifacts",
+    "tickets",
+    "outcomeEvidence",
+    "counterfactualReplay",
+    "ruleOutcomeAudit",
+    "finalLearning"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "trade_outcome_feedback_v1"
+    },
+    "feedbackId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "symbol": {
+      "type": "string",
+      "minLength": 1
+    },
+    "side": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "LONG",
+        "SHORT",
+        "AUTO",
+        null
+      ]
+    },
+    "family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timeframe": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pretrade_frozen",
+        "waiting_for_fill",
+        "waiting_for_close_or_expiry",
+        "ready_for_outcome_audit",
+        "audited",
+        "patched",
+        "archived_no_lesson"
+      ]
+    },
+    "preTradeThesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "impulse",
+        "keyLevels",
+        "entryThesis",
+        "slThesis",
+        "tpThesis",
+        "liquidityThesis",
+        "promptRulesUsed"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "impulse": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keyLevels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "entryThesis": {
+          "type": "string"
+        },
+        "slThesis": {
+          "type": "string"
+        },
+        "tpThesis": {
+          "type": "string"
+        },
+        "liquidityThesis": {
+          "type": "string"
+        },
+        "promptRulesUsed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sourceArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tvflowReport": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "packetDir": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gptSource": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "liveExecutionSummary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "journalSnapshot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tradingViewExport": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tickets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tvflowProposed",
+        "gptProposed",
+        "andreaPreferred",
+        "actuallyPlaced"
+      ],
+      "properties": {
+        "tvflowProposed": {
+          "$ref": "#/$defs/ticketSet"
+        },
+        "gptProposed": {
+          "$ref": "#/$defs/ticketSet"
+        },
+        "andreaPreferred": {
+          "$ref": "#/$defs/ticketSet"
+        },
+        "actuallyPlaced": {
+          "$ref": "#/$defs/ticketSet"
+        }
+      }
+    },
+    "outcomeEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "summary",
+        "metrics",
+        "verificationSourcePolicy"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "open",
+            "closed",
+            "cancelled",
+            "expired",
+            "partial",
+            "not_placed"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "bitgetOrderIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "plannedRiskUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "plannedRewardUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "realizedPnlUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "realizedR": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "mfeUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "maeUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "mfeR": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "maeR": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "timeToFillMinutes": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "timeToCloseMinutes": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "missedEntryDistancePct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "slippageUsdt": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "verificationSourcePolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "executionTruth",
+            "marketPathTruth",
+            "screenshotsRole",
+            "finalJudgmentRule"
+          ],
+          "properties": {
+            "executionTruth": {
+              "type": "string",
+              "const": "bitget_export_or_journal_required"
+            },
+            "marketPathTruth": {
+              "type": "string",
+              "const": "tradingview_or_bitget_ohlcv_export_required"
+            },
+            "screenshotsRole": {
+              "type": "string",
+              "const": "supporting_visual_only"
+            },
+            "finalJudgmentRule": {
+              "type": "string",
+              "const": "defer_if_required_export_evidence_missing"
+            }
+          }
+        }
+      }
+    },
+    "counterfactualReplay": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate",
+          "result",
+          "note"
+        ],
+        "properties": {
+          "candidate": {
+            "type": "string",
+            "enum": [
+              "tvflow",
+              "gpt",
+              "andrea_manual",
+              "hybrid",
+              "no_trade"
+            ]
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "best",
+              "good",
+              "mixed",
+              "bad",
+              "unknown"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ruleOutcomeAudit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule",
+          "effect",
+          "evidence"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "helped",
+              "hurt",
+              "neutral",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "finalLearning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcomeCategory",
+        "summary",
+        "patchDecision",
+        "actions"
+      ],
+      "properties": {
+        "outcomeCategory": {
+          "type": "string",
+          "enum": [
+            "deferred_missing_export_evidence",
+            "evidence_incomplete",
+            "validated_thesis",
+            "good_thesis_bad_execution",
+            "bad_thesis",
+            "good_setup_missed_by_entry",
+            "good_entry_bad_sl",
+            "good_entry_tp_too_ambitious",
+            "liquidity_warning_confirmed",
+            "liquidity_warning_too_conservative",
+            "valid_trade_overfiltered",
+            "no_trade_was_best",
+            "no_lesson_noise",
+            "pending"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "patchDecision": {
+          "type": "string",
+          "enum": [
+            "none",
+            "memory_only",
+            "prompt_patch",
+            "tool_patch",
+            "docs_patch",
+            "execution_safety_patch",
+            "regression_case",
+            "pending"
+          ]
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "ticketSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "legs",
+        "rawText"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "legs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "rawText": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
