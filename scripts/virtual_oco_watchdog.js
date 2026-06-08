@@ -26,6 +26,7 @@ const TF_MS = {
 };
 
 const DEFAULT_OUT_DIR = path.resolve(__dirname, '..', 'reports', 'watchdogs', 'virtual_oco');
+const TERMINAL_STATUSES = new Set(['ALERTED', 'INVALIDATED', 'EXPIRED', 'LIVE_LEG_FILLED']);
 
 function num(v, fallback = NaN) {
   const n = Number(v);
@@ -195,6 +196,39 @@ function checkPullbackFamily(family, ctx, config) {
   ];
   return { family, kind: 'pullback', direction, triggered: gates.every(g => g.ok), gates, triggerReason: reason, zone };
 }
+function shouldSuppressHybridPullbackAlert(family, ctx = {}, config = {}) {
+  const mode = upper(ctx.executionModeInfo?.execution_mode || config.execution_mode);
+  if (mode !== 'HYBRID_VOCO') return false;
+
+  const letter = familyLetter(family);
+  const style = upper(family.style);
+  const isBreakout = letter === 'C' || style === 'BREAKOUT' || style === 'BREAKDOWN';
+  if (isBreakout) return false;
+
+  const setting = family.suppressWhenLiveLadderDetected
+    ?? config.suppressPullbackAlertsWhenLiveLadderDetected
+    ?? config.liveState?.suppressPullbackAlertsWhenLadderDetected;
+  if (setting === false) return false;
+
+  const ladderStatus = upper(ctx.liveState?.ladder_status);
+  return ['OPEN_UNFILLED', 'PARTIALLY_FILLED', 'FULLY_FILLED'].includes(ladderStatus);
+}
+function suppressHybridPullbackResult(result, ctx = {}) {
+  const ladderStatus = ctx.liveState?.ladder_status || 'UNKNOWN';
+  const detail = ctx.liveState?.ladder_status_detail ? ` (${ctx.liveState.ladder_status_detail})` : '';
+  const gate = {
+    name: 'hybrid live ladder suppression',
+    ok: false,
+    value: `HYBRID_VOCO already has ladder status ${ladderStatus}${detail}; suppressing duplicate pullback/B alert because the live Bitget ladder/position is managing that leg`,
+  };
+  return {
+    ...result,
+    triggered: false,
+    gates: [gate, ...(result.gates || [])],
+    suppressed: true,
+    triggerReason: gate.value,
+  };
+}
 function checkStaleness(family, ctx, zone) {
   const out = [];
   const maxDist = num(family.maxStalenessDistance ?? family.maxChaseDistance, NaN);
@@ -352,6 +386,40 @@ No valid trigger occurred.
 Action:
 Refresh the analysis before considering a new ticket.`;
 }
+function shouldResolveHybridOnLiveFill(config = {}, ctx = {}) {
+  const mode = upper(ctx.executionModeInfo?.execution_mode || config.execution_mode);
+  if (mode !== 'HYBRID_VOCO') return false;
+  const setting = config.resolveHybridVocoOnLiveFill
+    ?? config.cancelVirtualAlternativeOnLiveFill
+    ?? config.liveState?.resolveHybridVocoOnLiveFill
+    ?? config.liveState?.cancelVirtualAlternativeOnLiveFill;
+  if (setting === false) return false;
+  const ladderStatus = upper(ctx.liveState?.ladder_status);
+  return ['PARTIALLY_FILLED', 'FULLY_FILLED'].includes(ladderStatus);
+}
+function formatLiveLegFilled(config, ctx = {}) {
+  const live = ctx.liveState || {};
+  const checkClose = ctx?.checkClosed?.ts ? new Date(ctx.checkClosed.ts).toISOString() : 'n/a';
+  return `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED
+
+OCO group: ${config.ocoGroupId}
+Symbol: ${config.symbol}
+${metadataBlock(config, ctx)}
+
+Live ladder status: ${live.ladder_status || 'UNKNOWN'}${live.ladder_status_detail ? ` (${live.ladder_status_detail})` : ''}
+Position size detected: ${fmt(live.positionSize)}
+Regular live ladder/order rows: ${Array.isArray(live.ladderOrders) ? live.ladderOrders.length : 'n/a'}
+Checked candle: ${ctx?.checkTf || config.checkTf || config.mainTf || 'n/a'} ${checkClose}
+Current price: ${fmt(ctx?.currentPrice)}
+
+Resolution:
+- A real/live ladder leg has filled or a matching position is active.
+- The HYBRID_VOCO virtual alternative is now cancelled/disarmed by the watchdog.
+- This is a room-only operational update, not a Discord DM trigger alert.
+
+Action:
+Do not place the virtual alternative from this VOCO. Let the existing live order/position continue under the normal Bitget TP/SL and live-order workflow. Watchdog did not place, cancel, or modify exchange orders.`;
+}
 function firstFailedGate(result) {
   const gates = result?.gates || [];
   return gates.find(g => !g.ok) || gates[0] || null;
@@ -373,9 +441,11 @@ ${note ? `Note: ${note}\n` : ''}${lines.join('\n')}
 
 Status: still armed. No live order was placed.`;
 }
-function sendDiscord(message, config) {
+function sendDiscord(message, config, result = {}) {
   const dm = config.discord || {};
-  const target = dm.target || dm.dmTarget || process.env.OPENCLAW_VOCO_DISCORD_TARGET;
+  const target = result.status === 'LIVE_LEG_FILLED'
+    ? (dm.routineTarget || dm.roomTarget || dm.fallbackTarget || process.env.OPENCLAW_VOCO_DISCORD_ROOM_TARGET || dm.target || dm.dmTarget || process.env.OPENCLAW_VOCO_DISCORD_TARGET)
+    : (dm.target || dm.dmTarget || process.env.OPENCLAW_VOCO_DISCORD_TARGET);
   if (!target) throw new Error('Discord target missing. Set config.discord.target, e.g. "dm:1322306175865323552".');
   const args = ['message', 'send', '--channel', 'discord', '--target', target, '--message', message, '--json'];
   const res = spawnSync('openclaw', args, { encoding: 'utf8', windowsHide: true, maxBuffer: 1024 * 1024 });
@@ -385,7 +455,7 @@ function sendDiscord(message, config) {
 }
 
 function maybeCancelCronAfterTerminal(result, config, args = {}) {
-  if (!['ALERTED', 'INVALIDATED', 'EXPIRED'].includes(result?.status)) return null;
+  if (!TERMINAL_STATUSES.has(result?.status)) return null;
   if (args.updateState === 'false') return null;
   const scheduler = config.scheduler || config.cron || {};
   const shouldCancel = scheduler.cancelCronAfterTerminal === true || scheduler.disableCronAfterTerminal === true;
@@ -785,6 +855,18 @@ async function evaluate(config, args = {}) {
   ctx.riskCapUsd = resolveRiskCapUsd(config);
   ctx.liveState = await collectLiveState(config, ctx);
   ctx.executionModeInfo = resolveExecutionMode(config, ctx.liveState);
+  if (shouldResolveHybridOnLiveFill(config, ctx)) {
+    const message = formatLiveLegFilled(config, ctx);
+    state.status = 'LIVE_LEG_FILLED';
+    state.liveLegFilledAt = ctx.nowIso;
+    state.virtualAlternativeCancelledAt = ctx.nowIso;
+    state.lastMessage = message;
+    state.executionModeInfo = ctx.executionModeInfo;
+    state.liveState = ctx.liveState;
+    state.resolution = 'HYBRID_VOCO live leg filled; virtual alternative cancelled/disarmed; room-only update';
+    if (updateState) saveJson(statePath, state);
+    return { status: 'LIVE_LEG_FILLED', message, statePath, executionModeInfo: ctx.executionModeInfo, liveState: ctx.liveState, notificationKind: 'room' };
+  }
   const expiry = Date.parse(config.expiryUtc || config.watchdogExpiry || '');
   if (Number.isFinite(expiry) && ctx.nowMs >= expiry) {
     state.status = 'EXPIRED'; state.expiredAt = ctx.nowIso;
@@ -837,7 +919,11 @@ async function evaluate(config, args = {}) {
     const letter = familyLetter(f);
     const style = upper(f.style);
     const isBreakout = letter === 'C' || style === 'BREAKOUT' || style === 'BREAKDOWN';
-    return isBreakout ? checkBreakoutFamily(f, ctx, config) : checkPullbackFamily(f, ctx, config);
+    if (isBreakout) return checkBreakoutFamily(f, ctx, config);
+    const pullbackResult = checkPullbackFamily(f, ctx, config);
+    return shouldSuppressHybridPullbackAlert(f, ctx, config)
+      ? suppressHybridPullbackResult(pullbackResult, ctx)
+      : pullbackResult;
   });
   const choice = chooseTriggered(results, config);
 
@@ -877,14 +963,14 @@ async function evaluate(config, args = {}) {
   if (!args.config) throw new Error('Usage: node scripts/virtual_oco_watchdog.js --config watchdog/virtual_oco/example.json [--send true] [--json]');
   const config = loadJson(path.resolve(args.config));
   const result = await evaluate(config, args);
-  if (args.send === 'true' && ['ALERTED', 'INVALIDATED', 'EXPIRED'].includes(result.status)) {
-    sendDiscord(result.message, config);
+  if (args.send === 'true' && TERMINAL_STATUSES.has(result.status)) {
+    sendDiscord(result.message, config, result);
     result.sentDiscord = true;
   }
   const cronCancellation = maybeCancelCronAfterTerminal(result, config, args);
   if (cronCancellation) result.cronCancellation = cronCancellation;
   if (args.json) console.log(JSON.stringify(result, null, 2));
-  else if (['ALERTED', 'INVALIDATED', 'EXPIRED', 'CHECKED', 'CHECKED_ALREADY'].includes(result.status)) console.log(result.message);
+  else if (['ALERTED', 'INVALIDATED', 'EXPIRED', 'LIVE_LEG_FILLED', 'CHECKED', 'CHECKED_ALREADY'].includes(result.status)) console.log(result.message);
   else console.log('NO_REPLY');
 })().catch((err) => {
   console.error(err.stack || err.message || String(err));

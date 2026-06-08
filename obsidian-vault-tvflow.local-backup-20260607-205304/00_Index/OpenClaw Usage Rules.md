@@ -2,9 +2,6 @@
 
 This vault is a curated knowledge layer, not a replacement for code, schemas, prompts, or live-order confirmation rules.
 
-Canonical shared location: `G:\My Drive\Trading\obsidian-vault-tvflow`.
-The workspace path `C:\Users\anmar\.openclaw\workspace-tvflow\obsidian-vault-tvflow` is only a compatibility junction to the same vault.
-
 ## Rules
 
 1. Never treat a note as an automatic live-trading instruction.

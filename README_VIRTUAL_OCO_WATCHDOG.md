@@ -9,11 +9,12 @@ Reusable read-only Bitget Virtual OCO alert watchdog for prepared D/VOCO trade i
 - Never imports or calls live order scripts.
 - Never cancels or modifies live orders.
 - Uses prepared ticket levels/size/SL/TP only; it does not creatively redesign the trade.
-- Sends alert text only when one prepared family becomes valid, or when the idea expires/invalidates.
+- Sends alert text only when one prepared virtual family becomes valid, when the idea expires/invalidates, or when a HYBRID_VOCO live leg fills and the virtual alternative is cancelled.
 - Routine watchdog status/no-trigger feedback should land in the Bitget Trades room/thread.
-- Actual `VIRTUAL OCO ALERT` trade triggers should land in Andrea's Discord DM first, with room mention fallback if DM attempts fail.
+- Actual **virtual-order trigger proposals** (`VIRTUAL OCO ALERT — TRADE PROPOSAL READY`) should land in Andrea's Discord DM first, with room mention fallback if DM attempts fail.
+- Real/live order fill resolution (`VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`) is **room-only**; it must not DM Andrea.
 - For scheduled Discord VOCOs, **do not rely on cron runner DM delivery**. Use the in-agent Discord message tool / direct message-tool route for critical DM alerts.
-- After alert/expiry/invalidation, state stops until explicitly re-armed.
+- After alert/expiry/invalidation/live-fill resolution, state stops until explicitly re-armed.
 - For scheduled watchdogs, set `scheduler.cronId` and keep `scheduler.cancelCronAfterTerminal: true`; after the terminal state is committed, the tool disables that OpenClaw cron job so it does not keep waking uselessly.
 
 ## Files
@@ -71,7 +72,7 @@ If you want visible feedback on every scheduled check, set `feedbackOnEveryCheck
 The watchdog supports three alert-only modes:
 
 - `PURE_VOCO`: A/B pullback and C breakout/breakdown are both virtual alternatives. First valid family triggers a DM proposal, blocks the other family, and stops the watchdog.
-- `HYBRID_VOCO`: A/B ladder orders may already be live while C remains virtual. A/B and C are alternatives; if C triggers while ladder orders may still be live, the DM warns that ladder exposure must be cancelled/blocked through the normal live-order workflow before accepting C.
+- `HYBRID_VOCO`: A/B ladder orders may already be live while C remains virtual. A/B and C are alternatives. If C triggers while ladder orders are still open/unfilled, the DM warns that ladder exposure must be cancelled/blocked through the normal live-order workflow before accepting C. Once a matching live ladder/order/position is detected, duplicate A/B pullback alerts are suppressed by default because Bitget is already managing that live leg. Once any matching live ladder leg is actually filled / a matching position is active (`PARTIALLY_FILLED` or `FULLY_FILLED`), the watchdog terminally cancels/disarms the virtual alternative, sends a room-only `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED` update, and disables its cron when configured. Set `suppressPullbackAlertsWhenLiveLadderDetected: false` only for an intentional virtual pullback re-alert; set `resolveHybridVocoOnLiveFill: false` only if Andrea explicitly wants the virtual alternative to remain armed after a live fill.
 - `HYBRID_C100`: A/B ladder and C may coexist only when the original analysis/config explicitly approves C100 or a C100 plan/order is already active. C trigger requires combined all-filled risk verification against `risk_cap_usd`.
 
 Mode inference when `execution_mode` is blank:
@@ -109,7 +110,7 @@ When multiple virtual OCO watchdogs are active on the same timeframe, stagger th
 
 ### Robust Discord routing pattern
 
-For Andrea's mobile alerts, actual `VIRTUAL OCO ALERT` triggers must arrive by DM. The proven route is **direct in-agent Discord message-tool send** to `user:1322306175865323552`, not cron runner `announce` delivery to `dm:<id>`.
+For Andrea's mobile alerts, only actual **virtual trigger proposals** (`VIRTUAL OCO ALERT — TRADE PROPOSAL READY`) must arrive by DM. Live-real-order fill resolution is not a mobile DM event; it is a room-only operational update. The proven DM route is **direct in-agent Discord message-tool send** to `user:1322306175865323552`, not cron runner `announce` delivery to `dm:<id>`.
 
 Hard anti-regression check: a scheduled VOCO job is misconfigured for critical alerts if its top-level cron delivery is `announce` to a room/user and the payload does not explicitly perform direct message-tool routing. A room-delivered alert is not evidence that DM worked; confirm run history contains `messageToolSentTo user:1322306175865323552` for DM tests/triggers.
 
@@ -119,10 +120,11 @@ Recommended scheduled job behavior:
 2. Allow the cron agent to use `exec` plus the Discord message tool.
 3. Run the watchdog first with `-Json -Feedback -NoStateUpdate` so a trigger is not marked alerted before notification is attempted.
 4. If the message is routine `VIRTUAL OCO CHECK`, send it by message tool to the Bitget Trades room (`channel:1499631210283008002`).
-5. If the message is an actual `VIRTUAL OCO ALERT`, send it by message tool to `user:1322306175865323552` first; retry `dm:1322306175865323552` if needed; room fallback with `<@1322306175865323552>` only after DM attempts fail.
-6. If the message is `VIRTUAL OCO INVALIDATED` or `VIRTUAL OCO EXPIRED`, send it to the Bitget Trades room unless it contains an actual `VIRTUAL OCO ALERT`.
-7. After the notification attempt completes, run the watchdog once without `-NoStateUpdate` to persist state. If notification could not be attempted at all, do not commit state; leave it armed for retry.
-8. On the commit run, if the watchdog returns `ALERTED`, `EXPIRED`, or `INVALIDATED` and `scheduler.cancelCronAfterTerminal` is enabled, the tool runs `openclaw cron disable <scheduler.cronId>` automatically.
+5. If the message is an actual virtual trigger proposal (`VIRTUAL OCO ALERT — TRADE PROPOSAL READY` or manual-review alert caused by the virtual trigger), send it by message tool to `user:1322306175865323552` first; retry `dm:1322306175865323552` if needed; room fallback with `<@1322306175865323552>` only after DM attempts fail.
+6. If the message is `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`, send it only to the Bitget Trades room (`channel:1499631210283008002`), then commit state. Do not DM.
+7. If the message is `VIRTUAL OCO INVALIDATED` or `VIRTUAL OCO EXPIRED`, send it to the Bitget Trades room unless it contains an actual virtual trigger proposal.
+8. After the notification attempt completes, run the watchdog once without `-NoStateUpdate` to persist state. If notification could not be attempted at all, do not commit state; leave it armed for retry.
+9. On the commit run, if the watchdog returns `ALERTED`, `LIVE_LEG_FILLED`, `EXPIRED`, or `INVALIDATED` and `scheduler.cancelCronAfterTerminal` is enabled, the tool runs `openclaw cron disable <scheduler.cronId>` automatically.
 
 This avoids the failure mode where cron runner delivery resolves `dm:<id>` but returns `not-delivered`, while preserving DM-first mobile alerts.
 

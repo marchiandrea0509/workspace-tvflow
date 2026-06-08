@@ -4,13 +4,6 @@ Purpose: a curated, human-readable wiki for TradingView/Pine/deep-analysis/live-
 
 This vault is useful for both Andrea and OpenClaw, but it is not an automatic rule engine.
 
-## Location
-
-Canonical vault path: `G:\My Drive\Trading\obsidian-vault-tvflow`
-
-The old local workspace path is kept as a junction for OpenClaw compatibility:
-`C:\Users\anmar\.openclaw\workspace-tvflow\obsidian-vault-tvflow`
-
 ## Main sections
 
 - [[../10_Setup_Playbooks/README|Setup Playbooks]]

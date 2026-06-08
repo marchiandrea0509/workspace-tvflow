@@ -8,6 +8,8 @@
   "checkDelayMinutes": 2,
   "feedbackOnEveryCheck": false,
   "execution_mode": "",
+  "suppressPullbackAlertsWhenLiveLadderDetected": true,
+  "resolveHybridVocoOnLiveFill": true,
   "risk_cap_usd": 100,
   "c100Approved": false,
   "liveState": {
@@ -16,6 +18,7 @@
     "ladderClientOidIncludes": ["ladder", "_L1", "_L2", "_L3", "_A", "_B", "optA", "optB"],
     "c100ClientOidIncludes": ["C100"],
     "positionImpliesFilledLadder": true,
+    "cancelVirtualAlternativeOnLiveFill": true,
     "priceTolerance": 0.002
   },
   "c100": {
