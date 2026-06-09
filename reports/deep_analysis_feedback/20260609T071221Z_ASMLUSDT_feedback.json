@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "deep_analysis_feedback_v0",
+  "feedbackId": "20260609T071221Z_ASMLUSDT_feedback",
+  "createdAt": "2026-06-09T07:12:21.772525Z",
+  "updatedAt": "2026-06-09T07:18:00Z",
+  "symbol": "ASMLUSDT",
+  "side": "LONG",
+  "family": "A/B",
+  "status": "patched",
+  "sourceArtifacts": {
+    "tvflowReport": "reports\\deep_analysis\\2026-06-09_ASMLUSDT_deep_analysis.md",
+    "packetDir": null,
+    "gptSource": "C:\\Users\\anmar\\.openclaw\\media\\inbound\\0c482438-f878-405d-b84a-6ce80b0a1b5d.txt",
+    "liveExecutionSummary": null,
+    "journalSnapshot": null,
+    "screenshots": []
+  },
+  "tickets": {
+    "tvflowProposed": {
+      "verdict": null,
+      "summary": "Extract from tvflow report if needed.",
+      "legs": [],
+      "rawText": ""
+    },
+    "gptProposed": {
+      "verdict": null,
+      "summary": "Raw GPT text captured; extract legs if needed.",
+      "legs": [],
+      "rawText": "## ASMLUSDTPERP — 5-day swing plan\n\n### Context and state\n\n| Item                  |                                           Reading |\n| --------------------- | ------------------------------------------------: |\n| Current price         |                                      **1,769.80** |\n| ATR4H                 |                                         **29.05** |\n| 1D bias               |                            Bullish rising channel |\n| 4H bias               | Bullish impulse, but price is at major resistance |\n| 1H timing             |     Strong recovery, now extended into resistance |\n| Market classification |                       **GOOD MARKET + BAD ENTRY** |\n\nPrice is only **9.67 points = 0.33 ATR4H** below the previous-week high at **1,779.47**. A market long or a shallow resting limit would be a chase. The correct approach is to wait for a broader pullback or for a confirmed 4H breakout.\n\n### Key levels — nearest to farthest\n\n| Type              |                 Level | Source                                                    |\n| ----------------- | --------------------: | --------------------------------------------------------- |\n| Resistance        |          **1,769.80** | Monday high / current test                                |\n| Resistance        |          **1,779.47** | Previous-week high and major liquidity                    |\n| Support           |          **1,745.28** | Local 1H shelf                                            |\n| Support           |          **1,719.22** | 38.2% broad impulse retracement                           |\n| Support           |          **1,700.62** | 50% broad impulse retracement                             |\n| Support           |          **1,691.73** | Visible 1H shelf                                          |\n| Support           |          **1,682.01** | 61.8% broad impulse retracement                           |\n| Support           | **1,672.65–1,670.00** | 1H support and visible 4H breakout shelf                  |\n| Invalidation area |          **1,655.00** | Below the 1,670 shelf with approximately 0.5 ATR4H buffer |\n| Major support     |          **1,621.76** | Monday low                                                |\n| Major support     |          **1,586.17** | Previous-week low                                         |\n\n## Impulse used for pullback calculations\n\nI am using the broad visible 4H impulse rather than the latest small rally:\n\n| Item           |          Value |\n| -------------- | -------------: |\n| Impulse low    |   **1,621.76** |\n| Impulse high   |   **1,779.47** |\n| Point move     |     **157.71** |\n| ATR4H multiple | **5.43 ATR4H** |\n\nThis is a valid bullish impulse. Because price is already close to the previous-week high, the pullback anchor must remain broad and relatively deep.\n\n## TP map\n\n| TP                 | Source                      | Distance from 1,700.62 | ATR distance | Use                                                              |\n| ------------------ | --------------------------- | ---------------------: | -----------: | ---------------------------------------------------------------- |\n| **1,745.28**       | Nearest 1H resistance shelf |                  44.66 |   1.54 ATR4H | Conservative TP after a deeper pullback                          |\n| **1,769.80**       | Monday high                 |                  69.18 |   2.38 ATR4H | Realistic primary TP                                             |\n| **1,779.47**       | Previous-week high          |                  78.85 |   2.71 ATR4H | Main structural TP                                               |\n| **Above 1,779.47** | 1D channel open space       |                      — |            — | Not used for static PB tickets until a confirmed breakout occurs |\n\nThe previous-week high is the best objective static exit. I would not invent a farther TP merely to improve the reward-to-risk ratio.\n\n---\n\n## A — Best-quality pullback setup: VALID\n\n**Style:** DIP_LADDER\n**Mode:** STANDALONE_STATIC\n**Thesis:** Buy a deeper broad-impulse retracement. Avoid shallow entries near resistance.\n\n| Leg |        Entry | Type      |      Qty |  Notional |           SL |   Loss |           TP |  Profit |       RR | Trigger       |\n| --- | -----------: | --------- | -------: | --------: | -----------: | -----: | -----------: | ------: | -------: | ------------- |\n| L1  | **1,700.60** | Limit buy | **0.87** | $1,479.52 | **1,655.00** | $39.67 | **1,769.80** |  $60.20 | **1.52** | Passive limit |\n| L2  | **1,682.00** | Limit buy | **2.22** | $3,734.04 | **1,655.00** | $59.94 | **1,779.47** | $216.38 | **3.61** | Passive limit |\n\n| Metric                         |        Result |\n| ------------------------------ | ------------: |\n| Total maximum loss             |    **$99.61** |\n| Total notional if fully filled | **$5,213.56** |\n| Margin at 20x                  |   **$260.68** |\n| Blended entry                  |  **1,687.26** |\n| All-filled aggregate RR        |      **2.78** |\n\n**Why this is the best-quality option:** both entries are tied to the broad bullish impulse. The second entry is close to the 61.8% retracement and above the 1,670 support shelf. The structural stop remains below that shelf with a meaningful buffer.\n\n---\n\n## B — Best fill-probability pullback setup: VALID\n\n**Style:** DIP_LADDER\n**Mode:** STANDALONE_STATIC\n**Thesis:** Add one higher broad-value entry without chasing the local 1H shelf.\n\n| Leg |        Entry | Type      |      Qty |  Notional |           SL |   Loss |           TP |  Profit |       RR | Trigger       |\n| --- | -----------: | --------- | -------: | --------: | -----------: | -----: | -----------: | ------: | -------: | ------------- |\n| L1  | **1,719.20** | Limit buy | **0.38** |   $653.30 | **1,655.00** | $24.40 | **1,779.47** |  $22.90 | **0.94** | Passive limit |\n| L2  | **1,700.60** | Limit buy | **0.76** | $1,292.46 | **1,655.00** | $34.66 | **1,779.47** |  $59.94 | **1.73** | Passive limit |\n| L3  | **1,682.00** | Limit buy | **1.48** | $2,489.36 | **1,655.00** | $39.96 | **1,779.47** | $144.26 | **3.61** | Passive limit |\n\n| Metric                         |        Result |\n| ------------------------------ | ------------: |\n| First-leg RR                   |      **0.94** |\n| First-two-leg aggregate RR     |      **1.40** |\n| All-filled aggregate RR        |      **2.29** |\n| Total maximum loss             |    **$99.01** |\n| Total notional if fully filled | **$4,435.11** |\n| Margin at 20x                  |   **$221.76** |\n| Blended entry                  |  **1,692.90** |\n\n**Why B is acceptable:** the first leg is a borderline but valid fill-probability entry at the 38.2% retracement. Its RR is slightly below 1.0 but remains within the shallow-B exception range. The other two legs preserve strong blended RR.\n\n### Rejected shallow entry\n\n| Candidate                   | Result       | Reason                                                                                                                                                                                                          |\n| --------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| **1,745.28** local 1H shelf | **REJECTED** | Price is near major resistance. With the structural SL at 1,655, the RR to the realistic 1,769.80–1,779.47 target zone is too poor. It would improve fill probability but weaken the trade quality excessively. |\n\n---\n\n## C — Breakout continuation setup: REJECTED FOR NOW\n\n**Style:** BO\n**Mode:** WATCH ONLY\n\nThe market has not produced a closed 4H breakout above the previous-week high.\n\n| Gate                   | Required                                     | Current status     |\n| ---------------------- | -------------------------------------------- | ------------------ |\n| Meaningful trigger     | Previous-week high **1,779.47**              | Present            |\n| Closed 4H confirmation | Close at or above **1,782.38**               | **Missing**        |\n| Minimum close distance | 0.10 ATR4H above trigger                     | **Missing**        |\n| Candle close position  | At least 0.60                                | Not yet measurable |\n| 1H rejection risk      | Must not immediately reject into range       | Still open         |\n| Open space             | Must be checked after breakout candle closes | Not confirmed      |\n\nA wick above **1,779.47** is not enough. A conditional buy-stop placed now would not enforce the required closed-4H confirmation.\n\n**C watch condition:** reassess only after a 4H candle closes at or above **1,782.38**, with a strong close in the upper part of the candle. The breakout ticket must then be refreshed using the new shelf and the actual candle structure.\n\n---\n\n## D — OC wrapper: REJECTED\n\n| Wrapper | Status           | Reason                                                                       |\n| ------- | ---------------- | ---------------------------------------------------------------------------- |\n| VOCO    | **Rejected now** | Pullback setup is valid, but C is not yet a valid breakout setup.            |\n| C100    | **Rejected now** | No confirmed breakout leg exists to combine safely with the pullback ladder. |\n\nDo not create an OC structure merely because both execution types exist.\n\n## Orderability\n\nA and B are technically placeable as static Bitget limit ladders. Risk, margin and 20x leverage constraints pass comfortably. The screenshots do not show live spread or order-book depth, so liquidity should be checked immediately before placement. Choose **A or B**, not both.\n\nFinal verdict:\n\n* Bias: **Bullish, but extended into major resistance at 1,769.80–1,779.47.**\n* Best quality pullback setup: **Option A — VALID. Two-leg broad-value ladder at 1,700.60 / 1,682.00.**\n* Best fill-probability pullback setup: **Option B — VALID. Three-leg ladder at 1,719.20 / 1,700.60 / 1,682.00.**\n* Breakout/breakdown setup: **Option C — REJECTED FOR NOW. Wait for a closed 4H candle at or above 1,782.38.**\n* Preferred OC execution: **None. VOCO and C100 are not justified before breakout confirmation.**\n* Preferred option: **Option A. It offers the cleanest structure and stronger aggregate RR.**\n* Orderability: **Placeable as static limits after checking live spread and depth. Choose one option only.**\n* Confidence: **82**\n* Invalidation: **A confirmed loss of the 1,670 breakout shelf. Static SL: 1,655.00.**\n* What I should do now: **Do not buy at market. Place Option A limits or wait for the confirmed 4H breakout condition.**\n"
+    },
+    "userPreferred": {
+      "verdict": null,
+      "summary": "Fill when Andrea chooses/edits final ticket.",
+      "legs": [],
+      "rawText": ""
+    },
+    "actuallyPlaced": {
+      "verdict": null,
+      "summary": "Fill if a live order is placed.",
+      "legs": [],
+      "rawText": ""
+    }
+  },
+  "comparison": {
+    "preferredSource": "gpt",
+    "summary": "ASMLUSDT 2026-06-09 comparison: tvflow rejected A/B as WAIT after using wider 1612/1626 SL and lower/current 1768 target map; GPT built valid broad pullback A/B using previous-week high 1779.47 as structural impulse/TP and shelf-loss SL 1655 below 1670 support.",
+    "whatGptDidBetter": [
+      "Used broad visible 4H parent impulse 1621.76→1779.47 instead of capping around the latest packet high 1770/1768.",
+      "Tested structural SL 1655 below the 1670 breakout shelf, while tvflow over-widened SL toward 1626/1612 and destroyed R:R.",
+      "Accepted B shallow L1 RR 0.94 because risk share and all-filled RR passed; tvflow rejected a comparable fill-probability family too mechanically."
+    ],
+    "whatTvflowDidBetter": [
+      "Correctly identified GOOD MARKET + BAD ENTRY and rejected market chase near 1770-1780.",
+      "Correctly kept C breakout watch-only and separated live execution confirmation/orderability."
+    ],
+    "actionableLesson": "When price is near major resistance, audit previous-week/range high as impulse high/TP and test shelf-loss SL below the immediate 4H breakout/retest support before forcing SL to older impulse-base supports. If visible/GPT levels differ from packet OHLCV pivots by material ATR, compare both maps before WAIT.",
+    "shouldPatchPrompt": true,
+    "shouldPatchTool": false,
+    "shouldPatchDocsMemory": true
+  },
+  "issueTags": [
+    "valid_trade_overfiltered",
+    "sl_too_wide",
+    "wrong_impulse_selection",
+    "tool_packet_issue"
+  ],
+  "scorecard": {
+    "levelMapQuality": {
+      "score": 3,
+      "note": "tvflow saw 1779.47 but did not test GPT previous-week-high parent map 1621.76→1779.47 as the controlling A/B map."
+    },
+    "biasRead": {
+      "score": null,
+      "note": ""
+    },
+    "entryQuality": {
+      "score": 3,
+      "note": "WAIT/no-chase near 1770 was correct, but valid resting B entries around 1719/1700/1682 were overfiltered."
+    },
+    "ladderConstruction": {
+      "score": null,
+      "note": ""
+    },
+    "slStructure": {
+      "score": 2,
+      "note": "tvflow over-widened SL to 1626/1612 instead of auditing the 1655 shelf-loss SL below 1670, even though losing 1670 would invalidate the immediate pullback thesis."
+    },
+    "tpRealism": {
+      "score": 3,
+      "note": "1779.47 was a realistic previous-week high/static target; 1807+ remained correctly rejected before breakout."
+    },
+    "riskReward": {
+      "score": 2,
+      "note": "R:R failed only under the over-wide SL and lower TP map; GPT Option B passed shallow-B/all-filled gates under shelf-loss SL."
+    },
+    "orderability": {
+      "score": null,
+      "note": ""
+    },
+    "finalVerdictUsefulness": {
+      "score": null,
+      "note": ""
+    }
+  },
+  "journalOutcome": {
+    "status": "not_linked",
+    "journalSnapshot": null,
+    "linkedOrderIds": [],
+    "fillResult": null,
+    "realizedPnlUsdt": null,
+    "plannedRiskUsdt": null,
+    "plannedRewardUsdt": null,
+    "maxFavorableExcursionUsdt": null,
+    "maxAdverseExcursionUsdt": null,
+    "slReview": "",
+    "tpReview": "",
+    "entryReview": "",
+    "summary": "",
+    "lessonsForAnalysis": []
+  },
+  "improvementActions": {
+    "status": "completed",
+    "actions": [
+      {
+        "type": "prompt_patch",
+        "description": "Added previous-week/range-high audit and shelf-loss SL audit to master prompt; reinforced shallow-B exception.",
+        "status": "done",
+        "artifact": "prompts/master_trade_analysis_prompt_v2.md"
+      },
+      {
+        "type": "docs_patch",
+        "description": "Mirrored ASML correction in deep-analysis README and packet contract.",
+        "status": "done",
+        "artifact": "README_DEEP_ANALYSIS_V2.md; schemas/deep_analysis_packet_contract_v2.md"
+      },
+      {
+        "type": "obsidian_log",
+        "description": "Logged v6.2 in Deep Analysis Prompt Evolution.",
+        "status": "done",
+        "artifact": "obsidian-vault-tvflow/50_Prompt_and_Tool_Patches/Deep Analysis Prompt Evolution.md"
+      }
+    ]
+  },
+  "notes": "Triggered by Andrea in TV Outcome Feedback Loop with GPT prompt/result attachments and tvflow saved report text."
+}

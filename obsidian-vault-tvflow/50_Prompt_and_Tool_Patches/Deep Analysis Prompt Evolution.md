@@ -24,7 +24,7 @@ Important: these are retrospective semantic versions for documentation. The repo
 
 ## Current one-line summary
 
-The deep-analysis workflow evolved from a generic/Bitget packet prompt into a screenshot-first, A/B/C/D swing-plan analyst with strict ticket formatting, explicit liquidity/orderability gates, VOCO alert-only wrappers, feedback records, outcome audits, mechanical validation/render gates, and structure-first TP optimization.
+The deep-analysis workflow evolved from a generic/Bitget packet prompt into a screenshot-first, A/B/C/D swing-plan analyst with strict ticket formatting, explicit liquidity/orderability gates, VOCO alert-only wrappers, feedback records, outcome audits, mechanical validation/render gates, structure-first TP optimization, and explicit previous-week/range-high plus shelf-loss SL audits for pullbacks near major resistance/support.
 
 ## Version timeline
 
@@ -57,6 +57,7 @@ The deep-analysis workflow evolved from a generic/Bitget packet prompt into a sc
 | v5.3 | 2026-06-05 | Mechanical chat renderer gate | Added `render_deep_analysis_chat_reply.py`; future reports must validate saved markdown and rendered Discord reply, then send rendered reply or chunks, not hand-compressed summaries. | `memory/2026-06-05.md` lines 55-60 |
 | v6 | 2026-06-09 | Structure-first TP design | TP selection became structure-first and independently optimized per order leg. Poor R:R rejection must first test ranked TP candidates and realistic per-leg assignments. | `memory/2026-06-09.md` lines 3-9 |
 | v6.1 | 2026-06-09 | Contradiction audit after TP patch | Cleaned stale contradictions: A/B/C always emit status/audit sections; only valid/conditional setups get tickets. VOCO clarified as alert/proposal-only, never exchange execution. | `memory/2026-06-09.md` lines 10-15 |
+| v6.2 | 2026-06-09 | ASML previous-week high / shelf-loss SL regression | ASMLUSDT comparison showed tvflow overfiltered GPT's valid Option B by capping impulse/TP around packet highs and forcing SL down to older supports. Prompt/docs/schema now require auditing previous-week/range high as parent high/TP and testing shelf-loss SL before WAIT. | `reports/deep_analysis_feedback/20260609T071221Z_ASMLUSDT_feedback.json` |
 
 ## Major design pivots
 
@@ -135,6 +136,7 @@ Git has periodic sync checkpoints touching the prompt from 2026-05-10 through 20
 - Always output A/B/C/D status sections, even if rejected.
 - Only valid/conditional setups get full trade tickets.
 - Use explicit rejection audits with observed value, required value, reason, and what would fix it.
+- When price is extended just below previous-week/range resistance, audit that high as parent-swing high and realistic TP; test shelf-loss SL below the immediate breakout/retest shelf before forcing stops to older support clusters.
 - Treat live execution as separate: deep analysis proposes only.
 - VOCO/watchdogs are alert/proposal-only unless a future separately approved executor is explicitly created.
 - Validate saved report and rendered chat reply before delivery.
