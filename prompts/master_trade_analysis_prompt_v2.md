@@ -64,13 +64,13 @@ Core rules:
 - Do not reject an otherwise valid ticket only because its margin exceeds $1500 at the initial/current/planned leverage. Recalculate the required leverage up to 20x and report the lowest leverage that fits the $1500 margin target while keeping liquidation safely beyond SL. Reject for margin only if the ticket still cannot fit under $1500 at <=20x, or if the required leverage makes liquidation safety unacceptable.
 - For existing live orders, do not call the ladder invalid only because the current exchange leverage creates >$1500 all-filled margin. First judge whether the live ladder is structurally valid and risk-capped. If margin is the only issue, state the required leverage that would fit the margin cap and say any leverage change requires separate explicit user instruction.
 - SL must be structural, not only chosen for better R:R.
-- TP must be realistic, not invented to make R:R look good.
-- One TP per order.
-- Ladder legs must not all share the same TP.
+- TP design is structure-first and independently optimized per order leg. Do not reject A/B/C for poor R:R until realistic TP candidates and per-leg TP assignments have been tested.
+- Each order must have one TP. Assign TP independently for each leg. Distinct TPs are preferred, but identical TPs are allowed when the same structural target is objectively the best realistic exit for multiple legs. Do not invent a farther TP only to make TP values different. Do not reject an otherwise valid ladder only because two legs share the same realistic TP.
+- TP must be realistic, not invented to make R:R look good. Round numbers are secondary confluence only. Fib/ATR targets cannot be used alone without visible structural support.
 - Static tickets are preferred.
 - No discretionary future cancellation, SL move, trailing SL, or post-fill adjustment.
-- Exception: OC_CONDITIONAL_BREAKOUT and D VIRTUAL_OCO may include predefined OC automation rules, but those rules must be explicit before entry.
-- OC may cancel unfilled alternative orders only if this is part of a predefined VIRTUAL_OCO plan.
+- Exception: OC_CONDITIONAL_BREAKOUT and D VIRTUAL_OCO may include predefined OC automation rules, but those rules must be explicit before entry and still require the normal live-order confirmation boundary for any exchange write.
+- The reusable VOCO watchdog is alert/proposal-only and never places, cancels, or modifies exchange orders. If a future explicitly approved executor is used, it may cancel unfilled alternative orders only when that cancellation is part of the predefined VIRTUAL_OCO plan and was separately confirmed.
 - OC automation is an execution/risk-control tool, not a reason to approve a weak chart setup.
 
 Allowed styles:
@@ -105,6 +105,16 @@ SL rule:
 - SL from blended pullback entry: ideal 0.70–1.80 x ATR4H; avoid >2.00 unless target is very strong.
 - From deepest pullback entry, SL distance should be >=0.25 x ATR4H.
 
+TP design / candidate map:
+- Before ticket selection, generate a ranked TP candidate map from visible structure.
+- For LONG setups inspect: nearest 1H resistance / liquidity zone; prior 4H swing high; next 4H resistance shelf; 1D resistance / channel boundary; measured-move target; fib extension target 1.0 / 1.272 / 1.618 only if aligned with visible structure; ATR4H projection only if aligned with visible 4H/1D structure.
+- For SHORT setups reverse: nearest 1H support / liquidity zone; prior 4H swing low; next 4H support shelf; 1D support / channel boundary; measured-move target; fib extension target 1.0 / 1.272 / 1.618 only if aligned with visible structure; ATR4H projection only if aligned with visible 4H/1D structure.
+- Classify each candidate: T1 = nearest conservative structural target; T2 = next realistic 4H target; T3 = extended but realistic 4H/1D target; T4 = aggressive target, allowed only with strong open space and HTF support.
+- For each TP candidate state: target price; source (`1H SR`, `4H SR`, `1D SR`, `LQ`, `measured move`, `fib extension`, `ATR projection`); distance from entry in points; distance from entry in ATR4H; quality (`conservative`, `normal`, `extended`, `aggressive`); whether open space exists before the target.
+- Check TP distance separately for each leg: `tp_distance_atr = abs(TP - entry) / ATR4H`. Preferred per-leg TP distance: normal 1.0–3.0 ATR4H; extended >3.0 to 3.5 ATR4H; aggressive >3.5 ATR4H only if strong 4H/1D structure and open space support it. Do not use a single blended TP distance as the main realism check; weighted/blended TP distance may be reported as context only.
+- Calculate per-leg R:R using that leg’s own entry, SL, and TP; L1-only/S1-only R:R; L1+L2/S1+S2 aggregate R:R; all-filled aggregate R:R. Aggregate ladder R:R = `sum(per-leg expected profits) / sum(per-leg risks)`.
+- Whenever A/B/C is rejected for poor R:R, include a TP rejection audit: `TP candidate | source | distance ATR4H | open space valid? | used/rejected | reason`, then state the best realistic TP combination tested, all-filled R:R, and whether rejection is due to genuinely poor geometry or insufficient open space.
+
 ==================================================
 A/B PB
 ==================================================
@@ -122,7 +132,7 @@ Impulse anchor priority:
 - Major-support rule for shorts is the reverse: near major support, A/B sell-rally anchors must use the broader/deeper 4H swing; B may add at most one shallow local resistance leg if structurally clear and RR is about 0.9+.
 - Local breakout impulse exception: a local BO/BD impulse may define A/B only if all are true: 4H closed clearly beyond the major trigger; price held the broken level by 1H/4H retest/shelf; the pullback entry is on the safe side of the broken level rather than inside old resistance/support; entry->TP room is >=1.2 ATR4H; SL is structural/noise-safe; and local anchoring does not make both A and B shallow near current price.
 - If broad and local maps both fit: A uses the broad/deeper value. B may add one shallow local/broad-support leg above/near A only if it passes RR and is not almost-market/chase; the remaining legs stay tied to broad/deeper value. Never allow A and B to both be built only from a local impulse while current price is at/near major R/S.
-- Do not reject a broad-swing A/B just because the packet’s static optimisation scan says no candidate. Manually test screenshot-visible broad-swing levels, structural SL, distinct per-leg TPs, and risk/margin/leverage. Static scan failure is a warning, not a veto over visible structure.
+- Do not reject a broad-swing A/B just because the packet’s static optimisation scan says no candidate. Manually test screenshot-visible broad-swing levels, structural SL, realistic per-leg TP assignments from the TP candidate map, and risk/margin/leverage. Static scan failure is a warning, not a veto over visible structure.
 - If GPT/user reference supplies a coherent structural SL just beyond the immediate 4H breakout/retest shelf, manually test that exact SL before rejecting A/B. Older lower supports, EMA200, or distant stale pivots below that SL are not automatic vetoes when losing the nearer shelf would already invalidate the immediate pullback thesis. Treat the packet `sl_hierarchy_uncleared_levels` as an audit warning, not as a hard reject, unless the chart thesis would still be valid after that shelf is lost. Regression example: ASMLUSDT 2026-06-04 — do not force a long pullback SL down toward ~1574/EMA200 if a visible 1633 shelf loss makes SL ~1625 structurally coherent.
 
 A quality logic: try 1-2 cleanest PB levels first; use 3 legs only if all 3 are high-quality and not forced. If only one strong level survives, classify SINGLE_LIMIT_PULLBACK.
@@ -132,6 +142,14 @@ B fill logic: maximize fill probability mainly by adding an earlier valid shallo
 Level-density rule: before narrowing to A/B/C tickets, list enough visible levels to make the map auditable. Do not compress to only final ticket levels. Include nearest-to-farthest support/resistance from 1H/4H/1D, at least 6-10 meaningful levels when visible, including prior breakout shelves, pivot highs/lows, major HTF levels, and fresh highs/lows. Then explain which levels became entries, stops, or TPs and which were rejected/secondary.
 
 SELL_RALLY short = reverse using LH->LL impulse/retrace into resistance; B also attempts max valid 3-leg sell-rally first, then removes invalid/forced legs.
+
+PB static optimisation scan:
+- Before rejecting A or B, scan 2–3 valid entry combinations, 2–4 structural SL candidates, 3–6 realistic TP candidates, and several realistic per-leg TP assignments.
+- Typical LONG assignments: L1 -> T1; L2 -> T1 or T2; L3 -> T2 or T3.
+- Typical SHORT assignments: S1 -> T1; S2 -> T1 or T2; S3 -> T2 or T3.
+- Do not force L1/L2/L3 or S1/S2/S3 to use different TPs. Use the nearest realistic TP assignment that passes quality gates. A deeper leg may target farther only when the higher/lower target is structurally credible.
+- Select the nearest credible TP assignment that passes: per-leg realism, open-space check, aggregate R:R, risk, margin, leverage, and liquidation safety. Do not choose the farthest TP automatically. Do not reject based only on the nearest conservative TP if a realistic next structural TP exists.
+- If A or B is rejected for poor R:R, output: TP candidates tested, best realistic TP assignment tested, per-leg R:R, all-filled R:R, and the exact reason why no realistic TP assignment passes.
 
 ==================================================
 C — BREAKOUT / BREAKDOWN FAMILY
@@ -174,12 +192,14 @@ Guideline:
 - reject: >0.8 x ATR4H beyond trigger, unless a new clean consolidation shelf has formed.
 
 5) Open-space rule:
-There must be enough room to the next realistic TP.
-Minimum:
-- trigger to TP1 ≈ 1.2 x ATR4H.
-Preferred:
-- 1.5–2.5 x ATR4H.
-Reject C if breakout triggers directly into major 1D resistance for longs or major 1D support for shorts.
+Generate T1/T2/T3 candidates from visible open space and structure.
+Required:
+- trigger -> T1 open space minimum ≈1.2 x ATR4H.
+- preferred trigger -> selected TP ≈1.5–2.5 x ATR4H.
+- reject if major 1D SR blocks the path before T1.
+- allow T2/T3 only if BO/BD structure and open space support them.
+- do not reject C based only on a close T1 if a valid next structural target exists beyond a minor level.
+- do not skip major SR or use fantasy extension targets.
 
 6) Structural SL rule:
 - SL must be structural, not only chosen for R:R.
@@ -238,10 +258,12 @@ If C is valid, provide:
 - order type: stop-limit, stop-market, or OC conditional.
 - max chase distance.
 - SL.
-- TP.
-- R:R.
+- T1/T2/T3 TP candidates from the TP candidate map.
+- selected TP, or selected per-leg TP assignment for C100/VOCO multi-leg cases.
+- per-leg R:R and aggregate/all-filled R:R where relevant.
 - invalidation.
 - why C is better than waiting for ladder, or why C is only a backup.
+If C is rejected for poor R:R, include the TP rejection audit and state whether rejection is genuinely poor geometry or insufficient open space.
 
 ==================================================
 D — OC EXECUTION WRAPPER
@@ -264,6 +286,7 @@ VOCO watchdog boundary:
 - Do not change existing breakout/breakdown trigger conditions, candle-quality rules, timeframe logic, expiry logic, or ticket calculations when selecting a VOCO mode.
 - Use `risk_cap_usd`; default is `100` if the user did not specify another risk. Never hardcode `$100` inside VOCO/C100 checks when the user supplied a different cap.
 - If risk cannot be verified, do not approve the proposal; state `Risk verification failed — refresh or resize required.`
+- For VOCO and C100, calculate total reward using the selected per-leg TP assignment. For C100, all-filled aggregate R:R = `sum(per-leg expected profits) / total all-filled-to-SL risk`.
 
 ----------------------------------
 D1 — VIRTUAL_OCO
@@ -271,9 +294,9 @@ D1 — VIRTUAL_OCO
 
 Meaning:
 - Pullback and breakout are alternative ways to enter the same directional idea.
-- OC monitors both paths.
+- OC/watchdog monitors both paths.
 - The first valid trigger/fill wins.
-- The other family is cancelled or blocked.
+- The other family is blocked as a proposal/state path by the watchdog; exchange-order cancellation is only a normal live-order workflow action after separate explicit confirmation.
 - Planned risk remains within `risk_cap_usd` for the selected path.
 - A/B/C risks are not summed because they are alternatives under OCO control.
 
@@ -293,17 +316,16 @@ VIRTUAL_OCO is preferred when:
 
 VIRTUAL_OCO rules:
 - Must define one OCO group ID.
-- OC checks no existing position before placing.
-- OC checks no conflicting open orders before placing.
-- If one family fills, OC immediately cancels or blocks the other family.
-- If cancellation fails, OC must not place additional orders.
+- Before any live placement proposal, check no existing position and no conflicting open orders.
+- If one family fills, the watchdog immediately blocks/disarms the other family as a proposal path; it does not cancel exchange orders.
+- If an explicitly approved future executor is used and exchange cancellation fails, it must not place additional orders.
 - If both sides accidentally fill, state worst-case combined risk and whether it remains acceptable.
-- Preferred safety mode: staged virtual OCO, where OC monitors both ideas but places only the first valid one.
+- Preferred safety mode: staged virtual OCO, where OC monitors both ideas and proposes only the first valid one; actual placement remains separately confirmed.
 
 Reject VIRTUAL_OCO if:
 - one side is weak/forced.
 - one side only exists to increase fill probability.
-- cancellation failure could create unacceptable risk.
+- the plan depends on unconfirmed exchange cancellation and a cancellation failure could create unacceptable risk.
 - both sides together could create uncontrolled exposure.
 
 ----------------------------------
@@ -321,17 +343,17 @@ HYBRID_C100 watchdog mode:
 - A/B ladder may already be live; C remains virtual until trigger.
 - A/B and C are complementary scale-in components, not alternatives.
 - Both may coexist only when C100 was explicitly approved or already active.
-- Before a C proposal, verify combined all-filled risk <= `risk_cap_usd`, one shared structural invalidation, acceptable blended R:R, margin/leverage/liquidation checks when available, and that the existing C trigger/open-space rules still pass.
+- Before a C proposal, verify combined all-filled risk <= `risk_cap_usd`, one shared structural invalidation, acceptable all-filled aggregate R:R using the selected per-leg TP assignment, margin/leverage/liquidation checks when available, and that the existing C trigger/open-space rules still pass.
 - If ladder is fully filled, C may be proposed only if the original C100 plan explicitly allows it and combined risk remains within cap; otherwise state `Ladder fully filled. C requires add-on review.`
 - If combined risk cannot be calculated, do not approve C; state `C100 risk cannot be verified — refresh required.`
-- HYBRID_C100 C alerts must include a `C100 compliance` block: risk cap, combined risk, combined risk <= cap YES/NO, shared invalidation valid YES/NO, blended RR acceptable YES/NO, margin/leverage/liquidation pass YES/NO.
+- HYBRID_C100 C alerts must include a `C100 compliance` block: risk cap, combined risk, combined risk <= cap YES/NO, shared invalidation valid YES/NO, all-filled aggregate R:R acceptable YES/NO using selected per-leg TPs, margin/leverage/liquidation pass YES/NO.
 
 COMBO_100 is allowed only when:
 - same directional thesis.
 - both entries are independently valid.
 - both entries share one coherent structural invalidation.
-- if both fill, blended R:R remains good.
-- all-filled R:R should ideally remain around 1.5+.
+- if both fill, selected per-leg TP assignment keeps aggregate R:R good.
+- all-filled aggregate R:R should ideally remain around 1.5+.
 - breakout trigger is not too close to TP.
 - pullback levels remain valid after breakout.
 - the second fill would not mean the first thesis has failed.
@@ -442,33 +464,35 @@ Brief reason.
 6) Primary Trade Plan Options
 
 A) BEST QUALITY PULLBACK
-Only provide if valid.
+Always provide status: VALID / CONDITIONAL / REJECTED. If valid or conditional, include the fields below. If rejected, do not print a poor/forced ticket; print the exact rejection audit instead.
 Include:
 - Bias:
 - Entry method:
 - Style:
 - Entry zone:
 - SL:
+- TP candidate map / candidates tested:
 - Per-leg TP logic:
-- R:R:
+- Per-leg R:R and aggregate/all-filled R:R:
 - Why quality:
 - Weakness:
 
 B) BEST FILL-PROBABILITY PULLBACK
-Only provide if valid.
+Always provide status: VALID / CONDITIONAL / REJECTED. If valid or conditional, include the fields below. If rejected, do not print a poor/forced ticket; print the exact rejection audit instead.
 Include:
 - Bias:
 - Entry method:
 - Style:
 - Entry zone:
 - SL:
+- TP candidate map / candidates tested:
 - Per-leg TP logic:
-- R:R:
+- Per-leg R:R and aggregate/all-filled R:R:
 - Why fill probability:
 - Weakness:
 
 C) BREAKOUT / BREAKDOWN
-Only provide if valid.
+Always provide status: VALID / CONDITIONAL / REJECTED. If valid or conditional, include the fields below. If rejected, do not print a poor/forced ticket; print the exact rejection audit instead.
 Include:
 - Bias:
 - Entry method:
@@ -478,14 +502,16 @@ Include:
 - Order type:
 - Max chase distance:
 - SL:
-- TP:
-- R:R:
+- T1/T2/T3 TP candidates:
+- Selected TP / per-leg TP assignment:
+- Per-leg R:R and aggregate/all-filled R:R:
 - Why C is valid:
 - Why C is better than waiting for ladder, or why C is only backup:
 - Weakness/fakeout risk:
 
-If A, B, or C is rejected, briefly state why.
-Do not provide poor/forced/invalid options.
+If A, B, or C is rejected for poor R:R, include the TP rejection audit: TP candidates tested, source, distance ATR4H, open-space validity, used/rejected reason, best realistic TP combination tested, per-leg R:R, all-filled R:R, and whether rejection is due to genuinely poor geometry or insufficient open space.
+If A, B, or C is rejected for a non-R:R reason, state the exact blocker, observed value/condition, required value/condition, why it blocks, and what would fix it.
+Do not provide poor/forced/invalid trade tickets; rejected sections are still required as status/audit sections.
 
 7) OC Execution Wrapper
 
@@ -611,8 +637,8 @@ Separate ticket for each valid standalone option A/B/C.
 For every valid A/B/C ticket include table: Leg | Entry | Type | Qty | Notional | SL | Loss | TP | Profit | RR | Trigger.
 
 Rules:
-- Each row must have its own TP.
-- Do not repeat same TP for all ladder legs.
+- Each row must have one TP. Assign TP independently per leg.
+- Distinct TPs are preferred, but identical TPs are allowed when the same structural target is objectively the best realistic exit for multiple legs. Do not invent a farther TP only to make TP values different.
 - For C, include trigger condition and max chase.
 - For OC conditional orders, mark trigger clearly.
 - State risk, margin, leverage, blended entry, all-filled R:R.
