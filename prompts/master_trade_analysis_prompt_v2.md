@@ -66,6 +66,8 @@ Core rules:
 - SL must be structural, not only chosen for better R:R.
 - TP design is structure-first and independently optimized per order leg. Do not reject A/B/C for poor R:R until realistic TP candidates and per-leg TP assignments have been tested.
 - Each order must have one TP. Assign TP independently for each leg. Distinct TPs are preferred, but identical TPs are allowed when the same structural target is objectively the best realistic exit for multiple legs. Do not invent a farther TP only to make TP values different. Do not reject an otherwise valid ladder only because two legs share the same realistic TP.
+- Do not collapse a valid multi-leg A or B ladder into one conservative leg merely because shallow legs have weaker R:R or because live liquidity is RED. If the ladder is chart-valid, print the full A and/or B ticket and mark it WATCH_ONLY / NOT_LIVE_PLACEABLE when liquidity blocks live execution.
+- Leg-specific TP realism must account for entry depth: shallow fill-probability legs usually use nearer resistance, while deeper structural support legs may use a broader visible channel/range target when screenshots show open space. Do not force the deepest leg to exit at the same first resistance used for shallow legs.
 - TP must be realistic, not invented to make R:R look good. Round numbers are secondary confluence only. Fib/ATR targets cannot be used alone without visible structural support.
 - Static tickets are preferred.
 - No discretionary future cancellation, SL move, trailing SL, or post-fill adjustment.
