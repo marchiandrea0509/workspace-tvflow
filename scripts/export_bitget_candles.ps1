@@ -42,7 +42,10 @@ while ($true) {
   if ($prevOldest -ne $null -and [int64]$oldest -ge [int64]$prevOldest) { break }
   $prevOldest = [int64]$oldest
   if ($batch.Count -lt $Limit) { break }
-  $endTime = ([int64]$oldest - 1).ToString()
+  # Bitget history-candles treats endTime as an aligned candle boundary.
+  # Using oldest-1ms skips the candle immediately before the page on 1H.
+  # Use oldest open time for the next page; rows are de-duplicated by timestamp.
+  $endTime = ([int64]$oldest).ToString()
   Start-Sleep -Milliseconds 180
 }
 
