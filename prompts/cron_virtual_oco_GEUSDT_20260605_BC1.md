@@ -34,7 +34,7 @@ Interpretation:
 - If message starts with `VIRTUAL OCO CHECK`, send that message to the room, commit state, then final reply exactly `NO_REPLY`.
 - If message starts with `VIRTUAL OCO ALERT`, send that exact virtual-trigger message by DM as above, commit state after the notification attempt, then final reply exactly `NO_REPLY`.
 - If message starts with `VIRTUAL OCO LIVE LEG FILLED`, send that exact message to the room only (`channel:1499631210283008002`), commit state after the notification attempt, then final reply exactly `NO_REPLY`.
-- If the watchdog says it is already `ALERTED` / `LIVE_LEG_FILLED` / `INVALIDATED` / `EXPIRED`, do not send another alert; disable the cron if possible and final reply exactly `NO_REPLY`.
+- If the watchdog says it is already `ALERTED` / `LIVE_LEG_FILLED` / `INVALIDATED` / `EXPIRED`, do not send another alert; remove/delete the cron if possible and final reply exactly `NO_REPLY`.
 - If command errors or state is unclear, send a concise room alert saying the GEUSDT virtual OCO watchdog check failed and no order was placed, including the blocker, then final reply exactly `NO_REPLY`.
 
 This job checks only the latest fully CLOSED 4H candle after close+17m and never triggers from intrabar wicks. GE B ladder is live/resting; C1 is virtual alert-only and must never auto-place live.

@@ -14,7 +14,7 @@
   "risk_cap_usd": 100,
   "scheduler": {
     "cronId": "3f9fffd2-9a6a-4acc-99ef-c2314404b3f2",
-    "cancelCronAfterTerminal": true,
+    "deleteCronAfterTerminal": true,
     "note": "B sell-rally ladder is live at 5x; C breakdown is virtual/alert-only. Scheduled at 4H close+11m, staggered after AAPL/EWY. If C triggers, cancel/block B through normal live-order workflow before accepting C; do not let B and C execute together."
   },
   "expiryUtc": "2026-06-04T20:00:00Z",

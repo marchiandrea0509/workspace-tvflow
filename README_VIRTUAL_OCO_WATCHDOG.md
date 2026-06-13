@@ -15,7 +15,7 @@ Reusable read-only Bitget Virtual OCO alert watchdog for prepared D/VOCO trade i
 - Real/live order fill resolution (`VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`) is **room-only**; it must not DM Andrea.
 - For scheduled Discord VOCOs, **do not rely on cron runner DM delivery**. Use the in-agent Discord message tool / direct message-tool route for critical DM alerts.
 - After alert/expiry/invalidation/live-fill resolution, state stops until explicitly re-armed.
-- For scheduled watchdogs, set `scheduler.cronId` and keep `scheduler.cancelCronAfterTerminal: true`; after the terminal state is committed, the tool disables that OpenClaw cron job so it does not keep waking uselessly.
+- For scheduled watchdogs, set `scheduler.cronId` and keep `scheduler.deleteCronAfterTerminal: true`; after the terminal state is committed, the tool removes that OpenClaw cron job completely so the dashboard does not accumulate dead VOCO jobs. Legacy `cancelCronAfterTerminal: true` is still accepted as an alias, but now means delete/remove, not disable.
 
 ## Files
 
@@ -42,7 +42,7 @@ Copy-Item watchdog\virtual_oco_watchdog.template.json watchdog\virtual_oco_MYTRA
 - optionally set `execution_mode` to `PURE_VOCO`, `HYBRID_VOCO`, or `HYBRID_C100`; if omitted, the tool infers from read-only live state
 - paste the prepared A/B pullback ticket and/or C breakout/breakdown ticket exactly from the deep analysis
 - set `preferredFamily` if both sides pass on the same check
-- for scheduled jobs, set `scheduler.cronId` to the OpenClaw cron job id and keep `scheduler.cancelCronAfterTerminal: true`
+- for scheduled jobs, set `scheduler.cronId` to the OpenClaw cron job id and keep `scheduler.deleteCronAfterTerminal: true`
 - keep `discord.target` as Andrea user DM for ad-hoc `-Send`; for scheduled cron jobs use the direct message-tool routing pattern below
 
 3. Dry-run/check without sending:
@@ -72,7 +72,7 @@ If you want visible feedback on every scheduled check, set `feedbackOnEveryCheck
 The watchdog supports three alert-only modes:
 
 - `PURE_VOCO`: A/B pullback and C breakout/breakdown are both virtual alternatives. First valid family triggers a DM proposal, blocks the other family, and stops the watchdog.
-- `HYBRID_VOCO`: A/B ladder orders may already be live while C remains virtual. A/B and C are alternatives. If C triggers while ladder orders are still open/unfilled, the DM warns that ladder exposure must be cancelled/blocked through the normal live-order workflow before accepting C. Once a matching live ladder/order/position is detected, duplicate A/B pullback alerts are suppressed by default because Bitget is already managing that live leg. Once any matching live ladder leg is actually filled / a matching position is active (`PARTIALLY_FILLED` or `FULLY_FILLED`), the watchdog terminally cancels/disarms the virtual alternative, sends a room-only `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED` update, and disables its cron when configured. Set `suppressPullbackAlertsWhenLiveLadderDetected: false` only for an intentional virtual pullback re-alert; set `resolveHybridVocoOnLiveFill: false` only if Andrea explicitly wants the virtual alternative to remain armed after a live fill.
+- `HYBRID_VOCO`: A/B ladder orders may already be live while C remains virtual. A/B and C are alternatives. If C triggers while ladder orders are still open/unfilled, the DM warns that ladder exposure must be cancelled/blocked through the normal live-order workflow before accepting C. Once a matching live ladder/order/position is detected, duplicate A/B pullback alerts are suppressed by default because Bitget is already managing that live leg. Once any matching live ladder leg is actually filled / a matching position is active (`PARTIALLY_FILLED` or `FULLY_FILLED`), the watchdog terminally cancels/disarms the virtual alternative, sends a room-only `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED` update, and removes its cron when configured. Set `suppressPullbackAlertsWhenLiveLadderDetected: false` only for an intentional virtual pullback re-alert; set `resolveHybridVocoOnLiveFill: false` only if Andrea explicitly wants the virtual alternative to remain armed after a live fill.
 - `HYBRID_C100`: A/B ladder and C may coexist only when the original analysis/config explicitly approves C100 or a C100 plan/order is already active. C trigger requires combined all-filled risk verification against `risk_cap_usd`.
 
 Mode inference when `execution_mode` is blank:
@@ -124,7 +124,7 @@ Recommended scheduled job behavior:
 6. If the message is `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`, send it only to the Bitget Trades room (`channel:1499631210283008002`), then commit state. Do not DM.
 7. If the message is `VIRTUAL OCO INVALIDATED` or `VIRTUAL OCO EXPIRED`, send it to the Bitget Trades room unless it contains an actual virtual trigger proposal.
 8. After the notification attempt completes, run the watchdog once without `-NoStateUpdate` to persist state. If notification could not be attempted at all, do not commit state; leave it armed for retry.
-9. On the commit run, if the watchdog returns `ALERTED`, `LIVE_LEG_FILLED`, `EXPIRED`, or `INVALIDATED` and `scheduler.cancelCronAfterTerminal` is enabled, the tool runs `openclaw cron disable <scheduler.cronId>` automatically.
+9. On the commit run, if the watchdog returns `ALERTED`, `LIVE_LEG_FILLED`, `EXPIRED`, or `INVALIDATED` and `scheduler.deleteCronAfterTerminal` is enabled, the tool runs `openclaw cron remove <scheduler.cronId>` automatically. The legacy aliases `cancelCronAfterTerminal`, `removeCronAfterTerminal`, and `disableCronAfterTerminal` are accepted, but terminal cleanup still removes/deletes the cron rather than leaving it disabled.
 
 This avoids the failure mode where cron runner delivery resolves `dm:<id>` but returns `not-delivered`, while preserving DM-first mobile alerts.
 

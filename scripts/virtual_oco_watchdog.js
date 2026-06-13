@@ -454,30 +454,66 @@ function sendDiscord(message, config, result = {}) {
   return { status: res.status, stdout: res.stdout || '' };
 }
 
-function maybeCancelCronAfterTerminal(result, config, args = {}) {
-  if (!TERMINAL_STATUSES.has(result?.status)) return null;
-  if (args.updateState === 'false') return null;
-  const scheduler = config.scheduler || config.cron || {};
-  const shouldCancel = scheduler.cancelCronAfterTerminal === true || scheduler.disableCronAfterTerminal === true;
-  const cronId = scheduler.cronId || scheduler.jobId || scheduler.id;
-  if (!shouldCancel) return null;
-  if (!cronId) {
-    return { attempted: false, ok: false, reason: 'scheduler.cancelCronAfterTerminal=true but scheduler.cronId is missing' };
-  }
-  const res = spawnSync('openclaw', ['cron', 'disable', String(cronId)], {
+function runOpenClawCronCommand(subcommand, cronId) {
+  const res = spawnSync('openclaw', ['cron', subcommand, String(cronId)], {
     encoding: 'utf8',
     windowsHide: true,
-    timeout: 30000,
+    timeout: 10000,
     maxBuffer: 1024 * 1024,
   });
   return {
-    attempted: true,
-    ok: res.status === 0,
-    cronId: String(cronId),
-    action: 'openclaw cron disable',
+    subcommand,
     status: res.status,
+    ok: res.status === 0,
     error: res.error ? (res.error.message || String(res.error)) : undefined,
     stderr: res.stderr ? res.stderr.slice(0, 2000) : undefined,
+    stdout: res.stdout ? res.stdout.slice(0, 2000) : undefined,
+  };
+}
+
+function maybeDeleteCronAfterTerminal(result, config, args = {}) {
+  if (!TERMINAL_STATUSES.has(result?.status)) return null;
+  if (args.updateState === 'false') return null;
+  const scheduler = config.scheduler || config.cron || {};
+  const shouldDelete = scheduler.deleteCronAfterTerminal === true
+    || scheduler.removeCronAfterTerminal === true
+    || scheduler.cancelCronAfterTerminal === true
+    || scheduler.disableCronAfterTerminal === true;
+  const cronId = scheduler.cronId || scheduler.jobId || scheduler.id;
+  if (!shouldDelete) return null;
+  if (!cronId) {
+    return { attempted: false, ok: false, reason: 'scheduler delete/remove after terminal is enabled but scheduler.cronId is missing' };
+  }
+
+  // User-facing cleanup requirement: expired/triggered VOCO cron jobs should disappear from
+  // the dashboard, not just be disabled. Keep old config keys as compatibility aliases, but
+  // perform a remove/delete action by default.
+  const preferredAction = String(scheduler.terminalCronAction || scheduler.cronTerminalAction || 'remove').toLowerCase();
+  const candidates = preferredAction === 'delete'
+    ? ['delete', 'remove']
+    : preferredAction === 'remove'
+      ? ['remove', 'delete']
+      : [preferredAction, 'remove', 'delete'];
+  const attempts = [];
+  for (const subcommand of [...new Set(candidates)]) {
+    const attempt = runOpenClawCronCommand(subcommand, cronId);
+    attempts.push(attempt);
+    if (attempt.ok) {
+      return {
+        attempted: true,
+        ok: true,
+        cronId: String(cronId),
+        action: `openclaw cron ${subcommand}`,
+        attempts,
+      };
+    }
+  }
+  return {
+    attempted: true,
+    ok: false,
+    cronId: String(cronId),
+    action: 'openclaw cron remove/delete',
+    attempts,
   };
 }
 function listFromResponse(response) {
@@ -967,8 +1003,8 @@ async function evaluate(config, args = {}) {
     sendDiscord(result.message, config, result);
     result.sentDiscord = true;
   }
-  const cronCancellation = maybeCancelCronAfterTerminal(result, config, args);
-  if (cronCancellation) result.cronCancellation = cronCancellation;
+  const cronDeletion = maybeDeleteCronAfterTerminal(result, config, args);
+  if (cronDeletion) result.cronDeletion = cronDeletion;
   if (args.json) console.log(JSON.stringify(result, null, 2));
   else if (['ALERTED', 'INVALIDATED', 'EXPIRED', 'LIVE_LEG_FILLED', 'CHECKED', 'CHECKED_ALREADY'].includes(result.status)) console.log(result.message);
   else console.log('NO_REPLY');

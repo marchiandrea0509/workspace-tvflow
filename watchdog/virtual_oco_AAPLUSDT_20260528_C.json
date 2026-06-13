@@ -14,7 +14,7 @@
   "risk_cap_usd": 100,
   "scheduler": {
     "cronId": "d1528f70-ed8d-46c3-8a26-ec065855b36b",
-    "cancelCronAfterTerminal": true,
+    "deleteCronAfterTerminal": true,
     "note": "Disable the scheduled watchdog after ALERTED/EXPIRED/INVALIDATED is committed."
   },
   "expiryUtc": "2026-05-31T20:00:00Z",

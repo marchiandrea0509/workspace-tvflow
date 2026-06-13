@@ -11,7 +11,7 @@
   "risk_cap_usd": 100,
   "scheduler": {
     "cronId": "1ec52fa7-a13e-40d7-ae9a-400fbbf358c9",
-    "cancelCronAfterTerminal": true,
+    "deleteCronAfterTerminal": true,
     "note": "Alert-only VOCO A+C1 for GEUSDT from 2026-06-04 deep analysis. No live order placement. A pullback and C1 breakout are virtual alternatives; if one triggers, user must separately authorize any live Bitget action. GE liquidity gate was RED at creation, so any alert requires fresh gate/manual review before live order. Scheduled at 4H close+8m UTC."
   },
   "expiryUtc": "2026-06-09T20:00:00Z",

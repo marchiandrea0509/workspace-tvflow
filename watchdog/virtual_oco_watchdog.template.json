@@ -34,8 +34,8 @@
   },
   "scheduler": {
     "cronId": "",
-    "cancelCronAfterTerminal": true,
-    "note": "For scheduled watchdogs, set cronId to the OpenClaw cron job id. After ALERTED/EXPIRED/INVALIDATED is committed, the tool disables that cron so it does not keep waking."
+    "deleteCronAfterTerminal": true,
+    "note": "For scheduled watchdogs, set cronId to the OpenClaw cron job id. After ALERTED/EXPIRED/INVALIDATED/LIVE_LEG_FILLED is committed, the tool removes that cron completely so stale VOCO jobs do not remain in the dashboard."
   },
   "expiryUtc": "2026-05-25T20:00:00Z",
   "preferredFamily": "A",

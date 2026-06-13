@@ -14,7 +14,7 @@
   "risk_cap_usd": 100,
   "scheduler": {
     "cronId": "857eaf78-92d6-478a-a35c-f6e7343c8b97",
-    "cancelCronAfterTerminal": true,
+    "deleteCronAfterTerminal": true,
     "note": "B pullback ladder is live at 8x isolated; C1 breakout is virtual/alert-only. Scheduled at 4H close+17m UTC. If C1 triggers, alert Andrea first; do not auto-place C1. B live/resting exposure must be cancelled/blocked through the normal live-order workflow before any C1 live execution."
   },
   "expiryUtc": "2026-06-10T20:00:00Z",
