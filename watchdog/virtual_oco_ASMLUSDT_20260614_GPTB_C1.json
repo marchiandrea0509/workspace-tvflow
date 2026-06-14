@@ -1,0 +1,118 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_ASMLUSDT_20260614_GPTB_C1",
+  "symbol": "ASMLUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 8,
+  "feedbackOnEveryCheck": false,
+  "execution_mode": "HYBRID_VOCO",
+  "suppressPullbackAlertsWhenLiveLadderDetected": true,
+  "resolveHybridVocoOnLiveFill": true,
+  "risk_cap_usd": 100,
+  "c100Approved": false,
+  "liveState": {
+    "enabled": true,
+    "planTypes": ["normal_plan", "profit_loss", "track_plan"],
+    "ladderClientOidIncludes": ["oc-asml-gptB-voco-20260614-B1", "oc-asml-gptB-voco-20260614-B2", "oc-asml-gptB-voco-20260614-B3"],
+    "c100ClientOidIncludes": ["C100"],
+    "positionImpliesFilledLadder": true,
+    "cancelVirtualAlternativeOnLiveFill": true,
+    "priceTolerance": 0.002
+  },
+  "scheduler": {
+    "cronId": "80d259ae-7fae-4c65-9143-ad44aeb6b6e8",
+    "deleteCronAfterTerminal": true,
+    "note": "Set after live B placement after Andrea confirmed RED-liquidity override and 8x isolated. Schedule 4H close+8m unless slot conflict."
+  },
+  "expiryUtc": "2026-06-19T20:00:00Z",
+  "preferredFamily": "B",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 10,
+  "discord": {
+    "target": "user:1322306175865323552",
+    "routineTarget": "channel:1499631210283008002",
+    "alertTarget": "user:1322306175865323552",
+    "alertRetryTarget": "dm:1322306175865323552",
+    "fallbackTarget": "channel:1499631210283008002"
+  },
+  "globalInvalidation": {
+    "note": "Invalidate long PB thesis if price trades below GPT structural invalidation 1768.0.",
+    "priceCrosses": 1768.0,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "B",
+    "bias": "LONG",
+    "style": "DIP_LADDER",
+    "orderTypeProposal": "GPT Option B live regular limit ladder already placed after explicit confirmation; watchdog suppresses virtual PB alerts when live ladder detected.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 1779.0, "max": 1846.5 },
+    "entries": [
+      { "level": "B1", "entry": 1846.5, "quantity": 0.31, "notional": 572.42, "sl": 1768.0, "tp": 1924.5, "plannedRisk": 24.34, "rr": 0.99 },
+      { "level": "B2", "entry": 1821.0, "quantity": 0.66, "notional": 1201.86, "sl": 1768.0, "tp": 1924.5, "plannedRisk": 34.98, "rr": 1.95 },
+      { "level": "B3", "entry": 1779.0, "quantity": 3.63, "notional": 6457.77, "sl": 1768.0, "tp": 1924.5, "plannedRisk": 39.93, "rr": 13.23 }
+    ],
+    "ticket": {
+      "entry": "B1 1846.50 / B2 1821.00 / B3 1779.00",
+      "sl": 1768.0,
+      "tp": "1924.50 all legs",
+      "quantity": "0.31 + 0.66 + 3.63",
+      "notional": 8232.05,
+      "plannedRisk": 99.25,
+      "margin": 1029.01,
+      "leverage": 8,
+      "rr": 6.25,
+      "minRr": 1.5,
+      "invalidation": "4H failure/trade below 1768.0 invalidates GPT pullback thesis below broken 1779 prior high",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 6.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "Virtual C1 alert only. If triggered while B ladder is live/resting, alert Andrea to cancel/block B through normal live-order workflow before accepting C. Watchdog never places/cancels exchange orders.",
+    "trigger": 1868.5,
+    "confirmationRule": "closed_above_trigger",
+    "stalenessReference": 1868.5,
+    "maxStalenessDistance": 5.5,
+    "maxStalenessUnit": "PRICE",
+    "minCloseBufferAtr": 0.05,
+    "minClosePositionLong": 0.60,
+    "ticket": {
+      "entry": "C1 1870.00 stop-limit after 4H close > 1868.50; max chase 1874.00",
+      "sl": 1835.0,
+      "tp": 1924.5,
+      "quantity": 2.85,
+      "notional": 5329.5,
+      "plannedRisk": 99.75,
+      "margin": 666.19,
+      "leverage": 8,
+      "rr": 1.56,
+      "minRr": 1.2,
+      "invalidation": "Failure below 1835.0 after confirmed breakout",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "confirmations": [],
+    "noImmediateRejectionConditions": [
+      {
+        "description": "closed candle stayed above breakout trigger",
+        "field": "checkClosed.close",
+        "op": ">=",
+        "value": 1868.5
+      }
+    ]
+  },
+  "breakoutMinCloseBufferAtr": 0.05,
+  "breakoutMinClosePositionLong": 0.60,
+  "breakoutMaxClosePositionShort": 0.40
+}

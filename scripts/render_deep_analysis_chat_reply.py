@@ -80,6 +80,7 @@ def main() -> int:
     ap.add_argument("--out", help="Write chat draft to this path")
     ap.add_argument("--chunk-dir", help="Optional directory for Discord-sized chunks")
     ap.add_argument("--chunk-limit", type=int, default=1800, help="Chunk size for --chunk-dir")
+    ap.add_argument("--allow-long-single-message", action="store_true", help="Permit a rendered reply longer than --chunk-limit without --chunk-dir. Use only outside Discord.")
     ap.add_argument("--no-path", action="store_true", help="Do not include saved report path in rendered reply")
     args = ap.parse_args()
 
@@ -101,6 +102,23 @@ def main() -> int:
             print(f"- {failure['key']}: {failure['message']}", file=sys.stderr)
         return 3
 
+    # Discord answers must not be hand-compressed after this render step. A long
+    # validated reply without chunk output is exactly how prior regressions
+    # happened: the report passed, then the assistant summarized it manually.
+    # Fail closed unless the caller explicitly says this is not a Discord send.
+    if len(reply) > args.chunk_limit and not args.chunk_dir and not args.allow_long_single_message:
+        print(
+            "ERROR: rendered reply is longer than the Discord-safe chunk limit. "
+            "Run again with --chunk-dir and send the generated chunks verbatim; "
+            "do not replace them with a compressed summary.",
+            file=sys.stderr,
+        )
+        print(f"reply_chars: {len(reply)}", file=sys.stderr)
+        print(f"chunk_limit: {args.chunk_limit}", file=sys.stderr)
+        suggested = report_path.with_suffix(report_path.suffix + ".discord_chunks")
+        print(f"suggested_chunk_dir: {suggested.as_posix()}", file=sys.stderr)
+        return 4
+
     if args.out:
         out_path = Path(args.out)
         out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -114,7 +132,7 @@ def main() -> int:
         chunks = chunk_text(reply, args.chunk_limit)
         total = len(chunks)
         for i, chunk in enumerate(chunks, start=1):
-            prefix = f"({i}/{total})\n" if total > 1 else ""
+            prefix = f"({i}/{total}) — validated deep-analysis reply chunk. Send chunks verbatim; do not summarize.\n" if total > 1 else ""
             (chunk_dir / f"chunk_{i:02d}.md").write_text(prefix + chunk, encoding="utf-8")
 
     if not args.out and not args.chunk_dir:

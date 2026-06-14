@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "50_Prompt_and_Tool_Patches/Deep Analysis Prompt Evolution.md",
+                "file": "00_Index/OpenClaw Usage Rules.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Deep Analysis Prompt Evolution"
+              "title": "OpenClaw Usage Rules"
             }
           }
         ]
@@ -53,11 +53,11 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "deep analysis",
+                "query": "",
                 "matchingCase": false,
-                "explainSearch": false,
+                "explainSearch": true,
                 "collapseAll": false,
-                "extraContext": false,
+                "extraContext": true,
                 "sortOrder": "alphabetical"
               },
               "icon": "lucide-search",
@@ -185,14 +185,16 @@
   },
   "active": "39fdafa3ba01c331",
   "lastOpenFiles": [
-    "50_Prompt_and_Tool_Patches/2026-06-07 VOCO live-fill routing.md",
+    "90_Inbox_Unprocessed/Deep Analysis Prompt Evolution.md",
+    "00_Index/OpenClaw Usage Rules.md",
+    "90_Inbox_Unprocessed/2026-06-14.md",
+    "Untitled.canvas",
     "50_Prompt_and_Tool_Patches/Deep Analysis Prompt Evolution.md",
+    "50_Prompt_and_Tool_Patches/2026-06-07 VOCO live-fill routing.md",
     "50_Prompt_and_Tool_Patches/README.md",
     "90_Inbox_Unprocessed/README.md",
-    "90_Inbox_Unprocessed/Deep Analysis Prompt Evolution.md",
     "30_Outcome_Audits/README.md",
     "00_Index/Home.md",
-    "00_Index/OpenClaw Usage Rules.md",
     "20_Trade_Journal/README.md",
     "40_Liquidity_Orderability/README.md"
   ]
