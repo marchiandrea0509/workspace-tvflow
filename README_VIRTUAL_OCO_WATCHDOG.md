@@ -14,8 +14,10 @@ Reusable read-only Bitget Virtual OCO alert watchdog for prepared D/VOCO trade i
 - Actual **virtual-order trigger proposals** (`VIRTUAL OCO ALERT — TRADE PROPOSAL READY`) should land in Andrea's Discord DM first, with room mention fallback if DM attempts fail.
 - Real/live order fill resolution (`VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`) is **room-only**; it must not DM Andrea.
 - For scheduled Discord VOCOs, **do not rely on cron runner DM delivery**. Use the in-agent Discord message tool / direct message-tool route for critical DM alerts.
+- On Windows/Node cron runs, do not assume bare `openclaw` is spawnable from Node; the JS watchdog resolves OpenClaw through the installed `openclaw.mjs` path and `process.execPath` for Discord sends and cron cleanup.
+- If a terminal notification send fails, the JS watchdog restores state to `ARMED`, records `TERMINAL_NOTIFICATION_FAILED`, clears the checked-candle lock, and preserves `pendingTerminalAlert` so a missed DM does not silently consume the trigger.
 - After alert/expiry/invalidation/live-fill resolution, state stops until explicitly re-armed.
-- For scheduled watchdogs, set `scheduler.cronId` and keep `scheduler.deleteCronAfterTerminal: true`; after the terminal state is committed, the tool removes that OpenClaw cron job completely so the dashboard does not accumulate dead VOCO jobs. Legacy `cancelCronAfterTerminal: true` is still accepted as an alias, but now means delete/remove, not disable.
+- For scheduled watchdogs, set `scheduler.cronId` and keep `scheduler.deleteCronAfterTerminal: true`; after the terminal state is committed, the tool removes that OpenClaw cron job completely so the dashboard does not accumulate dead VOCO jobs. Legacy `cancelCronAfterTerminal: true` is still accepted as an alias, but now means delete/remove, not disable. The cleanup path accepts the current OpenClaw `cron rm` command as well as legacy `remove/delete` aliases.
 
 ## Files
 
@@ -124,9 +126,9 @@ Recommended scheduled job behavior:
 6. If the message is `VIRTUAL OCO LIVE LEG FILLED — VIRTUAL ALTERNATIVE CANCELLED`, send it only to the Bitget Trades room (`channel:1499631210283008002`), then commit state. Do not DM.
 7. If the message is `VIRTUAL OCO INVALIDATED` or `VIRTUAL OCO EXPIRED`, send it to the Bitget Trades room unless it contains an actual virtual trigger proposal.
 8. After the notification attempt completes, run the watchdog once without `-NoStateUpdate` to persist state. If notification could not be attempted at all, do not commit state; leave it armed for retry.
-9. On the commit run, if the watchdog returns `ALERTED`, `LIVE_LEG_FILLED`, `EXPIRED`, or `INVALIDATED` and `scheduler.deleteCronAfterTerminal` is enabled, the tool runs `openclaw cron remove <scheduler.cronId>` automatically. The legacy aliases `cancelCronAfterTerminal`, `removeCronAfterTerminal`, and `disableCronAfterTerminal` are accepted, but terminal cleanup still removes/deletes the cron rather than leaving it disabled.
+9. On the commit run, if the watchdog returns `ALERTED`, `LIVE_LEG_FILLED`, `EXPIRED`, or `INVALIDATED` and `scheduler.deleteCronAfterTerminal` is enabled, the tool runs OpenClaw cron cleanup automatically (`cron rm` preferred when needed; legacy `remove/delete` attempted too). The legacy aliases `cancelCronAfterTerminal`, `removeCronAfterTerminal`, and `disableCronAfterTerminal` are accepted, but terminal cleanup still removes/deletes the cron rather than leaving it disabled.
 
-This avoids the failure mode where cron runner delivery resolves `dm:<id>` but returns `not-delivered`, while preserving DM-first mobile alerts.
+This avoids the failure mode where cron runner delivery resolves `dm:<id>` but returns `not-delivered`, while preserving DM-first mobile alerts. It also avoids the Windows/Node failure mode where `spawnSync('openclaw', ...)` raises `ENOENT`; the watchdog now invokes the installed `openclaw.mjs` via Node and records/rearms terminal-notification failures instead of silently consuming the trigger.
 
 For a normal 4H watchdog, schedule around minute `5` after 00:00/04:00/08:00/12:00/16:00/20:00 UTC; if another 4H watchdog already uses that slot, use the next 3-minute slot (`8`, then `11`, etc.).
 

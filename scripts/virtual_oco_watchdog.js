@@ -441,6 +441,51 @@ ${note ? `Note: ${note}\n` : ''}${lines.join('\n')}
 
 Status: still armed. No live order was placed.`;
 }
+function openClawCliInvocation(args) {
+  const envCli = process.env.OPENCLAW_CLI_MJS;
+  const appData = process.env.APPDATA;
+  const userProfile = process.env.USERPROFILE;
+  const candidates = [
+    envCli,
+    appData ? path.join(appData, 'npm', 'node_modules', 'openclaw', 'openclaw.mjs') : null,
+    userProfile ? path.join(userProfile, 'AppData', 'Roaming', 'npm', 'node_modules', 'openclaw', 'openclaw.mjs') : null,
+  ].filter(Boolean);
+  const cli = candidates.find((candidate) => fs.existsSync(candidate));
+  if (cli) return { command: process.execPath, args: [cli, ...args], display: `node ${cli}` };
+  return { command: 'openclaw', args, display: 'openclaw' };
+}
+
+function spawnOpenClaw(args, options = {}) {
+  const invocation = openClawCliInvocation(args);
+  const res = spawnSync(invocation.command, invocation.args, {
+    encoding: 'utf8',
+    windowsHide: true,
+    maxBuffer: 1024 * 1024,
+    ...options,
+  });
+  return { ...res, invocation };
+}
+
+function markTerminalNotificationFailed(result, err) {
+  if (!TERMINAL_STATUSES.has(result?.status) || !result?.statePath) return null;
+  const state = loadJsonFallback(result.statePath, null);
+  if (!state || state.status !== result.status) return null;
+  state.status = 'ARMED';
+  state.lastStatus = 'TERMINAL_NOTIFICATION_FAILED';
+  state.notificationFailedAt = new Date().toISOString();
+  state.notificationError = err?.message || String(err);
+  state.pendingTerminalAlert = {
+    status: result.status,
+    message: result.message,
+    selected: result.selected,
+    blocked: result.blocked,
+    failedAt: state.notificationFailedAt,
+  };
+  delete state.lastCheckedCandleStartMs;
+  saveJson(result.statePath, state);
+  return { statePath: result.statePath, restoredStatus: 'ARMED', lastStatus: state.lastStatus };
+}
+
 function sendDiscord(message, config, result = {}) {
   const dm = config.discord || {};
   const target = result.status === 'LIVE_LEG_FILLED'
@@ -448,18 +493,15 @@ function sendDiscord(message, config, result = {}) {
     : (dm.target || dm.dmTarget || process.env.OPENCLAW_VOCO_DISCORD_TARGET);
   if (!target) throw new Error('Discord target missing. Set config.discord.target, e.g. "dm:1322306175865323552".');
   const args = ['message', 'send', '--channel', 'discord', '--target', target, '--message', message, '--json'];
-  const res = spawnSync('openclaw', args, { encoding: 'utf8', windowsHide: true, maxBuffer: 1024 * 1024 });
+  const res = spawnOpenClaw(args);
   if (res.error) throw res.error;
-  if (res.status !== 0) throw new Error(`openclaw message send failed (${res.status}): ${res.stderr || res.stdout}`);
-  return { status: res.status, stdout: res.stdout || '' };
+  if (res.status !== 0) throw new Error(`${res.invocation.display} message send failed (${res.status}): ${res.stderr || res.stdout}`);
+  return { status: res.status, stdout: res.stdout || '', invocation: res.invocation.display };
 }
 
 function runOpenClawCronCommand(subcommand, cronId) {
-  const res = spawnSync('openclaw', ['cron', subcommand, String(cronId)], {
-    encoding: 'utf8',
-    windowsHide: true,
+  const res = spawnOpenClaw(['cron', subcommand, String(cronId)], {
     timeout: 10000,
-    maxBuffer: 1024 * 1024,
   });
   return {
     subcommand,
@@ -490,10 +532,12 @@ function maybeDeleteCronAfterTerminal(result, config, args = {}) {
   // perform a remove/delete action by default.
   const preferredAction = String(scheduler.terminalCronAction || scheduler.cronTerminalAction || 'remove').toLowerCase();
   const candidates = preferredAction === 'delete'
-    ? ['delete', 'remove']
+    ? ['delete', 'remove', 'rm']
     : preferredAction === 'remove'
-      ? ['remove', 'delete']
-      : [preferredAction, 'remove', 'delete'];
+      ? ['remove', 'delete', 'rm']
+      : preferredAction === 'rm'
+        ? ['rm', 'remove', 'delete']
+        : [preferredAction, 'remove', 'delete', 'rm'];
   const attempts = [];
   for (const subcommand of [...new Set(candidates)]) {
     const attempt = runOpenClawCronCommand(subcommand, cronId);
@@ -1000,8 +1044,14 @@ async function evaluate(config, args = {}) {
   const config = loadJson(path.resolve(args.config));
   const result = await evaluate(config, args);
   if (args.send === 'true' && TERMINAL_STATUSES.has(result.status)) {
-    sendDiscord(result.message, config, result);
-    result.sentDiscord = true;
+    try {
+      result.discordSend = sendDiscord(result.message, config, result);
+      result.sentDiscord = true;
+    } catch (err) {
+      result.sentDiscord = false;
+      result.notificationRecovery = markTerminalNotificationFailed(result, err);
+      throw err;
+    }
   }
   const cronDeletion = maybeDeleteCronAfterTerminal(result, config, args);
   if (cronDeletion) result.cronDeletion = cronDeletion;
