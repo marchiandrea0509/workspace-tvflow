@@ -15,7 +15,7 @@ Format parity rule:
 - The Discord/chat answer is the deliverable, not just the saved markdown report. Do not reply with a compressed summary when a deep analysis was requested.
 - Use the compact 5-day swing-plan style unless Andrea explicitly asks for a shorter summary: header with current price / ATR4H / classification / bias; Context and State TF table; Key Levels table; Pullback Impulse Used section with fib table; A/B/C/D setup sections; Orderability traffic-light table; Final verdict bullets.
 - Never omit the Pullback Impulse Used section, valid A/B/C ticket tables, or the traffic-light orderability table from chat if they exist in the report/packet.
-- In the traffic-light orderability section, separate `A. Liquidity and executable orderability`, `B. Operational safety`, and `C. Risk and feasibility`. Use the gate priority/order in section 8. Do not mix existing-order/position checks with liquidity metrics. If a metric was not run, print `⚪ NOT RUN` rather than omitting it.
+- In the traffic-light orderability section, separate `A. Liquidity and executable orderability`, `B. Operational safety`, and `C. Risk and feasibility`. Use the gate priority/order in section 8. Do not mix existing-order/position checks with liquidity metrics. Discord-facing orderability must be a compact square table with `Gate | Value | Limit / rule | Traffic light` columns, where the final column is only the colored ball (`🟢`, `🟡`, `🔴`, `⚪`). If a metric was not run, print `⚪ NOT RUN` rather than omitting it.
 
 ARM-approved anti-regression rule:
 - The 2026-06-01 ARMUSDT corrected report is the accepted layout standard. Future deep-analysis outputs must preserve that exact section family: Header / classification, Context and state, Detected/Structure level map, Pullback impulse used with alternatives, explicit A, B, C1/C2, D/VOCO sections, Orderability / liquidity traffic-light table, Risk sizing summary, Final verdict.
@@ -571,7 +571,7 @@ Separate chart validity from live/exchange orderability:
   - `A. Liquidity and executable orderability`
   - `B. Operational safety`
   - `C. Risk and feasibility`
-- `A. Liquidity and executable orderability` table columns exactly: `Gate | Observed | Limit / required | Status | Risk if failed | Note`.
+- Discord-facing orderability tables use exactly these core columns: `Gate | Value | Limit / rule | Traffic light`. `Gate` = pass/fail gate name, `Value` = observed numeric value, `Limit / rule` = threshold/rule, `Traffic light` = only `🟢` / `🟡` / `🔴` / `⚪`. Longer notes may follow after the square table, but should not replace the four core columns.
 - Liquidity rows must appear in this priority order:
   1. Stop-exit simulated slippage — report baseline current-book slippage, worst observed slippage across snapshots when available, and 50%-visible-depth stressed slippage. The 50%-depth haircut is the decision metric. GREEN <20% extra slippage vs planned risk; YELLOW <=35%; RED >35% or full size cannot fill.
   2. Near-market executable depth — replace depth-to-SL as the hard depth check. For longs evaluate bids; for shorts evaluate asks. Report visible opposite-side depth within 0.25% and 0.50% of current price. 0.25% thresholds: GREEN >=3x position notional, YELLOW >=1.5x, RED <1.5x. 0.50% thresholds: GREEN >=5x, YELLOW >=2.5x, RED <2.5x.

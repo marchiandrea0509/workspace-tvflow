@@ -711,7 +711,10 @@ function light(status) {
 }
 
 function row(lines, gate, observed, limit, status, risk, note) {
-  lines.push(`${gate} | ${observed} | ${limit} | ${light(status)} | ${risk} | ${note}`);
+  lines.push(`${gate} | ${observed} | ${limit} | ${light(status)}`);
+  if (risk || note) {
+    lines.push(`  - Note: ${[risk, note].filter(Boolean).join(' ')}`);
+  }
 }
 
 function formatGateReport(gate) {
@@ -719,7 +722,7 @@ function formatGateReport(gate) {
   const lines = [];
   lines.push(`LIQUIDITY GATE — ${gate.inputs.symbol}`);
   lines.push('A. Liquidity and executable orderability');
-  lines.push('Gate | Observed | Limit / required | Status | Risk if failed | Note');
+  lines.push('Gate | Value | Limit / rule | Traffic light');
   row(lines,
     '1. Stop-exit simulated slippage',
     `baseline ${fmtNum(m.simSlippage.baselineCurrentBook?.extraLossUsdt, 2)} USDT (${fmtNum(m.simSlippage.baselineCurrentBook?.extraLossPct, 2)}% risk); worst ${fmtNum(m.simSlippage.worstObservedCurrentBook?.extraLossUsdt, 2)} USDT; 50%-depth ${fmtNum(m.simSlippage.extraLossUsdt, 2)} USDT (${fmtNum(m.simSlippage.extraLossPct, 2)}% risk)`,
