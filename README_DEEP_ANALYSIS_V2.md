@@ -25,6 +25,8 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - TP assignment must be leg-depth aware. Shallow entries should usually use nearer resistance; deeper support entries can use broader visible channel/range targets when screenshots show structure and open space. Do not force all legs to use the shallow-leg TP.
 - When price is near major 4H/1D resistance/support, A/B pullback construction must not anchor only to the latest small/local impulse or to the packet builder's `selected_builder_impulse`. Use the broad visible 4H parent swing as the default A/B anchor; local breakout/retest levels may define A/B only after a confirmed 4H break/hold, otherwise B may add at most one shallow local leg while A remains broad/deeper value. If the packet static scan says no candidate but screenshots show valid broad-swing levels, manually test the screenshot levels instead of letting the static scan veto them.
 - Previous-week/range-high correction: if price is extended just below a visible previous-week/range high, the final analysis must test that high as the parent-swing high and realistic static TP candidate before rejecting A/B. Do not let a lower packet selected high/current close cap TP when screenshots show the higher liquidity target. If user/GPT attachments supply a coherent level map, audit it explicitly against the screenshot map.
+- ATH / price-discovery refresh correction: after a fresh ATH breakout, do not reject all higher refresh ladders only because no historical resistance exists above current price. Build a conservative extension TP map from visible breakout geometry: fresh high retest, 1.118/1.272 impulse extensions, and nearby round-number front-runs (e.g. targets just before `370`). These can be valid static TPs when conservative and paired with a structural shelf-loss SL. Regression case: GEUSDT 2026-06-17 — GPT Option B (`356.20/352.60/348.80`, SL `345.90`, TPs `366/366/368.5`) was better because tvflow used a deeper `339.81` SL and did not test the exact supplied SL/TP combination.
+- Exact user/GPT ticket audit: when Andrea supplies a preferred ticket, calculate the exact ticket before rejecting it: per-leg risk, per-leg R:R, first-leg / first-2-leg / all-filled R:R, margin at requested or implied leverage, and live liquidity. Do not let packet static scan warnings or same-side-structure warnings veto the supplied ticket before this audit. If chart-valid but liquidity is RED, preserve it as `WATCH_ONLY / REQUIRES RED-LIQUIDITY OVERRIDE`.
 - Huge-impulse prior-high retest correction: after a very large 4H impulse from a broad base through a previous-week/range high into a fresh high, test both the tactical flag-shelf SL and the deeper broken-range-high retest SL before finalizing A/B. Do not omit the deep prior-high retest leg merely because it is several ATR below current if it remains inside the active 5-day breakout thesis and supplies the main aggregate R:R. A shallow B1 with ~1R or slightly below is acceptable only when its risk share is small and deeper legs carry the setup quality. Regression case: ASMLUSDT 2026-06-14 — GPT's B used broad `1620.35→1926.68`, entries `1846.5/1821.0/1779.0`, SL `1768.0`, TP `1924.5`; tvflow over-focused on tactical `1805.5` invalidation and omitted the `1779` retest leg.
 - Shelf-loss SL correction: for bullish pullbacks after a breakout/retest shelf, test a structural SL just below that immediate shelf plus 0.25-0.50 ATR4H before forcing invalidation to older impulse-base supports, EMA200, or stale lower clusters. If losing the shelf would already invalidate the immediate thesis, lower supports are warnings/context, not automatic SL vetoes. Regression case: ASMLUSDT 2026-06-09 — GPT's broad `1621.76→1779.47` map with `1655` shelf-loss SL and Option B `1719.20/1700.60/1682.00` was overfiltered by tvflow's wider `1626/1612` SL scan.
 - Every final report and chat reply must explicitly print `PB impulse used` for A/B: selected swing low->high (or high->low), reason, and approximate 23.6/38.2/50/61.8 levels when useful. It must also compare the nearest local/broad/stale impulse alternatives when materially different and explain why they were not used. This is a known failure mode in tvflow vs GPT comparisons.
@@ -106,22 +108,25 @@ Validator limitation / chat-parity rule: `validate_deep_analysis_report.py` only
 
 ARM-approved layout anti-regression: Andrea explicitly preferred the corrected ARMUSDT 2026-06-01 deep-analysis format. Treat it as the canonical finalization checklist, not as optional style. A complete report/chat must include Header/classification, Context and state, Detected/Structure level map, Pullback impulse used with local/broad alternatives, explicit A, B, C1/C2, D/VOCO sections, Orderability/liquidity traffic-light table, Risk sizing summary, and Final verdict. If a GPT/user attachment contains a coherent ticket, audit it as a candidate before rejecting it. If the visible chart high/low differs from the packet's closed-candle impulse, compare both before selecting or rejecting A/B levels.
 
-Mechanical validation gate: before calling a deep-analysis report complete, run:
+Mechanical delivery gate — mandatory after the 2026-06-17 GEUSDT regression: before calling a deep-analysis answer complete, run the single strict finalizer:
+
+```powershell
+python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
+```
+
+This command validates the saved report, renders the actual Discord/chat answer, writes `discord_reply.md`, writes `discord_chunks/chunk_*.md`, validates the combined chunks, and adds a `VERBATIM_DEEP_ANALYSIS_CHUNK` marker to each chunk. If it fails, do **not** answer with a manual summary; fix the report first. The next assistant message must be copied from the generated `chunk_*.md` files verbatim and in order.
+
+Legacy individual commands remain available for debugging only:
 
 ```powershell
 python scripts\validate_deep_analysis_report.py --report reports\deep_analysis\<REPORT>.md
-```
-
-Then render and validate the actual Discord/chat answer from that report:
-
-```powershell
 python scripts\render_deep_analysis_chat_reply.py `
   --report reports\deep_analysis\<REPORT>.md `
   --out reports\deep_analysis\<REPORT>.discord_reply.md `
   --chunk-dir reports\deep_analysis\<REPORT>.discord_chunks
 ```
 
-Send the generated `discord_chunks/chunk_*.md` files verbatim, in order, when the rendered reply is longer than the Discord-safe chunk limit. The renderer now fails closed for long replies unless `--chunk-dir` is supplied, because the known regression path is: saved report passes, rendered reply is long, assistant hand-compresses the Discord answer. Do not replace chunks with a short verdict summary unless Andrea explicitly requested a short summary.
+Known failure mode: a saved report may pass, or an analysis may be mentally complete, while the actual Discord answer is a hand-written compressed verdict. That is a failed deliverable. Do not replace chunks with a short verdict summary unless Andrea explicitly requested a short summary.
 
 The validator intentionally uses the ARMUSDT 2026-06-01 report as the accepted structural reference. If it fails, do **not** send the report/chat answer; fix the missing section(s) first. Known regression proof: `reports/deep_analysis/2026-06-01_ARMUSDT_deep_analysis.md` passes, `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis.md` fails, and `reports/deep_analysis/2026-06-02_TSMUSDT_deep_analysis_corrected.md` passes.
 

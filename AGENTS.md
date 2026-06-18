@@ -41,3 +41,14 @@ For live Bitget order workflows, durable notes should include:
 Never rely only on memory of the chat for a fixed weakness; encode it in code, docs, or project state before considering the workflow hardened.
 
 For deep-analysis quality feedback, use `README_DEEP_ANALYSIS_FEEDBACK.md` and create records under `reports/deep_analysis_feedback/` when Andrea provides GPT comparisons, preferred tickets, or journal/outcome lessons. Treat GPT as an audit source, not an authority: compare, tag the failure mode, then patch prompts/tools/docs only when justified by a repeated, clear, or safety-critical weakness.
+
+## Deep-analysis delivery hard stop
+For any user request like `Analyse SYMBOL.P`, `analyze SYMBOL`, or a fresh Bitget deep-analysis request, the chat answer itself must use the full validated 5-day swing-plan section family. Do **not** manually summarize from memory, screenshots, or packet output.
+
+Mandatory final step before sending the analysis:
+
+```powershell
+python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
+```
+
+If this command fails, the correct response is to say the report is not delivery-valid yet and continue fixing it. The next analysis message must be copied from the generated `discord_chunks/chunk_*.md` files verbatim and in order. A short verdict-only reply is allowed only when Andrea explicitly asks for a short summary.
