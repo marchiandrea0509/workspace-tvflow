@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -24,8 +23,6 @@ if str(SCRIPT_DIR) not in sys.path:
 from validate_deep_analysis_report import validate  # noqa: E402
 from render_deep_analysis_chat_reply import chunk_text, render_chat_reply  # noqa: E402
 
-REQUIRED_VERBATIM_MARKER = "VERBATIM_DEEP_ANALYSIS_CHUNK"
-
 
 def write_chunks(reply: str, chunk_dir: Path, limit: int) -> list[Path]:
     chunk_dir.mkdir(parents=True, exist_ok=True)
@@ -33,10 +30,14 @@ def write_chunks(reply: str, chunk_dir: Path, limit: int) -> list[Path]:
         old.unlink()
     chunks = chunk_text(reply, limit)
     paths: list[Path] = []
-    total = len(chunks)
     for i, chunk in enumerate(chunks, start=1):
-        marker = f"[{REQUIRED_VERBATIM_MARKER} {i}/{total} — paste/send this chunk exactly; do not summarize]"
-        text = f"{marker}\n{chunk.rstrip()}\n"
+        # IMPORTANT: chunk files are user-visible delivery artifacts. Keep them
+        # clean. Do not prepend control markers/instructions here; those belong
+        # in the manifest only. A previous version wrote
+        # "VERBATIM_DEEP_ANALYSIS_CHUNK ..." into chunk_*.md and the assistant
+        # correctly followed "send verbatim", leaking internal delivery metadata
+        # into Discord and making the first-shot format ugly.
+        text = f"{chunk.rstrip()}\n"
         path = chunk_dir / f"chunk_{i:02d}.md"
         path.write_text(text, encoding="utf-8")
         paths.append(path)
@@ -48,11 +49,9 @@ def validate_rendered_chunks(paths: list[Path]) -> dict:
     failures: list[str] = []
     for p in paths:
         text = p.read_text(encoding="utf-8-sig")
-        if REQUIRED_VERBATIM_MARKER not in text.splitlines()[0]:
-            failures.append(f"{p}: missing verbatim marker")
-        # Strip only marker lines for structural validation of the combined reply.
-        stripped = re.sub(rf"^\[{REQUIRED_VERBATIM_MARKER}[^\n]*\]\n?", "", text, flags=re.M)
-        combined_parts.append(stripped)
+        if "VERBATIM_DEEP_ANALYSIS_CHUNK" in text:
+            failures.append(f"{p}: contains user-visible internal chunk marker")
+        combined_parts.append(text)
     combined = "\n".join(combined_parts)
     result = validate(combined)
     if not result["ok"]:
@@ -109,13 +108,14 @@ def main() -> int:
 
     manifest = {
         "status": "PASS",
-        "rule": "Send chunk_*.md verbatim and in order. Do not write a compressed manual summary.",
+        "rule": "Send clean chunk_*.md content verbatim and in order. Do not include internal marker text. Do not write a compressed manual summary.",
         "report": str(report_path),
         "reply": str(out_path),
         "chunkDir": str(chunk_dir),
         "chunks": [str(p) for p in chunk_paths],
         "chunkCount": len(chunk_paths),
         "chunkLimit": args.chunk_limit,
+        "userVisibleChunksAreClean": True,
     }
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -125,7 +125,7 @@ def main() -> int:
     print(f"reply: {out_path}")
     print(f"chunks: {chunk_dir}")
     print(f"manifest: {manifest_path}")
-    print("NEXT ACTION: send chunk_*.md verbatim, in order. Do not summarize.")
+    print("NEXT ACTION: send clean chunk_*.md content verbatim, in order. Do not summarize and do not add marker text.")
     return 0
 
 

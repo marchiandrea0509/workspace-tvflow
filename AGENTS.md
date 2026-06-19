@@ -51,4 +51,16 @@ Mandatory final step before sending the analysis:
 python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
 ```
 
-If this command fails, the correct response is to say the report is not delivery-valid yet and continue fixing it. The next analysis message must be copied from the generated `discord_chunks/chunk_*.md` files verbatim and in order. A short verdict-only reply is allowed only when Andrea explicitly asks for a short summary.
+If this command fails, the correct response is to say the report is not delivery-valid yet and continue fixing it.
+
+After finalizer PASS and before replying, run the dedicated delivery-auditor subagent/check using `prompts/deep_analysis_delivery_auditor.md` against the saved report, rendered reply, and `discord_chunks/chunk_*.md`. Treat `AUDIT_FAIL` as a hard stop: fix the files, rerun finalizer, and audit again. The auditor must confirm that chunks are clean user-visible content with no `VERBATIM_DEEP_ANALYSIS_CHUNK` or other internal marker leakage, that all chunks are present/in order, and that the final verdict is included.
+
+Deterministic audit command, mandatory even if a subagent is used:
+
+```powershell
+python scripts\audit_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
+```
+
+This must print `AUDIT_PASS`. If it prints `AUDIT_FAIL`, do not answer the analysis yet.
+
+Only after `AUDIT_PASS`, the next analysis message must be copied from the generated clean `discord_chunks/chunk_*.md` files verbatim and in order. A short verdict-only reply is allowed only when Andrea explicitly asks for a short summary.
