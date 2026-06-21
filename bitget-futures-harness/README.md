@@ -156,6 +156,16 @@ node scripts/execution-service-dry-run.js --plan path\to\execution-plan.json --r
 
 Audit JSON files are written to `reports/live_execution/audit/`.
 
+## Position / order diagnostic
+
+For read-only recommendations on currently open Bitget futures orders/positions, use:
+
+```powershell
+node scripts/position-order-diagnostic.js --markdownOut reports/diagnostics/latest.md --out reports/diagnostics/latest.json
+```
+
+This tool only classifies and recommends (`KEEP_UNCHANGED`, `CANCEL_UNFILLED`, `TP_REFRESH`, etc.). It never cancels, modifies, exits, or places exchange orders. See `README_POSITION_DIAGNOSTIC.md`.
+
 ## Live-trading safety
 
 The harness refuses live order placement unless **both** are true:

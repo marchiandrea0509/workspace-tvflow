@@ -12,6 +12,7 @@
     "market-metrics": "node scripts/export-market-metrics.js",
     "positions": "node scripts/positions.js",
     "list-open-orders": "node scripts/list-open-orders.js",
+    "position-diagnostic": "node scripts/position-order-diagnostic.js",
     "set-margin-mode": "node scripts/set-margin-mode.js",
     "set-leverage": "node scripts/set-leverage.js",
     "place-order": "node scripts/place-order.js",
