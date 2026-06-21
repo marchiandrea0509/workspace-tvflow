@@ -44,6 +44,8 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - `scripts/build_deep_analysis_packet_v2.py` - core packet builder.
 - `scripts/run_deep_analysis_packet_v2.ps1` - normal wrapper; can optionally run Playwright chart captures.
 - `prompts/master_trade_analysis_prompt_v2.md` - prompt for final LLM analysis.
+- `schemas/deep_analysis_decision.schema.json` - fast-path model decision JSON contract.
+- `scripts/render_deep_analysis_from_decision_json.py` - deterministic report renderer from decision JSON; owns section order/tables/format.
 - `schemas/deep_analysis_packet_contract_v2.md` - output contract.
 - `README_DEEP_ANALYSIS_FEEDBACK.md` - v0 continuous-improvement loop for GPT/user/journal feedback.
 - `scripts/create_deep_analysis_feedback.py` - helper to create structured feedback records.
@@ -115,7 +117,7 @@ Mechanical delivery gate — mandatory after the 2026-06-17 GEUSDT regression: b
 python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
 ```
 
-This command validates the saved report, renders the actual Discord/chat answer, writes `discord_reply.md`, writes `discord_chunks/chunk_*.md`, validates the combined chunks, and adds a `VERBATIM_DEEP_ANALYSIS_CHUNK` marker to each chunk. If it fails, do **not** answer with a manual summary; fix the report first. The next assistant message must be copied from the generated `chunk_*.md` files verbatim and in order.
+This command validates the saved report, renders the actual Discord/chat answer, writes `discord_reply.md`, writes clean user-visible `discord_chunks/chunk_*.md`, validates the combined chunks, and writes delivery metadata to `manifest.json`. It must **not** put internal control markers into chunk files. If it fails, do **not** answer with a manual summary; fix the report first. The next assistant message must be copied from the generated clean `chunk_*.md` files verbatim and in order.
 
 Legacy individual commands remain available for debugging only:
 
@@ -178,12 +180,40 @@ reports/deep_analysis_packets_v2/YYYYMMDD_HHMMSS_SYMBOL/
     candidate_levels.json              # full levels + candidate design
     freshness_check.json
     decision_packet_compact.json       # compact final-decision payload
+    decision_packet_ultra_compact.json # fast decision-only payload for JSON->renderer path
   llm_input_packet.md                   # compact packet for normal final LLM/report step
+  llm_decision_request_ultra_compact.md # fast-path prompt: model returns decision JSON only
   llm_input_packet_V2.full.md           # verbose full packet for comparison/audit/debug
   llm_input_packet_full.md              # backward-compatible alias of V2.full
 ```
 
 Feed compact `llm_input_packet.md` together with `prompts/master_trade_analysis_prompt_v2.md` into the normal final analysis step. Keep `llm_input_packet_V2.full.md`, `analysis_summary.json`, and raw files for comparison/audit/debug only. The compact packet preserves mandatory rules, selected decision facts, and compact valid/rejected candidate alternatives for A/B pullback validation while removing duplicated raw data, repeated leverage arrays, long pivot histories, and bulky manifests. Final C breakout/breakdown and D OC-wrapper judgment comes primarily from the screenshot read plus any fallback/export validation.
+
+## Fast-path final decision renderer
+
+Andrea approved moving report-format ownership from the model into code to reduce runtime while preserving format quality. The safe fast path is:
+
+1. Build the normal packet. The builder now also writes:
+   - `derived/decision_packet_ultra_compact.json`
+   - `llm_decision_request_ultra_compact.md`
+2. Feed `llm_decision_request_ultra_compact.md` plus the required screenshot reads to the final model.
+3. The model must return **only JSON** matching `schemas/deep_analysis_decision.schema.json`; it should decide content, not write markdown.
+4. Render the report deterministically:
+
+```powershell
+python scripts\render_deep_analysis_from_decision_json.py `
+  --decision reports\deep_analysis\<SYMBOL>_decision.json `
+  --out reports\deep_analysis\<REPORT>.md
+```
+
+5. Run the existing mandatory delivery gates:
+
+```powershell
+python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
+python scripts\audit_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
+```
+
+Format quality rule: the renderer owns canonical headings, ticket-table columns, traffic-light tables, risk table, and Discord chunking. The model owns judgment: chart state, selected impulse, A/B/C/D validity, ticket content, warnings, and final verdict. If rendered output fails validation/audit, fix the decision JSON or renderer; do not bypass with a manual summary.
 
 Comparison rule: if comparing compact vs `V2.full`, run each final LLM analysis in an isolated context with only its own packet and the same master prompt/model. Do not paste the first result into the second run, or the second result can be influenced by the first.
 

@@ -45,6 +45,8 @@ For deep-analysis quality feedback, use `README_DEEP_ANALYSIS_FEEDBACK.md` and c
 ## Deep-analysis delivery hard stop
 For any user request like `Analyse SYMBOL.P`, `analyze SYMBOL`, or a fresh Bitget deep-analysis request, the chat answer itself must use the full validated 5-day swing-plan section family. Do **not** manually summarize from memory, screenshots, or packet output.
 
+Fast-path renderer note: when using the optimized final-decision workflow, the model may output `deep_analysis_decision_v1` JSON from `llm_decision_request_ultra_compact.md`, but the report must then be rendered by `python scripts\render_deep_analysis_from_decision_json.py --decision <decision.json> --out reports\deep_analysis\<REPORT>.md`. The renderer, finalizer, and audit own the delivery format; never send the decision JSON itself as the user-facing analysis.
+
 Mandatory final step before sending the analysis:
 
 ```powershell

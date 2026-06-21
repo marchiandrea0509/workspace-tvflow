@@ -2425,6 +2425,153 @@ The full raw/audit packet remains on disk. Do not infer live-execution permissio
     path.write_text(content, encoding="utf-8")
 
 
+def _first_items(value: Any, limit: int) -> Any:
+    if isinstance(value, list):
+        return value[:limit]
+    return value
+
+
+def _compact_reason_list(value: Any, limit: int = 5) -> List[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(x) for x in value if x][:limit]
+
+
+def ultra_compact_candidate(candidate: Any) -> Dict[str, Any]:
+    """Keep only decision-useful candidate fields for the fast final model pass."""
+    if not isinstance(candidate, dict):
+        return {}
+    keep = [
+        "entries_name", "entry_prices", "stop_loss", "stop_loss_source", "take_profit",
+        "take_profit_source", "per_leg_take_profits", "actual_risk_usdt", "estimated_reward_usdt",
+        "total_notional_usdt", "estimated_margin_at_planned_leverage_usdt", "blended_entry",
+        "rr_l1_only", "rr_l1_l2", "rr_all_filled", "l1_risk_share", "sl_distance_atr_from_blended",
+        "sl_hierarchy_clear", "first_entry_distance_atr4h", "fill_probability_distance_ok",
+        "tp_distance_atr_from_blended", "valid_static_ticket", "valid_best_quality",
+        "valid_best_fill_probability", "option_compliance",
+    ]
+    out = {k: candidate.get(k) for k in keep if k in candidate}
+    out["per_leg_take_profits"] = _first_items(out.get("per_leg_take_profits"), 3)
+    if isinstance(candidate.get("selected_leverage_check"), dict):
+        out["selected_leverage_check"] = {
+            k: candidate["selected_leverage_check"].get(k)
+            for k in ("leverage", "estimated_margin_usdt", "liquidation_safety", "ok")
+            if k in candidate["selected_leverage_check"]
+        }
+    if isinstance(candidate.get("sl_hierarchy_uncleared_levels"), list):
+        out["sl_hierarchy_uncleared_levels"] = candidate["sl_hierarchy_uncleared_levels"][:5]
+    out["reject_reasons"] = _compact_reason_list(candidate.get("reject_reasons"), 5)
+    out["warning_reasons"] = _compact_reason_list(candidate.get("warning_reasons"), 5)
+    return out
+
+
+def make_ultra_compact_decision_payload(compact_payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Create a smaller model input whose output is JSON rendered by code.
+
+    The existing compact packet remains available for audit/debug. This packet is
+    intentionally narrow: the model should make the trade-quality decision and
+    return `deep_analysis_decision_v1` JSON, while markdown format is owned by
+    `render_deep_analysis_from_decision_json.py`.
+    """
+    ctd = compact_payload.get("candidate_trade_design") or {}
+    scan = ctd.get("static_optimisation_scan_summary") or {}
+    evidence = compact_payload.get("evidence_files") or {}
+    return {
+        "packet_type": "ultra_compact_deep_analysis_decision_packet_v1",
+        "usage": (
+            "Fast final-decision input. Analyze screenshots/visible chart structure first; use this packet for "
+            "ATR/current price/sizing/levels/candidate validation. Return ONLY JSON matching "
+            "schemas/deep_analysis_decision.schema.json, then render with scripts/render_deep_analysis_from_decision_json.py."
+        ),
+        "format_quality_contract": {
+            "model_owns": [
+                "market judgment", "selected/rejected A/B/C/D options", "key reasons", "final verdict bullets"
+            ],
+            "code_owns": [
+                "section order", "markdown tables", "ticket table schema", "traffic-light table schema", "Discord chunks"
+            ],
+            "renderer": "scripts/render_deep_analysis_from_decision_json.py",
+            "schema": "schemas/deep_analysis_decision.schema.json",
+            "gates_after_render": [
+                "python scripts/validate_deep_analysis_report.py --report <rendered.md>",
+                "python scripts/finalize_deep_analysis_delivery.py --report <rendered.md>",
+                "python scripts/audit_deep_analysis_delivery.py --report <rendered.md>",
+            ],
+        },
+        "hard_rules": [
+            "Screenshots / visible TradingView chart structure are primary truth for structure and levels.",
+            "A/B/C are alternatives unless D explicitly wraps them; do not sum alternative risks.",
+            "Planned risk target is 100 USDT unless user specified otherwise; live execution is excluded.",
+            "1500 USDT is max margin target after leverage recalculation up to 20x, not max notional.",
+            "Every valid A/B/C option must include canonical ticket rows in the JSON.",
+            "Rejected options must state the exact blocking reason and what would fix them.",
+            "Orderability must be split into liquidity, operational safety, and risk/feasibility gates.",
+            "Any live placement requires a separate explicit confirmation outside this report.",
+        ],
+        "manifest": compact_payload.get("manifest"),
+        "freshness": compact_payload.get("freshness"),
+        "price_reference": compact_payload.get("ladder_price_reference"),
+        "contract_rules": compact_payload.get("contract_rules_compact"),
+        "timeframes": compact_payload.get("timeframes"),
+        "levels": {
+            "supports": _first_items((compact_payload.get("key_levels_nearest") or {}).get("supports"), 12),
+            "resistances": _first_items((compact_payload.get("key_levels_nearest") or {}).get("resistances"), 12),
+            "detected_level_map": _first_items(compact_payload.get("detected_level_map"), 16),
+        },
+        "candidate_context": {
+            "source_priority_warning": ctd.get("source_priority_warning"),
+            "side": ctd.get("side"),
+            "current_price_reference": ctd.get("current_price_reference"),
+            "atr4h_reference": ctd.get("atr4h_reference"),
+            "impulse_analysis_4h": ctd.get("impulse_analysis_4h"),
+            "impulse_zone_comparison": ctd.get("impulse_zone_comparison"),
+            "value_zone": ctd.get("value_zone"),
+            "invalidation_logic": ctd.get("invalidation_logic"),
+            "stop_loss_candidate": ctd.get("stop_loss_candidate"),
+            "warnings": _compact_reason_list(ctd.get("warnings"), 8),
+            "near_market_rejected_entries": _first_items(ctd.get("near_market_rejected_entries"), 8),
+            "precomputed_orders_secondary": _first_items(ctd.get("orders"), 3),
+            "static_scan": {
+                "priority": scan.get("priority"),
+                "candidate_count": scan.get("candidate_count"),
+                "best_quality_candidate": ultra_compact_candidate(scan.get("best_quality_candidate")),
+                "best_fill_probability_candidate": ultra_compact_candidate(scan.get("best_fill_probability_candidate")),
+                "valid_candidate_alternatives": [
+                    ultra_compact_candidate(x)
+                    for x in _first_items(scan.get("valid_candidate_alternatives_compact"), 4) or []
+                ],
+                "shallow_fill_probability_leg_audit": _first_items(scan.get("shallow_fill_probability_leg_audit_compact"), 6),
+                "rejected_candidate_examples": [
+                    ultra_compact_candidate(x)
+                    for x in _first_items(scan.get("rejected_candidate_examples_compact"), 3) or []
+                ],
+            },
+        },
+        "execution_state": compact_payload.get("execution_state"),
+        "evidence_files": {
+            "tv_exports": evidence.get("tv_exports"),
+            "preferred_media_files": evidence.get("preferred_media_files"),
+            "analysis_summary_full": evidence.get("analysis_summary_full"),
+            "candidate_levels_full": evidence.get("candidate_levels_full"),
+        },
+    }
+
+
+def make_ultra_compact_llm_packet(path: Path, ultra_payload: Dict[str, Any]) -> None:
+    content = f"""# Ultra-Compact Deep-Analysis Decision Packet - {((ultra_payload.get('manifest') or {}).get('symbol'))}
+
+Use this packet for the fast final-decision pass.
+
+Return **only JSON** matching `schemas/deep_analysis_decision.schema.json`.
+Do not write markdown. Markdown/report format is rendered by `scripts/render_deep_analysis_from_decision_json.py`.
+
+```json
+{json.dumps(ultra_payload, indent=2, ensure_ascii=False)}
+```
+"""
+    path.write_text(content, encoding="utf-8")
+
+
 def make_full_llm_packet(path: Path, master_prompt: str, manifest: Dict[str, Any], analysis_summary: Dict[str, Any], market_snapshot: Dict[str, Any], execution_state: Dict[str, Any], files: Dict[str, Any]) -> None:
     def j(x: Any) -> str:
         return json.dumps(x, indent=2, ensure_ascii=False)
@@ -2666,6 +2813,9 @@ def main() -> int:
     compact_payload = make_compact_decision_payload(manifest, analysis_summary, execution_state, files)
     write_json(derived_dir / "decision_packet_compact.json", compact_payload)
     files["derived"]["decision_packet_compact"] = str(derived_dir / "decision_packet_compact.json")
+    ultra_compact_payload = make_ultra_compact_decision_payload(compact_payload)
+    write_json(derived_dir / "decision_packet_ultra_compact.json", ultra_compact_payload)
+    files["derived"]["decision_packet_ultra_compact"] = str(derived_dir / "decision_packet_ultra_compact.json")
 
     # Keep the original verbose packet for audit/debug, but make the canonical
     # llm_input_packet.md compact so normal deep-analysis runs are cheaper and
@@ -2675,13 +2825,16 @@ def main() -> int:
     # Backward-compatible alias for older notes/tools; V2.full is the explicit comparison name.
     shutil.copy2(v2_full_packet, out_dir / "llm_input_packet_full.md")
     make_compact_llm_packet(out_dir / "llm_input_packet.md", args.master_prompt, compact_payload)
+    make_ultra_compact_llm_packet(out_dir / "llm_decision_request_ultra_compact.md", ultra_compact_payload)
     print(json.dumps({
         "packet_dir": str(out_dir),
         "llm_input_packet": str(out_dir / "llm_input_packet.md"),
         "llm_input_packet_kind": "compact",
+        "llm_decision_request_ultra_compact": str(out_dir / "llm_decision_request_ultra_compact.md"),
         "full_llm_input_packet": str(v2_full_packet),
         "full_llm_input_packet_alias": str(out_dir / "llm_input_packet_full.md"),
         "decision_packet_compact_json": str(derived_dir / "decision_packet_compact.json"),
+        "decision_packet_ultra_compact_json": str(derived_dir / "decision_packet_ultra_compact.json"),
         "analysis_summary": str(derived_dir / "analysis_summary.json"),
         "symbol": symbol,
         "side": args.side,

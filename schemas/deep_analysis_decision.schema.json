@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/schemas/deep_analysis_decision.schema.json",
+  "title": "Deep Analysis Decision v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "title",
+    "header",
+    "contextState",
+    "detectedLevelMap",
+    "pullbackImpulse",
+    "options",
+    "orderability",
+    "riskSizing",
+    "finalVerdict"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "deep_analysis_decision_v1" },
+    "title": { "type": "string", "minLength": 1 },
+    "header": {
+      "type": "object",
+      "required": ["fields"],
+      "properties": {
+        "fields": {
+          "type": "array",
+          "minItems": 4,
+          "items": { "$ref": "#/$defs/fieldRow" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "contextState": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "$ref": "#/$defs/contextRow" }
+    },
+    "detectedLevelMap": {
+      "type": "array",
+      "minItems": 6,
+      "items": { "$ref": "#/$defs/levelRow" }
+    },
+    "pullbackImpulse": {
+      "type": "object",
+      "required": ["narrative", "rows"],
+      "properties": {
+        "narrative": { "type": "string", "minLength": 1 },
+        "rows": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/impulseRow" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "options": {
+      "type": "object",
+      "required": ["A", "B", "C1", "C2", "D"],
+      "properties": {
+        "A": { "$ref": "#/$defs/option" },
+        "B": { "$ref": "#/$defs/option" },
+        "C1": { "$ref": "#/$defs/option" },
+        "C2": { "$ref": "#/$defs/option" },
+        "D": { "$ref": "#/$defs/option" }
+      },
+      "additionalProperties": true
+    },
+    "orderability": {
+      "type": "object",
+      "required": ["liquidity", "operationalSafety", "riskFeasibility"],
+      "properties": {
+        "liquidity": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/gateRow" } },
+        "operationalSafety": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/gateRow" } },
+        "riskFeasibility": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/gateRow" } }
+      },
+      "additionalProperties": true
+    },
+    "riskSizing": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/riskRow" }
+    },
+    "finalVerdict": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "fieldRow": {
+      "type": "object",
+      "required": ["field", "value"],
+      "properties": {
+        "field": { "type": "string" },
+        "value": { "type": ["string", "number", "boolean", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "contextRow": {
+      "type": "object",
+      "required": ["tf", "state", "evidence", "executionMeaning"],
+      "properties": {
+        "tf": { "type": "string" },
+        "state": { "type": "string" },
+        "evidence": { "type": "string" },
+        "executionMeaning": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "levelRow": {
+      "type": "object",
+      "required": ["level", "type", "source", "planUse"],
+      "properties": {
+        "level": { "type": ["string", "number"] },
+        "type": { "type": "string" },
+        "source": { "type": "string" },
+        "planUse": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "impulseRow": {
+      "type": "object",
+      "required": ["impulse", "levels", "decision"],
+      "properties": {
+        "impulse": { "type": "string" },
+        "levels": { "type": "string" },
+        "decision": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "option": {
+      "type": "object",
+      "required": ["status", "commentary"],
+      "properties": {
+        "status": { "type": "string" },
+        "commentary": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "ticket": { "type": "array", "items": { "$ref": "#/$defs/ticketRow" } },
+        "tables": { "type": "array", "items": { "$ref": "#/$defs/genericTable" } }
+      },
+      "additionalProperties": true
+    },
+    "ticketRow": {
+      "type": "object",
+      "required": ["leg", "entry", "type", "qty", "notional", "sl", "loss", "tp", "profit", "rr", "trigger"],
+      "properties": {
+        "leg": {}, "entry": {}, "type": {}, "qty": {}, "notional": {}, "sl": {}, "loss": {}, "tp": {}, "profit": {}, "rr": {}, "trigger": {}
+      },
+      "additionalProperties": true
+    },
+    "gateRow": {
+      "type": "object",
+      "required": ["gate", "value", "limitRule", "trafficLight"],
+      "properties": {
+        "gate": { "type": "string" },
+        "value": {},
+        "limitRule": { "type": "string" },
+        "trafficLight": { "type": "string", "enum": ["🟢", "🟡", "🔴", "⚪", "⚪ NOT RUN"] }
+      },
+      "additionalProperties": true
+    },
+    "riskRow": {
+      "type": "object",
+      "required": ["plan", "status", "risk", "reward", "rr", "notional", "margin"],
+      "properties": {
+        "plan": {}, "status": {}, "risk": {}, "reward": {}, "rr": {}, "notional": {}, "margin": {}
+      },
+      "additionalProperties": true
+    },
+    "genericTable": {
+      "type": "object",
+      "required": ["headers", "rows"],
+      "properties": {
+        "title": { "type": "string" },
+        "headers": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "rows": { "type": "array", "items": { "type": "array" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
