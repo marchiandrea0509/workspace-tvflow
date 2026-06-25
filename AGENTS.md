@@ -12,6 +12,26 @@ This is the main project workspace for TradingView, Pine Script, screeners, char
 - Treat mini/nano Pine or screener agents only as helper agents.
 - Keep main continuity, decisions, and project memory here.
 
+## BITGET Trades routing / speed rule
+
+The Discord thread `BITGET Trades` (`channel:1499631210283008002`) is the durable audit/history room. It is intentionally allowed to keep full context, but it must not be the default place for small routine operations when speed matters.
+
+Use the configured `tvflow-fast` agent for fresh, low-context Bitget operations:
+- routine order/position/status checks
+- postchecks after already-explicit user actions
+- journal refreshes and read-only diagnostics
+- mechanical execution of a fully specified, already-approved non-RED ticket
+
+`tvflow-fast` runs on `openai-codex/gpt-5.4-mini` with low thinking. It should keep replies concise, avoid deep trade reconstruction, and write artifacts/audit notes back into this workspace.
+
+Escalate back to full `tvflow` / `gpt-5.5` for:
+- fresh discretionary trade judgment or A/B/C/D ticket construction
+- ambiguous live execution instructions
+- any RED-liquidity override decision
+- changing risk, leverage, SL/TP, or thesis rather than merely reading/verifying state
+
+If a routine request arrives inside the heavy BITGET Trades thread, do not carry the entire audit context through a long tool chain if avoidable. Start/route it as a clean `tvflow-fast` run, then post only the concise result or artifact reference back to BITGET Trades. Runbook: `README_BITGET_FAST_ROUTING.md`.
+
 ## Session start
 At the start of each session:
 1. Read `PROJECT_STATE.md`
