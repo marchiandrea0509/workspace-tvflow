@@ -1,10 +1,10 @@
 {
   "messages": [
-    "Bitget semi-auto trade report\nGenerated: 2026-06-25 08:11:29 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 185 | fills 605 | plan/order-plan history 18\nCurrent: active orders 4 | positions 1\nRealized PnL gross: 1014.23 USDT | fees: -86.67 | net est: 927.55 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
-    "Order state changes since previous refresh (6)\n- REMOVED from active orders: ASMLUSDT open/buy long qty 3.63 @ 1779 | TP 1924.5 SL 1768 | isolated 8x | id 1450096458995494913 | history status canceled fill/qty 0\n- REMOVED from active orders: UNHUSDT open/buy long qty 1.97 @ 401.65 | TP 413.23 SL 389 | isolated 7x | id 1450657082418819073 | history status filled fill/qty 1.97 avg 401.65\n- REMOVED from active orders: UNHUSDT open/buy long qty 3.77 @ 398.27 | TP 413.23 SL 389 | isolated 7x | id 1450657132305870849 | history status filled fill/qty 3.77 avg 398.27\n- NEW active order: INTCUSDT open/buy long qty 3.5 @ 133.05 | TP 139.5 SL 125.9 | isolated 5x | id 1453920422008090625\n- NEW active order: INTCUSDT open/buy long qty 7 @ 130.9 | TP 139.5 SL 125.9 | isolated 5x | id 1453920490320719873\n- NEW active order: INTCUSDT open/buy long qty 17.39 @ 128.2 | TP 144.84 SL 125.9 | isolated 5x | id 1453920564069167105",
-    "Active Bitget futures orders / planned legs\n- INTCUSDT open/buy long qty 17.39 @ 128.2 | TP 144.84 SL 125.9 | isolated 5x | id 1453920564069167105\n- INTCUSDT open/buy long qty 7 @ 130.9 | TP 139.5 SL 125.9 | isolated 5x | id 1453920490320719873\n- INTCUSDT open/buy long qty 3.5 @ 133.05 | TP 139.5 SL 125.9 | isolated 5x | id 1453920422008090625\n- UNHUSDT open/buy long qty 10 @ 393 | TP 417.5 SL 389 | isolated 7x | id 1450657186294951937",
-    "Current Bitget futures positions\n- UNHUSDT long qty 5.74 | avg 399.430034843206 mark 404.57 | uPnL 29.503399999997 | liq 351.321617574073 | isolated 7x",
-    "Recent Bitget futures executions (latest 8)\n- 2026-06-24 17:23:43 | GEUSDT close/buy long qty 13.79 avg 368.21 | status filled | PnL 243.47 fee -3.05 net 240.42 | id 1453698381841592321\n- 2026-06-24 16:46:15 | GEUSDT close/buy long qty 2.43 avg 366.03 | status filled | PnL 37.59 fee -0.53 net 37.06 | id 1453688955831218178\n- 2026-06-24 16:46:15 | GEUSDT close/buy long qty 5.22 avg 366.17 | status filled | PnL 81.48 fee -1.15 net 80.33 | id 1453688955806052352\n- 2026-06-23 09:00:03 | ASMLUSDT close/buy long qty 0.85 avg 1844.84 | status filled | PnL -23.46 fee -0.94 net -24.40 | id 1453209240980844546\n- 2026-06-23 09:00:03 | ASMLUSDT close/buy long qty 2.66 avg 1846.01 | status filled | PnL -70.29 fee -2.95 net -73.24 | id 1453209240959873024\n- 2026-06-23 05:22:50 | ARMUSDT close/buy long qty 3.54 avg 389.12 | status filled | PnL -59.47 fee -0.83 net -60.29 | id 1453154579422801922\n- 2026-06-23 05:22:50 | ARMUSDT close/buy long qty 1.64 avg 389.12 | status filled | PnL -27.55 fee -0.38 net -27.93 | id 1453154579418607618\n- 2026-06-23 05:22:50 | ARMUSDT close/buy long qty 0.8 avg 389.12 | status filled | PnL -13.44 fee -0.19 net -13.63 | id 1453154579410219009"
+    "Bitget semi-auto trade report\nGenerated: 2026-06-26 18:44:02 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 194 | fills 615 | plan/order-plan history 18\nCurrent: active orders 0 | positions 0\nRealized PnL gross: 990.59 USDT | fees: -90.92 | net est: 899.66 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
+    "Order state changes since previous refresh: previous snapshot unavailable.",
+    "Active Bitget futures orders: none.",
+    "Current Bitget futures positions: none.",
+    "Recent Bitget futures executions (latest 8)\n- 2026-06-25 15:59:52 | INTCUSDT close/buy long qty 17.39 avg 125.85 | status filled | PnL -63.24 fee -1.31 net -64.55 | id 1454039670718099863\n- 2026-06-25 15:59:52 | INTCUSDT close/buy long qty 7 avg 125.85 | status filled | PnL -25.45 fee -0.53 net -25.98 | id 1454039670718099768\n- 2026-06-25 15:59:52 | INTCUSDT close/buy long qty 3.5 avg 125.85 | status filled | PnL -12.73 fee -0.26 net -12.99 | id 1454039670709710849\n- 2026-06-25 15:40:59 | UNHUSDT close/buy long qty 1.97 avg 412.98 | status filled | PnL 26.69 fee -0.49 net 26.21 | id 1454034915526602755\n- 2026-06-25 15:40:59 | UNHUSDT close/buy long qty 3.77 avg 412.98 | status filled | PnL 51.08 fee -0.93 net 50.15 | id 1454034915505631236\n- 2026-06-25 08:06:35 | INTCUSDT open/buy long qty 17.39 avg 128.2 | status filled | PnL 0.00 fee -0.45 net -0.45 | id 1453920564069167105\n- 2026-06-25 08:06:18 | INTCUSDT open/buy long qty 7 avg 130.9 | status filled | PnL 0.00 fee -0.18 net -0.18 | id 1453920490320719873\n- 2026-06-25 08:06:01 | INTCUSDT open/buy long qty 3.5 avg 133.05 | status filled | PnL 0.00 fee -0.09 net -0.09 | id 1453920422008090625"
   ],
   "source": {
     "history_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_bitget_history_latest.json",
@@ -23,8 +23,7 @@
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ARMUSDT_latest.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_APPUSDT_latest.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_CLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_UNHUSDT_latest.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_latest.json"
     ],
     "previous_open_orders_json": [
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_BTCUSDT_previous.json",
@@ -41,8 +40,7 @@
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ARMUSDT_previous.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_APPUSDT_previous.json",
       "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_CLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_UNHUSDT_previous.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_previous.json"
     ],
     "positions_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_positions_latest.json",
     "workbook": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls"
