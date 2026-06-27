@@ -1,6 +1,6 @@
 {
   "messages": [
-    "Bitget semi-auto trade report\nGenerated: 2026-06-26 18:44:02 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 194 | fills 615 | plan/order-plan history 18\nCurrent: active orders 0 | positions 0\nRealized PnL gross: 990.59 USDT | fees: -90.92 | net est: 899.66 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
+    "Bitget semi-auto trade report\nGenerated: 2026-06-27 20:12:28 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 194 | fills 615 | plan/order-plan history 18\nCurrent: active orders 0 | positions 0\nRealized PnL gross: 990.59 USDT | fees: -90.92 | net est: 899.66 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
     "Order state changes since previous refresh: previous snapshot unavailable.",
     "Active Bitget futures orders: none.",
     "Current Bitget futures positions: none.",
