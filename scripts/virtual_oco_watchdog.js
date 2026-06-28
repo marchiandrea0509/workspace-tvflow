@@ -101,7 +101,7 @@ function familyPlannedRisk(family = {}) {
 function ticketRiskChecks(ticket = {}, cfg = {}) {
   const source = ticket.ticket || ticket;
   const riskCapUsd = resolveRiskCapUsd(cfg);
-  const maxMargin = num(cfg.maxMarginUsdt, 1500);
+  const maxMargin = num(cfg.maxMarginUsdt, 500);
   const maxLeverage = num(cfg.maxLeverage, 20);
   const minRr = num(source.minRr ?? cfg.minRr, NaN);
   const checks = [];
@@ -799,7 +799,7 @@ function c100RiskSummary(config = {}, ctx = {}, selected = null) {
     { name: 'risk cap', ok: Number.isFinite(totalRisk) && totalRisk <= riskCapUsd + 1e-9, value: `${fmt(totalRisk, 2)} <= ${fmt(riskCapUsd, 2)}` },
     { name: 'shared invalidation valid', ok: c100.sharedInvalidationValid !== false, value: String(c100.sharedInvalidationValid !== false) },
     { name: 'blended RR acceptable', ok: !Number.isFinite(minBlendedRr) || (Number.isFinite(blendedRr) && blendedRr >= minBlendedRr - 1e-9), value: Number.isFinite(minBlendedRr) ? `${fmt(blendedRr, 2)} >= ${fmt(minBlendedRr, 2)}` : 'not specified' },
-    { name: 'margin pass', ok: !Number.isFinite(combinedMargin) || combinedMargin <= num(config.maxMarginUsdt, 1500) + 1e-9, value: Number.isFinite(combinedMargin) ? `${fmt(combinedMargin, 2)} <= ${fmt(num(config.maxMarginUsdt, 1500), 2)}` : 'not specified' },
+    { name: 'margin pass', ok: !Number.isFinite(combinedMargin) || combinedMargin <= num(config.maxMarginUsdt, 500) + 1e-9, value: Number.isFinite(combinedMargin) ? `${fmt(combinedMargin, 2)} <= ${fmt(num(config.maxMarginUsdt, 500), 2)}` : 'not specified' },
     { name: 'leverage pass', ok: !Number.isFinite(combinedLeverage) || combinedLeverage <= num(config.maxLeverage, 20) + 1e-9, value: Number.isFinite(combinedLeverage) ? `${fmt(combinedLeverage, 2)} <= ${fmt(num(config.maxLeverage, 20), 2)}` : 'not specified' },
     { name: 'liquidation-distance sanity pass', ok: c100.liquidationPass !== false && c100.liquidationDistanceSane !== false, value: String(c100.liquidationPass !== false && c100.liquidationDistanceSane !== false) },
   ];

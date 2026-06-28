@@ -1,0 +1,126 @@
+{
+  "enabled": true,
+  "ocoGroupId": "VOCO_GEUSDT_20260628_A_C1",
+  "symbol": "GEUSDT",
+  "productType": "USDT-FUTURES",
+  "mainTf": "4H",
+  "checkTf": "4H",
+  "checkDelayMinutes": 5,
+  "feedbackOnEveryCheck": false,
+  "breakoutMinCloseBufferAtr": 0.075,
+  "breakoutMinClosePositionLong": 0.6,
+  "breakoutMaxClosePositionShort": 0.4,
+  "execution_mode": "HYBRID_VOCO",
+  "suppressPullbackAlertsWhenLiveLadderDetected": true,
+  "resolveHybridVocoOnLiveFill": true,
+  "risk_cap_usd": 100,
+  "scheduler": {
+    "cronId": "a6f23060-93d5-4c7d-ba88-f3e29cb8a877",
+    "deleteCronAfterTerminal": true,
+    "note": "Existing GE Option A ladder remains live at 8x isolated; C1 breakout/retest is virtual/alert-only. Scheduled at 4H close+5m UTC. If C1 triggers, alert only; do not auto-place C1. Any live C1 execution requires fresh liquidity/orderability and separate explicit confirmation."
+  },
+  "expiryUtc": "2026-07-01T20:00:00Z",
+  "preferredFamily": "C",
+  "maxPlannedRiskUsdt": 100,
+  "maxMarginUsdt": 1500,
+  "maxLeverage": 20,
+  "discord": {
+    "target": "channel:1520077341945102346",
+    "routineTarget": "channel:1520077341945102346",
+    "fallbackTarget": "channel:1520077341945102346"
+  },
+  "liveState": {
+    "enabled": true,
+    "planTypes": ["normal_plan", "profit_loss", "track_plan"],
+    "ladderClientOidIncludes": [
+      "oc-ge-optionA-8x-20260624-A1",
+      "oc-ge-optionA-8x-20260624-A2",
+      "1453792286981386241",
+      "1453792304324833281"
+    ],
+    "c100ClientOidIncludes": ["C100", "ge_c100"],
+    "positionImpliesFilledLadder": true,
+    "cancelVirtualAlternativeOnLiveFill": true,
+    "priceTolerance": 0.002
+  },
+  "globalInvalidation": {
+    "note": "Bullish GE A/C1 thesis invalidates if price trades below the existing live ladder stop zone.",
+    "priceCrosses": 347.8,
+    "direction": "BELOW",
+    "conditions": []
+  },
+  "pullbackFamily": {
+    "family": "A",
+    "bias": "LONG",
+    "style": "DIP_LADDER",
+    "orderTypeProposal": "LIVE Bitget GE Option A pullback ladder already placed at 8x isolated with preset TP/SL; C1 remains virtual/alert-only.",
+    "triggerRule": "touch_entry_zone",
+    "entryZone": { "min": 352.5, "max": 356.05 },
+    "entries": [
+      { "level": "A1", "entry": 356.05, "quantity": 4.84, "notional": 1723.28, "sl": 347.8, "tp": 368.89, "plannedRisk": 39.93, "plannedProfit": 62.15, "rr": 1.56, "orderId": "1453792286981386241", "clientOid": "oc-ge-optionA-8x-20260624-A1" },
+      { "level": "A2", "entry": 352.5, "quantity": 12.76, "notional": 4497.9, "sl": 347.8, "tp": 371.43, "plannedRisk": 59.97, "plannedProfit": 241.55, "rr": 4.03, "orderId": "1453792304324833281", "clientOid": "oc-ge-optionA-8x-20260624-A2" }
+    ],
+    "ticket": {
+      "bias": "LONG",
+      "style": "DIP_LADDER",
+      "entry": "A1 356.05 / A2 352.50",
+      "sl": 347.8,
+      "tp": "A1 368.89 / A2 371.43",
+      "quantity": "4.84 + 12.76",
+      "notional": 6221.18,
+      "plannedRisk": 99.9,
+      "plannedProfit": 303.7,
+      "margin": 777.65,
+      "leverage": 8,
+      "rr": 3.04,
+      "minRr": 1.5,
+      "invalidation": "Shared SL 347.80; acceptance below 348.72/347.80 invalidates the long pullback thesis.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true
+    },
+    "maxStalenessDistance": 1.0,
+    "maxStalenessUnit": "ATR",
+    "confirmations": []
+  },
+  "breakoutFamily": {
+    "family": "C",
+    "bias": "LONG",
+    "style": "BREAKOUT",
+    "orderTypeProposal": "ALERT_ONLY C1 breakout/retest long. If triggered, manually confirm/place only after fresh liquidity/orderability and after resolving the existing A ladder through normal live-order workflow if needed.",
+    "trigger": 379.38,
+    "confirmationRule": "closed_above_trigger",
+    "minCloseBufferAtr": 0.075,
+    "minClosePositionLong": 0.6,
+    "maxStalenessDistance": 0.5,
+    "maxStalenessUnit": "ATR",
+    "ticket": {
+      "bias": "LONG",
+      "style": "BREAKOUT_RETEST",
+      "orderTypeProposal": "ALERT_ONLY C1 conditional long after 4H close >379.38 and retest/hold above 379/376",
+      "entry": 380.2,
+      "trigger": 379.38,
+      "maxAcceptableEntry": 381.75,
+      "atr4hReference": 4.745,
+      "sl": 371.4,
+      "tp": 394.5,
+      "quantity": 11.36,
+      "notional": 4319.07,
+      "plannedRisk": 99.97,
+      "plannedProfit": 162.45,
+      "rr": 1.63,
+      "minRr": 1.2,
+      "invalidation": "No-chase if price is far above 379.38/380.20; after entry, SL 371.40. Because GE A ladder is live/resting, fresh live action requires separate confirmation and normal live-order workflow.",
+      "structuralValid": true,
+      "tpOpenSpaceValid": true,
+      "margin": 539.88,
+      "leverage": 8
+    },
+    "confirmations": [
+      { "description": "closed 4H candle above 379.38 fresh high", "field": "checkClosed.close", "op": ">", "value": 379.38 },
+      { "description": "4H candle low holds above 376.00 retest/hold shelf", "field": "checkClosed.low", "op": ">=", "value": 376.0 }
+    ],
+    "noImmediateRejectionConditions": [
+      { "description": "current price is not extended beyond the C1 no-chase band", "field": "currentPrice", "op": "<=", "value": 381.75 }
+    ]
+  }
+}

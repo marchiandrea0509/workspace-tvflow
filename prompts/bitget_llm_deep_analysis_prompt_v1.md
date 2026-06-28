@@ -48,7 +48,7 @@ Optional account inputs:
 
 Fixed hard limits:
 - Max total planned risk: <100 USDT>
-- Max total margin implication: <1500 USDT>
+- Max total margin implication: <500 USDT>
 
 Optional notes from me:
 - macro / sentiment notes: <OPTIONAL>
@@ -98,7 +98,7 @@ ANALYSIS RULES
 
 12) Risk hard caps are mandatory:
 - never exceed 100 USDT total planned risk
-- never exceed 1500 USDT total margin implication
+- never exceed 500 USDT total margin implication
 - if Equity, FM, or leverage constraints imply a lower usable amount, use the stricter lower amount
 - if the setup cannot fit those constraints cleanly, say WAIT or reduce the plan size
 
@@ -176,7 +176,7 @@ Only if sizing inputs are provided.
 Rules:
 - If both Risk Budget $ and BRB% are given, use the stricter one
 - Never exceed Free Margin if provided
-- Never exceed 1500 USDT total margin implication
+- Never exceed 500 USDT total margin implication
 - Never exceed 100 USDT total planned risk
 - Size from stop distance
 - Keep execution realistic for Bitget perpetual futures
@@ -200,7 +200,7 @@ Also state:
 - effective risk budget used
 - total planned risk
 - total margin implication
-- whether margin stays within the 1500 USDT cap
+- whether margin stays within the 500 USDT cap
 - short note if margin is too tight
 
 ## 10) Final Verdict

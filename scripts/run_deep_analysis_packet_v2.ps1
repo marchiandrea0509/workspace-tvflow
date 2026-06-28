@@ -5,7 +5,7 @@ param(
   [double]$Score = [double]::NaN,
   [int]$Rank = -1,
   [double]$RiskUsdt = 100.0,
-  [double]$MaxMarginUsdt = 1500.0,
+  [double]$MaxMarginUsdt = 500.0,
   [double]$PlannedLeverage = 4.0,
   # Deprecated compatibility input. Prefer -MaxMarginUsdt.
   [double]$MaxNotionalUsdt = [double]::NaN,

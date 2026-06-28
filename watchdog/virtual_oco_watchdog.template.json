@@ -40,7 +40,7 @@
   "expiryUtc": "2026-05-25T20:00:00Z",
   "preferredFamily": "A",
   "maxPlannedRiskUsdt": 100,
-  "maxMarginUsdt": 1500,
+  "maxMarginUsdt": 500,
   "maxLeverage": 20,
   "discord": {
     "target": "user:1322306175865323552",

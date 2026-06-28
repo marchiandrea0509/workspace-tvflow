@@ -37,7 +37,7 @@ function indicators(allCandles, closed) {
   return { atr14, volAvg20 };
 }
 
-function buildTicket({ entry, sl, tp1, tp2, riskBudget, qtyStep, leverageMax, marginMax }) {
+function buildTicket({ entry, sl, tp1, tp2, riskBudget, qtyStep, leverageMax, marginMax, atr14 }) {
   const riskPerUnit = sl - entry;
   if (!(riskPerUnit > 0)) return { ok: false, reason: 'entry is not below SL for short ticket' };
   const qty1 = floorStep((riskBudget * 0.40) / riskPerUnit, qtyStep);
@@ -55,7 +55,12 @@ function buildTicket({ entry, sl, tp1, tp2, riskBudget, qtyStep, leverageMax, ma
   let leverage = Math.max(1, Math.ceil(notional / marginMax));
   if (leverage > leverageMax) return { ok: false, reason: `required leverage ${leverage}x exceeds max ${leverageMax}x` };
   const margin = notional / leverage;
-  return { ok: true, entry, sl, tp1, tp2, qty1, qty2, qty, risk1, risk2, totalRisk, reward1, reward2, rr1, rr2, weightedRr, notional, margin, leverage };
+  const maintenance = 0.006;
+  const estimatedLiquidation = entry * (1 + (1 / leverage) - maintenance);
+  const liquidationVsSlGap = estimatedLiquidation - sl;
+  const minLiqGap = Number.isFinite(Number(atr14)) && Number(atr14) > 0 ? 0.25 * Number(atr14) : 0;
+  const liquidationPass = liquidationVsSlGap > minLiqGap;
+  return { ok: true, entry, sl, tp1, tp2, qty1, qty2, qty, risk1, risk2, totalRisk, reward1, reward2, rr1, rr2, weightedRr, notional, margin, leverage, estimatedLiquidation, liquidationVsSlGap, minLiqGap, liquidationPass };
 }
 
 function passLine(name, ok, value = '') { return { name, ok: Boolean(ok), value }; }
@@ -117,7 +122,7 @@ async function evaluate({ mode, statePath, updateState }) {
   const contract = rows(contractsRaw).find(c => c.symbol === symbol) || {};
   const qtyStep = num(contract.sizeMultiplier || 0.01) || 0.01;
 
-  const ticket = buildTicket({ entry: currentPrice, sl: 97.25, tp1: 90.10, tp2: 88.70, riskBudget: 100, qtyStep, leverageMax: 20, marginMax: 1500 });
+  const ticket = buildTicket({ entry: currentPrice, sl: 97.25, tp1: 90.10, tp2: 88.70, riskBudget: 100, qtyStep, leverageMax: 20, marginMax: 500, atr14 });
   const liquidityGate = ticket.ok ? await runLiquidityGate({
     symbol,
     productType,
@@ -140,8 +145,9 @@ async function evaluate({ mode, statePath, updateState }) {
     passLine('No existing active CLUSDT short order', activeShortOrders.length === 0, `${activeShortOrders.length}`),
     passLine('Bitget data fresh', dataFresh && closedTsValid, `tickerAgeMs=${Math.round(nowMs - num(ticker.ts || 0))}, closed=${new Date(closed.ts).toISOString()}`),
     passLine('Risk <= 100', ticket.ok && ticket.totalRisk <= 100, ticket.ok ? fmt(ticket.totalRisk, 2) : ticket.reason),
-    passLine('Margin <= 1500', ticket.ok && ticket.margin <= 1500, ticket.ok ? fmt(ticket.margin, 2) : ticket.reason),
+    passLine('Margin <= 500', ticket.ok && ticket.margin <= 500, ticket.ok ? fmt(ticket.margin, 2) : ticket.reason),
     passLine('Leverage <= 20x', ticket.ok && ticket.leverage <= 20, ticket.ok ? `${ticket.leverage}x` : ticket.reason),
+    passLine('Liquidation safely beyond SL', ticket.ok && ticket.liquidationPass, ticket.ok ? `liq ${fmt(ticket.estimatedLiquidation, 3)} > SL ${fmt(ticket.sl, 3)} by ${fmt(ticket.liquidationVsSlGap, 3)} (min ${fmt(ticket.minLiqGap, 3)})` : ticket.reason),
     passLine('Weighted R:R >= 1.50', ticket.ok && ticket.weightedRr >= 1.50, ticket.ok ? fmt(ticket.weightedRr, 2) : ticket.reason),
   ];
 
@@ -159,7 +165,7 @@ async function evaluate({ mode, statePath, updateState }) {
       return { status: 'INVALIDATED', failed, message: `CLUSDT.P BREAKDOWN WATCHDOG SIGNAL INVALIDATED\n\n${failed.map(g => `- ${g.name}: ${g.value}`).join('\n')}\n\nNo order will be placed; a new fully closed 4H candle signal is required.` };
     }
     if (mode === 'final') {
-      return { status: 'FINAL_READY', gates, ticket, liquidityGate, message: `CLUSDT.P FINAL RECHECK PASSED — READY TO PLACE\n\nDirection: SHORT\nEntry type: MARKET\nEstimated entry: ${fmt(ticket.entry, 3)}\nSL: ${fmt(ticket.sl, 3)}\nTP1: ${fmt(ticket.tp1, 3)}\nTP2: ${fmt(ticket.tp2, 3)}\nQuantity part 1: ${fmt(ticket.qty1, 2)}\nQuantity part 2: ${fmt(ticket.qty2, 2)}\nTotal risk: ${fmt(ticket.totalRisk, 2)} USDT\nEstimated margin: ${fmt(ticket.margin, 2)} USDT\nLeverage: ${ticket.leverage}x isolated\nWeighted R:R: ${fmt(ticket.weightedRr, 2)}\nLiquidity gate: ${liquidityGate.result}` };
+      return { status: 'FINAL_READY', gates, ticket, liquidityGate, message: `CLUSDT.P FINAL RECHECK PASSED — READY TO PLACE\n\nDirection: SHORT\nEntry type: MARKET\nEstimated entry: ${fmt(ticket.entry, 3)}\nSL: ${fmt(ticket.sl, 3)}\nTP1: ${fmt(ticket.tp1, 3)}\nTP2: ${fmt(ticket.tp2, 3)}\nQuantity part 1: ${fmt(ticket.qty1, 2)}\nQuantity part 2: ${fmt(ticket.qty2, 2)}\nTotal risk: ${fmt(ticket.totalRisk, 2)} USDT\nEstimated margin: ${fmt(ticket.margin, 2)} USDT\nLeverage: ${ticket.leverage}x isolated\nEstimated liquidation: ${fmt(ticket.estimatedLiquidation, 3)} (SL ${fmt(ticket.sl, 3)}; pass=${ticket.liquidationPass ? 'YES' : 'NO'})\nWeighted R:R: ${fmt(ticket.weightedRr, 2)}\nLiquidity gate: ${liquidityGate.result}` };
     }
     return { status: 'NO_REPLY', reason: 'active ticket still valid' };
   }
@@ -185,7 +191,7 @@ async function evaluate({ mode, statePath, updateState }) {
   state.lastTriggeredCandleStartMs = closed.ts;
   if (updateState) saveJson(statePath, state);
 
-  const message = `CLUSDT.P BREAKDOWN WATCHDOG SIGNAL\n\nStatus: READY FOR REVIEW — NOT EXECUTED\n\nGate results:\n- 4H close below 94.30: PASS (${fmt(closed.close, 3)})\n- Close distance in ATR: PASS (${fmt(closeDistanceAtr, 3)} ATR)\n- ATR4H: ${fmt(atr14, 4)}\n- Volume vs 20-period average: PASS (${fmt(volumeRatio, 2)}x)\n- Candle close position: PASS (${fmt(closePosition * 100, 1)}% of range)\n- Current price: ${fmt(currentPrice, 3)}\n- Overextension check: PASS (${fmt(overextensionAtr, 3)} ATR below trigger)\n- Spread/slippage: ${liquidityGate.result} (spread ${fmt(spreadBps, 2)} bps)\n- Existing position: PASS (none)\n- Existing orders: PASS (no active CLUSDT short order)\n- Data freshness: PASS\n\nProposed ticket:\n- Direction: SHORT\n- Entry type: MARKET ONLY AFTER APPROVAL + FINAL RECHECK\n- Estimated entry: ${fmt(ticket.entry, 3)}\n- SL: ${fmt(ticket.sl, 3)}\n- TP1: ${fmt(ticket.tp1, 3)}\n- TP2: ${fmt(ticket.tp2, 3)}\n- Quantity part 1: ${fmt(ticket.qty1, 2)}\n- Quantity part 2: ${fmt(ticket.qty2, 2)}\n- Risk part 1: ${fmt(ticket.risk1, 2)} USDT\n- Risk part 2: ${fmt(ticket.risk2, 2)} USDT\n- Total risk: ${fmt(ticket.totalRisk, 2)} USDT\n- Estimated margin: ${fmt(ticket.margin, 2)} USDT\n- Leverage: ${ticket.leverage}x isolated\n- R:R to TP1: ${fmt(ticket.rr1, 2)}\n- R:R to TP2: ${fmt(ticket.rr2, 2)}\n- Weighted R:R: ${fmt(ticket.weightedRr, 2)}\n\nWarnings:\n- Oil headline risk remains high.\n- Market order can slip during Iran/Hormuz/news events.\n- Final recheck is mandatory before execution.\n\nReply exactly:\nAPPROVE CL SHORT\n\nSignal expires: ${new Date(expiresAtMs).toISOString()}`;
+  const message = `CLUSDT.P BREAKDOWN WATCHDOG SIGNAL\n\nStatus: READY FOR REVIEW — NOT EXECUTED\n\nGate results:\n- 4H close below 94.30: PASS (${fmt(closed.close, 3)})\n- Close distance in ATR: PASS (${fmt(closeDistanceAtr, 3)} ATR)\n- ATR4H: ${fmt(atr14, 4)}\n- Volume vs 20-period average: PASS (${fmt(volumeRatio, 2)}x)\n- Candle close position: PASS (${fmt(closePosition * 100, 1)}% of range)\n- Current price: ${fmt(currentPrice, 3)}\n- Overextension check: PASS (${fmt(overextensionAtr, 3)} ATR below trigger)\n- Spread/slippage: ${liquidityGate.result} (spread ${fmt(spreadBps, 2)} bps)\n- Existing position: PASS (none)\n- Existing orders: PASS (no active CLUSDT short order)\n- Data freshness: PASS\n\nProposed ticket:\n- Direction: SHORT\n- Entry type: MARKET ONLY AFTER APPROVAL + FINAL RECHECK\n- Estimated entry: ${fmt(ticket.entry, 3)}\n- SL: ${fmt(ticket.sl, 3)}\n- TP1: ${fmt(ticket.tp1, 3)}\n- TP2: ${fmt(ticket.tp2, 3)}\n- Quantity part 1: ${fmt(ticket.qty1, 2)}\n- Quantity part 2: ${fmt(ticket.qty2, 2)}\n- Risk part 1: ${fmt(ticket.risk1, 2)} USDT\n- Risk part 2: ${fmt(ticket.risk2, 2)} USDT\n- Total risk: ${fmt(ticket.totalRisk, 2)} USDT\n- Estimated margin: ${fmt(ticket.margin, 2)} USDT\n- Leverage: ${ticket.leverage}x isolated\n- Estimated liquidation: ${fmt(ticket.estimatedLiquidation, 3)} (SL ${fmt(ticket.sl, 3)}; pass=${ticket.liquidationPass ? 'YES' : 'NO'})\n- R:R to TP1: ${fmt(ticket.rr1, 2)}\n- R:R to TP2: ${fmt(ticket.rr2, 2)}\n- Weighted R:R: ${fmt(ticket.weightedRr, 2)}\n\nWarnings:\n- Oil headline risk remains high.\n- Market order can slip during Iran/Hormuz/news events.\n- Final recheck is mandatory before execution.\n\nReply exactly:\nAPPROVE CL SHORT\n\nSignal expires: ${new Date(expiresAtMs).toISOString()}`;
 
   return { status: 'READY', message, gates, ticket, liquidityGate };
 }

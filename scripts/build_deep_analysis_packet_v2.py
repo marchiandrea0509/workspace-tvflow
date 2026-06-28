@@ -6,7 +6,7 @@ Design decisions:
 - User-selected screener symbol is context, not proof.
 - No hard screener score threshold.
 - Target planned risk remains 100 USDT by default.
-- 1500 cap means max margin after recalculating leverage up to 20x, not max total notional.
+- 500 cap means max margin after recalculating leverage up to 20x, not max total notional.
 - Live execution is excluded; this script never places/cancels/modifies orders.
 - Ladder entries must be plausible for the expected pullback, not simply deep supports.
 - --screener-data-file accepts TradingView Screener/strategy-test CSV or JSON exports.
@@ -1813,8 +1813,10 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         stop = float(best["stop_loss"])
         invalidation_source = str(best.get("stop_loss_source") or invalidation_source)
         selected_leverage = float((best.get("selected_leverage_check") or {}).get("leverage") or planned_leverage)
+        selected_liquidation_safety_check = best.get("selected_leverage_check") if isinstance(best.get("selected_leverage_check"), dict) else None
     else:
         selected_leverage = planned_leverage
+        selected_liquidation_safety_check = None
 
     for o in target_orders:
         try:
@@ -1852,6 +1854,8 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         warnings.append("Actual risk after contract rounding is materially below target; do not silently add unsafe size to force exactly 100 USDT.")
     if not target_risk_feasible_under_margin_cap:
         static_rejects.append("Full static ticket breaches max margin cap even after leverage recalculation up to 20x, or liquidation safety failed.")
+    if target_orders and not (selected_liquidation_safety_check or {}).get("liquidation_beyond_sl"):
+        static_rejects.append("Selected leverage is missing a PASS liquidation-vs-SL sanity check.")
     if not (best or {}).get("valid_static_ticket"):
         static_rejects.append("Static optimisation scan found no candidate meeting R:R, ATR-distance, margin, and liquidation safety rules.")
     if near_major_resistance and side == "LONG":
@@ -1923,6 +1927,7 @@ def build_ladder(side: str, family: str, summaries: Dict[str, Dict[str, Any]], l
         "target_orders_before_margin_cap": target_orders,
         "target_total_notional_before_cap_usdt": rn(total_notional, 2),
         "target_estimated_margin_before_cap_usdt": rn(total_margin, 2),
+        "selected_liquidation_safety_check": selected_liquidation_safety_check,
         "target_risk_feasible_under_margin_cap": target_risk_feasible_under_margin_cap,
         "cap_adjusted_orders_if_needed": cap_adjusted_orders,
         "static_optimisation_scan": {
@@ -2287,7 +2292,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "candidate_scan_priority": "Do NOT use precomputed candidate levels, static optimisation scan output, OHLCV-derived value zones, or old packet ladder levels as the main source of trade levels. Use them only as fallback/secondary validation when screenshots are unclear or when they confirm 1D/4H/1H screenshots. If packet/export levels conflict with screenshots, screenshots win.",
             "trade_style": "Evaluate A/B pullback families, C breakout/breakdown family, and D OC execution wrapper when useful. Valid styles: AUTO, SINGLE_LIMIT_PULLBACK, DIP_LADDER, SELL_RALLY, BREAKOUT, BREAKDOWN, WAIT. Do not force a trade.",
             "risk_target": "Default max planned loss is 100 USDT unless the user specifies another risk_cap_usd. A/B/C standalone options are alternatives; do not sum their risks. D PURE_VOCO/HYBRID_VOCO selected path max loss is risk_cap_usd. D COMBO_100/HYBRID_C100 all-filled worst-case loss must be <= risk_cap_usd.",
-            "margin_cap": "1500 USDT max margin after recalculating leverage up to 20x, not max total notional. Do not reject an otherwise valid ticket only because it exceeds the margin cap at initial/current/planned leverage; report the lowest leverage that fits while keeping liquidation safely beyond SL. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.",
+            "margin_cap": "500 USDT max margin after recalculating leverage up to 20x, not max total notional. Every ticket must include a liquidation-vs-SL sanity check at the selected leverage. Do not reject an otherwise valid ticket only because it exceeds the margin cap at initial/current/planned leverage; report the lowest leverage that fits while keeping liquidation safely beyond SL. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.",
             "static_safety": "If all planned entries for a standalone ladder or COMBO_100 fill and price goes directly to SL, total loss must remain within the planned-risk cap.",
             "forbidden_assumptions": ["no live execution", "no discretionary dynamic management", "no trailing", "no unplanned future cancellation assumption", "no SL movement or post-fill adjustment"],
             "confirmation": "Any live order placement requires a separate explicit user confirmation; final JSON must keep requires_user_confirmation=true.",
@@ -2348,6 +2353,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "selected_leverage_reason": ladder.get("selected_leverage_reason"),
             "target_total_notional_before_cap_usdt": ladder.get("target_total_notional_before_cap_usdt"),
             "target_estimated_margin_before_cap_usdt": ladder.get("target_estimated_margin_before_cap_usdt"),
+            "selected_liquidation_safety_check": ladder.get("selected_liquidation_safety_check"),
             "target_risk_feasible_under_margin_cap": ladder.get("target_risk_feasible_under_margin_cap"),
             "static_ticket_safe": ladder.get("static_ticket_safe"),
             "static_ticket_reject_reasons": ladder.get("static_ticket_reject_reasons"),
@@ -2455,7 +2461,7 @@ def ultra_compact_candidate(candidate: Any) -> Dict[str, Any]:
     if isinstance(candidate.get("selected_leverage_check"), dict):
         out["selected_leverage_check"] = {
             k: candidate["selected_leverage_check"].get(k)
-            for k in ("leverage", "estimated_margin_usdt", "liquidation_safety", "ok")
+            for k in ("leverage", "estimated_margin_usdt", "estimated_liquidation", "liquidation_vs_sl_gap_atr", "liquidation_beyond_sl", "passes")
             if k in candidate["selected_leverage_check"]
         }
     if isinstance(candidate.get("sl_hierarchy_uncleared_levels"), list):
@@ -2502,7 +2508,8 @@ def make_ultra_compact_decision_payload(compact_payload: Dict[str, Any]) -> Dict
             "Screenshots / visible TradingView chart structure are primary truth for structure and levels.",
             "A/B/C are alternatives unless D explicitly wraps them; do not sum alternative risks.",
             "Planned risk target is 100 USDT unless user specified otherwise; live execution is excluded.",
-            "1500 USDT is max margin target after leverage recalculation up to 20x, not max notional.",
+            "500 USDT is max margin target after leverage recalculation up to 20x, not max notional.",
+            "Every generated trade ticket must show a liquidation-vs-SL sanity check at selected leverage; reject/WAIT if liquidation is not safely beyond SL.",
             "Every valid A/B/C option must include canonical ticket rows in the JSON.",
             "Rejected options must state the exact blocking reason and what would fix them.",
             "Orderability must be split into liquidity, operational safety, and risk/feasibility gates.",
@@ -2531,6 +2538,7 @@ def make_ultra_compact_decision_payload(compact_payload: Dict[str, Any]) -> Dict
             "warnings": _compact_reason_list(ctd.get("warnings"), 8),
             "near_market_rejected_entries": _first_items(ctd.get("near_market_rejected_entries"), 8),
             "precomputed_orders_secondary": _first_items(ctd.get("orders"), 3),
+            "selected_liquidation_safety_check": ctd.get("selected_liquidation_safety_check"),
             "static_scan": {
                 "priority": scan.get("priority"),
                 "candidate_count": scan.get("candidate_count"),
@@ -2595,7 +2603,7 @@ Use this packet with `{master_prompt}`.
 - Screener context is candidate-selection context only, not proof.
 - No hard screener-score eligibility rule.
 - Target planned risk is 100 USDT unless user supplied another value.
-- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin target. If margin exceeds this at initial/planned/current leverage, recalculate up to 20x and report the lowest leverage that fits with liquidation safely beyond SL. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.
+- Max cap is margin, not notional: {manifest['max_margin_usdt']} USDT margin target. If margin exceeds this at initial/planned/current leverage, recalculate up to 20x and report the lowest leverage that fits with liquidation safely beyond SL. Always include the selected-leverage liquidation-vs-SL sanity check in the risk/feasibility table. Reject for margin only if it cannot fit at <=20x or liquidation safety fails.
 - Evaluate A/B pullback, C breakout/breakdown, and D OC wrapper exactly as the master prompt defines them. A/B/C are alternatives unless D explicitly wraps them.
 - If requested side is AUTO, use `candidate_trade_design.analysis_side_inference` only to preserve directional fib/value-zone maps; final judgment remains screenshot-first.
 - Always include a Detected Level Map before tickets, using the dense support/resistance inventory rather than only actionable levels; include intermediate 1H/4H/1D shelves/fresh highs/lows so the map is auditable against GPT-style analysis.
@@ -2643,7 +2651,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--rank", type=int, default=None)
     p.add_argument("--screener-version", default=DEFAULT_SCREENER_VERSION)
     p.add_argument("--risk-usdt", type=float, default=100.0)
-    p.add_argument("--max-margin-usdt", type=float, default=1500.0, help="Maximum margin budget in USDT, not total notional.")
+    p.add_argument("--max-margin-usdt", type=float, default=500.0, help="Maximum margin budget in USDT, not total notional.")
     p.add_argument("--planned-leverage", type=float, default=4.0, help="Initial/planned leverage; tickets may be recalculated up to 20x to fit the margin target when liquidation remains safe.")
     p.add_argument("--max-notional-usdt", type=float, default=None, help="Deprecated compatibility flag; if supplied, converted to margin using --planned-leverage.")
     p.add_argument("--bars-1d", type=int, default=400)

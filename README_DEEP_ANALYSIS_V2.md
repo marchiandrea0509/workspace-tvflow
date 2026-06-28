@@ -15,8 +15,8 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - If the requested side is `AUTO`, the builder now infers a working LONG/SHORT side from screener context or 1D/4H trend for directional fib/value-zone mapping. The final report must still use screenshot-first judgment.
 - Final reports must include a compact `Detected Level Map` and compare confirmed-pivot impulse fibs with active/fresh-high or fresh-low impulse fibs when they materially differ.
 - Target planned risk: `100 USDT` by default.
-- Cap: `1500 USDT max margin` is a leverage-sizing target, not a chart-quality reject by itself. Never reject an otherwise valid ticket solely because margin exceeds `1500 USDT` at the initial/current/planned leverage; recalculate the lowest leverage up to `20x` that fits the margin cap and keeps liquidation safely beyond SL. Reject for margin only if it still cannot fit at `<=20x` or liquidation safety fails.
-- Existing live ladders: judge structure/risk first. If an already-live ladder is structurally valid and max planned risk is acceptable, do not label it invalid only because its current exchange leverage implies margin above `1500 USDT`; state the leverage that would fit and note that any leverage change needs a separate explicit instruction.
+- Cap: `500 USDT max margin` is a leverage-sizing target, not a chart-quality reject by itself. Never reject an otherwise valid ticket solely because margin exceeds `500 USDT` at the initial/current/planned leverage; recalculate the lowest leverage up to `20x` that fits the margin cap and keeps liquidation safely beyond SL. Reject for margin only if it still cannot fit at `<=20x` or liquidation safety fails.
+- Existing live ladders: judge structure/risk first. If an already-live ladder is structurally valid and max planned risk is acceptable, do not label it invalid only because its current exchange leverage implies margin above `500 USDT`; state the leverage that would fit and note that any leverage change needs a separate explicit instruction.
 - Live execution is excluded. Any real order placement requires a separate explicit user request.
 - Rejections and broken rules must always be justified. Every WAIT/NO_TRADE, omitted side, rejected option, invalid candidate, and material warning must state the exact rule/gate, observed value, required value/threshold, why it blocks orderability, and what would fix it.
 - Final reports now use Andrea's A/B/C/D family prompt: A = BEST QUALITY PULLBACK, B = BEST FILL-PROBABILITY PULLBACK, C = BREAKOUT/BREAKDOWN, D = OC EXECUTION WRAPPER (`PURE_VOCO` / `HYBRID_VOCO` or `COMBO_100` / `HYBRID_C100`) only if useful and valid. A/B/C are alternatives unless D explicitly wraps them. Rejected families should be briefly rejected with the concrete failing reason.
@@ -35,7 +35,7 @@ This is the default deep-analysis packet workflow for manually selected Pine Scr
 - Structural SL rule refinement: do not force SL beyond every older same-side resistance/support if the current visible lower-high/higher-low or breakout/retest shelf loss already invalidates the 4H thesis. The final screenshot read may accept that nearer structural invalidation; the packet's SL-hierarchy warnings are audit aids, not vetoes.
 - Level-density rule: reports must include an auditable `Detected Level Map` before tickets, with enough visible 1H/4H/1D levels nearest-to-farthest. Do not show only the few final order levels; include intermediate supports/resistances, prior breakout shelves, fresh highs/lows, and HTF levels so the ticket choice can be compared with GPT-style analysis. Important parent-swing anchors must still be surfaced even if they are farther than the compact nearest-level list.
 - Keep chart validity separate from live Bitget orderability. A liquidity RED or missing live confirmation blocks placement, but it should not erase a structurally valid watch ticket; label it `WATCH_ONLY / NOT_LIVE_PLACEABLE` and state the live blocker.
-- Liquidity/orderability must be explicit in both the saved report and Discord/chat answer. Split reporting into `A. Liquidity and executable orderability`, `B. Operational safety`, and `C. Risk and feasibility`. Do not mix existing-order/position checks with liquidity metrics. The Discord-facing orderability block must be a compact square traffic-light table with exactly these core columns: `Gate | Value | Limit / rule | Traffic light`. Put the pass/fail gate name in `Gate`, the numeric observed value in `Value`, the numeric threshold/rule in `Limit / rule`, and only the colored-ball status in `Traffic light` (`🟢`, `🟡`, `🔴`, `⚪`). Use this exact priority for liquidity rows: stop-exit simulated slippage, near-market executable depth, spread stability, p10/weak-minute volume stress, dead 1m candles, 24h quote-volume ratio, visible depth-to-SL corridor as informational only. For same-symbol orders/position/TP-SL/margin/position mode/confirmation boundary and risk/margin/R:R/freshness, use the same four-column square format or an immediately adjacent square table. Longer risk-if-failed notes are optional after the square table, not replacement columns. If a metric was not run, print `⚪ NOT RUN`; do not write only `Orderability: OK` or `RED` without values/limits.
+- Liquidity/orderability must be explicit in both the saved report and Discord/chat answer. Split reporting into `A. Liquidity and executable orderability`, `B. Operational safety`, and `C. Risk and feasibility`. Do not mix existing-order/position checks with liquidity metrics. The Discord-facing orderability block must be a compact square traffic-light table with exactly these core columns: `Gate | Value | Limit / rule | Traffic light`. Put the pass/fail gate name in `Gate`, the numeric observed value in `Value`, the numeric threshold/rule in `Limit / rule`, and only the colored-ball status in `Traffic light` (`🟢`, `🟡`, `🔴`, `⚪`). Use this exact priority for liquidity rows: stop-exit simulated slippage, near-market executable depth, spread stability, p10/weak-minute volume stress, dead 1m candles, 24h quote-volume ratio, visible depth-to-SL corridor as informational only. For same-symbol orders/position/TP-SL/margin/position mode/confirmation boundary and risk/margin/R:R/freshness, use the same four-column square format or an immediately adjacent square table. The risk/feasibility block must always include selected-leverage liquidation-vs-SL sanity. Longer risk-if-failed notes are optional after the square table, not replacement columns. If a metric was not run, print `⚪ NOT RUN`; do not write only `Orderability: OK` or `RED` without values/limits.
 - Every rejected shallow fill-probability leg must be shown with candidate entry, SL, nearest TP, next TP, R:R to nearest TP, R:R to next TP, and accepted/rejected reason.
 - Delegate simple deterministic support tasks to cheap mini/nano subagents using Codex OAuth/local zero-cost routes, not paid API keys. Keep `tvflow` responsible for coordination, final trade judgment, and any user-confirmation boundary.
 
@@ -83,7 +83,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_deep_analysis_pa
   -Family LC `
   -Score 72.4 `
   -RiskUsdt 100 `
-  -MaxMarginUsdt 1500 `
+  -MaxMarginUsdt 500 `
   -PlannedLeverage 4
 ```
 
@@ -96,7 +96,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_deep_analysis_pa
   -Family LC `
   -Score 72.4 `
   -RiskUsdt 100 `
-  -MaxMarginUsdt 1500 `
+  -MaxMarginUsdt 500 `
   -PlannedLeverage 4 `
   -CaptureTv
 ```

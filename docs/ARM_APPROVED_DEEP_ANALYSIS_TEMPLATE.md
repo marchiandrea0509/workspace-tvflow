@@ -101,7 +101,8 @@ State which gate/ticket size was used. Keep chart validity separate from live or
 | Planned no-slippage risk |  | ~100 USDT | 🟢/🟡/🔴/⚪ |  |
 | Estimated extra slippage loss |  |  | 🟢/🟡/🔴/⚪ |  |
 | Estimated total loss at SL |  |  | 🟢/🟡/🔴/⚪ |  |
-| Notional / margin / leverage |  | <=1500 margin, <=20x | 🟢/🟡/🔴/⚪ |  |
+| Notional / margin / leverage |  | <=500 margin, <=20x | 🟢/🟡/🔴/⚪ |  |
+| Liquidation vs SL sanity |  | liquidation safely beyond SL at selected leverage | 🟢/🟡/🔴/⚪ |  |
 | Reward-to-risk / structure / freshness |  |  | 🟢/🟡/🔴/⚪ |  |
 
 ## Risk sizing summary

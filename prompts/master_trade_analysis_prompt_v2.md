@@ -30,7 +30,7 @@ Fixed constraints:
 - Venue: Bitget CEX, perps unless shown otherwise.
 - Main TF: 4H. Support TFs: 1D = HTF bias, 1H = tactical timing.
 - Risk budget: $100 max planned risk.
-- Max margin target: $1500, but this is a margin/leverage sizing target, not a chart-quality reject by itself.
+- Max margin target: $500, but this is a margin/leverage sizing target, not a chart-quality reject by itself.
 - Max leverage: 20x.
 - Infer symbol from screenshot; if unclear say not clearly visible.
 - Sources: screenshots = truth; user notes = secondary only.
@@ -61,8 +61,8 @@ Core rules:
 - If not tradeable, say WAIT clearly.
 - Size from stop distance, not conviction.
 - Never exceed $100 planned risk or 20x leverage.
-- Do not reject an otherwise valid ticket only because its margin exceeds $1500 at the initial/current/planned leverage. Recalculate the required leverage up to 20x and report the lowest leverage that fits the $1500 margin target while keeping liquidation safely beyond SL. Reject for margin only if the ticket still cannot fit under $1500 at <=20x, or if the required leverage makes liquidation safety unacceptable.
-- For existing live orders, do not call the ladder invalid only because the current exchange leverage creates >$1500 all-filled margin. First judge whether the live ladder is structurally valid and risk-capped. If margin is the only issue, state the required leverage that would fit the margin cap and say any leverage change requires separate explicit user instruction.
+- Do not reject an otherwise valid ticket only because its margin exceeds $500 at the initial/current/planned leverage. Recalculate the required leverage up to 20x and report the lowest leverage that fits the $500 margin target while keeping liquidation safely beyond SL. Reject for margin only if the ticket still cannot fit under $500 at <=20x, or if the required leverage makes liquidation safety unacceptable.
+- For existing live orders, do not call the ladder invalid only because the current exchange leverage creates >$500 all-filled margin. First judge whether the live ladder is structurally valid and risk-capped. If margin is the only issue, state the required leverage that would fit the margin cap and say any leverage change requires separate explicit user instruction.
 - SL must be structural, not only chosen for better R:R.
 - TP design is structure-first and independently optimized per order leg. Do not reject A/B/C for poor R:R until realistic TP candidates and per-leg TP assignments have been tested.
 - Each order must have one TP. Assign TP independently for each leg. Distinct TPs are preferred, but identical TPs are allowed when the same structural target is objectively the best realistic exit for multiple legs. Do not invent a farther TP only to make TP values different. Do not reject an otherwise valid ladder only because two legs share the same realistic TP.
@@ -365,7 +365,7 @@ COMBO_100 is allowed only when:
 - pullback levels remain valid after breakout.
 - the second fill would not mean the first thesis has failed.
 - combined worst-case loss <= $100.
-- combined margin <= $1500.
+- combined margin <= $500.
 - leverage <= 20x.
 - liquidation risk acceptable.
 - OC can detect accidental overfill/conflicts.
@@ -589,7 +589,7 @@ Separate chart validity from live/exchange orderability:
   - Standard crypto: any RED supporting metric => RED unless explicitly overridden.
   - RWA/tokenized-stock: one RED supporting metric alone => YELLOW / PLACEABLE_ONLY_WITH_CONFIRMATION; two RED supporting metrics => RED; one RED supporting + one YELLOW/RED primary => RED; all GREEN => GREEN; any YELLOW without RED => YELLOW.
 - `B. Operational safety` table columns exactly: `Check | Observed | Status | Risk if failed | Required action`. Include same-symbol regular orders, plan/trigger orders, existing position, existing TP/SL orders, available margin, observed one-way/hedge mode, and confirmation boundary. Do not silently stack or replace exposure; conflicting state requires explicit cancel/modify/replace/stack instruction.
-- `C. Risk and feasibility` table columns exactly: `Metric | Observed | Limit / target | Status | Note`. Required rows: planned no-slippage risk, estimated extra slippage loss, estimated total loss at SL, notional, required margin, leverage, reward-to-risk ratio, structural validity, freshness. If liquidity/R:R/structure/freshness/margin cap makes the ticket weak, return WAIT / NO_TRADE / WATCH_ONLY / NOT_LIVE_PLACEABLE instead of silently weakening standards.
+- `C. Risk and feasibility` table columns exactly: `Metric | Observed | Limit / target | Status | Note`. Required rows: planned no-slippage risk, estimated extra slippage loss, estimated total loss at SL, notional, required margin, leverage, selected-leverage liquidation-vs-SL sanity, reward-to-risk ratio, structural validity, freshness. If liquidity/R:R/structure/freshness/margin cap/liquidation safety makes the ticket weak, return WAIT / NO_TRADE / WATCH_ONLY / NOT_LIVE_PLACEABLE instead of silently weakening standards.
 - Downsized fallback proposals: if a live-order request fails liquidity/slippage gates, provide two alternatives instead of only rejecting: Proposal A caps extra stop-market slippage to `slippage_pct x original/base planned risk` (default 5% x 100 USDT = 5 USDT); Proposal B caps extra slippage to `slippage_pct x new planned no-slippage risk` (default 5%). For each report revised size, notional, margin, planned no-slippage risk, estimated extra slippage, estimated total loss, p10 status, near-market depth status, spread status, whether it remains meaningful, and placeable/not-placeable verdict. Do not shrink indefinitely; if too small or still failing, return NO_TRADE.
 - If only a simpler constraint table is available from a reference/GPT output, upgrade it into the traffic-light table using the live gate/order-state data that was run. If no gate was run, explicitly mark those rows `⚪ not run` instead of omitting the table.
 
@@ -622,7 +622,7 @@ If no clear trigger, say no backup plan.
 
 Rules:
 - $100 max planned risk.
-- Max margin $1500.
+- Max margin $500.
 - Max leverage 20x.
 - Size from stop distance.
 - For A/B/C standalone: each valid option has its own $100 max risk, but user chooses only one.
@@ -635,7 +635,7 @@ State:
 - leverage.
 - blended entry.
 - all-filled R:R where relevant.
-- liquidation concern if visible/relevant.
+- selected-leverage liquidation-vs-SL sanity check (always; mark PASS only when liquidation is safely beyond SL).
 
 11) Trade Plan Tickets
 

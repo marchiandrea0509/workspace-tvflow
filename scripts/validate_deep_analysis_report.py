@@ -79,6 +79,7 @@ def validate(text: str) -> dict:
         ("gate_volume_stress", "RWA|Volume stress|p10"),
         ("gate_stop_exit", "Stop-exit|stop-exit sim"),
         ("gate_depth", "Depth"),
+        ("gate_liquidation_vs_sl", r"Liquidation|liq.*SL|SL.*liq"),
     ]:
         add(key, bool(re.search(label, orderability, flags=re.IGNORECASE)), f"Orderability table includes {label} gate")
 
