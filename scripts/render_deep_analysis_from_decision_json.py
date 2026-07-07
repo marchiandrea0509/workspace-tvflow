@@ -136,6 +136,7 @@ def render(data: dict[str, Any]) -> str:
     header = require_dict(data, "header")
     fields = require_list(header, "fields", 4)
     context = require_list(data, "contextState", 3)
+    input_integrity = require_list(data, "inputIntegrity", 1)
     levels = require_list(data, "detectedLevelMap", 6)
     impulse = require_dict(data, "pullbackImpulse")
     impulse_rows = require_list(impulse, "rows", 2)
@@ -153,6 +154,12 @@ def render(data: dict[str, Any]) -> str:
     out.append(md_table(
         ["TF", "State", "Evidence", "Execution meaning"],
         [[r.get("tf"), r.get("state"), r.get("evidence"), r.get("executionMeaning")] for r in context if isinstance(r, dict)],
+    ))
+
+    out.append("\n## Input screenshot audit\n\n")
+    out.append(md_table(
+        ["Source", "Issue", "Analysis impact"],
+        [[r.get("source"), r.get("issue"), r.get("analysisImpact")] for r in input_integrity if isinstance(r, dict)],
     ))
 
     out.append("\n## Detected Level Map\n\n")

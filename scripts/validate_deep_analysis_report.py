@@ -41,6 +41,7 @@ def validate(text: str) -> dict:
     required_sections = [
         ("header", r"^##\s+.*header\s*/\s*classification|^##\s+.*header.*classification", "Header / classification section"),
         ("context_state", r"^##\s+.*context\s+and\s+state", "Context and state section"),
+        ("input_screenshot_audit", r"^##\s+.*input\s+(screenshot\s+)?audit|^##\s+.*input\s+integrity", "Input screenshot/integrity audit section"),
         ("level_map", r"^##\s+.*(detected\s+level\s+map|structure\s+and\s+key\s+levels)", "Detected level map / structure levels section"),
         ("pullback_impulse", r"^##\s+.*pullback\s+impulse\s+used", "Pullback impulse used section"),
         ("a_section", r"^##\s+A\s+[—-].*BEST\s+QUALITY\s+PULLBACK", "A — BEST QUALITY PULLBACK section"),
@@ -69,6 +70,10 @@ def validate(text: str) -> dict:
     arrows = len(re.findall(r"→|->", impulse))
     add("impulse_alternatives", arrows >= 2, "Pullback impulse section compares at least two candidate impulses")
     add("broad_impulse", bool(re.search(r"broad|visible|parent", impulse, flags=re.IGNORECASE)), "Impulse section explicitly discusses broad/visible/parent impulse")
+
+    input_audit = section_text(text, r"^##\s+.*(input\s+(screenshot\s+)?audit|input\s+integrity).*$")
+    add("input_audit_table", "| Source | Issue | Analysis impact |".lower() in input_audit.lower(), "Input screenshot audit table with source/issue/impact columns")
+    add("input_audit_result", bool(re.search(r"PASS|OK|WARN|MATERIAL|unreadable|missing|low.?resolution|squeez", input_audit, flags=re.IGNORECASE)), "Input screenshot audit reports PASS/OK or a material issue")
 
     orderability = section_text(text, r"^##\s+.*(Orderability|liquidity).*$")
     for key, label in [

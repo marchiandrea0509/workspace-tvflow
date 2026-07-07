@@ -33,6 +33,7 @@ FORBIDDEN_VISIBLE_MARKERS = [
 REQUIRED_VISIBLE_STRINGS = [
     "## Header / Classification",
     "## Context and State",
+    "## Input screenshot audit",
     "## Detected Level Map",
     "## Pullback Impulse Used",
     "## A — BEST QUALITY PULLBACK",
@@ -50,6 +51,7 @@ REQUIRED_VISIBLE_STRINGS = [
     "| Leg | Entry | Type | Qty | Notional | SL | Loss | TP | Profit | RR | Trigger |",
     "| Plan | Status | Risk | Reward | RR | Notional | Margin |",
     "| Gate | Value | Limit / rule | Traffic light |",
+    "| Source | Issue | Analysis impact |",
 ]
 
 

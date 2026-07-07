@@ -1998,6 +1998,136 @@ def copy_tv_exports(tv_export_dir: Optional[Path], raw_dir: Path) -> Dict[str, A
     return out
 
 
+def image_dimensions(path: Path) -> Tuple[Optional[int], Optional[int], Optional[str]]:
+    """Return image width/height using only stdlib header parsing.
+
+    Deep-analysis screenshots are normally PNGs from Playwright, but JPEG/WebP
+    support keeps the integrity check useful for manually supplied evidence too.
+    """
+    try:
+        data = path.read_bytes()[:4096]
+        if data.startswith(b"\x89PNG\r\n\x1a\n") and len(data) >= 24:
+            return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big"), "png"
+        if data.startswith(b"\xff\xd8"):
+            with path.open("rb") as f:
+                f.read(2)
+                while True:
+                    marker_prefix = f.read(1)
+                    if not marker_prefix:
+                        break
+                    if marker_prefix != b"\xff":
+                        continue
+                    marker = f.read(1)
+                    while marker == b"\xff":
+                        marker = f.read(1)
+                    if marker in (b"\xd8", b"\xd9"):
+                        continue
+                    size_raw = f.read(2)
+                    if len(size_raw) != 2:
+                        break
+                    size = int.from_bytes(size_raw, "big")
+                    if marker and marker[0] in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                        payload = f.read(5)
+                        if len(payload) == 5:
+                            return int.from_bytes(payload[3:5], "big"), int.from_bytes(payload[1:3], "big"), "jpeg"
+                        break
+                    f.seek(max(size - 2, 0), 1)
+        if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+            if data[12:16] == b"VP8X" and len(data) >= 30:
+                w = 1 + int.from_bytes(data[24:27], "little")
+                h = 1 + int.from_bytes(data[27:30], "little")
+                return w, h, "webp"
+            if data[12:16] == b"VP8 " and len(data) >= 30:
+                return int.from_bytes(data[26:28], "little") & 0x3FFF, int.from_bytes(data[28:30], "little") & 0x3FFF, "webp"
+            if data[12:16] == b"VP8L" and len(data) >= 25:
+                bits = int.from_bytes(data[21:25], "little")
+                return (bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1, "webp"
+    except Exception:
+        return None, None, None
+    return None, None, None
+
+
+def infer_screenshot_tf(path: str) -> Optional[str]:
+    name = Path(path).name.lower()
+    for tf in ("1d", "4h", "1h", "15m"):
+        token = f"_{tf}_"
+        if token in name or name.startswith(f"{tf}_") or name.endswith(f"_{tf}.png") or name.endswith(f"_{tf}.jpg") or name.endswith(f"_{tf}.jpeg") or name.endswith(f"_{tf}.webp"):
+            return tf.upper()
+    return None
+
+
+def screenshot_integrity_check(tv_files: List[str]) -> Dict[str, Any]:
+    """Mechanical evidence check for generated/attached TradingView screenshots.
+
+    This catches missing files, tiny/corrupt images, low resolution, and contact
+    sheet fallback. The final vision/model step must still inspect semantic
+    problems such as unreadable price axes, squeezed scales, or missing visible
+    indicators and report them only when they materially affect analysis.
+    """
+    image_exts = (".png", ".jpg", ".jpeg", ".webp")
+    images = [p for p in tv_files if str(p).lower().endswith(image_exts)]
+    non_sheet = [p for p in images if "contact_sheet" not in Path(str(p)).name.lower()]
+    by_tf: Dict[str, List[str]] = {"1D": [], "4H": [], "1H": []}
+    for p in non_sheet:
+        tf = infer_screenshot_tf(str(p))
+        if tf in by_tf:
+            by_tf[tf].append(p)
+
+    rows: List[Dict[str, Any]] = []
+    material_issues: List[Dict[str, Any]] = []
+
+    def add_issue(row: Dict[str, Any], code: str, impact: str) -> None:
+        row.setdefault("issues", []).append(code)
+        material_issues.append({"timeframe": row.get("timeframe"), "file": row.get("file"), "issue": code, "analysis_impact": impact})
+
+    for tf in ("1D", "4H", "1H"):
+        selected = by_tf[tf][0] if by_tf[tf] else None
+        if not selected:
+            row = {"timeframe": tf, "file": None, "present": False, "status": "MATERIAL_ISSUE", "issues": ["missing_individual_screenshot"], "analysis_impact": f"{tf} visual structure cannot be independently verified from a full-resolution screenshot."}
+            rows.append(row)
+            material_issues.append({"timeframe": tf, "file": None, "issue": "missing_individual_screenshot", "analysis_impact": row["analysis_impact"]})
+            continue
+        path = Path(selected)
+        width, height, fmt = image_dimensions(path)
+        try:
+            size_bytes = path.stat().st_size
+        except Exception:
+            size_bytes = None
+        row = {"timeframe": tf, "file": selected, "present": True, "format": fmt, "width": width, "height": height, "size_bytes": size_bytes, "status": "OK", "issues": [], "analysis_impact": "none_detected_mechanically"}
+        if size_bytes is None or size_bytes <= 0:
+            add_issue(row, "file_missing_or_empty", "Screenshot file is missing/empty, so visible structure is unavailable.")
+        elif size_bytes < 50_000:
+            add_issue(row, "suspiciously_small_file", "Screenshot may be blank/half-loaded; verify chart before trusting visual levels.")
+        if width is None or height is None:
+            add_issue(row, "dimensions_unreadable", "Image header could not be parsed; verify screenshot integrity manually.")
+        else:
+            if width < 1200 or height < 700:
+                add_issue(row, "low_resolution", "Small screenshot may make price/time axes or indicators unreadable.")
+            aspect = width / height if height else None
+            row["aspect_ratio"] = rn(aspect, 3) if aspect else None
+            if aspect is not None and (aspect < 1.2 or aspect > 3.2):
+                add_issue(row, "unusual_aspect_ratio", "Chart may be squeezed/cropped; verify axes and visible levels before relying on it.")
+        if row["issues"]:
+            row["status"] = "MATERIAL_ISSUE"
+        rows.append(row)
+
+    contact_sheets = [p for p in images if "contact_sheet" in Path(str(p)).name.lower()]
+    if contact_sheets and not all(by_tf[tf] for tf in ("1D", "4H", "1H")):
+        material_issues.append({"timeframe": "MULTI", "file": contact_sheets[0], "issue": "contact_sheet_fallback_only", "analysis_impact": "Merged/contact-sheet evidence can squeeze axes; prefer full-resolution individual screenshots for precise levels."})
+
+    status = "OK" if not material_issues else "MATERIAL_ISSUES_TO_REPORT_IF_ANALYSIS_AFFECTED"
+    return {
+        "status": status,
+        "checked_at_utc": utc_now_iso(),
+        "policy": "Report only issues that materially affect analysis confidence or level readability; omit this section when all screenshots are usable.",
+        "mechanical_scope": "presence, file size, dimensions, resolution, aspect ratio, contact-sheet fallback",
+        "model_visual_scope": "The final screenshot read must also inspect chart clarity, price-axis readability, time-axis readability, squeezed scales, missing/hidden indicators, cropped panes, and blurry/overlapped labels.",
+        "required_individual_timeframes": ["1D", "4H", "1H"],
+        "rows": rows,
+        "material_issues": material_issues,
+    }
+
+
 def load_execution_state(execution_state_json: Optional[Path], raw_dir: Path) -> Dict[str, Any]:
     if execution_state_json and execution_state_json.exists():
         data = read_json(execution_state_json, default={})
@@ -2310,6 +2440,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "impulse_audit_required": "Final reports must print PB impulse used (selected swing and 38.2/50/61.8 levels) and compare any materially different local/broad/stale alternative before choosing A/B levels. Prefer the recent visible 4H parent swing around 3-7 ATR when price is near major S/R; do not jump to stale over-broad 1D pivots just because they are available. Wrong impulse selection is a known regression.",
             "format_parity_required": "The chat answer itself, not only the saved report, must include the 5-day swing-plan structure: header/classification, Context and State TF table, Key Levels table, Pullback Impulse Used table, A/B/C/D sections with ticket tables for valid options, split Orderability tables (liquidity/executable orderability, operational safety, risk/feasibility), and Final verdict bullets. Do not compress away impulse, gate tables, or valid B/C tickets.",
             "level_density_required": "Detected Level Map must be dense enough to audit: include nearest-to-farthest 1H/4H/1D supports/resistances, intermediate shelves, fresh highs/lows, and HTF levels before narrowing to tickets.",
+            "input_integrity_required": "Before trusting screenshots, check input integrity and always print a compact Input screenshot audit section/table after Context and State. If screenshots are usable, include a PASS/no material issue row. Add detailed rows only for material issues: missing/unreadable 1D/4H/1H screenshots, low resolution, blurry or squeezed axes, unreadable prices, cropped/missing indicator panes, wrong symbol/timeframe, or hidden/missing indicators.",
             "do_not": ["choose old pivots just because they are confirmed", "ignore fresh breakout highs/lows", "reject resting limit ladders only because current price is hot", "reject tickets solely because margin exceeds cap at initial/current/planned leverage when <=20x can fit", "require 2+ ladder legs if one valid single pullback limit survives all checks"],
             "screenshot_delivery": "Analyze 1D, 4H, and 1H screenshots when available, but Discord screenshot delivery should happen only after the analysis text is released: send exactly one image per follow-up message, full-resolution original files, and only 4H then 1D. Do not inline screenshots in the analysis message. If a required analysis screenshot is missing, unclear, or not used, say so explicitly.",
         },
@@ -2319,6 +2450,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "created_at_utc", "price_truth_source", "screener_usage", "live_execution_scope",
         ] if k in manifest},
         "freshness": analysis_summary.get("freshness"),
+        "input_integrity": analysis_summary.get("screenshot_integrity_check"),
         "ladder_price_reference": analysis_summary.get("ladder_price_reference"),
         "contract_rules_compact": {k: contract_rules.get(k) for k in ["price_place", "volume_place", "size_multiplier", "min_trade_num", "min_trade_usdt"] if k in contract_rules},
         "timeframes": {tf: compact_tf_summary(s) for tf, s in (analysis_summary.get("timeframes") or {}).items() if isinstance(s, dict)},
@@ -2407,6 +2539,7 @@ def make_compact_decision_payload(manifest: Dict[str, Any], analysis_summary: Di
             "analysis_summary_full": (files.get("derived") or {}).get("analysis_summary"),
             "candidate_levels_full": (files.get("derived") or {}).get("candidate_levels"),
             "freshness_check": (files.get("derived") or {}).get("freshness_check"),
+            "screenshot_integrity_check": (files.get("derived") or {}).get("screenshot_integrity_check"),
             "tv_exports": files.get("tv_exports", []),
             "preferred_media_files": files.get("preferred_media_files", []),
             "discord_media_lines": files.get("discord_media_lines", []),
@@ -2513,10 +2646,12 @@ def make_ultra_compact_decision_payload(compact_payload: Dict[str, Any]) -> Dict
             "Every valid A/B/C option must include canonical ticket rows in the JSON.",
             "Rejected options must state the exact blocking reason and what would fix them.",
             "Orderability must be split into liquidity, operational safety, and risk/feasibility gates.",
+            "Check screenshot/input integrity before using visual evidence. Always include inputIntegrity with at least one PASS/no material issue row or material issue row(s); do not omit it from the rendered report.",
             "Any live placement requires a separate explicit confirmation outside this report.",
         ],
         "manifest": compact_payload.get("manifest"),
         "freshness": compact_payload.get("freshness"),
+        "input_integrity": compact_payload.get("input_integrity"),
         "price_reference": compact_payload.get("ladder_price_reference"),
         "contract_rules": compact_payload.get("contract_rules_compact"),
         "timeframes": compact_payload.get("timeframes"),
@@ -2559,6 +2694,7 @@ def make_ultra_compact_decision_payload(compact_payload: Dict[str, Any]) -> Dict
         "evidence_files": {
             "tv_exports": evidence.get("tv_exports"),
             "preferred_media_files": evidence.get("preferred_media_files"),
+            "screenshot_integrity_check": evidence.get("screenshot_integrity_check"),
             "analysis_summary_full": evidence.get("analysis_summary_full"),
             "candidate_levels_full": evidence.get("candidate_levels_full"),
         },
@@ -2596,6 +2732,7 @@ Use this packet with `{master_prompt}`.
 ## 2. Decision rules reminder
 
 - Screenshots / visible TradingView chart structure are primary truth for structure and levels.
+- Before relying on screenshots, perform an input-integrity read and always output `inputIntegrity`: use one PASS/no material issue row when screenshots are usable; add detailed rows only for material issues that affect analysis confidence or level readability (unclear/low-res chart, squeezed axes, unreadable price scale, missing/hidden indicators, cropped panes, wrong/missing timeframe/symbol).
 - User notes are secondary only.
 - Bitget OHLCV/export/ticker/execution state is fallback/validation only when screenshot levels/data are unclear, and for ATR/current price/sizing/margin/leverage/liquidation/execution-feasibility checks.
 - TradingView OHLCV/export data must not override clearly visible screenshot structure.
@@ -2752,6 +2889,30 @@ def main() -> int:
     ladder["auto_side_patch_note"] = "When requested side is AUTO, builder infers LONG/SHORT for directional fib/value-zone mapping so levels are not lost. Final report must still use screenshot-first judgment."
     fresh = freshness(market_snapshot, summaries, bool(tv_summary.get("available")))
 
+    tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+    non_sheet_screenshots = [p for p in tv_screenshot_files if "contact_sheet" not in Path(str(p)).name.lower()]
+
+    def screenshot_for_tf(tf: str) -> Optional[str]:
+        tf_l = f"_{tf.lower()}_"
+        for p in non_sheet_screenshots:
+            if tf_l in Path(str(p)).name.lower():
+                return p
+        return None
+
+    individual_3tf_screenshots = [screenshot_for_tf(tf) for tf in ("1D", "4H", "1H")]
+    screenshot_integrity = screenshot_integrity_check(tv_screenshot_files)
+
+    # Discord delivery preference: keep 1H available for analysis/audit, but only send
+    # full-resolution 4H and 1D screenshots after the analysis, one image per message.
+    individual_discord_screenshots = [screenshot_for_tf(tf) for tf in ("4H", "1D")]
+    discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
+    contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
+    preferred_media_files = individual_discord_screenshots if all(individual_discord_screenshots) else (discord_sheets or contact_sheets or tv_screenshot_files)
+    files["preferred_media_files"] = preferred_media_files
+    files["discord_media_lines"] = [f"MEDIA:{p}" for p in preferred_media_files]
+    files["discord_media_delivery_mode"] = "after_analysis_separate_messages_one_image_each_4H_then_1D"
+    files["discord_media_messages"] = [{"message_index": i + 1, "media_file": p, "media_line": f"MEDIA:{p}"} for i, p in enumerate(preferred_media_files)]
+
     screener_summary = {
         "screener_version": args.screener_version,
         "symbol": tv_symbol,
@@ -2787,36 +2948,18 @@ def main() -> int:
         "screener_summary": screener_summary,
         "freshness": fresh,
         "tv_exports_summary": tv_summary,
+        "screenshot_integrity_check": screenshot_integrity,
     }
     write_json(derived_dir / "analysis_summary.json", analysis_summary)
     write_json(derived_dir / "candidate_levels.json", {**levels, "candidate_trade_design": ladder})
     write_json(derived_dir / "freshness_check.json", fresh)
+    write_json(derived_dir / "screenshot_integrity_check.json", screenshot_integrity)
     files["derived"] = {
         "analysis_summary": str(derived_dir / "analysis_summary.json"),
         "candidate_levels": str(derived_dir / "candidate_levels.json"),
         "freshness_check": str(derived_dir / "freshness_check.json"),
+        "screenshot_integrity_check": str(derived_dir / "screenshot_integrity_check.json"),
     }
-    tv_screenshot_files = [p for p in files.get("tv_exports", []) if str(p).lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
-    non_sheet_screenshots = [p for p in tv_screenshot_files if "contact_sheet" not in Path(str(p)).name.lower()]
-
-    def screenshot_for_tf(tf: str) -> Optional[str]:
-        tf_l = f"_{tf.lower()}_"
-        for p in non_sheet_screenshots:
-            if tf_l in Path(str(p)).name.lower():
-                return p
-        return None
-
-    individual_3tf_screenshots = [screenshot_for_tf(tf) for tf in ("1D", "4H", "1H")]
-    # Discord delivery preference: keep 1H available for analysis/audit, but only send
-    # full-resolution 4H and 1D screenshots after the analysis, one image per message.
-    individual_discord_screenshots = [screenshot_for_tf(tf) for tf in ("4H", "1D")]
-    discord_sheets = [p for p in tv_screenshot_files if "contact_sheet_discord" in Path(str(p)).name.lower()]
-    contact_sheets = [p for p in tv_screenshot_files if "contact_sheet" in Path(str(p)).name.lower()]
-    preferred_media_files = individual_discord_screenshots if all(individual_discord_screenshots) else (discord_sheets or contact_sheets or tv_screenshot_files)
-    files["preferred_media_files"] = preferred_media_files
-    files["discord_media_lines"] = [f"MEDIA:{p}" for p in preferred_media_files]
-    files["discord_media_delivery_mode"] = "after_analysis_separate_messages_one_image_each_4H_then_1D"
-    files["discord_media_messages"] = [{"message_index": i + 1, "media_file": p, "media_line": f"MEDIA:{p}"} for i, p in enumerate(preferred_media_files)]
 
     compact_payload = make_compact_decision_payload(manifest, analysis_summary, execution_state, files)
     write_json(derived_dir / "decision_packet_compact.json", compact_payload)
