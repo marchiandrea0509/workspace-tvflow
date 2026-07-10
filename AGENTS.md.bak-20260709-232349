@@ -32,17 +32,13 @@ Escalate back to full `tvflow` / `gpt-5.5` for:
 
 If a routine request arrives inside the heavy BITGET Trades thread, do not carry the entire audit context through a long tool chain if avoidable. Start/route it as a clean `tvflow-fast` run, then post only the concise result or artifact reference back to BITGET Trades. Runbook: `README_BITGET_FAST_ROUTING.md`.
 
-## Session start / timeout discipline
-Do **not** spend the first Discord turn rereading broad project files by default. Deep-analysis and live-trading requests can exceed the channel run timeout if startup burns time on generic context.
-
-Fast startup rules:
-1. Read `SESSION_START.txt` first; it contains the lightweight routing checklist.
-2. Use targeted reads of `PROJECT_STATE.md` only when the task needs current live-order state, blockers, or recent operational context.
-3. Read today's `memory/YYYY-MM-DD.md` only when same-day live orders, diagnostics, or workflow patches may matter. Read yesterday only if today references it or the task is explicitly historical.
-4. If `memory/SHARED_FROM_MAIN.md` exists, read it only when the user asks about cross-workspace/main-session context.
-5. Update `PROJECT_STATE.md` and/or dated memory when milestones, blockers, safety rules, or workflow changes occur.
-
-For fresh `Analyse SYMBOL` / stock-to-Bitget comparison requests, start the optimized deep-analysis path immediately. Do not reread full README/schema/script files unless changing/debugging the workflow; rely on the mandatory delivery gates below.
+## Session start
+At the start of each session:
+1. Read `PROJECT_STATE.md`
+2. Read `SESSION_START.txt`
+3. Read today and yesterday under `memory/` if present
+4. If `memory/SHARED_FROM_MAIN.md` exists, read it as the safe cross-workspace bridge
+5. Update `PROJECT_STATE.md` when milestones or blockers change
 
 ## Continuity
 Prefer storing durable decisions, workflows, architecture notes, screener rules, and Pine design choices in workspace files so the project remains coherent over time.

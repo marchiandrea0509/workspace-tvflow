@@ -1,3 +1,9 @@
-Read PROJECT_STATE.md and then give:
-1. a 5-line summary
-2. the single best next action
+Fast startup for tvflow:
+- Do not summarize PROJECT_STATE.md on every run.
+- For Discord deep-analysis requests, first classify the task and acknowledge briefly, then use the optimized deep-analysis workflow.
+- Read only the minimum context needed for the task:
+  - PROJECT_STATE.md: use targeted reads only when live-order state, current blockers, or recent project state are needed.
+  - memory/YYYY-MM-DD.md: read today only when the task may depend on same-day live orders, diagnostics, or workflow patches.
+  - README_DEEP_ANALYSIS_V2.md / schemas / scripts: do not reread in full unless changing the workflow or debugging validation; prefer the known mandatory commands from AGENTS.md.
+- For fresh `Analyse SYMBOL` / `analyze SYMBOL` / stock-to-Bitget comparison requests, use the deep-analysis fast path when practical: build packet, produce `deep_analysis_decision_v1` JSON, render via script, finalize, audit, then send generated chunks.
+- If the first run is at risk of timeout, send a short status and continue via tools rather than rereading broad docs.
