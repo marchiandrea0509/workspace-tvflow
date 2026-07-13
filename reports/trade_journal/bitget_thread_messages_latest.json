@@ -1,48 +1,22 @@
 {
   "messages": [
-    "Bitget semi-auto trade report\nGenerated: 2026-07-13 00:20:44 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 224 | fills 705 | plan/order-plan history 18\nCurrent: active orders 3 | positions 1\nRealized PnL gross: 919.51 USDT | fees: -118.04 | net est: 801.48 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
-    "Order state changes since previous refresh (6)\n- REMOVED from active orders: LLYUSDT open/buy long qty 0.94 @ 1193.3 | TP 1222 SL 1166.8 | isolated 10x | id 1456986126345203713 | history status filled fill/qty 0.94 avg 1193.3\n- REMOVED from active orders: LLYUSDT open/buy long qty 2.41 @ 1181.3 | TP 1222 SL 1166.8 | isolated 10x | id 1456986144347156481 | history status not active now fill/qty 0\n- REMOVED from active orders: LLYUSDT open/buy long qty 4.76 @ 1175.2 | TP 1205.1 SL 1166.8 | isolated 10x | id 1456986162890174465 | history status not active now fill/qty 0\n- NEW active order: JDUSDT open/buy long qty 75.76 @ 28.01 | TP 28.52 SL 27.68 | isolated 10x | id 1460324905445388289\n- NEW active order: JDUSDT open/buy long qty 74.47 @ 27.75 | TP 29.16 SL 27.28 | isolated 10x | id 1460324923359260673\n- NEW active order: JDUSDT open/buy long qty 210.53 @ 27.37 | TP 29.16 SL 27.18 | isolated 10x | id 1460324940807565313",
-    "Active Bitget futures orders / planned legs\n- JDUSDT open/buy long qty 210.53 @ 27.37 | TP 29.16 SL 27.18 | isolated 10x | id 1460324940807565313\n- JDUSDT open/buy long qty 74.47 @ 27.75 | TP 29.16 SL 27.28 | isolated 10x | id 1460324923359260673\n- JDUSDT open/buy long qty 75.76 @ 28.01 | TP 28.52 SL 27.68 | isolated 10x | id 1460324905445388289",
-    "Current Bitget futures positions\n- LLYUSDT long qty 3.34 | avg 1200.549101796408 mark 1194.13 | uPnL -21.439800000003 | liq 1095.191663744215 | isolated 9x",
-    "Recent Bitget futures executions (latest 8)\n- 2026-07-09 16:06:14 | UNHUSDT close/buy long qty 4.49 avg 432.83 | status filled | PnL 78.14 fee -1.17 net 76.97 | id 1459114702846718082\n- 2026-07-09 16:06:14 | UNHUSDT close/buy long qty 11.94 avg 432.83 | status filled | PnL 207.79 fee -3.10 net 204.68 | id 1459114702817357824\n- 2026-07-09 10:00:17 | JDUSDT open/buy long qty 0 avg n/a | status canceled | PnL 0.00 fee 0.00 net 0.00 | id 1459022605040906241\n- 2026-07-09 10:00:12 | JDUSDT open/buy long qty 0 avg n/a | status canceled | PnL 0.00 fee 0.00 net 0.00 | id 1459022586724380673\n- 2026-07-09 10:00:08 | JDUSDT open/buy long qty 0 avg n/a | status canceled | PnL 0.00 fee 0.00 net 0.00 | id 1459022568353329155\n- 2026-07-08 10:23:46 | HOODUSDT close/buy long qty 7.46 avg 110.21 | status filled | PnL -11.77 fee -0.49 net -12.26 | id 1458666128962908165\n- 2026-07-08 10:23:46 | HOODUSDT close/buy long qty 14.88 avg 110.21 | status filled | PnL -23.47 fee -0.98 net -24.45 | id 1458666128962908162\n- 2026-07-08 10:23:46 | HOODUSDT close/buy long qty 40.95 avg 110.21 | status filled | PnL -64.58 fee -2.71 net -67.29 | id 1458666128950325250"
+    "Bitget semi-auto trade report\nGenerated: 2026-07-13 16:48:45 CEST\nMode: TradingView/Pine signal side + confirmed Bitget futures execution\nHistory: orders 225 | fills 712 | plan/order-plan history 18\nCurrent: active orders 6 | positions 0\nRealized PnL gross: 850.88 USDT | fees: -121.63 | net est: 729.25 USDT\nLocal log/workbook: C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls\nRead-only snapshot; not an instruction to place/cancel/modify orders.",
+    "Order state changes since previous refresh (2)\n- NEW active order: EWYUSDT open/sell short qty 4.59 @ 177.5 | TP 169.1 SL 186.2 | isolated 4x | id 1460573985455108097\n- NEW active order: EWYUSDT open/sell short qty 12 @ 181.2 | TP 166.3 SL 186.2 | isolated 4x | id 1460574420299575297",
+    "Active Bitget futures orders / planned legs\n- EWYUSDT open/sell short qty 12 @ 181.2 | TP 166.3 SL 186.2 | isolated 4x | id 1460574420299575297\n- EWYUSDT open/sell short qty 4.59 @ 177.5 | TP 169.1 SL 186.2 | isolated 4x | id 1460573985455108097\n- UNHUSDT open/buy long qty 12.9 @ 423.26 | TP 433.59 SL 421.7 | isolated 15x | id 1460571017532043266\n- UNHUSDT open/buy long qty 10.67 @ 425.45 | TP 433.59 SL 421.7 | isolated 15x | id 1460567871883735040\n- JDUSDT open/buy long qty 176.47 @ 28.01 | TP 29.16 SL 27.67 | isolated 7x | id 1460551490702307329\n- JDUSDT open/buy long qty 65.57 @ 28.28 | TP 28.99 SL 27.67 | isolated 7x | id 1460551253392781313",
+    "Current Bitget futures positions: none.",
+    "Recent Bitget futures executions (latest 8)\n- 2026-07-13 15:30:05 | LLYUSDT close/buy long qty 1.74 avg 1169.7 | status filled | PnL -53.68 fee -1.22 net -54.90 | id 1460555154347159558\n- 2026-07-13 15:30:05 | LLYUSDT close/buy long qty 1.6 avg 1170.37 | status filled | PnL -48.28 fee -1.12 net -49.41 | id 1460555154338770951\n- 2026-07-13 03:51:22 | JDUSDT close/buy long qty 54.63 avg 28.62 | status filled | PnL 33.32 fee -0.94 net 32.39 | id 1460379315580071937\n- 2026-07-13 00:15:09 | JDUSDT open/buy long qty 54.63 avg 28.01 | status canceled | PnL 0.00 fee -0.31 net -0.31 | id 1460324905445388289\n- 2026-07-09 16:06:14 | UNHUSDT close/buy long qty 4.49 avg 432.83 | status filled | PnL 78.14 fee -1.17 net 76.97 | id 1459114702846718082\n- 2026-07-09 16:06:14 | UNHUSDT close/buy long qty 11.94 avg 432.83 | status filled | PnL 207.79 fee -3.10 net 204.68 | id 1459114702817357824\n- 2026-07-08 10:23:46 | HOODUSDT close/buy long qty 7.46 avg 110.21 | status filled | PnL -11.77 fee -0.49 net -12.26 | id 1458666128962908165\n- 2026-07-08 10:23:46 | HOODUSDT close/buy long qty 14.88 avg 110.21 | status filled | PnL -23.47 fee -0.98 net -24.45 | id 1458666128962908162"
   ],
   "source": {
     "history_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_bitget_history_latest.json",
     "open_orders_json": [
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_BTCUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_TQQQUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GOOGLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GMEUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_AAPLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NEARUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NVDAUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_FUTUUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_MRVLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ARMUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_APPUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_CLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_latest.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_LLYUSDT_latest.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_EWYUSDT_latest.json",
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_UNHUSDT_latest.json",
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_latest.json"
     ],
     "previous_open_orders_json": [
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_BTCUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_TQQQUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GOOGLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_GMEUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_AAPLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NEARUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_INTCUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_NVDAUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_FUTUUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_MRVLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ARMUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_APPUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_CLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_ASMLUSDT_previous.json",
-      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_LLYUSDT_previous.json"
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_EWYUSDT_previous.json",
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_UNHUSDT_previous.json",
+      "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_open_orders_JDUSDT_previous.json"
     ],
     "positions_json": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_positions_latest.json",
     "workbook": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls"
