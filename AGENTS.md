@@ -44,6 +44,8 @@ Fast startup rules:
 
 For fresh `Analyse SYMBOL` / stock-to-Bitget comparison requests, start the optimized deep-analysis path immediately. Do not reread full README/schema/script files unless changing/debugging the workflow; rely on the mandatory delivery gates below.
 
+Screenshot reliability rule: all three timeframes remain mandatory. Prefer one multi-image analysis call containing the 1D, 4H, and 1H screenshots when the image tool supports multiple images, explicitly labeling each image by timeframe in the prompt. This is a batching optimization only, not evidence reduction. If multi-image comparison is unavailable, ambiguous, or appears to degrade interpretation, fall back to separate image reads for 1D/4H/1H.
+
 ## Continuity
 Prefer storing durable decisions, workflows, architecture notes, screener rules, and Pine design choices in workspace files so the project remains coherent over time.
 
@@ -75,18 +77,13 @@ Mandatory final step before sending the analysis:
 
 ```powershell
 python scripts\finalize_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
-```
-
-If this command fails, the correct response is to say the report is not delivery-valid yet and continue fixing it.
-
-After finalizer PASS and before replying, run the dedicated delivery-auditor subagent/check using `prompts/deep_analysis_delivery_auditor.md` against the saved report, rendered reply, and `discord_chunks/chunk_*.md`. Treat `AUDIT_FAIL` as a hard stop: fix the files, rerun finalizer, and audit again. The auditor must confirm that chunks are clean user-visible content with no `VERBATIM_DEEP_ANALYSIS_CHUNK` or other internal marker leakage, that all chunks are present/in order, and that the final verdict is included.
-
-Deterministic audit command, mandatory even if a subagent is used:
-
-```powershell
 python scripts\audit_deep_analysis_delivery.py --report reports\deep_analysis\<REPORT>.md
 ```
 
-This must print `AUDIT_PASS`. If it prints `AUDIT_FAIL`, do not answer the analysis yet.
+Fast delivery profile is now the default: `finalize_deep_analysis_delivery.py` renders compact Discord chunks that preserve required square ticket tables, orderability/risk traffic-light tables, and final verdict while leaving the full saved report intact. Use `--delivery-profile full` only when Andrea explicitly asks for the full long-form Discord report.
 
-Only after `AUDIT_PASS`, the next analysis message must be copied from the generated clean `discord_chunks/chunk_*.md` files verbatim and in order. A short verdict-only reply is allowed only when Andrea explicitly asks for a short summary.
+If either command fails, the correct response is to say the report is not delivery-valid yet and continue fixing it. If both pass, send generated clean `discord_chunks/chunk_*.md` content verbatim and in order.
+
+Do **not** spawn or wait for the optional delivery-auditor subagent after deterministic `AUDIT_PASS` during normal Discord delivery. That subagent is now reserved for debugging an `AUDIT_FAIL`, repeated formatting regressions, or explicit QA requests. The deterministic finalizer+auditor is the hard gate.
+
+A short verdict-only reply is allowed only when Andrea explicitly asks for a short summary.

@@ -66,7 +66,8 @@ def main() -> int:
     ap.add_argument("--out", help="Rendered full reply path; default <report>.discord_reply.md")
     ap.add_argument("--chunk-dir", help="Chunk output dir; default <report>.discord_chunks")
     ap.add_argument("--manifest", help="Manifest JSON path; default <chunk-dir>/manifest.json")
-    ap.add_argument("--chunk-limit", type=int, default=1800, help="Discord-safe chunk length before marker")
+    ap.add_argument("--chunk-limit", type=int, default=1900, help="Discord-safe chunk length; default stays below Discord's 2000-char ceiling")
+    ap.add_argument("--delivery-profile", choices=["compact", "full"], default="compact", help="Discord delivery profile. compact keeps square ticket/traffic-light/risk tables and final summary; full sends the whole rendered report.")
     ap.add_argument("--no-path", action="store_true", help="Do not include saved report path in rendered reply")
     args = ap.parse_args()
 
@@ -84,7 +85,7 @@ def main() -> int:
         print("\nDo not answer with a manual summary. Fix the report first.", file=sys.stderr)
         return 3
 
-    reply = render_chat_reply(report_text, report_path, include_path=not args.no_path)
+    reply = render_chat_reply(report_text, report_path, include_path=not args.no_path, delivery_profile=args.delivery_profile)
     reply_result = validate(reply)
     if not reply_result["ok"]:
         print("ERROR: rendered reply fails deep-analysis validator", file=sys.stderr)
@@ -115,6 +116,7 @@ def main() -> int:
         "chunks": [str(p) for p in chunk_paths],
         "chunkCount": len(chunk_paths),
         "chunkLimit": args.chunk_limit,
+        "deliveryProfile": args.delivery_profile,
         "userVisibleChunksAreClean": True,
     }
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
