@@ -3,6 +3,10 @@ const { parseArgs } = require('../lib/cli');
 
 (async () => {
   const args = parseArgs(process.argv.slice(2));
+  if (args.help) {
+    console.log('Usage: node scripts/set-leverage.js --symbol JDUSDT --leverage 6 [--holdSide long|short]');
+    return;
+  }
   const cfg = getDefaultTradingConfig();
   const symbol = args.symbol || cfg.defaultSymbol;
   const leverage = args.leverage || cfg.defaultLeverage;

@@ -105,10 +105,11 @@ Copy-Item $messagesLatest $messagesStamped -Force
 
 $sentIds = @()
 if (-not $NoSend) {
+  $sendTarget = if ($Target -match '^\d+$') { "channel:$Target" } else { $Target }
   $payload = Get-Content $messagesLatest -Raw | ConvertFrom-Json
   foreach ($msg in $payload.messages) {
     $body = if ($MessagePrefix) { "$MessagePrefix`n$msg" } else { [string]$msg }
-    $raw = & openclaw message send --channel discord --target $Target --message $body --json --verbose
+    $raw = & openclaw message send --channel discord --target $sendTarget --message $body --json --verbose
     if ($LASTEXITCODE -ne 0) { throw "openclaw message send failed with exit code $LASTEXITCODE`n$raw" }
     try {
       $parsed = ($raw -join "`n") | ConvertFrom-Json
@@ -123,7 +124,7 @@ $summary = @($history.results | ForEach-Object { [pscustomobject]@{ label = $_.l
 [pscustomobject]@{
   ok = $true
   modelRecommended = 'gpt-nano for normal refresh; gpt-mini only if API/reporting fails'
-  target = $Target
+  target = if ($NoSend) { $Target } else { $sendTarget }
   since = $Since
   trackedSymbols = $tracked
   historySummary = $summary

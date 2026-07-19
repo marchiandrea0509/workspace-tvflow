@@ -3,6 +3,10 @@ const { parseArgs } = require('../lib/cli');
 
 (async () => {
   const args = parseArgs(process.argv.slice(2));
+  if (args.help) {
+    console.log('Usage: node scripts/set-margin-mode.js --symbol JDUSDT --marginMode isolated|crossed');
+    return;
+  }
   const cfg = getDefaultTradingConfig();
   const symbol = args.symbol || cfg.defaultSymbol;
   const marginMode = args.marginMode || cfg.defaultMarginMode;

@@ -243,11 +243,15 @@ node scripts/positions.js
 node scripts/set-margin-mode.js --symbol BTCUSDT --marginMode isolated
 ```
 
+`--help` is read-only and prints usage. Never omit `--symbol` on a live account.
+
 ### Set leverage
 
 ```powershell
 node scripts/set-leverage.js --symbol BTCUSDT --leverage 3
 ```
+
+`--help` is read-only and prints usage. Never omit `--symbol` on a live account.
 
 ### Place one order directly
 
