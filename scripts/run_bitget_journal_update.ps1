@@ -51,7 +51,10 @@ $tracked = Parse-Symbols $Symbols
 try {
   $posJson = Get-Content $positionsLatest -Raw | ConvertFrom-Json
   $posSymbols = @($posJson.result.data | ForEach-Object { $_.symbol } | Where-Object { $_ })
-  $tracked = @($tracked + $posSymbols | Select-Object -Unique)
+  # Force both operands to arrays before concatenation. When each side contains
+  # exactly one symbol, PowerShell otherwise treats them as scalar strings and
+  # produces an invalid merged symbol (for example SOXLUSDTEWYUSDT).
+  $tracked = @((@($tracked) + @($posSymbols)) | Select-Object -Unique)
 } catch {}
 
 $openOrderFiles = @()
