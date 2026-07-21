@@ -18,7 +18,9 @@ Deep analysis / user request / GPT comparison
   -> Bitget write
   -> postcheck
   -> audit log
-  -> journal refresh / feedback loop
+  -> TradingView live Entry/SL/TP drawing + screenshot receipt
+  -> journal refresh + Discord messageId receipt
+  -> feedback loop
 ```
 
 ## Core principles
@@ -29,6 +31,7 @@ Deep analysis / user request / GPT comparison
 4. **Every live write must eventually produce an audit record.** The audit record should make it easy to understand what was requested, what checks passed/failed, what was sent to Bitget, and what postcheck found.
 5. **Human confirmation remains required for live execution.** The service can standardize checks but does not remove Andrea's explicit execution boundary.
 6. **Every action needs an idempotency key.** Retries, timeouts, duplicated cron/scheduler runs, or duplicate assistant turns must not create duplicate orders.
+7. **A successful exchange write is not the end of the operator workflow.** Live placement/replacement remains delivery-incomplete until the TradingView drawing screenshot and journal Discord message ID are recorded. The shared post-live finalizer owns this gate.
 
 ## Idempotency model
 

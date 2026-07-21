@@ -3,6 +3,9 @@ param(
   [string]$Since = '2020-01-01',
   [string]$Symbols = 'BTCUSDT,TQQQUSDT,GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT,FUTUUSDT,MRVLUSDT,JDUSDT,ARMUSDT,APPUSDT,CLUSDT,ASMLUSDT',
   [string]$MessagePrefix = '',
+  [ValidateSet('full', 'live-order')]
+  [string]$DeliveryProfile = 'full',
+  [string]$ReceiptOut = '',
   [switch]$NoSend,
   [switch]$Strict
 )
@@ -107,7 +110,16 @@ $sentIds = @()
 if (-not $NoSend) {
   $sendTarget = if ($Target -match '^\d+$') { "channel:$Target" } else { $Target }
   $payload = Get-Content $messagesLatest -Raw | ConvertFrom-Json
-  foreach ($msg in $payload.messages) {
+  $messagesToSend = @($payload.messages)
+  if ($DeliveryProfile -eq 'live-order') {
+    # A confirmed live-order action needs one concise delivery receipt: the
+    # report summary plus the active-order rows. Keeping this to one Discord
+    # send avoids partial multi-message delivery and makes the receipt atomic.
+    $summaryMessage = if ($messagesToSend.Count -gt 0) { [string]$messagesToSend[0] } else { '' }
+    $activeOrdersMessage = if ($messagesToSend.Count -gt 2) { [string]$messagesToSend[2] } else { '' }
+    $messagesToSend = @(($summaryMessage, $activeOrdersMessage | Where-Object { $_ }) -join "`n`n")
+  }
+  foreach ($msg in $messagesToSend) {
     $body = if ($MessagePrefix) { "$MessagePrefix`n$msg" } else { [string]$msg }
     $raw = & openclaw message send --channel discord --target $sendTarget --message $body --json --verbose
     if ($LASTEXITCODE -ne 0) { throw "openclaw message send failed with exit code $LASTEXITCODE`n$raw" }
@@ -121,10 +133,11 @@ if (-not $NoSend) {
 $history = Get-Content $historyLatest -Raw | ConvertFrom-Json
 $summary = @($history.results | ForEach-Object { [pscustomobject]@{ label = $_.label; ok = $_.ok; count = $_.count } })
 
-[pscustomobject]@{
+$resultObject = [pscustomobject]@{
   ok = $true
   modelRecommended = 'gpt-nano for normal refresh; gpt-mini only if API/reporting fails'
   target = if ($NoSend) { $Target } else { $sendTarget }
+  deliveryProfile = $DeliveryProfile
   since = $Since
   trackedSymbols = $tracked
   historySummary = $summary
@@ -137,4 +150,13 @@ $summary = @($history.results | ForEach-Object { [pscustomobject]@{ label = $_.l
   messagesSnapshot = $messagesStamped
   sent = -not [bool]$NoSend
   sentMessageIds = $sentIds
-} | ConvertTo-Json -Depth 8
+}
+
+$resultJson = $resultObject | ConvertTo-Json -Depth 8
+if ($ReceiptOut) {
+  $receiptPath = [System.IO.Path]::GetFullPath($ReceiptOut)
+  $receiptDir = Split-Path -Parent $receiptPath
+  if ($receiptDir) { New-Item -ItemType Directory -Force -Path $receiptDir | Out-Null }
+  Set-Content -LiteralPath $receiptPath -Value $resultJson -Encoding utf8
+}
+$resultJson

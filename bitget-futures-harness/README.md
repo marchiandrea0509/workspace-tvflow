@@ -75,13 +75,15 @@ BITGET_ALLOW_ORDER_PLACEMENT=true
 node scripts/execute-signal.js --signal examples/open-long.market.json --send
 ```
 
-6. After any confirmed auto-trade action, refresh the semi-auto journal:
+6. After exchange postchecks for any confirmed live-order placement/replacement, run the mandatory delivery finalizer. It draws the exact live orders on TradingView Desktop, saves a screenshot, refreshes the semi-auto journal, posts the one-message live-order journal profile to `BITGET Trades`, and writes a machine-readable receipt:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File ..\scripts\run_bitget_journal_update.ps1 -MessagePrefix "Journal refreshed after Bitget auto-trade."
+powershell -ExecutionPolicy Bypass -File ..\scripts\finalize_bitget_live_order_workflow.ps1 -PlanPath C:\Users\anmar\tools\trade_plan_from_oc.json -Symbols JDUSDT -MessagePrefix "Journal refreshed after JDUSDT live order."
 ```
 
-Use `-NoSend` if you only want to rebuild local artifacts without posting to the Bitget trades thread.
+The live-order workflow is complete only when the receipt contains a TradingView screenshot and at least one journal Discord `messageId`. Use `-ValidateOnly` to check plan shape/prerequisites without drawing or posting. `-NoSend` is diagnostic only and does not satisfy the normal live-order delivery gate.
+
+For journal-only maintenance outside a live-order action, continue using `run_bitget_journal_update.ps1`. Its `-DeliveryProfile live-order` option combines the report summary and active-order rows into one atomic Discord message; `-ReceiptOut <path>` writes the delivery result for automation.
 
 ## Robustness / anti-regression workflow
 
@@ -92,7 +94,8 @@ Harden the workflow in this order:
 2. Dry-run or syntax-check the tool before live use.
 3. Use live placement gates only for the exact send command; do not persistently loosen `.env.local` unless explicitly intended.
 4. Postcheck Bitget state with `list-open-orders.js` / `positions.js` after live changes.
-5. Update project memory/docs with the lesson:
+5. Run `finalize_bitget_live_order_workflow.ps1` and require both the TradingView screenshot and journal message-ID receipts.
+6. Update project memory/docs with the lesson:
    - `PROJECT_STATE.md` for the latest operational state and known quirks
    - this README or another relevant README for reusable command/checklist behavior
    - `memory/YYYY-MM-DD.md` for durable decisions and safety boundaries

@@ -66,6 +66,15 @@ For live Bitget order workflows, durable notes should include:
 
 Never rely only on memory of the chat for a fixed weakness; encode it in code, docs, or project state before considering the workflow hardened.
 
+## Bitget live-order delivery hard stop
+
+After every successful Bitget live order placement, replacement, or live-order ladder change, the workflow is not complete until both visible delivery tasks pass:
+
+1. Draw the exact live Entry/SL/TP levels on TradingView Desktop MCP using solid lines, include the placement arrow, and save a screenshot receipt.
+2. Refresh the Bitget journal and deliver the live-order journal profile to `BITGET Trades`; require a returned Discord `messageId`.
+
+Use `scripts\finalize_bitget_live_order_workflow.ps1 -PlanPath <plan.json> -Symbols <SYMBOLS>` after exchange postchecks. The final chat reply must cite the TradingView screenshot path and journal message ID. A local `-NoSend` journal rebuild does not satisfy the normal live-order delivery gate. If either task fails, say the live order itself is placed but delivery is incomplete, and continue repairing delivery; do not report the overall workflow complete.
+
 For deep-analysis quality feedback, use `README_DEEP_ANALYSIS_FEEDBACK.md` and create records under `reports/deep_analysis_feedback/` when Andrea provides GPT comparisons, preferred tickets, or journal/outcome lessons. Treat GPT as an audit source, not an authority: compare, tag the failure mode, then patch prompts/tools/docs only when justified by a repeated, clear, or safety-critical weakness.
 
 ## Deep-analysis delivery hard stop
