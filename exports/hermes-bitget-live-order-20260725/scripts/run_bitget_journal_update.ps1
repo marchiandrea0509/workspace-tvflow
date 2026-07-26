@@ -1,0 +1,164 @@
+param(
+  [string]$Target = '1499631210283008002',
+  [string]$Since = '2020-01-01',
+  [string]$Symbols = 'BTCUSDT,TQQQUSDT,GOOGLUSDT,GMEUSDT,AAPLUSDT,NEARUSDT,INTCUSDT,NVDAUSDT,FUTUUSDT,MRVLUSDT,JDUSDT,ARMUSDT,APPUSDT,CLUSDT,ASMLUSDT',
+  [string]$MessagePrefix = '',
+  [ValidateSet('full', 'live-order')]
+  [string]$DeliveryProfile = 'full',
+  [string]$ReceiptOut = '',
+  [switch]$NoSend,
+  [switch]$Strict
+)
+
+$ErrorActionPreference = 'Stop'
+
+function SafeStamp {
+  return (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH-mm-ss-fffZ')
+}
+
+function Parse-Symbols([string]$Raw) {
+  if (-not $Raw) { return @() }
+  return @($Raw -split '[,\s]+' | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim().ToUpperInvariant() } | Select-Object -Unique)
+}
+
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+Set-Location $root
+
+$stamp = SafeStamp
+$reportDir = Join-Path $root 'reports\trade_journal'
+New-Item -ItemType Directory -Force -Path $reportDir | Out-Null
+
+$historyLatest = Join-Path $reportDir 'raw_bitget_history_latest.json'
+$historyStamped = Join-Path $reportDir "raw_bitget_history_$stamp.json"
+$positionsLatest = Join-Path $reportDir 'raw_positions_latest.json'
+$positionsStamped = Join-Path $reportDir "raw_positions_$stamp.json"
+$marketMetricsLatest = Join-Path $reportDir 'raw_market_metrics_latest.json'
+$marketMetricsStamped = Join-Path $reportDir "raw_market_metrics_$stamp.json"
+$workbookLatest = Join-Path $reportDir 'bitget_futures_trade_report_latest.xls'
+$workbookStamped = Join-Path $reportDir "bitget_futures_trade_report_$stamp.xls"
+$csvLatest = Join-Path $reportDir 'bitget_futures_order_history_latest.csv'
+$csvStamped = Join-Path $reportDir "bitget_futures_order_history_$stamp.csv"
+$messagesLatest = Join-Path $reportDir 'bitget_thread_messages_latest.json'
+$messagesStamped = Join-Path $reportDir "bitget_thread_messages_$stamp.json"
+
+& node bitget-futures-harness\scripts\export-history-mirror.js --since $Since --out $historyLatest
+if ($LASTEXITCODE -ne 0) { throw "export-history-mirror.js failed with exit code $LASTEXITCODE" }
+Copy-Item $historyLatest $historyStamped -Force
+
+& node bitget-futures-harness\scripts\positions.js > $positionsLatest
+if ($LASTEXITCODE -ne 0) { throw "positions.js failed with exit code $LASTEXITCODE" }
+Copy-Item $positionsLatest $positionsStamped -Force
+
+# Include explicit tracked symbols plus any currently open position symbols.
+$tracked = Parse-Symbols $Symbols
+try {
+  $posJson = Get-Content $positionsLatest -Raw | ConvertFrom-Json
+  $posSymbols = @($posJson.result.data | ForEach-Object { $_.symbol } | Where-Object { $_ })
+  # Force both operands to arrays before concatenation. When each side contains
+  # exactly one symbol, PowerShell otherwise treats them as scalar strings and
+  # produces an invalid merged symbol (for example SOXLUSDTEWYUSDT).
+  $tracked = @((@($tracked) + @($posSymbols)) | Select-Object -Unique)
+} catch {}
+
+$openOrderFiles = @()
+$previousOpenOrderFiles = @()
+foreach ($sym in $tracked) {
+  $safe = $sym -replace '[^A-Z0-9_\-]', '_'
+  $openLatest = Join-Path $reportDir "raw_open_orders_${safe}_latest.json"
+  $openPrevious = Join-Path $reportDir "raw_open_orders_${safe}_previous.json"
+  $openStamped = Join-Path $reportDir "raw_open_orders_${safe}_$stamp.json"
+  if (Test-Path $openLatest) {
+    Copy-Item $openLatest $openPrevious -Force
+    $previousOpenOrderFiles += $openPrevious
+  }
+  & node bitget-futures-harness\scripts\list-open-orders.js --symbol $sym > $openLatest
+  if ($LASTEXITCODE -ne 0) {
+    if ($Strict) { throw "list-open-orders.js failed for $sym with exit code $LASTEXITCODE" }
+    continue
+  }
+  Copy-Item $openLatest $openStamped -Force
+  $openOrderFiles += $openLatest
+}
+
+if ($tracked.Count -gt 0) {
+  $trackedCsv = ($tracked -join ',')
+  & node bitget-futures-harness\scripts\export-market-metrics.js --symbols $trackedCsv > $marketMetricsLatest
+  if ($LASTEXITCODE -ne 0) {
+    if ($Strict) { throw "export-market-metrics.js failed with exit code $LASTEXITCODE" }
+  } elseif (Test-Path $marketMetricsLatest) {
+    Copy-Item $marketMetricsLatest $marketMetricsStamped -Force
+  }
+}
+
+$openArgs = @()
+foreach ($f in $openOrderFiles) { $openArgs += @('--open-orders-json', $f) }
+$previousOpenArgs = @()
+foreach ($f in $previousOpenOrderFiles) { $previousOpenArgs += @('--previous-open-orders-json', $f) }
+$marketArgs = @()
+if (Test-Path $marketMetricsLatest) { $marketArgs += @('--market-metrics-json', $marketMetricsLatest) }
+
+& python scripts\build_bitget_trade_report.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest @marketArgs --out-xls $workbookLatest --out-csv $csvLatest
+if ($LASTEXITCODE -ne 0) { throw "build_bitget_trade_report.py failed with exit code $LASTEXITCODE" }
+Copy-Item $workbookLatest $workbookStamped -Force
+Copy-Item $csvLatest $csvStamped -Force
+
+& python scripts\build_bitget_thread_messages.py --history-json $historyLatest @openArgs @previousOpenArgs --positions-json $positionsLatest --workbook $workbookLatest --out $messagesLatest
+if ($LASTEXITCODE -ne 0) { throw "build_bitget_thread_messages.py failed with exit code $LASTEXITCODE" }
+Copy-Item $messagesLatest $messagesStamped -Force
+
+$sentIds = @()
+if (-not $NoSend) {
+  $sendTarget = if ($Target -match '^\d+$') { "channel:$Target" } else { $Target }
+  $payload = Get-Content $messagesLatest -Raw | ConvertFrom-Json
+  $messagesToSend = @($payload.messages)
+  if ($DeliveryProfile -eq 'live-order') {
+    # A confirmed live-order action needs one concise delivery receipt: the
+    # report summary plus the active-order rows. Keeping this to one Discord
+    # send avoids partial multi-message delivery and makes the receipt atomic.
+    $summaryMessage = if ($messagesToSend.Count -gt 0) { [string]$messagesToSend[0] } else { '' }
+    $activeOrdersMessage = if ($messagesToSend.Count -gt 2) { [string]$messagesToSend[2] } else { '' }
+    $messagesToSend = @(($summaryMessage, $activeOrdersMessage | Where-Object { $_ }) -join "`n`n")
+  }
+  foreach ($msg in $messagesToSend) {
+    $body = if ($MessagePrefix) { "$MessagePrefix`n$msg" } else { [string]$msg }
+    $adapter = Join-Path $PSScriptRoot 'send_message_adapter.ps1'
+    if (-not (Test-Path -LiteralPath $adapter)) { throw "Message adapter not found: $adapter" }
+    $raw = & powershell -NoProfile -ExecutionPolicy Bypass -File $adapter -Target $sendTarget -Message $body
+    if ($LASTEXITCODE -ne 0) { throw "message adapter failed with exit code $LASTEXITCODE`n$raw" }
+    try {
+      $parsed = ($raw -join "`n") | ConvertFrom-Json
+      $sentIds += $parsed.payload.result.messageId
+    } catch {}
+  }
+}
+
+$history = Get-Content $historyLatest -Raw | ConvertFrom-Json
+$summary = @($history.results | ForEach-Object { [pscustomobject]@{ label = $_.label; ok = $_.ok; count = $_.count } })
+
+$resultObject = [pscustomobject]@{
+  ok = $true
+  modelRecommended = 'gpt-nano for normal refresh; gpt-mini only if API/reporting fails'
+  target = if ($NoSend) { $Target } else { $sendTarget }
+  deliveryProfile = $DeliveryProfile
+  since = $Since
+  trackedSymbols = $tracked
+  historySummary = $summary
+  workbook = $workbookLatest
+  workbookSnapshot = $workbookStamped
+  csv = $csvLatest
+  marketMetrics = $marketMetricsLatest
+  marketMetricsSnapshot = $marketMetricsStamped
+  messages = $messagesLatest
+  messagesSnapshot = $messagesStamped
+  sent = -not [bool]$NoSend
+  sentMessageIds = $sentIds
+}
+
+$resultJson = $resultObject | ConvertTo-Json -Depth 8
+if ($ReceiptOut) {
+  $receiptPath = [System.IO.Path]::GetFullPath($ReceiptOut)
+  $receiptDir = Split-Path -Parent $receiptPath
+  if ($receiptDir) { New-Item -ItemType Directory -Force -Path $receiptDir | Out-Null }
+  Set-Content -LiteralPath $receiptPath -Value $resultJson -Encoding utf8
+}
+$resultJson

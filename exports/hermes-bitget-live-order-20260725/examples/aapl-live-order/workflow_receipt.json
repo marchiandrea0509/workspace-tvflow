@@ -1,0 +1,64 @@
+{
+  "ok": true,
+  "completedAt": "2026-07-25T18:49:52.970Z",
+  "symbol": "BITGET:AAPLUSDT.P",
+  "timeframe": "4H",
+  "orderCount": 2,
+  "orders": [
+    {
+      "leg": "L1",
+      "orderId": "1464982910485041153",
+      "clientOid": "oc-aapl-dip-39x-red-20260725-L1",
+      "size": "3.86",
+      "entry": "329.15",
+      "sl": "318.80",
+      "tp": "338.78",
+      "leverage": "39",
+      "marginMode": "isolated",
+      "status": "live",
+      "baseVolume": "0"
+    },
+    {
+      "leg": "L2",
+      "orderId": "1464982995767824385",
+      "clientOid": "oc-aapl-dip-39x-red-20260725-L2",
+      "size": "11.49",
+      "entry": "324.02",
+      "sl": "318.80",
+      "tp": "338.78",
+      "leverage": "39",
+      "marginMode": "isolated",
+      "status": "live",
+      "baseVolume": "0"
+    }
+  ],
+  "risk": {
+    "notionalUsdt": 4993.5088,
+    "plannedLossUsdt": 99.9288,
+    "plannedProfitUsdt": 206.7642,
+    "simpleMarginUsdt": 128.0387,
+    "incrementalExchangeLockedMarginUsdt": 132.33015986,
+    "estimatedLiquidation": 318.7538,
+    "stopLoss": 318.80,
+    "liquidationBelowStop": true
+  },
+  "tradingView": {
+    "entityCount": 7,
+    "screenshot": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\tv_mcp_snapshots\\20260725_204650\\screenshot.png"
+  },
+  "journal": {
+    "workbookSnapshot": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_2026-07-25T18-49-12-673Z.xls",
+    "sent": true,
+    "sentMessageIds": [
+      "1530648538235801611"
+    ],
+    "receipt": "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\live_execution\\20260725_aaplusdt_dip_ladder_39x_red_override\\journal_receipt.json"
+  },
+  "deliveryRepair": {
+    "initialFinalizerAttemptCompletedDrawingAndScreenshot": true,
+    "initialFinalizerJournalStageSucceeded": false,
+    "journalRerunDirectlySucceeded": true,
+    "finalizerStderrHandlingPatched": true,
+    "finalizerParseAndValidateOnlyPassed": true
+  }
+}

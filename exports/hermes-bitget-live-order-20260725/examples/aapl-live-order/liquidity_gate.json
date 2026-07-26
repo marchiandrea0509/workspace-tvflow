@@ -1,0 +1,290 @@
+{
+  "generatedAt": "2026-07-25T18:36:21.951Z",
+  "env": "live",
+  "papTrading": false,
+  "inputs": {
+    "symbol": "AAPLUSDT",
+    "productType": "USDT-FUTURES",
+    "positionSide": "long",
+    "maxQty": 15.35,
+    "slPrice": 318.8,
+    "entryPrice": 325.310019544,
+    "positionNotional": 4993.5088,
+    "plannedRiskUsdt": 99.9288,
+    "plannedLeverage": 39,
+    "basePlannedRiskUsdt": 100,
+    "isRwa": true
+  },
+  "result": "RED",
+  "decisionLogic": {
+    "primaryExecutionGates": [
+      "simSlippage",
+      "nearMarketDepth",
+      "spread"
+    ],
+    "supportingLiquidityGates": [
+      "volumeStress",
+      "deadCandles",
+      "volume24h"
+    ],
+    "rwaSupportingRule": "one RED supporting gate alone => YELLOW; two RED supporting gates or RED support + YELLOW primary => RED",
+    "depthToSlCorridorRole": "informational_only"
+  },
+  "metrics": {
+    "simSlippage": {
+      "simulatedExitAvg": 332.72278501628665,
+      "worstPrice": 332.72,
+      "consumedQty": 15.350000000000001,
+      "remainingQty": 0,
+      "complete": true,
+      "extraLossUsdt": 0,
+      "extraLossPct": 0,
+      "baselineCurrentBook": {
+        "requestedQty": 15.35,
+        "consumedQty": 15.35,
+        "remainingQty": 0,
+        "avgPrice": 332.72557003257333,
+        "worstPrice": 332.72,
+        "consumedLevels": [
+          {
+            "price": 332.81,
+            "levelQty": 0.45,
+            "take": 0.45
+          },
+          {
+            "price": 332.77,
+            "levelQty": 0.18,
+            "take": 0.18
+          },
+          {
+            "price": 332.76,
+            "levelQty": 0.9,
+            "take": 0.9
+          },
+          {
+            "price": 332.72,
+            "levelQty": 504.8,
+            "take": 13.82
+          }
+        ],
+        "complete": true,
+        "extraLossUsdt": 0,
+        "extraLossPct": 0
+      },
+      "worstObservedCurrentBook": {
+        "requestedQty": 15.35,
+        "consumedQty": 15.35,
+        "remainingQty": 0,
+        "avgPrice": 332.72557003257333,
+        "worstPrice": 332.72,
+        "consumedLevels": [
+          {
+            "price": 332.81,
+            "levelQty": 0.45,
+            "take": 0.45
+          },
+          {
+            "price": 332.77,
+            "levelQty": 0.18,
+            "take": 0.18
+          },
+          {
+            "price": 332.76,
+            "levelQty": 0.9,
+            "take": 0.9
+          },
+          {
+            "price": 332.72,
+            "levelQty": 504.8,
+            "take": 13.82
+          }
+        ],
+        "complete": true,
+        "extraLossUsdt": 0,
+        "extraLossPct": 0
+      },
+      "stressedHalfDepth": {
+        "requestedQty": 15.35,
+        "consumedQty": 15.350000000000001,
+        "remainingQty": 0,
+        "avgPrice": 332.72278501628665,
+        "worstPrice": 332.72,
+        "consumedLevels": [
+          {
+            "price": 332.81,
+            "levelQty": 0.225,
+            "take": 0.225
+          },
+          {
+            "price": 332.77,
+            "levelQty": 0.09,
+            "take": 0.09
+          },
+          {
+            "price": 332.76,
+            "levelQty": 0.45,
+            "take": 0.45
+          },
+          {
+            "price": 332.72,
+            "levelQty": 252.4,
+            "take": 14.585
+          }
+        ],
+        "complete": true,
+        "extraLossUsdt": 0,
+        "extraLossPct": 0
+      },
+      "sampleSize": 3,
+      "depthHaircutPct": 50,
+      "decisionMetric": "stressed_half_visible_depth_extra_loss_pct",
+      "status": "GREEN"
+    },
+    "nearMarketDepth": {
+      "sideEvaluated": "bids",
+      "referencePrice": 332.81,
+      "within025": {
+        "qty": 6527.110000000002,
+        "notional": 2170328.0522,
+        "ratioToPosition": 434.62986431504834
+      },
+      "within050": {
+        "qty": 6557.850000000003,
+        "notional": 2180531.0316,
+        "ratioToPosition": 436.67311282199
+      },
+      "status025": "GREEN",
+      "status050": "GREEN",
+      "status": "GREEN"
+    },
+    "spread": {
+      "valuePct": 0.0030046722653699217,
+      "currentSpreadPct": 0.0030046722653699217,
+      "medianSpreadPct": 0.0030046722653699217,
+      "worstSpreadPct": 0.0030046722653699217,
+      "bid": 332.81,
+      "ask": 332.82,
+      "mid": 332.815,
+      "sampleSize": 3,
+      "status": "GREEN",
+      "decisionMetric": "worst_observed_spread_pct"
+    },
+    "volumeStress": {
+      "p10QuoteVolume": 16.6385,
+      "p10NonDeadQuoteVolume": 16.6385,
+      "medianNonZeroQuoteVolume": 156.3596,
+      "deadThresholdQuoteVolume": 1.563596,
+      "nonDeadSampleSize": 49,
+      "sampleSize": 120,
+      "positionNotional": 4993.5088,
+      "ratioPct": 30011.772695855994,
+      "greenThresholdPct": 25,
+      "yellowThresholdPct": 50,
+      "status": "BLOCK",
+      "effectiveMode": "rwa_p10_non_dead_120m"
+    },
+    "deadCandles": {
+      "count": 42,
+      "pct": 70,
+      "zeroCount": 42,
+      "zeroPct": 70,
+      "medianNonZeroQuoteVolume": 166.415,
+      "deadThresholdQuoteVolume": 1.66415,
+      "sampleSize": 60,
+      "status": "BLOCK",
+      "effectiveMode": "median_nonzero_60m"
+    },
+    "volume24h": {
+      "quoteVolume": 1312495.7638,
+      "requiredQuoteVolume": 2496754.4,
+      "yellowRequiredQuoteVolume": 1248377.2,
+      "ratioToNotional": 262.84038265838245,
+      "status": "WARN"
+    },
+    "depthToSl": {
+      "notional": 2180531.0316,
+      "qty": 6557.850000000003,
+      "requiredNotional": 14980.526399999999,
+      "low": false,
+      "status": "INFO_ONLY",
+      "decisionRole": "informational_only"
+    },
+    "rwaActiveSessionWarmup": {
+      "applicable": false,
+      "reason": "not enough active-session candles yet",
+      "fallbackRecentOnly": false,
+      "matureWindow": false,
+      "minActiveQuoteVolume": 100,
+      "inactiveStreakNeeded": 5,
+      "minActiveCandles": 10,
+      "maxWarmupCandles": 60,
+      "windowCandles": 0,
+      "activeCandles": 0,
+      "inactiveCandles": 0,
+      "inactivePct": 100,
+      "activeMedianQuoteVolume": 0,
+      "activeP25QuoteVolume": 0,
+      "activeAvgQuoteVolume": 0,
+      "ratioPct": null,
+      "activityStatus": "BLOCK",
+      "volumeStatus": "BLOCK",
+      "status": "BLOCK"
+    }
+  },
+  "reducedSizeProposal": {
+    "label": "A_fixed_extra_slippage_budget",
+    "available": true,
+    "budgetDescription": "5% x original/base planned risk",
+    "revisedSize": 15.349999999999127,
+    "revisedNotional": 4993.508799999716,
+    "revisedMargin": 128.0386871794799,
+    "plannedNoSlippageRisk": 99.92879999999431,
+    "estimatedExtraSlippage": 0,
+    "estimatedTotalLoss": 99.92879999999431,
+    "p10Status": "BLOCK",
+    "nearMarketDepthStatus": "GREEN",
+    "spreadStatus": "GREEN",
+    "finalResult": "RED",
+    "meaningful": true,
+    "verdict": "NO_TRADE",
+    "reason": ""
+  },
+  "downsizedFallbackProposals": [
+    {
+      "label": "A_fixed_extra_slippage_budget",
+      "available": true,
+      "budgetDescription": "5% x original/base planned risk",
+      "revisedSize": 15.349999999999127,
+      "revisedNotional": 4993.508799999716,
+      "revisedMargin": 128.0386871794799,
+      "plannedNoSlippageRisk": 99.92879999999431,
+      "estimatedExtraSlippage": 0,
+      "estimatedTotalLoss": 99.92879999999431,
+      "p10Status": "BLOCK",
+      "nearMarketDepthStatus": "GREEN",
+      "spreadStatus": "GREEN",
+      "finalResult": "RED",
+      "meaningful": true,
+      "verdict": "NO_TRADE",
+      "reason": ""
+    },
+    {
+      "label": "B_proportional_extra_slippage_budget",
+      "available": true,
+      "budgetDescription": "5% x new planned no-slippage risk",
+      "revisedSize": 15.349999999999127,
+      "revisedNotional": 4993.508799999716,
+      "revisedMargin": 128.0386871794799,
+      "plannedNoSlippageRisk": 99.92879999999431,
+      "estimatedExtraSlippage": 0,
+      "estimatedTotalLoss": 99.92879999999431,
+      "p10Status": "BLOCK",
+      "nearMarketDepthStatus": "GREEN",
+      "spreadStatus": "GREEN",
+      "finalResult": "RED",
+      "meaningful": true,
+      "verdict": "NO_TRADE",
+      "reason": ""
+    }
+  ]
+}

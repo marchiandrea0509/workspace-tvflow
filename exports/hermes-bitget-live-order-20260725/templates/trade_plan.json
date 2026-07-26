@@ -1,0 +1,39 @@
+{
+  "symbol": "BITGET:AAPLUSDT.P",
+  "timeframe": "4H",
+  "side": "long",
+  "length_bars": 4,
+  "arrow": {
+    "enabled": true,
+    "length_bars": 2,
+    "mode": "single"
+  },
+  "orders": [
+    {
+      "name": "AAPL DIP L1 live 39x",
+      "entry": 329.15,
+      "sl": 318.80,
+      "tp": 338.78,
+      "order_time": 1785005064608,
+      "arrow_price": 332.77,
+      "kind": "live",
+      "lineStyle": "solid"
+    },
+    {
+      "name": "AAPL DIP L2 live 39x",
+      "entry": 324.02,
+      "sl": 318.80,
+      "tp": 338.78,
+      "order_time": 1785005084936,
+      "arrow_price": 332.77,
+      "kind": "live",
+      "lineStyle": "solid"
+    }
+  ],
+  "style": {
+    "entry": { "color": "#FFD700", "width": 3 },
+    "sl": { "color": "#FF3333", "width": 3 },
+    "tp": { "color": "#00CC66", "width": 3 },
+    "arrow": { "color": "#FFFFFF", "width": 2, "shape": "arrow" }
+  }
+}

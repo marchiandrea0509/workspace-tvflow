@@ -1,0 +1,40 @@
+﻿{
+    "ok":  true,
+    "modelRecommended":  "gpt-nano for normal refresh; gpt-mini only if API/reporting fails",
+    "target":  "channel:1499631210283008002",
+    "deliveryProfile":  "live-order",
+    "since":  "2020-01-01",
+    "trackedSymbols":  [
+                           "AAPLUSDT",
+                           "SOXLUSDT",
+                           "JDUSDT"
+                       ],
+    "historySummary":  [
+                           {
+                               "label":  "orders-history",
+                               "ok":  true,
+                               "count":  242
+                           },
+                           {
+                               "label":  "fills",
+                               "ok":  true,
+                               "count":  781
+                           },
+                           {
+                               "label":  "orders-plan-history",
+                               "ok":  true,
+                               "count":  9
+                           }
+                       ],
+    "workbook":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_latest.xls",
+    "workbookSnapshot":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_trade_report_2026-07-25T18-49-12-673Z.xls",
+    "csv":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_futures_order_history_latest.csv",
+    "marketMetrics":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_market_metrics_latest.json",
+    "marketMetricsSnapshot":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\raw_market_metrics_2026-07-25T18-49-12-673Z.json",
+    "messages":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_thread_messages_latest.json",
+    "messagesSnapshot":  "C:\\Users\\anmar\\.openclaw\\workspace-tvflow\\reports\\trade_journal\\bitget_thread_messages_2026-07-25T18-49-12-673Z.json",
+    "sent":  true,
+    "sentMessageIds":  [
+                           "1530648538235801611"
+                       ]
+}

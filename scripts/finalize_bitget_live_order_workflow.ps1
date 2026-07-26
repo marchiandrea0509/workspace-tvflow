@@ -94,8 +94,17 @@ $journalArgs = @(
   '-ReceiptOut', $journalReceipt
 )
 if ($NoSend) { $journalArgs += '-NoSend' }
-$journalOutput = & powershell @journalArgs 2>&1
-$journalExit = $LASTEXITCODE
+$previousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+try {
+  # OpenClaw may emit harmless plugin-loading diagnostics on stderr even when
+  # the Discord send succeeds. Capture those diagnostics without allowing the
+  # outer Stop preference to abort before the child exit code/receipt checks.
+  $journalOutput = & powershell @journalArgs 2>&1
+  $journalExit = $LASTEXITCODE
+} finally {
+  $ErrorActionPreference = $previousErrorActionPreference
+}
 Write-Output ($journalOutput -join "`n")
 if ($journalExit -ne 0) { throw "Journal refresh/delivery failed with exit code $journalExit." }
 if (-not (Test-Path -LiteralPath $journalReceipt)) { throw 'Journal receipt was not created.' }
