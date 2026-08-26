@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-23T07:18:42.919Z",
+  "generatedAt": "2026-08-26T15:40:24.587Z",
   "env": "live",
   "papTrading": false,
   "mirror": true,
   "productType": "USDT-FUTURES",
   "symbol": null,
   "since": "2020-01-01T00:00:00.000Z",
-  "until": "2026-08-23T07:18:02.243Z",
+  "until": "2026-08-26T15:39:47.714Z",
   "chunkDays": 90,
   "limit": 100,
   "maxPages": 20,
@@ -18,7 +18,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1787469482243"
+        "untilTime": "1787758787714"
       },
       "count": 269,
       "windows": [
@@ -208,7 +208,7 @@
           "ok": true,
           "count": 188,
           "startTime": "1780012800000",
-          "endTime": "1787469482243",
+          "endTime": "1787758787714",
           "pages": 2
         }
       ],
@@ -8561,7 +8561,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1787469482243"
+        "untilTime": "1787758787714"
       },
       "count": 896,
       "windows": [
@@ -8751,7 +8751,7 @@
           "ok": true,
           "count": 550,
           "startTime": "1780012800000",
-          "endTime": "1787469482243",
+          "endTime": "1787758787714",
           "pages": 6
         }
       ],
@@ -29373,7 +29373,7 @@
       "query": {
         "productType": "USDT-FUTURES",
         "sinceTime": "1577836800000",
-        "untilTime": "1787469482243",
+        "untilTime": "1787758787714",
         "planType": "normal_plan"
       },
       "count": 0,
@@ -29564,7 +29564,7 @@
           "ok": true,
           "count": 0,
           "startTime": "1780012800000",
-          "endTime": "1787469482243",
+          "endTime": "1787758787714",
           "pages": 1
         }
       ],
